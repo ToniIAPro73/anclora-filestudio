@@ -13,7 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@anclora/filestudio-core": "*"
+    "@anclora/filestudio-core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5",

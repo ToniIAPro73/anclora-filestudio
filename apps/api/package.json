@@ -6,7 +6,7 @@
   "main": "./src/server.ts",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "npm run build --workspace=@anclora/filestudio-core && tsc -p tsconfig.build.json",
+    "build": "corepack pnpm@10.33.2 --filter @anclora/filestudio-core build && tsc -p tsconfig.build.json",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -14,7 +14,7 @@
     "migrate:up": "tsx src/db/migrate.ts"
   },
   "dependencies": {
-    "@anclora/filestudio-core": "*",
+    "@anclora/filestudio-core": "workspace:*",
     "hono": "^4.12.33",
     "@hono/node-server": "^2.0.12",
     "jose": "^5.10.0",

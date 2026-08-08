@@ -9,8 +9,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@anclora/filestudio-core": "*",
-    "@anclora/filestudio-sdk": "*",
+    "@anclora/filestudio-core": "workspace:*",
+    "@anclora/filestudio-sdk": "workspace:*",
     "hono": "^4.12.33",
     "@hono/node-server": "^2.0.12",
     "zod": "^4.4.3"

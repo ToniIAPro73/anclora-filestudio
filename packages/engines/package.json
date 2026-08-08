@@ -9,7 +9,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@anclora/filestudio-core": "*"
+    "@anclora/filestudio-core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5"

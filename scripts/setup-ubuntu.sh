@@ -26,13 +26,9 @@ if ! command -v pnpm &> /dev/null; then
 fi
 
 # Install system dependencies
-echo "ℹ️ Installing system dependencies (ffmpeg, python3-pip)..."
+echo "ℹ️ Installing system dependencies..."
 sudo apt update
-sudo apt install -y ffmpeg python3-pip
-
-# Install yt-dlp
-echo "ℹ️ Installing yt-dlp via pip..."
-python3 -m pip install --user yt-dlp
+sudo apt install -y ffmpeg poppler-utils qpdf pandoc tesseract-ocr p7zip-full yt-dlp
 
 # Export PATH if needed
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then

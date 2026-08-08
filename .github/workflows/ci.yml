@@ -23,7 +23,7 @@ jobs:
       - name: Install real engine binaries
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg poppler-utils qpdf pandoc tesseract-ocr
+          sudo apt-get install -y ffmpeg poppler-utils qpdf pandoc tesseract-ocr p7zip-full yt-dlp
       - run: pnpm test
 
   ci-service:
