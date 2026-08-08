@@ -1,0 +1,6 @@
+name = "Link2Media Test"
+version = "0.1.0"
+
+[metadata]
+author = "test-suite"
+purpose = "integration-test"

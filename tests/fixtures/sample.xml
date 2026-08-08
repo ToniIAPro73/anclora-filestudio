@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+  <item id="1">
+    <name>document1</name>
+    <type>pdf</type>
+    <size>1024</size>
+  </item>
+  <item id="2">
+    <name>image1</name>
+    <type>png</type>
+    <size>2048</size>
+  </item>
+</catalog>

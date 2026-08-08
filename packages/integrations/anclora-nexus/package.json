@@ -1,0 +1,23 @@
+{
+  "name": "@anclora/filestudio-nexus",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anclora/filestudio-core": "*",
+    "@anclora/filestudio-sdk": "*",
+    "hono": "^4.12.33",
+    "@hono/node-server": "^2.0.12",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5",
+    "vitest": "^4.1.8"
+  }
+}

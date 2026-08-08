@@ -1,0 +1,83 @@
+╔══════════════════════════════════════════════════════════════╗
+║                  Anclora FileStudio  — Guía rápida                   ║
+╚══════════════════════════════════════════════════════════════╝
+
+CÓMO EMPEZAR
+────────────
+1. Extrae TODO el contenido del ZIP en una carpeta de tu ordenador.
+   (Importante: no ejecutes nada directamente desde el ZIP.)
+2. Abre la carpeta extraída.
+3. Haz doble clic en INICIAR_ANCLORA_FILESTUDIO.bat
+4. Espera a que se abra el navegador automáticamente.
+5. Pega el enlace de YouTube y convierte tu contenido autorizado.
+
+CÓMO CERRAR
+───────────
+Haz doble clic en CERRAR_ANCLORA_FILESTUDIO.bat
+o cierra la ventana negra que se abrió al iniciar.
+
+REQUISITOS
+──────────
+· Windows 10 u 11 de 64 bits.
+· Conexión a Internet para las conversiones.
+· Espacio libre suficiente en el disco (los vídeos pueden requerir
+  varios GB temporales durante la conversión).
+· Solo para contenido propio o con permiso del autor.
+  No debes descargar ni convertir contenido protegido por copyright
+  sin la autorización del titular.
+
+ACTUALIZAR yt-dlp
+─────────────────
+Si las conversiones empiezan a fallar, es posible que YouTube
+haya actualizado su sistema. Haz doble clic en ACTUALIZAR_YTDLP.bat
+para obtener la versión más reciente de yt-dlp.
+
+PROBLEMAS FRECUENTES
+─────────────────────
+· Windows muestra una advertencia de seguridad (SmartScreen):
+  Haz clic en "Más información" → "Ejecutar de todas formas".
+  Los archivos proceden de proyectos de código abierto conocidos:
+  Node.js, yt-dlp y FFmpeg. Puedes verificar el SHA256.
+  No elimines el antivirus ni desactives SmartScreen globalmente.
+
+· El antivirus bloquea un ejecutable:
+  Algunos antivirus detectan falsos positivos en herramientas de
+  descarga. Si estás en un entorno corporativo, consulta con tu
+  administrador. No desactives el antivirus globalmente.
+
+· La ventana indica que faltan archivos:
+  Extrae primero TODO el ZIP en una carpeta local de tu ordenador
+  (no en una carpeta de red, no desde dentro del ZIP).
+  Vuelve a ejecutar INICIAR_ANCLORA_FILESTUDIO.bat desde la carpeta extraída.
+
+· El navegador no se abre automáticamente:
+  Abre manualmente tu navegador y ve a: http://127.0.0.1:3000
+  (si el puerto es diferente, la ventana de consola lo indicará).
+
+· El puerto está ocupado:
+  Cierra otras aplicaciones que puedan usar los puertos 3000-3010
+  e inténtalo de nuevo.
+
+· YouTube ha cambiado y falla la conversión:
+  Haz doble clic en ACTUALIZAR_YTDLP.bat y vuelve a intentarlo.
+
+· No hay espacio suficiente:
+  Libera espacio en el disco y vuelve a intentarlo.
+
+VERIFICACIÓN DE INTEGRIDAD
+───────────────────────────
+Puedes comprobar la integridad del ZIP comparando su SHA256 con el
+archivo Anclora FileStudio-Windows-x64.zip.sha256 disponible en el repositorio
+del proyecto.
+
+RENDIMIENTO
+───────────
+· Las conversiones de vídeo en alta resolución consumen mucho CPU.
+· El tiempo de conversión depende de la duración del vídeo y de tu
+  conexión a Internet.
+· No inicies varias conversiones simultáneamente.
+
+═══════════════════════════════════════════════════════════════
+  Solo para contenido propio o con autorización del titular.
+  Respeta siempre los derechos de autor y las licencias aplicables.
+═══════════════════════════════════════════════════════════════

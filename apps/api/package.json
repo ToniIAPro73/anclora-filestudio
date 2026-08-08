@@ -1,0 +1,35 @@
+{
+  "name": "@anclora/filestudio-api",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/server.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "npm run build --workspace=@anclora/filestudio-core && tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "migrate:up": "tsx src/db/migrate.ts"
+  },
+  "dependencies": {
+    "@anclora/filestudio-core": "*",
+    "hono": "^4.12.33",
+    "@hono/node-server": "^2.0.12",
+    "jose": "^5.10.0",
+    "pino": "^9.7.0",
+    "postgres": "^3.4.7",
+    "ioredis": "^5.4.2",
+    "bullmq": "^5.54.2",
+    "ulid": "^2.3.0",
+    "zod": "^4.4.3",
+    "file-type": "^22.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5",
+    "tsx": "^4.19.4",
+    "vitest": "^4.1.8"
+  }
+}
