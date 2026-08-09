@@ -5,12 +5,12 @@ import { CONFIG } from "../config";
 import { jobManager } from "../jobs/job-manager";
 import { buildYtdlpArgs, buildFfmpegAudioArgs, buildFfmpegVideoArgs } from "./command-builder";
 import { parseProgress } from "./progress-parser";
-import { verifyFile, probeOutputFile } from "./probe";
+import { probeFile, verifyMediaOutput, probeOutputFile, type MediaDescriptor } from "./probe";
 import { sanitizeFilename } from "../security/sanitize-filename";
 import { parseLegacyQualityString, VideoQualitySelection, VideoQualitySelectionSchema } from "../quality/quality-contract";
 import { getVideoMetadata } from "./metadata";
 import { AudioOutputFormat, VideoOutputFormat } from "../jobs/job-types";
-import { createAppError, type ErrorCode } from "../errors/error-codes";
+import { createAppError, ERROR_MESSAGES, type AppError, type ErrorCode } from "../errors/error-codes";
 import { checkDiskSpace } from "../jobs/disk-space-check";
 import crypto from "crypto";
 
@@ -71,6 +71,7 @@ export async function processJob(jobId: string) {
   }
 
   const outputPath = path.join(jobDir, `output${extension}`);
+  let inputDescriptor: MediaDescriptor | null = null;
 
   try {
     // Check disk space before processing
@@ -91,6 +92,12 @@ export async function processJob(jobId: string) {
       await processRemoteUrl(jobId, job.input_reference, outputFormat, job.quality, outputPath);
     } else if (job.input_kind === "local-file") {
       const inputPath = path.join(CONFIG.media.tempDir, job.input_reference);
+      inputDescriptor = await probeFile(inputPath);
+      if (!inputDescriptor) {
+        throw createAppError("INPUT_CORRUPTED", "El archivo de entrada está corrupto o no se puede leer.", {
+          stage: "pre-processing",
+        });
+      }
       if (isAudio) {
         await processLocalAudio(jobId, inputPath, outputFormat as AudioOutputFormat, job.quality, outputPath);
       } else if (isVideo) {
@@ -128,21 +135,42 @@ export async function processJob(jobId: string) {
     });
 
     const stats = fs.statSync(outputPath);
-    const verification = isImageOutput
-      ? verifyImageOutput(outputPath, outputFormat)
-      : await verifyFile(outputPath, isAudio ? "mp3" : "mp4");
-
-    if (!verification.isValid) {
+    if (isImageOutput) {
+      const verification = verifyImageOutput(outputPath, outputFormat);
+      if (!verification.isValid) {
+        const err = createAppError("ARTIFACT_VALIDATION_FAILED", "La verificación del archivo ha fallado.", {
+          stage: "validation",
+          technicalDetail: verification.reason,
+        });
+        jobManager.updateJob(jobId, {
+          status: "failed",
+          error_code: err.code,
+          error_message: ERROR_MESSAGES[err.code],
+          stage: "Error",
+        });
+        return;
+      }
+    } else {
+      const mediaExpectation = {
+        requireAudio: isAudio || job.operation === "extract-audio" || (isVideo && inputDescriptor?.hasAudio === true),
+        requireVideo: isVideo,
+        requireDuration: true,
+      };
+      const verification = await verifyMediaOutput(outputPath, mediaExpectation);
+      if (!verification.isValid) {
+        const technicalDetail = `expected audio=${mediaExpectation.requireAudio} video=${mediaExpectation.requireVideo}; actual audio=${verification.hasAudio} video=${verification.hasVideo}`;
       const err = createAppError("ARTIFACT_VALIDATION_FAILED", "La verificación del archivo ha fallado.", {
         stage: "validation",
+        technicalDetail,
       });
-      jobManager.updateJob(jobId, {
-        status: "failed",
-        error_code: err.code,
-        error_message: err.message,
-        stage: "Error",
-      });
-      return;
+        jobManager.updateJob(jobId, {
+          status: "failed",
+          error_code: err.code,
+          error_message: ERROR_MESSAGES[err.code],
+          stage: "Error",
+        });
+        return;
+      }
     }
 
     const token = crypto.randomBytes(32).toString("hex");
@@ -170,10 +198,15 @@ export async function processJob(jobId: string) {
       completed_at: new Date().toISOString(),
     });
   } catch (error: unknown) {
-    const appError = error as { code?: ErrorCode; message?: string };
+    const appError = error as AppError;
     const code: ErrorCode = appError?.code ?? "ENGINE_EXECUTE_FAILED";
-    const message =
-      error instanceof Error ? error.message : "Error interno del procesador.";
+    const message = ERROR_MESSAGES[code] ?? "Error interno del procesador.";
+    const technicalDetail =
+      appError?.technicalDetail ??
+      (error instanceof Error ? error.message : String(error));
+    console.error(
+      `[legacy-media] Job ${jobId} failed code=${code} stage=${appError?.stage ?? "unknown"} detail=${redactMediaError(technicalDetail)}`,
+    );
     jobManager.updateJob(jobId, {
       status: "failed",
       error_code: code,
@@ -181,6 +214,13 @@ export async function processJob(jobId: string) {
       stage: "Error",
     });
   }
+}
+
+function redactMediaError(message: string): string {
+  return message.replace(/\/[^\s"',:;)]+/g, (m) => {
+    const parts = m.split("/");
+    return parts.length > 3 ? `/.../${parts.slice(-2).join("/")}` : m;
+  }).slice(0, 500);
 }
 
 async function processRemoteUrl(

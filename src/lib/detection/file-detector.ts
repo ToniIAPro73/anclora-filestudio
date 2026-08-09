@@ -4,6 +4,8 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { XMLValidator } from "fast-xml-parser";
+import { createAppError } from "../errors/error-codes";
 import type {
   FileCategory,
   UniversalFileDescriptor,
@@ -414,6 +416,7 @@ function probeZipContents(
 
 function probeTextStructure(
   filePath: string,
+  ext: string | null,
 ): { mime: string; format: string } | null {
   try {
     const sample = fs
@@ -437,16 +440,37 @@ function probeTextStructure(
       return { mime: "text/xml", format: "xml" };
     if (trimmed.match(/^#\s+.+/m) || trimmed.match(/\*\*.+\*\*/))
       return { mime: "text/markdown", format: "markdown" };
-    // CSV/TSV heuristic: consistent delimiter
-    const firstLine = trimmed.split("\n")[0] ?? "";
-    if ((firstLine.match(/,/g) ?? []).length >= 2)
+    if (isDelimitedText(trimmed, ",", ext === "csv" ? 1 : 2))
       return { mime: "text/csv", format: "csv" };
-    if ((firstLine.match(/\t/g) ?? []).length >= 1)
+    if (isDelimitedText(trimmed, "\t", 1))
       return { mime: "text/tab-separated-values", format: "tsv" };
     return { mime: "text/plain", format: "txt" };
   } catch {
     return null;
   }
+}
+
+function isDelimitedText(sample: string, delimiter: "," | "\t", minDelimitersFirstLine: number): boolean {
+  const lines = sample
+    .split(/\r?\n/)
+    .map((line) => line.trimEnd())
+    .filter((line) => line.trim().length > 0 && !line.trimStart().startsWith("#"));
+  if (lines.length < 2) return false;
+
+  const counts = lines.slice(0, Math.min(lines.length, 10)).map((line) => {
+    let count = 0;
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i += 1) {
+      const ch = line[i];
+      if (ch === '"') inQuotes = !inQuotes;
+      if (!inQuotes && ch === delimiter) count += 1;
+    }
+    return count;
+  });
+
+  const first = counts[0] ?? 0;
+  if (first < minDelimitersFirstLine) return false;
+  return counts.every((count) => count === first);
 }
 
 // ── Compute SHA-256 ──────────────────────────────────────────────────────────
@@ -555,7 +579,7 @@ export async function detectFile(filePath: string): Promise<DetectionResult> {
 
   // 3. Text structure probe when no binary magic found
   if (!mime) {
-    const textProbe = probeTextStructure(filePath);
+    const textProbe = probeTextStructure(filePath, ext || null);
     if (textProbe) {
       mime = textProbe.mime;
       format = textProbe.format;
@@ -616,6 +640,8 @@ export async function detectFile(filePath: string): Promise<DetectionResult> {
   }
 
   // 8. Build basic attributes
+  validateDetectedContent(filePath, ext || null, category, format);
+
   const attributes: FileAttributes = buildAttributes(category, format);
 
   return {
@@ -625,6 +651,69 @@ export async function detectFile(filePath: string): Promise<DetectionResult> {
     attributes,
     warnings,
   };
+}
+
+function validateDetectedContent(
+  filePath: string,
+  ext: string | null,
+  category: FileCategory,
+  format: string | null,
+): void {
+  const stat = fs.statSync(filePath);
+  if (stat.size === 0 && ext && ["json", "xml", "pdf", "png", "jpg", "jpeg"].includes(ext)) {
+    throw createAppError("INPUT_CORRUPTED", "El archivo de entrada está vacío o corrupto.", {
+      stage: "analysis",
+      technicalDetail: `empty ${ext} input`,
+    });
+  }
+
+  if (category === "structured-data" && format === "json") {
+    const content = fs.readFileSync(filePath, "utf8");
+    try {
+      JSON.parse(content);
+    } catch (err) {
+      throw createAppError("INPUT_CORRUPTED", "El archivo JSON no es válido.", {
+        stage: "analysis",
+        technicalDetail: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  if (category === "structured-data" && format === "xml") {
+    const content = fs.readFileSync(filePath, "utf8");
+    const validation = XMLValidator.validate(content);
+    if (validation !== true) {
+      throw createAppError("INPUT_CORRUPTED", "El archivo XML no es válido.", {
+        stage: "analysis",
+        technicalDetail: JSON.stringify(validation),
+      });
+    }
+  }
+
+  if (category === "pdf" || format === "pdf") {
+    const bytes = fs.readFileSync(filePath);
+    const textTail = bytes.subarray(Math.max(0, bytes.length - 2048)).toString("latin1");
+    if (!bytes.subarray(0, 5).toString("ascii").startsWith("%PDF-") || !textTail.includes("%%EOF")) {
+      throw createAppError("INPUT_CORRUPTED", "El archivo PDF está corrupto o incompleto.", {
+        stage: "analysis",
+        technicalDetail: "missing PDF header or EOF marker",
+      });
+    }
+  }
+
+  if (category === "image" && format === "png") {
+    const bytes = fs.readFileSync(filePath);
+    const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    const hasHeader = bytes.length >= 33 && bytes.subarray(0, 8).equals(pngSignature);
+    const ihdrType = hasHeader ? bytes.subarray(12, 16).toString("ascii") : "";
+    const hasIend = bytes.includes(Buffer.from("IEND", "ascii"));
+    if (!hasHeader || ihdrType !== "IHDR" || !hasIend) {
+      throw createAppError("INPUT_CORRUPTED", "El archivo PNG está corrupto o incompleto.", {
+        stage: "analysis",
+        technicalDetail: "invalid PNG signature/IHDR/IEND",
+      });
+    }
+  }
 }
 
 function buildAttributes(

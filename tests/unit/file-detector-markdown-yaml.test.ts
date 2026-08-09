@@ -198,6 +198,53 @@ describe("file-detector — structured data formats still work", () => {
     expect(result.category).toBe("structured-data");
   });
 
+  it("detects two-column .csv as csv", async () => {
+    const p = writeTempFile("two-column.csv", "name,value\nalpha,1\nbeta,2\n");
+    const result = await detectFile(p);
+    expect(result.detectedFormat).toBe("csv");
+    expect(result.category).toBe("structured-data");
+  });
+
+  it("detects .tsv as tsv", async () => {
+    const p = writeTempFile("data.tsv", "name\tvalue\nalpha\t1\nbeta\t2\n");
+    const result = await detectFile(p);
+    expect(result.detectedFormat).toBe("tsv");
+    expect(result.category).toBe("structured-data");
+  });
+
+  it("does not classify ordinary prose text containing a comma as csv", async () => {
+    const p = writeTempFile("notes.txt", "Hello, world.\nThis is ordinary prose.\n");
+    const result = await detectFile(p);
+    expect(result.detectedFormat).toBe("txt");
+    expect(result.category).toBe("plain-text");
+  });
+
+  it("rejects malformed JSON during detection", async () => {
+    const p = writeTempFile("bad.json", '{"project":');
+    await expect(detectFile(p)).rejects.toMatchObject({ code: "INPUT_CORRUPTED" });
+  });
+
+  it("rejects malformed XML during detection", async () => {
+    const p = writeTempFile("bad.xml", "<root><item></root>");
+    await expect(detectFile(p)).rejects.toMatchObject({ code: "INPUT_CORRUPTED" });
+  });
+
+  it("rejects empty JSON during detection", async () => {
+    const p = writeTempFile("empty.json", "");
+    await expect(detectFile(p)).rejects.toMatchObject({ code: "INPUT_CORRUPTED" });
+  });
+
+  it("rejects truncated PNG during detection", async () => {
+    const p = path.join(testDir, "bad.png");
+    fs.writeFileSync(p, Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13]));
+    await expect(detectFile(p)).rejects.toMatchObject({ code: "INPUT_CORRUPTED" });
+  });
+
+  it("rejects truncated PDF during detection", async () => {
+    const p = writeTempFile("bad.pdf", "%PDF-1.4\ntruncated");
+    await expect(detectFile(p)).rejects.toMatchObject({ code: "INPUT_CORRUPTED" });
+  });
+
   it("detects .html as html", async () => {
     const p = writeTempFile(
       "page.html",

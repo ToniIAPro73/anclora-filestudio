@@ -4,6 +4,8 @@ import { getVideoMetadata } from "@/lib/media/metadata";
 import { normalizeYoutubeUrl } from "@/lib/youtube/normalize-url";
 import { analyzeRemoteMedia } from "@/lib/remote-media/remote-media-analyzer";
 import { AppError } from "@/lib/errors";
+import type { AppError as FileStudioAppError } from "@/lib/errors/error-codes";
+import { ERROR_MESSAGES as FILESTUDIO_ERROR_MESSAGES } from "@/lib/errors/error-codes";
 import { CONFIG } from "@/lib/config";
 import { sanitizeFilename } from "@/lib/security/sanitize-filename";
 import { ensurePathSafety } from "@/lib/security/path-safety";
@@ -269,8 +271,16 @@ async function handleUniversalFile(storedPath: string, originalName: string, upl
     });
   } catch (error: unknown) {
     fs.rmSync(path.dirname(storedPath), { recursive: true, force: true });
-    const msg = error instanceof Error ? error.message : "Error al analizar el archivo.";
-    return NextResponse.json({ error: msg, code: "ANALYSIS_FAILED" }, { status: 422 });
+    const appError = error as Partial<FileStudioAppError>;
+    const code = appError.code ?? "INPUT_CORRUPTED";
+    const msg =
+      code in FILESTUDIO_ERROR_MESSAGES
+        ? FILESTUDIO_ERROR_MESSAGES[code as keyof typeof FILESTUDIO_ERROR_MESSAGES]
+        : "El archivo no se pudo analizar.";
+    console.warn(
+      `[analyze] rejected invalid input code=${code} detail=${String(appError.technicalDetail ?? appError.message ?? "").slice(0, 300)}`,
+    );
+    return NextResponse.json({ error: msg, code }, { status: 422 });
   }
 }
 

@@ -6,6 +6,7 @@ import {
   validateOutputArtifact,
   getOutputMimeType,
   detectOutputMime,
+  buildUserErrorMessage,
 } from "../../src/lib/jobs/universal-job-processor";
 import { extractEngineIdFromCapabilityId } from "../../src/lib/jobs/capability-routing";
 import fs from "fs";
@@ -56,6 +57,33 @@ describe("extractEngineIdFromCapabilityId — real ID formats", () => {
 
   it("handles exact engine ID match without suffix", () => {
     expect(extractEngineIdFromCapabilityId("qpdf")).toBe("qpdf");
+  });
+});
+
+describe("universal job error normalization", () => {
+  it("does not expose raw parser exceptions in user-facing engine errors", () => {
+    const message = buildUserErrorMessage(
+      "ENGINE_EXECUTE_FAILED",
+      "data-ts: SyntaxError: Unexpected end of JSON input at /tmp/uploads/bad.json",
+      "data-ts",
+    );
+
+    expect(message).toContain("Error durante la ejecución del motor de conversión");
+    expect(message).not.toContain("SyntaxError");
+    expect(message).not.toContain("/tmp/uploads");
+    expect(message).not.toContain("Unexpected end of JSON input");
+  });
+
+  it("does not expose raw ffprobe stderr in user-facing validation errors", () => {
+    const message = buildUserErrorMessage(
+      "ARTIFACT_VALIDATION_FAILED",
+      "ffprobe exit 1: Invalid data found when processing input /tmp/output.webm",
+      "ffmpeg-media",
+    );
+
+    expect(message).toContain("No se pudo verificar el archivo generado");
+    expect(message).not.toContain("ffprobe exit");
+    expect(message).not.toContain("/tmp/output.webm");
   });
 });
 

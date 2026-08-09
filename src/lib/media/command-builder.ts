@@ -149,6 +149,8 @@ export function buildFfmpegVideoArgs(opts: VideoConversionOptions): string[] {
 
   if (opts.videoStreamIndex !== undefined) {
     args.push("-map", `0:v:${opts.videoStreamIndex}`);
+  } else {
+    args.push("-map", "0:v:0");
   }
   if (opts.audioStreamIndex !== undefined) {
     args.push("-map", `0:a:${opts.audioStreamIndex}`);
@@ -156,13 +158,13 @@ export function buildFfmpegVideoArgs(opts: VideoConversionOptions): string[] {
     args.push("-map", "0:a?");
   }
 
-  const height = parseInt(opts.quality, 10);
+  const height = normalizeVideoHeight(opts.quality, opts.format);
 
   switch (opts.format) {
     case "mp4":
       args.push("-c:v", "libx264", "-preset", "fast", "-crf", "23");
       args.push("-c:a", "aac", "-b:a", "128k");
-      if (!Number.isNaN(height)) {
+      if (height !== null) {
         args.push("-vf", `scale=-2:min(${height}\\,ih)`);
       }
       args.push("-movflags", "+faststart");
@@ -170,7 +172,7 @@ export function buildFfmpegVideoArgs(opts: VideoConversionOptions): string[] {
     case "webm":
       args.push("-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0");
       args.push("-c:a", "libopus", "-b:a", "128k");
-      if (!Number.isNaN(height)) {
+      if (height !== null) {
         args.push("-vf", `scale=-2:min(${height}\\,ih)`);
       }
       break;
@@ -181,6 +183,15 @@ export function buildFfmpegVideoArgs(opts: VideoConversionOptions): string[] {
 
   args.push(opts.outputPath);
   return args;
+}
+
+function normalizeVideoHeight(quality: string, format: VideoOutputFormat): number | null {
+  const parsed = parseInt(quality, 10);
+  if (Number.isFinite(parsed) && parsed >= 144) return parsed;
+  if (quality === "0" || quality === "copy") return null;
+  if (format === "webm") return 720;
+  if (format === "mp4") return 1080;
+  return null;
 }
 
 function mapAudioQuality(quality: string, format: AudioOutputFormat): string {

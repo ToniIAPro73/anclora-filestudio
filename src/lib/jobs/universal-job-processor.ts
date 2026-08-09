@@ -674,30 +674,25 @@ function buildUserErrorMessage(
 
   if (!technicalDetail) return baseMessage;
 
-  // Extract actionable info from technical detail
-  const detail = extractUserDetail(technicalDetail);
-  if (!detail) return baseMessage;
-
-  return `${baseMessage} (${engineId}: ${detail})`;
+  const hint = buildUserHint(code, engineId);
+  return hint ? `${baseMessage} ${hint}` : baseMessage;
 }
 
 /**
- * Extracts a user-friendly summary from the technical error detail.
- * Removes paths and internal data, keeps the useful error description.
+ * Returns stable remediation hints without exposing raw engine stderr,
+ * parser exceptions, command output, or filesystem paths.
  */
-function extractUserDetail(technicalDetail: string): string | null {
-  if (!technicalDetail || technicalDetail === "unknown error") return null;
-
-  // Extract pandoc exit code and message pattern
-  const pandocMatch = technicalDetail.match(/pandoc exit (\d+):\s*([\s\S]+)/);
-  if (pandocMatch) {
-    const exitCode = pandocMatch[1];
-    const stderr = pandocMatch[2]?.trim().slice(0, 200) ?? "";
-    if (stderr) return `exit ${exitCode} — ${stderr}`;
-    return `exit ${exitCode}`;
+function buildUserHint(code: ErrorCode, engineId: string): string | null {
+  if (code === "ENGINE_EXECUTE_FAILED") {
+    return "Comprueba que el archivo de entrada sea válido e inténtalo de nuevo.";
   }
-
-  // Generic: just truncate
-  const cleaned = technicalDetail.slice(0, 200).trim();
-  return cleaned || null;
+  if (code === "VALIDATION_FAILED" || code === "ARTIFACT_VALIDATION_FAILED") {
+    return "El archivo generado no superó la validación de FileStudio.";
+  }
+  if (code === "ENGINE_UNAVAILABLE" || code === "DEPENDENCY_MISSING" || code === "TOOL_NOT_AVAILABLE") {
+    return `Motor afectado: ${engineId}.`;
+  }
+  return null;
 }
+
+export { buildUserErrorMessage };

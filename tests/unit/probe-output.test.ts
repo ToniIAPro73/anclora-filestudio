@@ -22,7 +22,7 @@ vi.mock("fs", async (importOriginal) => {
   };
 });
 
-import { probeOutputFile } from "../../src/lib/media/probe";
+import { probeOutputFile, verifyMediaOutput } from "../../src/lib/media/probe";
 
 /** Build a fake spawn child backed by a PassThrough for stdout. */
 function fakeChild(jsonOutput: string, exitCode = 0, spawnError?: NodeJS.ErrnoException) {
@@ -142,5 +142,54 @@ describe("probeOutputFile", () => {
     await expect(
       probeOutputFile("/tmp/output.mp4", "/usr/bin/ffprobe")
     ).rejects.toBeDefined();
+  });
+});
+
+describe("verifyMediaOutput", () => {
+  beforeEach(() => {
+    mockSpawn.mockReset();
+    mockExistsSync.mockReturnValue(true);
+    mockStatSync.mockReturnValue({ size: 20952 });
+  });
+
+  it("rejects audio-only output when a video stream is required", async () => {
+    mockSpawn.mockReturnValueOnce(
+      fakeChild(JSON.stringify({
+        streams: [
+          { index: 0, codec_type: "audio", codec_name: "opus", sample_rate: "48000", channels: 1 },
+        ],
+        format: { format_name: "matroska,webm", duration: "1.029", size: "20952" },
+      })),
+    );
+
+    const result = await verifyMediaOutput("/tmp/output.webm", {
+      requireVideo: true,
+      requireAudio: true,
+      requireDuration: true,
+    });
+
+    expect(result.isValid).toBe(false);
+    expect(result.hasAudio).toBe(true);
+    expect(result.hasVideo).toBe(false);
+  });
+
+  it("accepts WebM with audio, video, dimensions, and duration", async () => {
+    mockSpawn.mockReturnValueOnce(
+      fakeChild(makeVideoJson({
+        width: 160, height: 120, fps: "15/1",
+        vcodec: "vp9", acodec: "opus",
+        duration: "1.029", size: "25000", container: "matroska,webm",
+      })),
+    );
+
+    const result = await verifyMediaOutput("/tmp/output.webm", {
+      requireVideo: true,
+      requireAudio: true,
+      requireDuration: true,
+    });
+
+    expect(result.isValid).toBe(true);
+    expect(result.hasAudio).toBe(true);
+    expect(result.hasVideo).toBe(true);
   });
 });

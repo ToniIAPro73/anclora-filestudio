@@ -15,13 +15,41 @@ export async function verifyFile(
   filePath: string,
   format: "mp3" | "mp4"
 ): Promise<VerificationResult> {
+  return verifyMediaOutput(filePath, {
+    requireAudio: format === "mp3",
+    requireVideo: format === "mp4",
+    requireDuration: true,
+  });
+}
+
+export interface MediaOutputExpectation {
+  requireAudio?: boolean;
+  requireVideo?: boolean;
+  requireDuration?: boolean;
+}
+
+export async function verifyMediaOutput(
+  filePath: string,
+  expectation: MediaOutputExpectation,
+): Promise<VerificationResult> {
   const result = await probeFile(filePath);
   if (!result) return { isValid: false, hasAudio: false, hasVideo: false };
 
   const hasAudio = result.audioStreams.length > 0;
   const hasVideo = result.videoStreams.length > 0;
+  const hasDuration =
+    !expectation.requireDuration ||
+    (result.durationSeconds !== null && result.durationSeconds > 0);
+  const videoDimensionsValid =
+    !expectation.requireVideo ||
+    result.videoStreams.some((s) => (s.width ?? 0) > 0 && (s.height ?? 0) > 0);
 
-  const isValid = format === "mp3" ? hasAudio : hasAudio || hasVideo;
+  const isValid =
+    (!expectation.requireAudio || hasAudio) &&
+    (!expectation.requireVideo || hasVideo) &&
+    hasDuration &&
+    videoDimensionsValid;
+
   return { isValid, hasAudio, hasVideo };
 }
 

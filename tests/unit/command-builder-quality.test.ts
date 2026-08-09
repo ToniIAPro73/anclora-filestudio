@@ -2,7 +2,7 @@
 // Covers: VideoQualitySelection typed input, legacy string adapter, audio formats
 
 import { describe, it, expect } from 'vitest';
-import { buildYtdlpArgs } from '../../src/lib/media/command-builder';
+import { buildFfmpegVideoArgs, buildYtdlpArgs } from '../../src/lib/media/command-builder';
 
 const DUMMY_URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 const DUMMY_OUTPUT = '/tmp/output.mp4';
@@ -122,5 +122,31 @@ describe('buildYtdlpArgs — legacy string quality adapter', () => {
     }).not.toThrow();
     // 'best' maps to source-max so no [ext=mp4]
     expect(args.some((a) => a.includes('[ext=mp4]'))).toBe(false);
+  });
+});
+
+describe('buildFfmpegVideoArgs — local video stream mapping', () => {
+  it('maps the first video stream when audio is mapped optionally', () => {
+    const args = buildFfmpegVideoArgs({
+      inputPath: '/tmp/input.mp4',
+      outputPath: '/tmp/output.webm',
+      format: 'webm',
+      quality: '720',
+    });
+
+    expect(args).toContain('-map');
+    expect(args).toEqual(expect.arrayContaining(['-map', '0:v:0', '-map', '0:a?']));
+  });
+
+  it('does not treat legacy UI quality 5 as a 5px WebM height', () => {
+    const args = buildFfmpegVideoArgs({
+      inputPath: '/tmp/input.mp4',
+      outputPath: '/tmp/output.webm',
+      format: 'webm',
+      quality: '5',
+    });
+
+    expect(args).toContain('scale=-2:min(720\\,ih)');
+    expect(args).not.toContain('scale=-2:min(5\\,ih)');
   });
 });
