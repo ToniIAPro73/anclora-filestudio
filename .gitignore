@@ -15,6 +15,7 @@ apps/*/node_modules
 
 # testing
 /coverage
+/artifacts/playwright/
 /artifacts/acceptance/**/downloads/
 /artifacts/acceptance/**/*.bin
 /tests/acceptance/fixtures/generated/

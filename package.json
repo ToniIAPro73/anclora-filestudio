@@ -133,11 +133,5 @@
   "overrides": {
     "postcss": "^8.5.18",
     "sharp": "^0.35.1"
-  },
-  "pnpm": {
-    "overrides": {
-      "postcss": "8.5.26",
-      "sharp": "0.35.3"
-    }
   }
 }

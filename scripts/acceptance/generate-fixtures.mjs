@@ -2,6 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import sharp from "sharp";
 import { discoverDeclaredFormats, writeJson } from "./catalog-discovery.mjs";
@@ -23,6 +24,7 @@ await createMediaFixtures();
 await createDocumentFixtures();
 await createArchiveFixtures();
 await createPdfFixture();
+await createEdgeCaseFixtures();
 
 const generatedExtensions = new Set(fixtures.map((fixture) => fixture.extension));
 const missingFixtures = declared
@@ -30,9 +32,16 @@ const missingFixtures = declared
   .map((format) => ({ extension: format.extension, category: format.category, reason: "fixture-generator-not-implemented" }));
 
 const manifest = {
+  schemaVersion: 2,
   generatedAt: new Date().toISOString(),
   marker,
   root: outDir,
+  qaModel: {
+    categories: ["image", "audio", "video", "document", "pdf", "archive", "ebook", "data"],
+    complexityLevels: ["simple", "medium", "complex", "malformed"],
+    fixtureKinds: ["canonical", "edge-case"],
+  },
+  coverage: summarizeCoverage(fixtures),
   declaredFormatCount: declared.length,
   fixtureCount: fixtures.length,
   fixtures,
@@ -229,6 +238,53 @@ async function createPdfFixture() {
   await writeBuffer("pdf", Buffer.from(pdf));
 }
 
+async function createEdgeCaseFixtures() {
+  addText("edge-empty.txt", "", true, {
+    extension: "txt",
+    category: "text",
+    qaCategory: "data",
+    complexity: "malformed",
+    fixtureKind: "edge-case",
+    description: "Empty text input for parser and upload edge-case handling.",
+  });
+  addText("edge-malformed.json", `{"marker": "${marker}", "broken": true\n`, true, {
+    extension: "json",
+    category: "structured-data",
+    qaCategory: "data",
+    complexity: "malformed",
+    fixtureKind: "edge-case",
+    description: "Malformed JSON input for data validator behavior.",
+  });
+  addText("edge-malformed.xml", `<fixture><marker>${marker}</fixture>\n`, true, {
+    extension: "xml",
+    category: "structured-data",
+    qaCategory: "data",
+    complexity: "malformed",
+    fixtureKind: "edge-case",
+    description: "Malformed XML input for data validator behavior.",
+  });
+  await writeBuffer("edge-corrupt.pdf", Buffer.from("%PDF-1.4\n% truncated fixture\n"), {
+    extension: "pdf",
+    category: "pdf",
+    qaCategory: "pdf",
+    complexity: "malformed",
+    fixtureKind: "edge-case",
+    description: "Truncated PDF input for error-path coverage.",
+  });
+  await createZipPackage("zip", {
+    "level-1/level-2/data.json": JSON.stringify({ marker, nesting: 2 }, null, 2),
+    "level-1/readme.txt": `${marker}\nNested archive fixture.\n`,
+  }, {
+    extension: "zip",
+    fileName: "edge-nested.zip",
+    category: "archive",
+    qaCategory: "archive",
+    complexity: "complex",
+    fixtureKind: "edge-case",
+    description: "Small nested archive for extraction-path coverage.",
+  });
+}
+
 async function replaceOfficeFixturesWithLibreOfficeOutputs() {
   const soffice = findCommand(["soffice", "libreoffice"]);
   if (!soffice) return;
@@ -252,7 +308,7 @@ async function replaceOfficeFixturesWithLibreOfficeOutputs() {
   }
 }
 
-async function createZipPackage(ext, entries) {
+async function createZipPackage(ext, entries, metadata = {}) {
   const work = fs.mkdtempSync(path.join(os.tmpdir(), `anclora-${ext}-`));
   try {
     for (const [name, content] of Object.entries(entries)) {
@@ -267,8 +323,9 @@ async function createZipPackage(ext, entries) {
       "    for p in sorted(root.rglob('*')):",
       "        if p.is_file(): z.write(p, p.relative_to(root).as_posix())",
     ].join("\n");
-    run("python3", ["-c", script, work, file(ext)]);
-    register(ext);
+    const outputPath = metadata.fileName ? path.join(outDir, metadata.fileName) : file(ext);
+    run("python3", ["-c", script, work, outputPath]);
+    register(ext, metadata);
   } finally {
     fs.rmSync(work, { recursive: true, force: true });
   }
@@ -284,27 +341,34 @@ function rels(target, type) {
   return `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/${type}" Target="${target}"/></Relationships>`;
 }
 
-function addText(ext, content, include = true) {
+function addText(ext, content, include = true, metadata = {}) {
   const target = ext.includes(".") ? path.join(outDir, ext) : file(ext);
   fs.writeFileSync(target, content);
-  if (include) register(ext);
+  if (include) register(ext, metadata);
 }
 
-async function writeBuffer(ext, buffer) {
-  fs.writeFileSync(file(ext), buffer);
-  register(ext);
+async function writeBuffer(ext, buffer, metadata = {}) {
+  const target = metadata.fileName ? path.join(outDir, metadata.fileName) : ext.includes(".") ? path.join(outDir, ext) : file(ext);
+  fs.writeFileSync(target, buffer);
+  register(ext, metadata);
 }
 
-function register(ext) {
-  const fixturePath = file(ext);
+function register(ext, metadata = {}) {
+  const effectiveExtension = metadata.extension ?? ext;
+  const fixturePath = metadata.fileName ? path.join(outDir, metadata.fileName) : ext.includes(".") ? path.join(outDir, ext) : file(ext);
   if (!fs.existsSync(fixturePath)) return;
-  const declaredFormat = byExtension.get(ext);
+  const declaredFormat = byExtension.get(effectiveExtension);
   fixtures.push({
-    extension: ext,
-    category: declaredFormat?.category ?? "unknown",
+    extension: effectiveExtension,
+    category: metadata.category ?? declaredFormat?.category ?? "unknown",
+    qaCategory: metadata.qaCategory ?? qaCategoryFor(metadata.category ?? declaredFormat?.category, effectiveExtension),
+    complexity: metadata.complexity ?? complexityFor(metadata.category ?? declaredFormat?.category, effectiveExtension),
+    fixtureKind: metadata.fixtureKind ?? "canonical",
+    description: metadata.description ?? `${effectiveExtension.toUpperCase()} ${metadata.fixtureKind ?? "canonical"} fixture.`,
     path: fixturePath,
     fileName: path.basename(fixturePath),
     sizeBytes: fs.statSync(fixturePath).size,
+    sha256: sha256File(fixturePath),
   });
 }
 
@@ -314,8 +378,57 @@ function file(ext) {
 
 function addSkipped(extensions, reason) {
   for (const extension of extensions) {
-    fixtures.push({ extension, category: byExtension.get(extension)?.category ?? "unknown", path: null, fileName: null, sizeBytes: 0, skipped: true, reason });
+    const category = byExtension.get(extension)?.category ?? "unknown";
+    fixtures.push({
+      extension,
+      category,
+      qaCategory: qaCategoryFor(category, extension),
+      complexity: complexityFor(category, extension),
+      fixtureKind: "canonical",
+      path: null,
+      fileName: null,
+      sizeBytes: 0,
+      sha256: null,
+      skipped: true,
+      reason,
+    });
   }
+}
+
+function qaCategoryFor(category, extension) {
+  if (["png", "jpg", "jpeg", "webp", "avif", "tiff", "tif", "gif"].includes(extension)) return "image";
+  if (["mp3", "m4a", "wav", "flac", "ogg", "aac"].includes(extension)) return "audio";
+  if (["mp4", "webm", "mkv", "avi", "mov", "wmv", "ts"].includes(extension)) return "video";
+  if (extension === "pdf") return "pdf";
+  if (["zip", "7z", "tar", "gz", "bz2", "xz"].includes(extension)) return "archive";
+  if (["epub", "mobi", "azw3"].includes(extension)) return "ebook";
+  if (["txt", "log", "json", "yaml", "yml", "toml", "xml", "csv", "tsv"].includes(extension)) return "data";
+  if (["docx", "xlsx", "pptx", "odt", "ods", "odp", "rtf", "doc", "xls", "ppt", "html", "htm", "md", "markdown", "rst", "tex", "latex"].includes(extension)) return "document";
+  return category ?? "unknown";
+}
+
+function complexityFor(category, extension) {
+  if (["docx", "xlsx", "pptx", "odt", "ods", "odp", "epub", "mobi", "azw3", "zip", "7z", "tar"].includes(extension)) return "complex";
+  if (["mp4", "webm", "mkv", "avi", "mov", "wmv", "ts", "pdf", "avif", "tiff", "tif", "webp", "html", "htm", "xml", "csv", "tsv"].includes(extension)) return "medium";
+  return "simple";
+}
+
+function sha256File(filePath) {
+  return crypto.createHash("sha256").update(fs.readFileSync(filePath)).digest("hex");
+}
+
+function summarizeCoverage(items) {
+  const summary = {};
+  for (const fixture of items) {
+    const qaCategory = fixture.qaCategory ?? "unknown";
+    summary[qaCategory] ??= { total: 0, generated: 0, skipped: 0, complexity: {} };
+    summary[qaCategory].total += 1;
+    if (fixture.skipped) summary[qaCategory].skipped += 1;
+    else summary[qaCategory].generated += 1;
+    const complexity = fixture.complexity ?? "unknown";
+    summary[qaCategory].complexity[complexity] = (summary[qaCategory].complexity[complexity] ?? 0) + 1;
+  }
+  return summary;
 }
 
 function hasCommand(command) {
