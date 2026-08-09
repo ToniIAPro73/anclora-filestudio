@@ -4,6 +4,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import JSZip from "jszip";
 import { XMLValidator } from "fast-xml-parser";
 import { createAppError } from "../errors/error-codes";
 import type {
@@ -355,10 +356,49 @@ const ODF_BY_MIMETYPE: Record<string, { mime: string; format: string }> = {
   "application/vnd.oasis.opendocument.presentation": ODF_BY_EXTENSION.odp,
 };
 
-function probeZipContents(
+async function probeEpubContents(
+  filePath: string,
+): Promise<{ mime: string; format: string } | null> {
+  try {
+    const zip = await JSZip.loadAsync(fs.readFileSync(filePath), {
+      checkCRC32: false,
+    });
+    const mimetypeEntry = zip.file("mimetype");
+    const containerEntry = zip.file("META-INF/container.xml");
+
+    // An EPUB is not identified by its .epub suffix or ZIP magic alone. The
+    // root mimetype entry and the EPUB container/package structure are required.
+    if (!mimetypeEntry || !containerEntry) return null;
+    const mimetype = (await mimetypeEntry.async("string")).trim();
+    if (mimetype !== "application/epub+zip") return null;
+
+    const containerXml = await containerEntry.async("string");
+    const rootfileMatch = containerXml.match(
+      /<rootfile\b[^>]*\bfull-path\s*=\s*["']([^"']+)["'][^>]*>/i,
+    );
+    const packagePath = rootfileMatch?.[1];
+    if (!packagePath || packagePath.startsWith("/") || packagePath.includes("..")) {
+      return null;
+    }
+
+    const packageEntry = zip.file(packagePath);
+    if (!packageEntry) return null;
+    const packageXml = await packageEntry.async("string");
+    if (!/<package\b/i.test(packageXml)) return null;
+
+    return { mime: "application/epub+zip", format: "epub" };
+  } catch {
+    return null;
+  }
+}
+
+async function probeZipContents(
   filePath: string,
   ext: string | null,
-): { mime: string; format: string } {
+): Promise<{ mime: string; format: string }> {
+  const epub = await probeEpubContents(filePath);
+  if (epub) return epub;
+
   try {
     const buf = fs.readFileSync(filePath);
     const str = buf.toString("binary");
@@ -572,7 +612,7 @@ export async function detectFile(filePath: string): Promise<DetectionResult> {
 
   // 2. For ZIP: probe internal structure
   if (format === "zip") {
-    const zipProbe = probeZipContents(filePath, ext || null);
+    const zipProbe = await probeZipContents(filePath, ext || null);
     mime = zipProbe.mime;
     format = zipProbe.format;
   }

@@ -1,11 +1,12 @@
 import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
+import { CONFIG } from "../../config";
 
 let _db: Database.Database | null = null;
 
-function getDbPath(): string {
-  const dataDir = path.resolve(process.cwd(), "data");
+export function getDbPath(): string {
+  const dataDir = path.resolve(CONFIG.media.dataDir);
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
   }
