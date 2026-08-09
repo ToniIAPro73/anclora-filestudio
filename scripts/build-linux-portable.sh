@@ -193,67 +193,145 @@ fi
 
 if [[ -n "${BS3_NODE:-}" ]] && [[ -f "$BS3_NODE" ]]; then
   file "$BS3_NODE" | grep -q "ELF.*x86-64" || die "better_sqlite3.node is not a Linux x64 ELF binary"
-  # Verify it loads with the current Node
-  node -e "require('$BS3_NODE')" 2>/dev/null && ok "better-sqlite3 loads OK" || warn "better-sqlite3 load check failed (may still work in runtime)"
+  BS3_PACKAGE_DIR="$(find "$PACKAGE_DIR/app/node_modules" -path "*/better-sqlite3/package.json" -type f 2>/dev/null | head -1 | xargs -r dirname)"
+  [[ -n "$BS3_PACKAGE_DIR" ]] || die "better-sqlite3 package directory not found in package"
+
+  if "$PACKAGE_DIR/runtime/node" -e "const Database=require('$BS3_PACKAGE_DIR'); const db=new Database(':memory:'); db.close();" >/dev/null 2>&1; then
+    ok "better-sqlite3 loads OK with bundled Node.js"
+  else
+    info "Reinstalling better-sqlite3 native module for bundled Node.js ABI ${NODE_ABI}..."
+    PREBUILD_INSTALL_BIN="$(find "$REPO_ROOT/node_modules/.pnpm" -path "*/prebuild-install/bin.js" -type f 2>/dev/null | head -1 || true)"
+    [[ -n "$PREBUILD_INSTALL_BIN" ]] || die "prebuild-install not found; cannot install better-sqlite3 for bundled Node.js ABI ${NODE_ABI}"
+    (
+      cd "$BS3_PACKAGE_DIR"
+      node "$PREBUILD_INSTALL_BIN" -r node -t "$NODE_LINUX_VERSION" --platform linux --arch x64
+    ) || die "Failed to install better-sqlite3 native module for Node.js ${NODE_LINUX_VERSION} ABI ${NODE_ABI}"
+    BS3_NODE="$BS3_PACKAGE_DIR/build/Release/better_sqlite3.node"
+    [[ -f "$BS3_NODE" ]] || die "better_sqlite3.node missing after ABI-targeted install"
+    file "$BS3_NODE" | grep -q "ELF.*x86-64" || die "better_sqlite3.node after ABI-targeted install is not Linux x64 ELF"
+    "$PACKAGE_DIR/runtime/node" -e "const Database=require('$BS3_PACKAGE_DIR'); const db=new Database(':memory:'); db.close();" >/dev/null 2>&1 \
+      || die "better-sqlite3 still does not load with bundled Node.js after ABI-targeted install"
+    ok "better-sqlite3 native module installed for bundled Node.js ABI ${NODE_ABI}"
+  fi
 else
   warn "better_sqlite3.node not found in package — SQLite persistence disabled"
 fi
 
-# ── Sharp 0.35.1 + libvips 8.18.3: mandatory packaging from pnpm store ────────
+# ── Sharp + libvips: mandatory packaging from pnpm store ─────────────────────
 # Root cause: Next.js standalone output trace copies .next/standalone/node_modules/
-# but does NOT follow .so files. The @img+sharp-libvips-linux-x64@1.3.0/lib/
-# directory in standalone only contains index.js — libvips-cpp.so.8.18.3 (17MB)
-# is missing. We must supplement the package with the complete lib/ from pnpm.
-info "Packaging Sharp 0.35.1 + libvips 8.18.3 from pnpm store (mandatory)..."
+# but does NOT always follow .so files. The sharp optional native packages must
+# be supplemented from the currently installed dependency graph.
+info "Packaging Sharp native runtime from pnpm store (mandatory)..."
 
 PNPM_STORE="$REPO_ROOT/node_modules/.pnpm"
-LIBVIPS_SRC="$PNPM_STORE/@img+sharp-libvips-linux-x64@1.3.0/node_modules/@img/sharp-libvips-linux-x64"
-SHARP_X64_SRC="$PNPM_STORE/@img+sharp-linux-x64@0.35.1/node_modules/@img/sharp-linux-x64"
 
-SHARP_NODE_SRC="$SHARP_X64_SRC/lib/sharp-linux-x64-0.35.1.node"
-LIBVIPS_SO_SRC="$LIBVIPS_SRC/lib/libvips-cpp.so.8.18.3"
+resolve_sharp_path() {
+  local key="$1"
+  node - "$key" <<'NODE'
+const fs = require("fs");
+const path = require("path");
+
+const key = process.argv[2];
+
+function findPackageDir(start) {
+  let dir = path.dirname(start);
+  while (dir !== path.dirname(dir)) {
+    const pkg = path.join(dir, "package.json");
+    if (fs.existsSync(pkg)) return dir;
+    dir = path.dirname(dir);
+  }
+  throw new Error("Could not locate sharp package.json from " + start);
+}
+
+const sharpPackageDir = findPackageDir(require.resolve("sharp"));
+const sharpPackageJson = JSON.parse(fs.readFileSync(path.join(sharpPackageDir, "package.json"), "utf8"));
+const imgDir = path.resolve(sharpPackageDir, "..", "@img");
+const sharpNativeDir = fs.realpathSync(path.join(imgDir, "sharp-linux-x64"));
+const libvipsDir = fs.realpathSync(path.join(imgDir, "sharp-libvips-linux-x64"));
+
+const values = {
+  sharpPackageDir,
+  sharpVersion: sharpPackageJson.version,
+  sharpNativeDir,
+  libvipsDir,
+};
+
+if (!values[key]) throw new Error("Unknown sharp path key: " + key);
+process.stdout.write(values[key]);
+NODE
+}
+
+SHARP_PACKAGE_DIR="$(resolve_sharp_path sharpPackageDir)"
+SHARP_VERSION="$(resolve_sharp_path sharpVersion)"
+SHARP_X64_SRC="$(resolve_sharp_path sharpNativeDir)"
+LIBVIPS_SRC="$(resolve_sharp_path libvipsDir)"
+
+[[ "$SHARP_PACKAGE_DIR" == "$PNPM_STORE/"* ]] || die "Sharp package is not under pnpm store: $SHARP_PACKAGE_DIR"
+[[ "$SHARP_X64_SRC" == "$PNPM_STORE/"* ]] || die "Sharp native package is not under pnpm store: $SHARP_X64_SRC"
+[[ "$LIBVIPS_SRC" == "$PNPM_STORE/"* ]] || die "Sharp libvips package is not under pnpm store: $LIBVIPS_SRC"
+
+SHARP_PACKAGE_REL="${SHARP_PACKAGE_DIR#"$PNPM_STORE/"}"
+SHARP_X64_REL="${SHARP_X64_SRC#"$PNPM_STORE/"}"
+LIBVIPS_REL="${LIBVIPS_SRC#"$PNPM_STORE/"}"
+
+SHARP_NODE_SRC="$(find "$SHARP_X64_SRC/lib" -maxdepth 1 -name 'sharp-linux-x64-*.node' -type f 2>/dev/null | sort | head -1 || true)"
+LIBVIPS_SO_SRC="$(find "$LIBVIPS_SRC/lib" -maxdepth 1 -name 'libvips-cpp.so.*' -type f ! -type l 2>/dev/null | sort | head -1 || true)"
 
 # Hard fail if sources are missing — do not silently degrade
-[[ -f "$SHARP_NODE_SRC" ]] || die "MISSING: $SHARP_NODE_SRC — run 'pnpm install --frozen-lockfile'"
-[[ -f "$LIBVIPS_SO_SRC" ]] || die "MISSING: $LIBVIPS_SO_SRC — run 'pnpm install --frozen-lockfile'"
+[[ -n "$SHARP_NODE_SRC" && -f "$SHARP_NODE_SRC" ]] || die "MISSING: sharp-linux-x64 native module in $SHARP_X64_SRC/lib — run 'pnpm install --frozen-lockfile'"
+[[ -n "$LIBVIPS_SO_SRC" && -f "$LIBVIPS_SO_SRC" ]] || die "MISSING: libvips-cpp.so in $LIBVIPS_SRC/lib — run 'pnpm install --frozen-lockfile'"
 
 # Validate source files are ELF x86-64 before copying
-file "$SHARP_NODE_SRC" | grep -q "ELF.*x86-64" || die "sharp-linux-x64-0.35.1.node source is not ELF x86-64"
-file "$LIBVIPS_SO_SRC" | grep -q "ELF.*x86-64" || die "libvips-cpp.so.8.18.3 source is not ELF x86-64"
+file "$SHARP_NODE_SRC" | grep -q "ELF.*x86-64" || die "$(basename "$SHARP_NODE_SRC") source is not ELF x86-64"
+file "$LIBVIPS_SO_SRC" | grep -q "ELF.*x86-64" || die "$(basename "$LIBVIPS_SO_SRC") source is not ELF x86-64"
 
-# Destination: mirror pnpm structure already present from standalone copy
-LIBVIPS_PKG="$PACKAGE_DIR/app/node_modules/.pnpm/@img+sharp-libvips-linux-x64@1.3.0/node_modules/@img/sharp-libvips-linux-x64"
-mkdir -p "$LIBVIPS_PKG/lib"
+copy_pnpm_package_dir() {
+  local src="$1"
+  local rel="${src#"$PNPM_STORE/"}"
+  local dest="$PACKAGE_DIR/app/node_modules/.pnpm/$rel"
+  mkdir -p "$(dirname "$dest")"
+  rm -rf "$dest"
+  cp -a "$src" "$dest"
+}
 
-# Overwrite the incomplete lib/ (which only has index.js from standalone trace)
-# with the complete version from pnpm — this physically places the .so in the package.
-# Do NOT use symlinks here: the .so must be a real file, not a pointer outside the package.
-cp -a "$LIBVIPS_SRC/lib/." "$LIBVIPS_PKG/lib/"
+copy_pnpm_symlinks() {
+  local src_dir="$1"
+  local rel_dir="${src_dir#"$PNPM_STORE/"}"
+  local dest_dir="$PACKAGE_DIR/app/node_modules/.pnpm/$rel_dir"
+  mkdir -p "$dest_dir"
+  find "$src_dir" -mindepth 1 -maxdepth 1 -type l -print0 | while IFS= read -r -d '' link; do
+    local name
+    name="$(basename "$link")"
+    rm -f "$dest_dir/$name"
+    cp -P "$link" "$dest_dir/$name"
+  done
+}
 
-# The standalone output does NOT copy the pnpm intra-package symlink:
-#   @img+sharp-linux-x64@0.35.1/node_modules/@img/sharp-libvips-linux-x64
-#     -> ../../../@img+sharp-libvips-linux-x64@1.3.0/node_modules/@img/sharp-libvips-linux-x64
-# This symlink is in the RPATH of sharp-linux-x64-0.35.1.node ($ORIGIN/../../sharp-libvips-linux-x64/lib/).
-# Without it the dynamic linker cannot find libvips-cpp.so.8.18.3 at runtime.
-# We recreate the same relative symlink that pnpm uses.
-SHARP_X64_IMG_DIR="$PACKAGE_DIR/app/node_modules/.pnpm/@img+sharp-linux-x64@0.35.1/node_modules/@img"
-mkdir -p "$SHARP_X64_IMG_DIR"
-LIBVIPS_SYMLINK="$SHARP_X64_IMG_DIR/sharp-libvips-linux-x64"
-if [[ ! -e "$LIBVIPS_SYMLINK" ]] && [[ ! -L "$LIBVIPS_SYMLINK" ]]; then
-  ln -s "../../../@img+sharp-libvips-linux-x64@1.3.0/node_modules/@img/sharp-libvips-linux-x64" "$LIBVIPS_SYMLINK"
-  info "Created sharp-libvips-linux-x64 symlink in @img+sharp-linux-x64@0.35.1"
+# Mirror the actual pnpm package directories. This physically places the native
+# .node and .so files in the package and keeps the same relative symlink layout.
+copy_pnpm_package_dir "$SHARP_X64_SRC"
+copy_pnpm_package_dir "$LIBVIPS_SRC"
+copy_pnpm_symlinks "$(dirname "$SHARP_PACKAGE_DIR")/@img"
+copy_pnpm_symlinks "$(dirname "$SHARP_X64_SRC")"
+
+# Ensure top-level node_modules/sharp exists when standalone tracing omits the
+# workspace symlink but includes the pnpm package body.
+SHARP_TOP_LINK="$PACKAGE_DIR/app/node_modules/sharp"
+if [[ ! -e "$SHARP_TOP_LINK" && ! -L "$SHARP_TOP_LINK" ]]; then
+  mkdir -p "$(dirname "$SHARP_TOP_LINK")"
+  ln -s ".pnpm/$SHARP_PACKAGE_REL" "$SHARP_TOP_LINK"
 fi
 
 # Mandatory post-copy validation
-LIBVIPS_SO_PKG="$LIBVIPS_PKG/lib/libvips-cpp.so.8.18.3"
-[[ -f "$LIBVIPS_SO_PKG" ]] || die "libvips-cpp.so.8.18.3 still missing after copy — check pnpm store"
-[[ -L "$LIBVIPS_SO_PKG" ]] && die "libvips-cpp.so.8.18.3 is a symlink — must be a real file in the package"
-file "$LIBVIPS_SO_PKG" | grep -q "ELF.*x86-64" || die "libvips-cpp.so.8.18.3 in package is not ELF x86-64"
+LIBVIPS_SO_PKG="$PACKAGE_DIR/app/node_modules/.pnpm/$LIBVIPS_REL/lib/$(basename "$LIBVIPS_SO_SRC")"
+[[ -f "$LIBVIPS_SO_PKG" ]] || die "$(basename "$LIBVIPS_SO_SRC") still missing after copy — check pnpm store"
+[[ -L "$LIBVIPS_SO_PKG" ]] && die "$(basename "$LIBVIPS_SO_SRC") is a symlink — must be a real file in the package"
+file "$LIBVIPS_SO_PKG" | grep -q "ELF.*x86-64" || die "$(basename "$LIBVIPS_SO_SRC") in package is not ELF x86-64"
 
-# Validate sharp .node is present (was traced by standalone into .pnpm tree)
-SHARP_NODE="$(find "$PACKAGE_DIR/app" -name "sharp-linux-x64-0.35.1.node" -type f 2>/dev/null | head -1 || true)"
-[[ -n "$SHARP_NODE" ]] || die "sharp-linux-x64-0.35.1.node not found in package after standalone copy"
-file "$SHARP_NODE" | grep -q "ELF.*x86-64" || die "sharp-linux-x64-0.35.1.node in package is not ELF x86-64"
+# Validate sharp .node is present
+SHARP_NODE="$PACKAGE_DIR/app/node_modules/.pnpm/$SHARP_X64_REL/lib/$(basename "$SHARP_NODE_SRC")"
+[[ -f "$SHARP_NODE" ]] || die "$(basename "$SHARP_NODE_SRC") not found in package after copy"
+file "$SHARP_NODE" | grep -q "ELF.*x86-64" || die "$(basename "$SHARP_NODE_SRC") in package is not ELF x86-64"
 
 # ldd check: RPATH in the .node uses $ORIGIN/../../sharp-libvips-linux-x64/lib/
 # After our copy the symlink resolves to the package's libvips lib/ where .so now lives.
@@ -267,7 +345,7 @@ if command -v ldd >/dev/null 2>&1; then
   fi
 fi
 
-ok "Sharp 0.35.1 + libvips 8.18.3 packaged (libvips-cpp.so.8.18.3 is real file, ELF x86-64)"
+ok "Sharp ${SHARP_VERSION} native runtime packaged ($(basename "$SHARP_NODE_SRC"), $(basename "$LIBVIPS_SO_SRC"))"
 
 # Verify: no .dll files in Linux package (Windows artifacts)
 DLL_COUNT=$(find "$PACKAGE_DIR" -name "*.dll" | wc -l)

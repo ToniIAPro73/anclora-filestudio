@@ -193,6 +193,14 @@ if [[ -n "$BS3_NODE" ]]; then
         (( PASS++ )) || true
       fi
     fi
+    BS3_PACKAGE_DIR="$(find "$PKG/app/node_modules" -path "*/better-sqlite3/package.json" -type f 2>/dev/null | head -1 | xargs -r dirname)"
+    if [[ -n "$BS3_PACKAGE_DIR" ]] && "$PKG/runtime/node" -e "const Database=require('$BS3_PACKAGE_DIR'); const db=new Database(':memory:'); db.close();" >/dev/null 2>&1; then
+      echo -e "${GREEN}[PASS]${NC} better-sqlite3 loads with bundled node"
+      (( PASS++ )) || true
+    else
+      echo -e "${RED}[FAIL]${NC} better-sqlite3 does not load with bundled node"
+      (( FAIL++ )) || true
+    fi
   else
     echo -e "${RED}[FAIL]${NC} better_sqlite3.node is NOT ELF x86-64 ($(file "$BS3_NODE"))"
     (( FAIL++ )) || true
@@ -202,69 +210,72 @@ else
   (( WARN_COUNT++ )) || true
 fi
 
-SHARP_NODE="$(find "$PKG/app" -name "sharp-linux-x64-0.35.1.node" -type f 2>/dev/null | head -1 || true)"
+SHARP_NODE="$(find "$PKG/app" -name "sharp-linux-x64-*.node" -type f 2>/dev/null | sort | head -1 || true)"
 if [[ -n "$SHARP_NODE" ]]; then
   if file "$SHARP_NODE" | grep -q "ELF.*x86-64"; then
-    echo -e "${GREEN}[PASS]${NC} sharp-linux-x64-0.35.1.node is ELF x86-64"
+    echo -e "${GREEN}[PASS]${NC} $(basename "$SHARP_NODE") is ELF x86-64"
     (( PASS++ )) || true
   else
-    echo -e "${RED}[FAIL]${NC} sharp-linux-x64-0.35.1.node is NOT ELF x86-64"
+    echo -e "${RED}[FAIL]${NC} $(basename "$SHARP_NODE") is NOT ELF x86-64"
     (( FAIL++ )) || true
   fi
 else
-  echo -e "${RED}[FAIL]${NC} sharp-linux-x64-0.35.1.node not found (Sharp not packaged)"
+  echo -e "${RED}[FAIL]${NC} sharp-linux-x64 native module not found (Sharp not packaged)"
   (( FAIL++ )) || true
 fi
 
 # ── 7b. Sharp libvips runtime completeness ────────────────────────────────────
 echo ""
-echo "--- 7b. Sharp libvips 8.18.3 runtime ---"
+echo "--- 7b. Sharp libvips runtime ---"
 
-LIBVIPS_PKG_DIR="$PKG/app/node_modules/.pnpm/@img+sharp-libvips-linux-x64@1.3.0/node_modules/@img/sharp-libvips-linux-x64"
+LIBVIPS_PKG_DIR="$(find "$PKG/app/node_modules/.pnpm" -path "*/node_modules/@img/sharp-libvips-linux-x64" -type d 2>/dev/null | sort | head -1 || true)"
 
 # Check directory exists
-if [[ -d "$LIBVIPS_PKG_DIR" ]]; then
-  echo -e "${GREEN}[PASS]${NC} @img/sharp-libvips-linux-x64@1.3.0 directory exists"
+if [[ -n "$LIBVIPS_PKG_DIR" && -d "$LIBVIPS_PKG_DIR" ]]; then
+  echo -e "${GREEN}[PASS]${NC} $(basename "$(dirname "$(dirname "$(dirname "$LIBVIPS_PKG_DIR")")")") directory exists"
   (( PASS++ )) || true
 else
-  echo -e "${RED}[FAIL]${NC} @img/sharp-libvips-linux-x64@1.3.0 directory missing"
+  echo -e "${RED}[FAIL]${NC} @img/sharp-libvips-linux-x64 directory missing"
   (( FAIL++ )) || true
 fi
 
-# Check libvips-cpp.so.8.18.3 physically present
-LIBVIPS_SO="$LIBVIPS_PKG_DIR/lib/libvips-cpp.so.8.18.3"
+# Check libvips-cpp.so physically present
+LIBVIPS_SO=""
+if [[ -n "$LIBVIPS_PKG_DIR" ]]; then
+  LIBVIPS_SO="$(find "$LIBVIPS_PKG_DIR/lib" -maxdepth 1 -name "libvips-cpp.so.*" -type f 2>/dev/null | sort | head -1 || true)"
+fi
 if [[ -f "$LIBVIPS_SO" ]] && [[ ! -L "$LIBVIPS_SO" ]]; then
-  echo -e "${GREEN}[PASS]${NC} libvips-cpp.so.8.18.3 is a real file (not symlink)"
+  echo -e "${GREEN}[PASS]${NC} $(basename "$LIBVIPS_SO") is a real file (not symlink)"
   (( PASS++ )) || true
   # Validate it is ELF x86-64
   if file "$LIBVIPS_SO" | grep -q "ELF.*x86-64"; then
-    echo -e "${GREEN}[PASS]${NC} libvips-cpp.so.8.18.3 is ELF x86-64"
+    echo -e "${GREEN}[PASS]${NC} $(basename "$LIBVIPS_SO") is ELF x86-64"
     (( PASS++ )) || true
   else
-    echo -e "${RED}[FAIL]${NC} libvips-cpp.so.8.18.3 is NOT ELF x86-64 ($(file "$LIBVIPS_SO" 2>/dev/null | head -1))"
+    echo -e "${RED}[FAIL]${NC} $(basename "$LIBVIPS_SO") is NOT ELF x86-64 ($(file "$LIBVIPS_SO" 2>/dev/null | head -1))"
     (( FAIL++ )) || true
   fi
   # Check size > 1MB (the real .so is ~17MB; a stub would be tiny)
   SO_SIZE="$(stat -c%s "$LIBVIPS_SO" 2>/dev/null || echo 0)"
   if [[ "$SO_SIZE" -gt 1000000 ]]; then
-    echo -e "${GREEN}[PASS]${NC} libvips-cpp.so.8.18.3 size OK ($(( SO_SIZE / 1024 / 1024 ))MB)"
+    echo -e "${GREEN}[PASS]${NC} $(basename "$LIBVIPS_SO") size OK ($(( SO_SIZE / 1024 / 1024 ))MB)"
     (( PASS++ )) || true
   else
-    echo -e "${RED}[FAIL]${NC} libvips-cpp.so.8.18.3 too small (${SO_SIZE} bytes) — likely a stub"
+    echo -e "${RED}[FAIL]${NC} $(basename "$LIBVIPS_SO") too small (${SO_SIZE} bytes) — likely a stub"
     (( FAIL++ )) || true
   fi
 elif [[ -L "$LIBVIPS_SO" ]]; then
-  echo -e "${RED}[FAIL]${NC} libvips-cpp.so.8.18.3 is a symlink — must be a real file in the package"
+  echo -e "${RED}[FAIL]${NC} $(basename "$LIBVIPS_SO") is a symlink — must be a real file in the package"
   (( FAIL++ )) || true
 else
-  echo -e "${RED}[FAIL]${NC} libvips-cpp.so.8.18.3 MISSING from package"
+  echo -e "${RED}[FAIL]${NC} libvips-cpp.so missing from package"
   (( FAIL++ )) || true
 fi
 
 # No broken symlinks in the Sharp pnpm tree
-BROKEN_SYMLINKS="$(find "$PKG/app/node_modules/.pnpm/sharp@0.35.1" -xtype l 2>/dev/null || true)"
+BROKEN_SYMLINKS="$(find "$PKG/app/node_modules/.pnpm" -path "*/sharp@*/node_modules/@img/*" -xtype l 2>/dev/null || true)"
 if [[ -z "$BROKEN_SYMLINKS" ]]; then
-  echo -e "${GREEN}[PASS]${NC} No broken symlinks in sharp@0.35.1 pnpm tree"
+  echo -e "${GREEN}[PASS]${NC} No broken symlinks in sharp pnpm tree"
   (( PASS++ )) || true
 else
   echo -e "${RED}[FAIL]${NC} Broken symlinks in sharp pnpm tree:"
@@ -286,7 +297,7 @@ if [[ -n "$SHARP_NODE" ]] && command -v ldd >/dev/null 2>&1; then
 fi
 
 # Real Sharp load test using bundled node
-# require('sharp') works because node_modules/sharp symlinks to .pnpm/sharp@0.35.1
+# require('sharp') works because node_modules/sharp symlinks to the packaged pnpm sharp entry.
 NODE_BIN_VERIFY="${PKG}/runtime/node"
 if [[ -x "$NODE_BIN_VERIFY" ]] && [[ -n "$SHARP_NODE" ]]; then
   SHARP_LOAD_RESULT="$(cd "$PKG/app" && "$NODE_BIN_VERIFY" -e "
@@ -295,7 +306,7 @@ const v = s.versions;
 if (!v || !v.sharp || !v.vips) { console.error('versions missing'); process.exit(1); }
 console.log('sharp=' + v.sharp + ' vips=' + v.vips);
 " 2>&1 || echo "FAILED")"
-  if echo "$SHARP_LOAD_RESULT" | grep -q "sharp=0.35.1.*vips=8.18.3"; then
+  if echo "$SHARP_LOAD_RESULT" | grep -Eq "sharp=[0-9]+\\.[0-9]+\\.[0-9]+ vips=[0-9]+\\.[0-9]+\\.[0-9]+"; then
     echo -e "${GREEN}[PASS]${NC} Sharp loads with bundled node: $SHARP_LOAD_RESULT"
     (( PASS++ )) || true
   else

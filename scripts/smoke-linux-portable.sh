@@ -92,14 +92,15 @@ echo ""
 echo "--- Sharp PNG→WebP conversion (bundled node) ---"
 
 NODE_BIN="$PKG/runtime/node"
-LIBVIPS_SO="$(find "$PKG/app/node_modules/.pnpm/@img+sharp-libvips-linux-x64@1.3.0" \
-  -name "libvips-cpp.so.8.18.3" -not -type l 2>/dev/null | head -1 || true)"
+LIBVIPS_SO="$(find "$PKG/app/node_modules/.pnpm" \
+  -path "*/node_modules/@img/sharp-libvips-linux-x64/lib/libvips-cpp.so.*" \
+  -type f 2>/dev/null | sort | head -1 || true)"
 
 if [[ ! -x "$NODE_BIN" ]]; then
   echo "[FAIL] runtime/node not executable — cannot run Sharp test"
   (( FAIL++ )) || true
 elif [[ -z "$LIBVIPS_SO" ]]; then
-  echo "[FAIL] libvips-cpp.so.8.18.3 not found in package — Sharp cannot load"
+  echo "[FAIL] libvips-cpp.so not found in package — Sharp cannot load"
   (( FAIL++ )) || true
 else
   # Create a minimal 4x4 red PNG in /tmp using Python (no external deps)
