@@ -5,8 +5,8 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  postcss: 8.5.26
-  sharp: 0.35.3
+  postcss: ^8.5.18
+  sharp: ^0.35.1
 
 importers:
 
@@ -64,7 +64,7 @@ importers:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
       sharp:
-        specifier: 0.35.3
+        specifier: ^0.35.1
         version: 0.35.3(@types/node@20.19.43)
       smol-toml:
         specifier: ^1.6.1
@@ -198,7 +198,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
       sharp:
-        specifier: 0.35.3
+        specifier: ^0.35.1
         version: 0.35.3(@types/node@20.19.43)
       ulid:
         specifier: ^2.3.0
@@ -238,7 +238,7 @@ importers:
         specifier: ^3.4.7
         version: 3.4.9
       sharp:
-        specifier: 0.35.3
+        specifier: ^0.35.1
         version: 0.35.3(@types/node@20.19.43)
       ulid:
         specifier: ^2.3.0
