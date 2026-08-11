@@ -6,6 +6,7 @@ import {
   validateOutputArtifact,
   getOutputMimeType,
   detectOutputMime,
+  buildConvertedOutputFileName,
   buildUserErrorMessage,
 } from "../../src/lib/jobs/universal-job-processor";
 import { extractEngineIdFromCapabilityId } from "../../src/lib/jobs/capability-routing";
@@ -84,6 +85,20 @@ describe("universal job error normalization", () => {
     expect(message).toContain("No se pudo verificar el archivo generado");
     expect(message).not.toContain("ffprobe exit");
     expect(message).not.toContain("/tmp/output.webm");
+  });
+});
+
+describe("buildConvertedOutputFileName", () => {
+  it("replaces the final input extension instead of appending a second extension", () => {
+    expect(buildConvertedOutputFileName("foto.png", "job123456789", "webp")).toBe("foto.webp");
+    expect(buildConvertedOutputFileName("documento.docx", "job123456789", "pdf")).toBe("documento.pdf");
+    expect(buildConvertedOutputFileName("libro.epub", "job123456789", "mobi")).toBe("libro.mobi");
+  });
+
+  it("preserves multiple dots, spaces, unicode, and extensionless names", () => {
+    expect(buildConvertedOutputFileName("informe.final.docx", "job123456789", "pdf")).toBe("informe.final.pdf");
+    expect(buildConvertedOutputFileName("mi foto final.png", "job123456789", "webp")).toBe("mi foto final.webp");
+    expect(buildConvertedOutputFileName("árbol final", "job123456789", "pdf")).toBe("árbol final.pdf");
   });
 });
 

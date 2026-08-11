@@ -138,6 +138,22 @@ function getOutputMimeType(outputFormat: string): string {
   return FALLBACK[outputFormat] ?? "application/octet-stream";
 }
 
+function buildConvertedOutputFileName(
+  inputTitle: string | null | undefined,
+  jobId: string,
+  outputFormat: string,
+): string {
+  const safeOutputFormat = outputFormat.replace(/^\.+/, "").toLowerCase();
+  const fallbackBase = `output_${jobId.substring(0, 8)}`;
+  const safeInputTitle = inputTitle ? sanitizeFilename(inputTitle) : "";
+  const base = safeInputTitle || fallbackBase;
+  const parsed = path.parse(base);
+  const withoutExtension = parsed.ext ? path.join(parsed.dir, parsed.name) : base;
+  const safeBase = sanitizeFilename(withoutExtension) || fallbackBase;
+
+  return `${safeBase}.${safeOutputFormat}`;
+}
+
 // ── Log redaction ─────────────────────────────────────────────────────────────
 
 function redact(message: string): string {
@@ -415,10 +431,11 @@ export async function processUniversalJob(jobId: string): Promise<void> {
 
     // Build output file name from input title or fallback
     const currentJob = jobManager.getJob(jobId);
-    const titleBase = currentJob?.input_title
-      ? sanitizeFilename(currentJob.input_title)
-      : `output_${jobId.substring(0, 8)}`;
-    const finalFileName = `${titleBase}${outputExt}`;
+    const finalFileName = buildConvertedOutputFileName(
+      currentJob?.input_title,
+      jobId,
+      outputFormat,
+    );
 
     // 12. Update job to completed — ONLY after validation
     jobManager.updateJob(jobId, {
@@ -657,7 +674,7 @@ async function resolveLossProfile(
 }
 
 // Exported for testing
-export { validateOutputArtifact, getOutputMimeType, detectOutputMime };
+export { validateOutputArtifact, getOutputMimeType, detectOutputMime, buildConvertedOutputFileName };
 
 // ── User-facing error message builder ─────────────────────────────────────────
 
