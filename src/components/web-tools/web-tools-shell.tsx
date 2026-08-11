@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import brandLogo from "@/assets/logo.png";
 import { useState } from "react";
 import { Download, HelpCircle } from "lucide-react";
 import { ExternalActionLink } from "@/components/web/external-action-link";
@@ -34,7 +33,7 @@ export function WebToolsShell() {
       <div className="relative mx-auto max-w-5xl px-4 pb-16 sm:px-6">
         <header className="pt-8 pb-6 text-center">
           <div className="mb-4 flex justify-center">
-            <Image src={brandLogo} alt={FILESTUDIO_BRAND.name} width={80} height={80} priority className="drop-shadow-[0_0_24px_rgba(20,184,166,0.35)] rounded-full" />
+            <Image src="/brand/anclora-filestudio.png" alt={FILESTUDIO_BRAND.name} width={80} height={80} priority className="drop-shadow-[0_0_24px_rgba(20,184,166,0.35)]" />
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <h1 className="text-[2rem] font-black leading-tight tracking-tight sm:text-4xl">
