@@ -25,7 +25,7 @@
 | /api/download/[id] | GET | Authenticated download |
 | /api/history | GET | Job history |
 | /api/health | GET | Tool health check |
-| /api/metadata | GET | YouTube metadata |
+| /api/metadata | POST | YouTube metadata. `GET` is intentionally `405 Method Not Allowed` with `Allow: POST`. |
 
 ### SQLite Schema (v1)
 - `jobs`: All conversion jobs (remote-url + local-file)
