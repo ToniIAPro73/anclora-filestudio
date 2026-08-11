@@ -2,7 +2,8 @@
 // contains YAML frontmatter, key:value patterns, or YAML-like blocks.
 
 import { describe, it, expect, afterAll } from "vitest";
-import { detectFile } from "../../src/lib/detection/file-detector";
+import { buildDescriptor, detectFile } from "../../src/lib/detection/file-detector";
+import type { ImageAttributes } from "../../src/lib/domain/descriptors";
 import { CONFIG } from "../../src/lib/config";
 import crypto from "crypto";
 import fs from "fs";
@@ -22,6 +23,25 @@ afterAll(() => {
 function writeTempFile(name: string, content: string): string {
   const p = path.join(testDir, name);
   fs.writeFileSync(p, content, "utf-8");
+  return p;
+}
+
+async function writeImageFixture(
+  name: string,
+  width: number,
+  height: number,
+  format: "png" | "jpeg" | "webp",
+): Promise<string> {
+  const sharp = (await import("sharp")).default;
+  const p = path.join(testDir, name);
+  await sharp({
+    create: {
+      width,
+      height,
+      channels: 4,
+      background: { r: 20, g: 80, b: 140, alpha: 0.5 },
+    },
+  })[format]().toFile(p);
   return p;
 }
 
@@ -253,5 +273,46 @@ describe("file-detector — structured data formats still work", () => {
     const result = await detectFile(p);
     expect(result.detectedFormat).toBe("html");
     expect(result.category).toBe("plain-text");
+  });
+});
+
+describe("file-detector — image metadata", () => {
+  it("populates real PNG dimensions and metadata", async () => {
+    const p = await writeImageFixture("known.png", 37, 23, "png");
+    const descriptor = await buildDescriptor(
+      p,
+      { kind: "local-upload", originalName: "known.png", storedRelativePath: "known.png" },
+      "png-known",
+    );
+    const attrs = descriptor.attributes as ImageAttributes;
+
+    expect(descriptor.category).toBe("image");
+    expect(attrs.width).toBe(37);
+    expect(attrs.height).toBe(23);
+    expect(attrs.format).toBe("png");
+    expect(attrs.channels).toBeGreaterThanOrEqual(3);
+    expect(attrs.hasAlpha).toBe(true);
+  });
+
+  it("populates real JPEG dimensions", async () => {
+    const p = await writeImageFixture("known.jpg", 41, 29, "jpeg");
+    const result = await detectFile(p);
+    const attrs = result.attributes as ImageAttributes;
+
+    expect(result.category).toBe("image");
+    expect(attrs.width).toBe(41);
+    expect(attrs.height).toBe(29);
+    expect(attrs.format).toBe("jpeg");
+  });
+
+  it("populates real WebP dimensions", async () => {
+    const p = await writeImageFixture("known.webp", 53, 31, "webp");
+    const result = await detectFile(p);
+    const attrs = result.attributes as ImageAttributes;
+
+    expect(result.category).toBe("image");
+    expect(attrs.width).toBe(53);
+    expect(attrs.height).toBe(31);
+    expect(attrs.format).toBe("webp");
   });
 });

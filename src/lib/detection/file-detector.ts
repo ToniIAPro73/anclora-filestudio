@@ -11,6 +11,7 @@ import type {
   FileCategory,
   UniversalFileDescriptor,
   FileAttributes,
+  ImageAttributes,
   InputSource,
   DescriptorWarning,
 } from "../domain/descriptors";
@@ -682,7 +683,7 @@ export async function detectFile(filePath: string): Promise<DetectionResult> {
   // 8. Build basic attributes
   validateDetectedContent(filePath, ext || null, category, format);
 
-  const attributes: FileAttributes = buildAttributes(category, format);
+  const attributes: FileAttributes = await buildAttributes(filePath, category, format);
 
   return {
     category,
@@ -756,10 +757,11 @@ function validateDetectedContent(
   }
 }
 
-function buildAttributes(
+async function buildAttributes(
+  filePath: string,
   category: FileCategory,
   format: string | null,
-): FileAttributes {
+): Promise<FileAttributes> {
   switch (category) {
     case "audio":
     case "video":
@@ -777,19 +779,7 @@ function buildAttributes(
         fps: null,
       };
     case "image":
-      return {
-        kind: "image",
-        width: 0,
-        height: 0,
-        channels: null,
-        hasAlpha: false,
-        format: format,
-        colorSpace: null,
-        animated: false,
-        frames: 1,
-        densityPpi: null,
-        iccProfile: null,
-      };
+      return buildImageAttributes(filePath, format);
     case "document":
       return {
         kind: "document",
@@ -871,6 +861,43 @@ function buildAttributes(
       };
     default:
       return { kind: "unknown" };
+  }
+}
+
+async function buildImageAttributes(
+  filePath: string,
+  detectedFormat: string | null,
+): Promise<ImageAttributes> {
+  try {
+    const sharp = (await import("sharp")).default;
+    const metadata = await sharp(filePath, { failOn: "error", animated: true }).metadata();
+    const width = metadata.width;
+    const height = metadata.height;
+
+    if (!Number.isInteger(width) || !Number.isInteger(height) || !width || !height) {
+      throw new Error("image metadata did not include dimensions");
+    }
+
+    const frames = Number.isInteger(metadata.pages) && metadata.pages ? metadata.pages : 1;
+
+    return {
+      kind: "image",
+      width,
+      height,
+      channels: Number.isInteger(metadata.channels) ? metadata.channels : null,
+      hasAlpha: metadata.hasAlpha ?? false,
+      format: metadata.format ?? detectedFormat,
+      colorSpace: metadata.space ?? null,
+      animated: frames > 1 || (Array.isArray(metadata.delay) && metadata.delay.length > 1),
+      frames,
+      densityPpi: Number.isFinite(metadata.density) ? metadata.density ?? null : null,
+      iccProfile: metadata.icc ? "embedded" : null,
+    };
+  } catch (err) {
+    throw createAppError("INPUT_CORRUPTED", "El archivo de imagen está corrupto o incompleto.", {
+      stage: "analysis",
+      technicalDetail: err instanceof Error ? err.message : String(err),
+    });
   }
 }
 
