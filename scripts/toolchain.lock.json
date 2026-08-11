@@ -83,11 +83,11 @@
           "sha256": null
         },
         "win-x64": {
-          "version": "BtbN-master-latest",
+          "version": "N-125875-g5d4d3bdc61",
           "provider": "https://github.com/BtbN/FFmpeg-Builds",
-          "sourceUrl": "https://github.com/BtbN/FFmpeg-Builds/releases/latest/download/ffmpeg-master-latest-win64-gpl.zip",
-          "sha256": "239cb6c6e4a39c53a51040b51baf7d744d4a57341101431a06dd4f8181bc1800",
-          "note": "BtbN builds are rolling. SHA recorded at lockfile time 2026-06-16."
+          "sourceUrl": "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-07-31-14-10/ffmpeg-N-125875-g5d4d3bdc61-win64-gpl.zip",
+          "sha256": "68a5e966533002785c3e4b9a98327e21d5277802668bf889d94086cb6426cbb4",
+          "note": "Pinned BtbN monthly-retained auto-build from 2026-07-31; no rolling latest URL."
         }
       }
     },
