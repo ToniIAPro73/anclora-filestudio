@@ -275,18 +275,20 @@ else
   PASS=$((PASS+1))
 fi
 
-# ── 12. No developer paths in launchers ──────────────────────────────────────
-info "Verificando ausencia de rutas del desarrollador en BAT/PS1..."
-DEV_PATHS=("/home/toni" "/root" "/home/antonio" "C:\\\\Users\\\\antonio" "wsl.localhost")
-for p in "${DEV_PATHS[@]}"; do
-  FOUND="$(grep -rl "$p" "$EXTRACTED" --include="*.bat" --include="*.ps1" 2>/dev/null || true)"
-  if [[ -n "$FOUND" ]]; then
-    fail "  Ruta hardcodeada '$p' encontrada en: $FOUND"
-  else
-    ok "  Ruta '$p' no encontrada en scripts"
-    PASS=$((PASS+1))
-  fi
-done
+# ── 12. No developer paths in package text files ─────────────────────────────
+info "Verificando ausencia de rutas del desarrollador en el portable..."
+DEV_PATH_REGEX='(/home/[^[:space:]"'"'"'<>]*/[^[:space:]"'"'"'<>]*/anclora/|/workspace/anclora/|/home/toni/)'
+FOUND="$(LC_ALL=C grep -IRnE "$DEV_PATH_REGEX" "$EXTRACTED" \
+  --exclude-dir=data --exclude-dir=temp --exclude-dir=logs \
+  --exclude="*.exe" --exclude="*.dll" --exclude="*.node" --exclude="*.zip" \
+  2>/dev/null | head -20 || true)"
+if [[ -n "$FOUND" ]]; then
+  fail "  Rutas del workspace encontradas:"
+  echo "$FOUND"
+else
+  ok "  Sin rutas absolutas del workspace de build"
+  PASS=$((PASS+1))
+fi
 
 # ── 13. BATs use %~dp0 ───────────────────────────────────────────────────────
 info "Verificando que los BAT usan %%~dp0..."

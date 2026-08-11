@@ -220,6 +220,32 @@ fi
 
 ok "Application copied (whitelist)"
 
+# Next.js trace/source-map metadata can contain absolute paths from the build
+# machine. The standalone runtime does not need these files in the portable.
+info "Removing build-only path metadata..."
+find "$APP_DIR" \
+  \( -name "*.map" \
+  -o -name "*.nft.json" \
+  -o -name "trace" \
+  -o -name "turbopack-trace.json" \
+  -o -name "required-server-files.json" \) \
+  -type f -delete 2>/dev/null || true
+ok "Build-only path metadata removed"
+
+if [[ -f "$APP_DIR/server.js" ]]; then
+  python3 - "$APP_DIR/server.js" "$REPO_ROOT" << 'PYEOF'
+import pathlib
+import sys
+
+server_js = pathlib.Path(sys.argv[1])
+repo_root = sys.argv[2]
+source = server_js.read_text(encoding="utf-8")
+source = source.replace(repo_root, ".")
+server_js.write_text(source, encoding="utf-8")
+PYEOF
+fi
+ok "Standalone server metadata sanitized"
+
 # ── Section 6: Node.js win-x64 runtime ───────────────────────────────────────
 info "Extracting node.exe..."
 TMP_NODE_EXTRACT="$(mktemp -d)"
@@ -565,6 +591,24 @@ $env:ANCLORA_FILESTUDIO_DATA_DIR = Join-Path $Root "data"
 $env:ANCLORA_FILESTUDIO_TEMP_DIR = Join-Path $Root "temp"
 $env:ANCLORA_FILESTUDIO_LOG_DIR = Join-Path $Root "logs"
 $env:ANCLORA_FILESTUDIO_TOOLS_DIR = Join-Path $Root "tools"
+
+# Load release metadata from the packaged manifest so runtime health
+# reports the same version/build identity as the distributed artifact.
+$ManifestPath = Join-Path $Root "manifest.json"
+if (Test-Path $ManifestPath) {
+    try {
+        $Manifest = Get-Content -Raw $ManifestPath | ConvertFrom-Json
+        if ($Manifest.version) {
+            $env:ANCLORA_FILESTUDIO_VERSION = [string]$Manifest.version
+        }
+        if ($Manifest.buildId) {
+            $env:ANCLORA_FILESTUDIO_BUILD_ID = [string]$Manifest.buildId
+        }
+    } catch {
+        Write-Warning "Could not read release metadata from manifest.json"
+    }
+}
+
 $env:PATH = (Join-Path $Root "tools\yt-dlp") + ";" + (Join-Path $Root "tools\ffmpeg") + ";" + `
             (Join-Path $Root "tools\pandoc") + ";" + (Join-Path $Root "tools\qpdf") + ";" + `
             (Join-Path $Root "tools\sevenzip") + ";" + $env:PATH
@@ -776,6 +820,18 @@ if grep -q "0\.0\.0\.0" "$INTERNAL_DIR/start-anclora-filestudio.ps1" 2>/dev/null
   die "Launcher binds to 0.0.0.0 (INSECURE)"
 fi
 ok "Launcher binds to 127.0.0.1 only"
+
+# No developer workspace paths in distributable text files.
+DEV_PATH_REGEX='(/home/[^[:space:]"'"'"'<>]*/[^[:space:]"'"'"'<>]*/anclora/|/workspace/anclora/|/home/toni/)'
+DEV_PATH_FOUND="$(LC_ALL=C grep -IRnE "$DEV_PATH_REGEX" "$STAGING_DIR" \
+    --exclude-dir=data --exclude-dir=temp --exclude-dir=logs \
+    --exclude="*.exe" --exclude="*.dll" --exclude="*.node" --exclude="*.zip" \
+    2>/dev/null | head -20 || true)"
+if [[ -n "$DEV_PATH_FOUND" ]]; then
+  echo "$DEV_PATH_FOUND"
+  die "Developer workspace path found in Windows portable staging"
+fi
+ok "No developer workspace paths found in staging"
 
 # ── Section 19: Create ZIP ────────────────────────────────────────────────────
 info "Creating ZIP..."

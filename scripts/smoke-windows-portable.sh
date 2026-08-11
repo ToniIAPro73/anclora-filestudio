@@ -106,17 +106,17 @@ if [[ -n "$SEVENZIP" ]]; then
   fi
 
   # Developer paths check
-  DEV_PATTERN="/home/toni|/home/antonio|convertidor_youtube_mp3"
-  if grep -rqE "$DEV_PATTERN" "$TMP_DIR" \
-       --include="*.bat" --include="*.ps1" --include="*.json" \
-       --exclude="required-server-files.json" --exclude="server.js" 2>/dev/null; then
+  DEV_PATTERN='(/home/[^[:space:]"'"'"'<>]*/[^[:space:]"'"'"'<>]*/anclora/|/workspace/anclora/|/home/toni/)'
+  DEV_FOUND="$(LC_ALL=C grep -IRnE "$DEV_PATTERN" "$PKG" \
+       --exclude-dir=data --exclude-dir=temp --exclude-dir=logs \
+       --exclude="*.exe" --exclude="*.dll" --exclude="*.node" --exclude="*.zip" \
+       2>/dev/null | head -20 || true)"
+  if [[ -n "$DEV_FOUND" ]]; then
     echo "[FAIL] Developer paths found in package"
-    grep -rE "$DEV_PATTERN" "$TMP_DIR" \
-       --include="*.bat" --include="*.ps1" --include="*.json" \
-       --exclude="required-server-files.json" --exclude="server.js" 2>/dev/null | head -5
+    echo "$DEV_FOUND"
     FAIL=$((FAIL+1))
   else
-    echo "[PASS] No developer paths (Next.js build artifacts excluded)"
+    echo "[PASS] No developer workspace paths"
     PASS=$((PASS+1))
   fi
 
