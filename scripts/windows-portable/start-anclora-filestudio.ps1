@@ -217,6 +217,21 @@ $env:HOSTNAME                      = '127.0.0.1'
 $env:PORT                          = "$selectedPort"
 $env:ANCLORA_FILESTUDIO_PLATFORM   = 'windows'
 
+$ManifestPath = Join-Path $Root 'manifest.json'
+if (Test-Path $ManifestPath) {
+    try {
+        $Manifest = Get-Content -Raw $ManifestPath | ConvertFrom-Json
+        if ($Manifest.version) {
+            $env:ANCLORA_FILESTUDIO_VERSION = [string]$Manifest.version
+        }
+        if ($Manifest.buildId) {
+            $env:ANCLORA_FILESTUDIO_BUILD_ID = [string]$Manifest.buildId
+        }
+    } catch {
+        Write-Warn "No se pudo leer metadata de manifest.json"
+    }
+}
+
 # ANCLORA_FILESTUDIO_* environment variables
 $env:ANCLORA_FILESTUDIO_FFMPEG_PATH        = $FfmpegExe
 $env:ANCLORA_FILESTUDIO_FFPROBE_PATH       = $FfprobeExe

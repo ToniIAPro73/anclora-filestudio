@@ -20,7 +20,7 @@ export async function GET() {
       status: webStatus,
       app: {
         name: "Anclora FileStudio",
-        version: process.env.npm_package_version ?? "0.1.0",
+        version: process.env.ANCLORA_FILESTUDIO_VERSION ?? process.env.npm_package_version ?? "unknown",
       },
       runtime: {
         deploymentTarget: getDeploymentTarget(),
@@ -65,7 +65,7 @@ export async function GET() {
     status: allOk ? "ready" : criticalOk ? "degraded" : "unavailable",
     app: {
       name: "Anclora FileStudio",
-      version: process.env.npm_package_version ?? "0.1.0",
+      version: process.env.ANCLORA_FILESTUDIO_VERSION ?? process.env.npm_package_version ?? "unknown",
       buildId: process.env.ANCLORA_FILESTUDIO_BUILD_ID ?? "dev",
       toolchainId: process.env.ANCLORA_FILESTUDIO_TOOLCHAIN_ID ?? "local",
     },
