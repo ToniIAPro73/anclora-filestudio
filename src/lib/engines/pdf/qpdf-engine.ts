@@ -136,7 +136,7 @@ export class QpdfEngine implements ConversionEngine {
     onProgress?: (progress: number, stage: string) => void,
   ): Promise<ExecutionResult> {
     const start = Date.now();
-    const opts = plan.options as unknown as QpdfOptions;
+    const opts = normalizeQpdfOptions(plan.operation, plan.options);
 
     try {
       ensurePathSafety(plan.inputPath);
@@ -194,7 +194,6 @@ export class QpdfEngine implements ConversionEngine {
     outputPath: string,
     plan: ConversionPlan,
   ): Promise<ArtifactValidation> {
-    void plan;
     const checks: ArtifactValidation["checks"] = [];
 
     const exists = fs.existsSync(outputPath);
@@ -219,6 +218,30 @@ export class QpdfEngine implements ConversionEngine {
       detail: `${stat.size} bytes`,
     });
 
+    const opts = normalizeQpdfOptions(plan.operation, plan.options);
+    if (opts.operation === "rotate") {
+      const expectedRotation = opts.rotation ?? 90;
+      try {
+        const inputRotations = await readPdfPageRotations(plan.inputPath);
+        const outputRotations = await readPdfPageRotations(outputPath);
+        const samePageCount = inputRotations.length === outputRotations.length;
+        const rotated = samePageCount && inputRotations.every((angle, index) => {
+          return outputRotations[index] === normalizeRotation(angle + expectedRotation);
+        });
+        checks.push({
+          name: "pdf-pages-rotated",
+          passed: rotated,
+          detail: `expected +${expectedRotation}; input=${inputRotations.join(",")}; output=${outputRotations.join(",")}`,
+        });
+      } catch (err) {
+        checks.push({
+          name: "pdf-pages-rotated",
+          passed: false,
+          detail: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+
     return { valid: checks.every((c) => c.passed), checks };
   }
 }
@@ -237,13 +260,50 @@ function buildArgs(
     }
     case "rotate": {
       const deg = opts.rotation ?? 90;
-      return [`--rotate=+${deg}`, inputPath, outputPath];
+      return [`--rotate=+${deg}:1-z`, inputPath, outputPath];
     }
     case "decrypt":
       return ["--decrypt", inputPath, outputPath];
     default:
       return ["--linearize", inputPath, outputPath];
   }
+}
+
+function normalizeQpdfOptions(
+  operation: string,
+  rawOptions: ConversionPlan["options"],
+): QpdfOptions {
+  const options = rawOptions as Partial<QpdfOptions>;
+  const rawOperation = options.operation ?? operation;
+  const qpdfOperation = isQpdfOperation(rawOperation) ? rawOperation : "linearize";
+  const rotation = Number(options.rotation);
+
+  return {
+    operation: qpdfOperation,
+    pages: options.pages,
+    rotation: isValidRotation(rotation) ? rotation : undefined,
+  };
+}
+
+function isQpdfOperation(operation: string): operation is QpdfOptions["operation"] {
+  return operation === "linearize" ||
+    operation === "extract-pages" ||
+    operation === "rotate" ||
+    operation === "decrypt";
+}
+
+function isValidRotation(rotation: number): rotation is 90 | 180 | 270 {
+  return rotation === 90 || rotation === 180 || rotation === 270;
+}
+
+function normalizeRotation(rotation: number): number {
+  return ((rotation % 360) + 360) % 360;
+}
+
+async function readPdfPageRotations(filePath: string): Promise<number[]> {
+  const { PDFDocument } = await import("pdf-lib");
+  const pdf = await PDFDocument.load(fs.readFileSync(filePath), { ignoreEncryption: false });
+  return pdf.getPages().map((page) => normalizeRotation(page.getRotation().angle));
 }
 
 function buildPresets(
