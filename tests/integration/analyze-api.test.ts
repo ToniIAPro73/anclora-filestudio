@@ -254,6 +254,76 @@ describe("Analyze API — extension validation (route-level checks)", () => {
   });
 });
 
+describe("Analyze API — extensionless upload contract", () => {
+  it("rejects unknown extensionless content without HTTP 500", async () => {
+    const { POST } = await import("../../src/server/desktop-routes/inputs-analyze-route");
+    const formData = new FormData();
+    formData.append(
+      "file",
+      new File(["plain words without reliable signature"], "archivo", {
+        type: "application/octet-stream",
+      }),
+    );
+
+    const response = await POST(
+      new Request("http://localhost/api/inputs/analyze", {
+        method: "POST",
+        body: formData,
+      }) as never,
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(415);
+    expect(body.code).toBe("UNSUPPORTED_INPUT");
+    expect(body.error).toMatch(/no tiene extensión|identificar/i);
+  });
+
+  it("accepts extensionless PNG content when magic bytes identify it", async () => {
+    const { POST } = await import("../../src/server/desktop-routes/inputs-analyze-route");
+    const pngBytes = fs.readFileSync(fixturePath("sample.png"));
+    const formData = new FormData();
+    formData.append(
+      "file",
+      new File([pngBytes], "archivo", { type: "application/octet-stream" }),
+    );
+
+    const response = await POST(
+      new Request("http://localhost/api/inputs/analyze", {
+        method: "POST",
+        body: formData,
+      }) as never,
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.kind).toBe("universal-file");
+    expect(body.originalName).toBe("archivo");
+    expect(body.detectedFormat).toBe("png");
+    expect(body.universalDescriptor.extension).toBeNull();
+    expect(body.storedRelativePath).not.toMatch(/\.png$/);
+
+    const storedDir = path.dirname(path.resolve(process.cwd(), "data/temp", body.storedRelativePath));
+    fs.rmSync(storedDir, { recursive: true, force: true });
+  });
+
+  it.each([
+    ["archivo", null],
+    [".", null],
+    ["mi archivo", null],
+    ["dátos", null],
+    ["reporte.final.v1.JSON", "json"],
+    ["foto.PNG", "png"],
+  ])("normalizes extension parsing for %s", async (fileName, expectedExtension) => {
+    const descriptor = await buildDescriptor(
+      fixturePath("sample.png"),
+      { kind: "local-upload", originalName: fileName, storedRelativePath: `uploads/test/${fileName}` },
+      `extensionless-test-${fileName}`,
+    );
+
+    expect(descriptor.extension).toBe(expectedExtension);
+  });
+});
+
 describe("Analyze API — large file rejection", () => {
   it("MAX_FILE_SIZE_BYTES is defined as 2 GB in the analyze route", () => {
     // We verify the constant indirectly — the route module uses 2 * 1024 * 1024 * 1024

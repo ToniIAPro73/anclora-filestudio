@@ -100,6 +100,18 @@ describe("buildConvertedOutputFileName", () => {
     expect(buildConvertedOutputFileName("mi foto final.png", "job123456789", "webp")).toBe("mi foto final.webp");
     expect(buildConvertedOutputFileName("árbol final", "job123456789", "pdf")).toBe("árbol final.pdf");
   });
+
+  it("keeps extensionless output names explicit and non-empty", () => {
+    expect(buildConvertedOutputFileName("archivo", "job123456789", "webp")).toBe("archivo.webp");
+    expect(buildConvertedOutputFileName(".", "job123456789", "webp")).toBe("archivo-convertido.webp");
+    expect(buildConvertedOutputFileName("mi archivo", "job123456789", "pdf")).toBe("mi archivo.pdf");
+    expect(buildConvertedOutputFileName("dátos", "job123456789", "json")).toBe("dátos.json");
+  });
+
+  it("normalizes uppercase and multi-dot input extensions", () => {
+    expect(buildConvertedOutputFileName("FOTO.PNG", "job123456789", "webp")).toBe("FOTO.webp");
+    expect(buildConvertedOutputFileName("reporte.final.v1.JSON", "job123456789", "csv")).toBe("reporte.final.v1.csv");
+  });
 });
 
 // ── getOutputMimeType ──────────────────────────────────────────────────────

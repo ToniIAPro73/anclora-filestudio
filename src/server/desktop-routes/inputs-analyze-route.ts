@@ -21,6 +21,31 @@ const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024 * 1024; // 2 GB
 
 /** Extensions that route through the legacy ffprobe path */
 const MEDIA_EXTENSIONS = new Set(["mp3", "m4a", "wav", "flac", "ogg", "aac", "mp4", "webm", "mkv", "avi", "mov", "wmv", "ts"]);
+const RELIABLE_EXTENSIONLESS_FORMATS = new Set([
+  "png",
+  "jpeg",
+  "jpg",
+  "gif",
+  "webp",
+  "avif",
+  "tiff",
+  "pdf",
+  "zip",
+  "7z",
+  "tar",
+  "gz",
+  "bz2",
+  "xz",
+  "ogg",
+  "flac",
+  "mp3",
+  "wav",
+]);
+
+function getInputExtension(originalName: string): string | null {
+  const ext = path.extname(originalName).replace(/^\./, "").toLowerCase();
+  return ext || null;
+}
 
 /** Analyze a remote YouTube URL or an uploaded file */
 export async function POST(req: NextRequest) {
@@ -177,10 +202,10 @@ async function handleFileUpload(req: NextRequest): Promise<NextResponse> {
   }
 
   const originalName = file.name;
-  const ext = originalName.split(".").pop()?.toLowerCase() ?? "";
+  const ext = getInputExtension(originalName);
 
   // Use the format catalog as the single source of truth for allowed extensions
-  if (!ALL_ALLOWED_EXTENSIONS.has(ext)) {
+  if (ext && !ALL_ALLOWED_EXTENSIONS.has(ext)) {
     return NextResponse.json(
       { error: `Formato no soportado: .${ext}`, code: "UNSUPPORTED_INPUT" },
       { status: 415 }
@@ -188,8 +213,8 @@ async function handleFileUpload(req: NextRequest): Promise<NextResponse> {
   }
 
   const uploadId = crypto.randomBytes(16).toString("hex");
-  const safeBase = sanitizeFilename(originalName.replace(/\.[^.]+$/, ""));
-  const safeFileName = `${safeBase}.${ext}`;
+  const safeBase = sanitizeFilename(ext ? originalName.replace(/\.[^.]+$/, "") : originalName);
+  const safeFileName = ext ? `${safeBase}.${ext}` : safeBase;
   const uploadDir = path.join(CONFIG.media.tempDir, "uploads", uploadId);
   fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -198,6 +223,10 @@ async function handleFileUpload(req: NextRequest): Promise<NextResponse> {
 
   const bytes = await file.arrayBuffer();
   fs.writeFileSync(storedPath, Buffer.from(bytes));
+
+  if (!ext) {
+    return handleExtensionlessFile(storedPath, originalName, uploadId, file.size);
+  }
 
   // Route to appropriate analyzer: media extensions go through ffprobe,
   // all others (universal) go through the file-detector
@@ -208,6 +237,74 @@ async function handleFileUpload(req: NextRequest): Promise<NextResponse> {
     return handleMediaFile(storedPath, originalName, uploadId, file.size);
   }
   return handleUniversalFile(storedPath, originalName, uploadId, file.size, ext);
+}
+
+async function handleExtensionlessFile(storedPath: string, originalName: string, uploadId: string, sizeBytes: number): Promise<NextResponse> {
+  try {
+    const relPath = path.relative(CONFIG.media.tempDir, storedPath);
+    const universalDescriptor = await buildDescriptor(
+      storedPath,
+      { kind: "local-upload", originalName, storedRelativePath: relPath },
+      uploadId
+    );
+
+    const detectedFormat = universalDescriptor.detectedFormat?.toLowerCase() ?? null;
+    if (!detectedFormat || !RELIABLE_EXTENSIONLESS_FORMATS.has(detectedFormat) || universalDescriptor.category === "unknown") {
+      fs.rmSync(path.dirname(storedPath), { recursive: true, force: true });
+      return NextResponse.json(
+        {
+          error: "El archivo no tiene extensión y su formato no se pudo identificar de forma fiable.",
+          code: "UNSUPPORTED_INPUT",
+        },
+        { status: 415 },
+      );
+    }
+
+    persistInputMetadata(uploadId, universalDescriptor, relPath);
+
+    const analysis: UniversalFileAnalysis = {
+      kind: "universal-file",
+      inputId: uploadId,
+      originalName,
+      storedRelativePath: relPath,
+      sizeBytes,
+      descriptor: universalDescriptor.attributes,
+      category: universalDescriptor.category as FileCategory,
+      detectedFormat: universalDescriptor.detectedFormat,
+      confidence: "medium",
+      warnings: [
+        ...universalDescriptor.warnings.map((w) => ({
+          code: w.code,
+          message: w.message,
+          severity: w.severity as "info" | "warning" | "danger",
+        })),
+        {
+          code: "EXTENSIONLESS_CONTENT_DETECTED",
+          message: `Formato detectado por contenido: ${detectedFormat}`,
+          severity: "info",
+        },
+      ],
+      detectedMimeType: universalDescriptor.detectedMimeType,
+      sha256: universalDescriptor.sha256,
+    };
+
+    return NextResponse.json({
+      ...analysis,
+      universalDescriptor,
+    });
+  } catch (error: unknown) {
+    fs.rmSync(path.dirname(storedPath), { recursive: true, force: true });
+    const appError = error as Partial<FileStudioAppError>;
+    const code = appError.code ?? "INPUT_CORRUPTED";
+    const msg =
+      code in FILESTUDIO_ERROR_MESSAGES
+        ? FILESTUDIO_ERROR_MESSAGES[code as keyof typeof FILESTUDIO_ERROR_MESSAGES]
+        : "El archivo no se pudo analizar.";
+    console.warn(
+      `[analyze] rejected extensionless input code=${code} detail=${String(appError.technicalDetail ?? appError.message ?? "").slice(0, 300)}`,
+    );
+    return NextResponse.json({ error: msg, code }, { status: 422 });
+  }
 }
 
 async function handleMediaFile(storedPath: string, originalName: string, uploadId: string, sizeBytes: number): Promise<NextResponse> {
