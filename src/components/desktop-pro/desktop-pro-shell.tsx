@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import brandLogo from "@/assets/logo.png";
 import { Toaster, toast } from "sonner";
 import {
   Archive,
@@ -294,12 +293,12 @@ export function DesktopProShell() {
         <header className="pt-6 pb-5 text-center">
           <div className="mb-4 flex justify-center">
             <Image
-              src={brandLogo}
+              src="/brand/anclora-filestudio.png"
               alt={FILESTUDIO_BRAND.name}
               width={80}
               height={80}
               priority
-              className="drop-shadow-[0_0_24px_rgba(20,184,166,0.35)] rounded-full"
+              className="drop-shadow-[0_0_24px_rgba(20,184,166,0.35)]"
             />
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3">
