@@ -1,0 +1,157 @@
+{
+  "date": "2026-08-12",
+  "repository": "anclora-filestudio",
+  "overall": {
+    "finalHardening": "PASS",
+    "remainingMinorRisks": []
+  },
+  "risks": {
+    "RISK-001": {
+      "name": "METADATA API",
+      "status": "CLOSED",
+      "classification": "correct behavior not explicitly documented/tested",
+      "contract": {
+        "canonicalMethod": "POST",
+        "getExpectedStatus": 405,
+        "getObtainedStatus": 405,
+        "allowExpected": "POST",
+        "allowObtained": "POST",
+        "postLiveInvalidBodyExpectedStatus": 400,
+        "postLiveInvalidBodyObtainedStatus": 400,
+        "postLiveInvalidBodyCode": "INVALID_URL",
+        "postContractTest": "PASS"
+      },
+      "changes": [
+        "Explicit GET 405 JSON response with Allow: POST",
+        "POST contract test",
+        "Historical baseline documentation updated"
+      ]
+    },
+    "RISK-002": {
+      "name": "BRANDING VERIFICATION",
+      "status": "CLOSED",
+      "classification": "verification gap",
+      "checks": {
+        "canonicalAsset": "PASS",
+        "webShellCanonicalReference": "PASS",
+        "desktopShellCanonicalReference": "PASS",
+        "oldPlaceholderReferenceInActiveUiExpected": 0,
+        "oldPlaceholderReferenceInActiveUiObtained": 0,
+        "httpCanonicalLogoStatus": 200,
+        "httpContentType": "image/png",
+        "pngDecode": "PASS",
+        "dimensions": {
+          "width": 1254,
+          "height": 1254
+        },
+        "manualVisualConfirmation": "PASS",
+        "browserDomAutomatedSmoke": "PASS"
+      },
+      "changes": [
+        "Added canonical logo contract tests",
+        "Extended Playwright shell smoke with logo visibility and decode checks"
+      ]
+    },
+    "RISK-003": {
+      "name": "EXTENSIONLESS INPUT",
+      "status": "CLOSED",
+      "classification": "product contract gap",
+      "checks": {
+        "unknownExtensionless": {
+          "result": "rejected",
+          "status": 415,
+          "code": "UNSUPPORTED_INPUT",
+          "http500": false,
+          "outputCreated": false
+        },
+        "recognizableExtensionless": {
+          "supported": true,
+          "fixture": "extensionless PNG",
+          "result": "accepted",
+          "status": 200,
+          "detectedFormat": "png"
+        },
+        "filenameContract": {
+          "archivoToWebp": "archivo.webp",
+          "dotToWebp": "archivo-convertido.webp",
+          "unicodeToJson": "dátos.json",
+          "multiDotUppercaseToCsv": "reporte.final.v1.csv",
+          "malformedEmptyBase": false,
+          "doubleExtension": false
+        }
+      },
+      "changes": [
+        "Extensionless upload route now uses existing detector",
+        "Unknown non-reliable extensionless content is rejected with controlled 415",
+        "Magic-byte-recognized extensionless content is accepted",
+        "Added extensionless route and output filename tests"
+      ]
+    }
+  },
+  "validation": {
+    "typecheck": {
+      "command": "pnpm typecheck",
+      "status": "PASS"
+    },
+    "tests": {
+      "command": "pnpm test",
+      "status": "PASS",
+      "passed": 795,
+      "skipped": 1
+    },
+    "build": {
+      "command": "pnpm build",
+      "status": "PASS",
+      "warnings": [
+        "Next/Turbopack NFT trace warnings for dynamic desktop route/config imports"
+      ]
+    },
+    "scriptSyntax": {
+      "buildWindowsPortable": "PASS",
+      "verifyWindowsPortable": "PASS",
+      "smokeWindowsPortable": "PASS"
+    },
+    "portableBuild": {
+      "command": "pnpm run build:portable:windows",
+      "status": "PASS"
+    },
+    "portableVerify": {
+      "command": "pnpm run verify:portable:windows",
+      "status": "PASS",
+      "checks": 98
+    },
+    "portableSmoke": {
+      "command": "pnpm run smoke:portable:windows",
+      "status": "PASS",
+      "structuralChecks": {
+        "passed": 42,
+        "failed": 0
+      },
+      "nativeWindowsExecution": "SKIPPED_IN_WSL"
+    },
+    "playwrightLogoSmoke": {
+      "command": "PLAYWRIGHT_BASE_URL=http://127.0.0.1:3100 PLAYWRIGHT_SKIP_WEB_SERVER=1 pnpm test:e2e",
+      "status": "PASS"
+    }
+  },
+  "portable": {
+    "generated": true,
+    "path": "dist/windows/Anclora-FileStudio-Windows-x64-Core.zip",
+    "size": "232M",
+    "sha256": "e1b958d0b5c7724fbe16f11f1fca36a2d2ef46f5829257ed5d57b7658b1888fe"
+  },
+  "commits": [
+    {
+      "sha": "f4bcccd",
+      "message": "fix: formalize metadata API contract"
+    },
+    {
+      "sha": "85515ba",
+      "message": "test: harden canonical branding verification"
+    },
+    {
+      "sha": "7945a5c",
+      "message": "fix: formalize extensionless input handling"
+    }
+  ]
+}
