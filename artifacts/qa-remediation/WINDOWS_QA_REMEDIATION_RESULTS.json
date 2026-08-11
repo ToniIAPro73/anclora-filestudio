@@ -1,0 +1,145 @@
+{
+  "date": "2026-08-11",
+  "status": "REMEDIATION: PASS WITH MINOR ISSUES",
+  "repository": "/home/toni/workspace/anclora/anclora-filestudio",
+  "candidate": {
+    "path": "dist/windows/Anclora-FileStudio-Windows-x64-Core.zip",
+    "sha256": "f160775ea3b96909ba572150507649cdd8658a02792034f05ba907dc5368a82b",
+    "size": "232M",
+    "manifestVersion": "0.2.0",
+    "manifestBuildId": "win-x64-2026-08-11",
+    "versionTxtFirstLine": "Anclora FileStudio 0.2.0"
+  },
+  "defects": {
+    "DEF-002": {
+      "status": "fixed",
+      "rootCause": "Health endpoint used stale hardcoded fallback metadata while portable manifest and VERSION.txt were generated from packaging metadata.",
+      "solution": "Health reads ANCLORA_FILESTUDIO_VERSION; Windows launcher reads manifest.json and exports ANCLORA_FILESTUDIO_VERSION and ANCLORA_FILESTUDIO_BUILD_ID.",
+      "tests": [
+        "manifest.json inspected",
+        "VERSION.txt inspected",
+        "launcher metadata exports inspected",
+        "pnpm build"
+      ],
+      "result": "manifest, VERSION.txt and runtime health inputs are coherent"
+    },
+    "DEF-003": {
+      "status": "fixed",
+      "rootCause": "Image attributes were static stubs with width and height set to 0.",
+      "solution": "file-detector dynamically loads Sharp server-side and populates real image metadata.",
+      "tests": [
+        "PNG known dimensions",
+        "JPEG known dimensions",
+        "WebP known dimensions",
+        "corrupt PNG validation"
+      ],
+      "result": "descriptor returns real image dimensions and reliable metadata"
+    },
+    "DEF-004": {
+      "status": "fixed",
+      "rootCause": "QPDF read operation from options only, so rotate jobs without options.operation defaulted to linearize and completed without rotation.",
+      "solution": "QPDF normalizes operation from plan.operation, applies explicit page range rotation, and validates resulting rotation metadata.",
+      "tests": [
+        "QPDF rotate 90",
+        "QPDF rotate 180",
+        "QPDF rotate 270",
+        "pdf-lib inspection of output rotation"
+      ],
+      "result": "rotated PDFs show changed page rotation and validation checks the change"
+    },
+    "DEF-005": {
+      "status": "fixed",
+      "rootCause": "Next standalone source maps, trace metadata and server config carried absolute build paths.",
+      "solution": "Packaging removes build-only metadata, sanitizes server.js metadata, and verify/smoke fail on developer workspace paths.",
+      "tests": [
+        "packaging staging path guard",
+        "verify:portable:windows developer path check",
+        "smoke:portable:windows developer path check",
+        "manual staging text scan"
+      ],
+      "result": "no developer workspace paths found in staging or verified portable text files"
+    },
+    "DEF-006": {
+      "status": "fixed",
+      "rootCause": "Output filename builder appended target extension to the full input title.",
+      "solution": "Centralized output filename helper removes only the final input extension before appending target format.",
+      "tests": [
+        "foto.png -> foto.webp",
+        "documento.docx -> documento.pdf",
+        "libro.epub -> libro.mobi",
+        "informe.final.docx -> informe.final.pdf",
+        "spaces, Unicode and extensionless names"
+      ],
+      "result": "converted output filenames no longer get double extensions"
+    }
+  },
+  "commits": [
+    {
+      "sha": "48fa4b6",
+      "message": "fix: align portable runtime version metadata"
+    },
+    {
+      "sha": "b39e25d",
+      "message": "fix: populate real image dimensions during analysis"
+    },
+    {
+      "sha": "7fcc520",
+      "message": "fix: apply PDF rotation correctly"
+    },
+    {
+      "sha": "a8ff753",
+      "message": "fix: normalize converted output filenames"
+    },
+    {
+      "sha": "61a08de",
+      "message": "fix: remove developer paths from portable packaging"
+    }
+  ],
+  "validation": [
+    {
+      "command": "pnpm typecheck",
+      "result": "pass"
+    },
+    {
+      "command": "pnpm test",
+      "result": "pass",
+      "details": "59 passed / 1 skipped test files; 779 passed / 1 skipped tests"
+    },
+    {
+      "command": "pnpm build",
+      "result": "pass"
+    },
+    {
+      "command": "bash -n scripts/build-windows-portable.sh scripts/verify-windows-portable-v2.sh scripts/smoke-windows-portable.sh",
+      "result": "pass"
+    },
+    {
+      "command": "pnpm vitest run tests/unit/file-detector-markdown-yaml.test.ts tests/unit/qpdf-engine.test.ts tests/unit/universal-job-processor.test.ts",
+      "result": "pass",
+      "details": "60 passed"
+    },
+    {
+      "command": "pnpm run build:portable:windows",
+      "result": "pass"
+    },
+    {
+      "command": "pnpm run verify:portable:windows",
+      "result": "pass",
+      "details": "94 checks"
+    },
+    {
+      "command": "pnpm run smoke:portable:windows",
+      "result": "pass",
+      "details": "39 structural checks; native Windows smoke skipped because powershell.exe is unavailable"
+    },
+    {
+      "command": "pnpm run test:acceptance:fixtures",
+      "result": "pass",
+      "details": "62 fixtures generated; python-pptx optional fixture skipped because module pptx is unavailable"
+    }
+  ],
+  "pendingIssues": [
+    "Native Windows smoke/acceptance was not executed in this Linux/WSL environment because neither powershell.exe nor pwsh is available.",
+    "Existing lint warnings remain for img usage in src/components/inspector/compare-inspector-modal.tsx."
+  ]
+}
