@@ -119,6 +119,7 @@ REQUIRED_FILES=(
   "SBOM.cdx.json"
   "manifest.json"
   "app/server.js"
+  "app/.next/required-server-files.json"
   "internal/start-anclora-filestudio.ps1"
   "internal/stop-anclora-filestudio.ps1"
   "internal/update-ytdlp.ps1"
@@ -231,6 +232,53 @@ else
   fail "  manifest.json no encontrado"
 fi
 
+# ── 8b. required-server-files.json válido ────────────────────────────────────
+info "Verificando required-server-files.json..."
+REQUIRED_SERVER_FILES="$EXTRACTED/app/.next/required-server-files.json"
+if [[ -f "$REQUIRED_SERVER_FILES" ]]; then
+  if python3 -c "import json; json.load(open('$REQUIRED_SERVER_FILES', encoding='utf-8'))" 2>/dev/null; then
+    ok "  required-server-files.json es JSON válido"
+    PASS=$((PASS+1))
+  else
+    fail "  required-server-files.json no es JSON válido"
+  fi
+
+  REQUIRED_SERVER_FILES_CHECK="$(python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF' 2>&1
+import json
+import pathlib
+import sys
+
+metadata_path = pathlib.Path(sys.argv[1])
+repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
+text = metadata_path.read_text(encoding="utf-8")
+data = json.loads(text)
+
+if repo_root in text:
+    raise SystemExit("contains repository root")
+
+for field in ("version", "config", "files"):
+    if field not in data:
+        raise SystemExit(f"missing field: {field}")
+
+for value in (data.get("appDir"), data.get("config", {}).get("outputFileTracingRoot"), data.get("config", {}).get("turbopack", {}).get("root")):
+    if isinstance(value, str) and value.startswith("/"):
+        raise SystemExit(f"absolute workspace-style metadata field: {value}")
+
+files = data.get("files")
+if not isinstance(files, list) or ".next/routes-manifest.json" not in files:
+    raise SystemExit("runtime files list is missing required Next.js manifests")
+PYEOF
+)"
+  if [[ -z "$REQUIRED_SERVER_FILES_CHECK" ]]; then
+    ok "  required-server-files.json conserva metadata runtime sin rutas del workspace"
+    PASS=$((PASS+1))
+  else
+    fail "  required-server-files.json inválido: $REQUIRED_SERVER_FILES_CHECK"
+  fi
+else
+  fail "  required-server-files.json no encontrado"
+fi
+
 # ── 9. SBOM.cdx.json válido ──────────────────────────────────────────────────
 info "Verificando SBOM.cdx.json..."
 if [[ -f "$EXTRACTED/SBOM.cdx.json" ]]; then
@@ -322,6 +370,15 @@ REQUIRED_ENV_VARS=(
   "ANCLORA_FILESTUDIO_TEMP_DIR"
 )
 if [[ -f "$START_PS1" ]]; then
+  if grep -q '\$ManifestPath[[:space:]]*=[[:space:]]*Join-Path[[:space:]]*\$Root' "$START_PS1" 2>/dev/null; then
+    fail "  start-anclora-filestudio.ps1 usa Root para manifest.json"
+  elif grep -q "\$ManifestPath[[:space:]]*=[[:space:]]*Join-Path[[:space:]]*\$BaseDir[[:space:]]*'manifest.json'" "$START_PS1" 2>/dev/null; then
+    ok "  start-anclora-filestudio.ps1 usa BaseDir para manifest.json"
+    PASS=$((PASS+1))
+  else
+    fail "  start-anclora-filestudio.ps1 no muestra contrato BaseDir para manifest.json"
+  fi
+
   for var in "${REQUIRED_ENV_VARS[@]}"; do
     if grep -q "$var" "$START_PS1" 2>/dev/null; then
       ok "  $var"

@@ -217,7 +217,7 @@ $env:HOSTNAME                      = '127.0.0.1'
 $env:PORT                          = "$selectedPort"
 $env:ANCLORA_FILESTUDIO_PLATFORM   = 'windows'
 
-$ManifestPath = Join-Path $Root 'manifest.json'
+$ManifestPath = Join-Path $BaseDir 'manifest.json'
 if (Test-Path $ManifestPath) {
     try {
         $Manifest = Get-Content -Raw $ManifestPath | ConvertFrom-Json

@@ -73,6 +73,7 @@ if [[ -n "$SEVENZIP" ]]; then
     "internal/stop-anclora-filestudio.ps1"
     "internal/tool-resolution.ps1"
     "app/server.js"
+    "app/.next/required-server-files.json"
     "app/.next/static"
     "app/node_modules/better-sqlite3/build/Release/better_sqlite3.node"
     "app/node_modules/@img/sharp-win32-x64/lib/sharp-win32-x64-0.35.1.node"
@@ -130,6 +131,34 @@ if [[ -n "$SEVENZIP" ]]; then
     FAIL=$((FAIL+1))
   fi
 
+  REQUIRED_SERVER_FILES="$PKG/app/.next/required-server-files.json"
+  REQUIRED_SERVER_FILES_CHECK="$(python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF' 2>&1
+import json
+import pathlib
+import sys
+
+metadata_path = pathlib.Path(sys.argv[1])
+repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
+text = metadata_path.read_text(encoding="utf-8")
+data = json.loads(text)
+if repo_root in text:
+    raise SystemExit("contains repository root")
+for field in ("version", "config", "files"):
+    if field not in data:
+        raise SystemExit(f"missing field: {field}")
+files = data.get("files")
+if not isinstance(files, list) or ".next/routes-manifest.json" not in files:
+    raise SystemExit("missing routes-manifest runtime entry")
+PYEOF
+)"
+  if [[ -z "$REQUIRED_SERVER_FILES_CHECK" ]]; then
+    echo "[PASS] required-server-files.json valid and portable"
+    PASS=$((PASS+1))
+  else
+    echo "[FAIL] required-server-files.json invalid: $REQUIRED_SERVER_FILES_CHECK"
+    FAIL=$((FAIL+1))
+  fi
+
   # no Linux binaries
   LINUX_BINS="$(find "$PKG/app" \( -name "*.so" -o -name "*.dylib" \) 2>/dev/null || true)"
   if [[ -n "$LINUX_BINS" ]]; then
@@ -176,6 +205,17 @@ if [[ -n "$SEVENZIP" ]]; then
     PASS=$((PASS+1))
   else
     echo "[FAIL] start launcher missing -SkipBrowser"
+    FAIL=$((FAIL+1))
+  fi
+
+  if grep -q '\$ManifestPath[[:space:]]*=[[:space:]]*Join-Path[[:space:]]*\$Root' "$START_PS1"; then
+    echo '[FAIL] start launcher uses $Root for manifest.json'
+    FAIL=$((FAIL+1))
+  elif grep -q "\$ManifestPath[[:space:]]*=[[:space:]]*Join-Path[[:space:]]*\$BaseDir[[:space:]]*'manifest.json'" "$START_PS1"; then
+    echo "[PASS] start launcher uses BaseDir for manifest.json"
+    PASS=$((PASS+1))
+  else
+    echo "[FAIL] start launcher missing BaseDir manifest.json contract"
     FAIL=$((FAIL+1))
   fi
 

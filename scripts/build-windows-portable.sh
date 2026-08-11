@@ -227,10 +227,41 @@ find "$APP_DIR" \
   \( -name "*.map" \
   -o -name "*.nft.json" \
   -o -name "trace" \
-  -o -name "turbopack-trace.json" \
-  -o -name "required-server-files.json" \) \
+  -o -name "turbopack-trace.json" \) \
   -type f -delete 2>/dev/null || true
 ok "Build-only path metadata removed"
+
+REQUIRED_SERVER_FILES="$APP_DIR/.next/required-server-files.json"
+[[ -f "$REQUIRED_SERVER_FILES" ]] || die "Next.js runtime metadata missing: app/.next/required-server-files.json"
+python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF'
+import json
+import pathlib
+import sys
+
+metadata_path = pathlib.Path(sys.argv[1])
+repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
+
+with metadata_path.open("r", encoding="utf-8") as fh:
+    data = json.load(fh)
+
+config = data.get("config")
+if isinstance(config, dict):
+    if config.get("outputFileTracingRoot") == repo_root:
+        config["outputFileTracingRoot"] = "."
+    turbopack = config.get("turbopack")
+    if isinstance(turbopack, dict) and turbopack.get("root") == repo_root:
+        turbopack["root"] = "."
+
+if data.get("appDir") == repo_root:
+    data["appDir"] = "."
+
+encoded = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+if repo_root in encoded:
+    raise SystemExit("required-server-files.json still contains the build workspace path")
+
+metadata_path.write_text(encoded, encoding="utf-8")
+PYEOF
+ok "Next.js runtime metadata preserved and sanitized"
 
 if [[ -f "$APP_DIR/server.js" ]]; then
   python3 - "$APP_DIR/server.js" "$REPO_ROOT" << 'PYEOF'
@@ -548,7 +579,7 @@ if [[ ! -f "$STAGING_DIR/INICIAR_ANCLORA_FILESTUDIO.bat" ]]; then
 cat > "$STAGING_DIR/INICIAR_ANCLORA_FILESTUDIO.bat" << 'BATEOF'
 @echo off
 cd /d "%~dp0"
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "internal\start-anclora-filestudio.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "internal\start-anclora-filestudio.ps1" -BaseDir "%CD%"
 pause
 BATEOF
 fi
@@ -569,8 +600,16 @@ if [[ ! -f "$INTERNAL_DIR/start-anclora-filestudio.ps1" ]]; then
   info "Generating start-anclora-filestudio.ps1..."
   cat > "$INTERNAL_DIR/start-anclora-filestudio.ps1" << 'PS1EOF'
 # Anclora FileStudio — Windows launcher
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$BaseDir,
+
+    [switch]$SkipBrowser
+)
+
 $ErrorActionPreference = "Stop"
-$Root = Split-Path -Parent $PSScriptRoot
+$Root = $BaseDir
 $NodeExe = Join-Path $Root "runtime\node.exe"
 $AppDir = Join-Path $Root "app"
 $ServerJs = Join-Path $AppDir "server.js"
@@ -594,7 +633,7 @@ $env:ANCLORA_FILESTUDIO_TOOLS_DIR = Join-Path $Root "tools"
 
 # Load release metadata from the packaged manifest so runtime health
 # reports the same version/build identity as the distributed artifact.
-$ManifestPath = Join-Path $Root "manifest.json"
+$ManifestPath = Join-Path $BaseDir "manifest.json"
 if (Test-Path $ManifestPath) {
     try {
         $Manifest = Get-Content -Raw $ManifestPath | ConvertFrom-Json
@@ -820,6 +859,31 @@ if grep -q "0\.0\.0\.0" "$INTERNAL_DIR/start-anclora-filestudio.ps1" 2>/dev/null
   die "Launcher binds to 0.0.0.0 (INSECURE)"
 fi
 ok "Launcher binds to 127.0.0.1 only"
+
+REQUIRED_SERVER_FILES="$STAGING_DIR/app/.next/required-server-files.json"
+if [[ ! -f "$REQUIRED_SERVER_FILES" ]]; then
+  die "app/.next/required-server-files.json missing from staging"
+fi
+python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF'
+import json
+import pathlib
+import sys
+
+metadata_path = pathlib.Path(sys.argv[1])
+repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
+data = json.loads(metadata_path.read_text(encoding="utf-8"))
+if repo_root in json.dumps(data, ensure_ascii=False):
+    raise SystemExit("required-server-files.json contains the build workspace path")
+for field in ("version", "config", "files"):
+    if field not in data:
+        raise SystemExit(f"required-server-files.json missing field: {field}")
+PYEOF
+ok "required-server-files.json present, valid, and portable"
+
+if grep -q '\$ManifestPath[[:space:]]*=[[:space:]]*Join-Path[[:space:]]*\$Root' "$INTERNAL_DIR/start-anclora-filestudio.ps1" 2>/dev/null; then
+  die "Launcher reads manifest.json through undefined or non-canonical Root"
+fi
+ok "Launcher reads manifest.json through BaseDir"
 
 # No developer workspace paths in distributable text files.
 DEV_PATH_REGEX='(/home/[^[:space:]"'"'"'<>]*/[^[:space:]"'"'"'<>]*/anclora/|/workspace/anclora/|/home/toni/)'
