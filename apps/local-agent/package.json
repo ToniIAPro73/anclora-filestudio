@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@anclora/filestudio-core": "workspace:*",
-    "sharp": "^0.35.1",
+    "sharp": "0.35.1",
     "yaml": "^2.9.0",
     "zod": "^4.4.3",
     "ulid": "^2.3.0"
