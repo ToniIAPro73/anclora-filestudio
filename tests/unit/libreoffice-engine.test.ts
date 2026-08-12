@@ -128,9 +128,12 @@ describe("LibreOfficeEngine — presentation capabilities", () => {
     expect(fmts).not.toContain("odp");
   });
 
-  it("ODP input is not advertised because it is not reliable cross-platform", () => {
+  it("ODP input offers PDF and PPTX (Tier 1 quick wins)", () => {
     const caps = engine.getCapabilities(makeDescriptor("odp", "presentation"), AVAILABLE_PROBE);
-    expect(caps).toEqual([]);
+    const fmts = caps.map((c) => c.outputFormat);
+    expect(fmts).toContain("pdf");
+    expect(fmts).toContain("pptx");
+    expect(fmts).not.toContain("odp");
   });
 });
 

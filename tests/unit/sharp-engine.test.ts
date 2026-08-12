@@ -66,15 +66,17 @@ describe("SharpEngine — capabilities", () => {
     expect(engine.getCapabilities(desc, AVAILABLE_PROBE)).toHaveLength(0);
   });
 
-  it("returns 6 output formats for JPEG input", () => {
+  it("returns 6 image outputs plus PDF for JPEG input", () => {
     const caps = engine.getCapabilities(makeImageDescriptor("jpeg"), AVAILABLE_PROBE);
-    expect(caps.length).toBe(6);
+    expect(caps.length).toBe(7);
+    expect(caps.map((c) => c.outputFormat)).toContain("pdf");
   });
 
-  it("returns 6 output formats for PNG input (including self)", () => {
+  it("returns 6 image outputs plus PDF for PNG input (including self)", () => {
     const caps = engine.getCapabilities(makeImageDescriptor("png"), AVAILABLE_PROBE);
-    expect(caps.length).toBe(6);
+    expect(caps.length).toBe(7);
     expect(caps.map((c) => c.outputFormat)).toContain("png");
+    expect(caps.map((c) => c.outputFormat)).toContain("pdf");
   });
 
   it("marks WebP as recommended", () => {

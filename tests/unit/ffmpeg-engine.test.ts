@@ -109,14 +109,14 @@ describe("FFmpegEngine — audio capabilities", () => {
   });
 
   it("returns no capabilities for unknown audio format", () => {
-    const desc = makeAudioDescriptor("aac");
+    const desc = makeAudioDescriptor("opus");
     expect(engine.getCapabilities(desc, AVAILABLE_PROBE)).toHaveLength(0);
   });
 
   it("returns audio conversion capabilities for MP3 input", () => {
     const caps = engine.getCapabilities(makeAudioDescriptor("mp3"), AVAILABLE_PROBE);
     const audioConversions = caps.filter((c) => c.operation === "transcode-audio");
-    expect(audioConversions.length).toBe(5); // mp3, m4a, wav, flac, ogg
+    expect(audioConversions.length).toBe(6); // mp3, m4a, wav, flac, ogg, aac
   });
 
   it("includes normalize-audio capability for audio input", () => {
