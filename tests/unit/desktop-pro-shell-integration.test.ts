@@ -69,19 +69,21 @@ describe('Desktop PRO shell — 1440p and 2160p resolution limits', () => {
     expect(sel.profile).toBe('source-max');
   });
 
-  it('source-max + 1440 → yt-dlp selector contains height<=1440 and no [ext=mp4]', () => {
+  it('source-max + 1440 → yt-dlp selector contains exact height=1440 and no [ext=mp4]', () => {
     const sel = buildQualityBody('source-max', '1440');
     const { formatArg, mergeFormat, willRecode } = buildYtdlpFormatSelector(sel);
-    expect(formatArg).toContain('height<=1440');
+    expect(formatArg).toContain('height=1440');
+    expect(formatArg).not.toContain('height<=');
     expect(formatArg).not.toContain('[ext=mp4]');
     expect(mergeFormat).toBe('mkv');
     expect(willRecode).toBe(false);
   });
 
-  it('source-max + 2160 → yt-dlp selector contains height<=2160 and no [ext=mp4]', () => {
+  it('source-max + 2160 → yt-dlp selector contains exact height=2160 and no [ext=mp4]', () => {
     const sel = buildQualityBody('source-max', '2160');
     const { formatArg, mergeFormat } = buildYtdlpFormatSelector(sel);
-    expect(formatArg).toContain('height<=2160');
+    expect(formatArg).toContain('height=2160');
+    expect(formatArg).not.toContain('height<=');
     expect(formatArg).not.toContain('[ext=mp4]');
     expect(mergeFormat).toBe('mkv');
   });

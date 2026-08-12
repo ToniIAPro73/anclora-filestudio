@@ -46,14 +46,14 @@ describe('buildYtdlpArgs — source-max profile', () => {
     expect(hasExtMp4).toBe(false);
   });
 
-  it('source-max + 2160 → result contains height<=2160 and does NOT contain [ext=mp4] before bestaudio', () => {
+  it('source-max + 2160 → result contains exact height=2160 and does NOT contain [ext=mp4] before bestaudio', () => {
     const args = buildYtdlpArgs({
       url: DUMMY_URL,
       format: 'mp4',
       quality: { profile: 'source-max', resolutionLimit: 2160, fallbackPolicy: 'reject' },
       outputPath: DUMMY_OUTPUT,
     });
-    const formatArg = args.find((a) => a.includes('height<=2160'));
+    const formatArg = args.find((a) => a.includes('height=2160'));
     expect(formatArg).toBeDefined();
     // Should not constrain to mp4 extension on source-max
     expect(formatArg).not.toContain('[ext=mp4]');
@@ -65,15 +65,16 @@ describe('buildYtdlpArgs — source-max profile', () => {
 // ---------------------------------------------------------------------------
 
 describe('buildYtdlpArgs — mp4-compatible profile', () => {
-  it('mp4-compatible + 1080 → result contains bestvideo[height<=1080][ext=mp4]', () => {
+  it('mp4-compatible + 1080 → result contains bestvideo*[height=1080][ext=mp4]', () => {
     const args = buildYtdlpArgs({
       url: DUMMY_URL,
       format: 'mp4',
       quality: { profile: 'mp4-compatible', resolutionLimit: 1080, fallbackPolicy: 'reject' },
       outputPath: DUMMY_OUTPUT,
     });
-    const formatArg = args.find((a) => a.includes('bestvideo[height<=1080][ext=mp4]'));
+    const formatArg = args.find((a) => a.includes('bestvideo*[height=1080][ext=mp4]'));
     expect(formatArg).toBeDefined();
+    expect(formatArg).not.toContain('height<=');
   });
 });
 
@@ -91,6 +92,19 @@ describe('buildYtdlpArgs — audio format (mp3)', () => {
     });
     expect(args).toContain('--extract-audio');
     expect(args).not.toContain('--no-check-certificates');
+  });
+
+  it("format mp3 + quality best → uses highest encoder quality, not low VBR 7", () => {
+    const args = buildYtdlpArgs({
+      url: DUMMY_URL,
+      format: "mp3",
+      quality: "best",
+      outputPath: "/tmp/output.mp3",
+    });
+    const qualityIndex = args.indexOf("--audio-quality");
+    expect(qualityIndex).toBeGreaterThanOrEqual(0);
+    expect(args[qualityIndex + 1]).toBe("0");
+    expect(args).not.toEqual(expect.arrayContaining(["--audio-quality", "7"]));
   });
 });
 

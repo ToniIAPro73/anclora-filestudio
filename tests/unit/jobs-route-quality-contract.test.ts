@@ -217,4 +217,29 @@ describe("POST /api/jobs — quality contract", () => {
       expect(result.data.fallbackPolicy).toBe("reject");
     }
   });
+
+  it("8. generic HLS URL is accepted without YouTube normalization", async () => {
+    const { normalizeYoutubeUrl } = await import("@/lib/youtube/normalize-url");
+    vi.mocked(normalizeYoutubeUrl).mockReturnValueOnce(null);
+
+    const { POST } = await import(
+      "@/server/desktop-routes/jobs-route"
+    );
+    const res = await POST(
+      makeRequest({
+        url: "https://example.com/master.m3u8",
+        format: "mp4",
+        qualitySelection: {
+          profile: "source-max",
+          resolutionLimit: "max",
+          fallbackPolicy: "reject",
+        },
+        rightsConfirmed: true,
+      })
+    );
+    expect(res.status).toBe(200);
+
+    const { jobManager } = await import("@/lib/jobs/job-manager");
+    expect(vi.mocked(jobManager.createJob).mock.calls.at(-1)?.[0]).toBe("https://example.com/master.m3u8");
+  });
 });

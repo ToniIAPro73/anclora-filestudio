@@ -24,13 +24,14 @@ describe('buildYtdlpFormatSelector — source-max profile', () => {
     expect(result.willRecode).toBe(false);
   });
 
-  it('source-max + 2160 → formatArg contains height<=2160 but NOT [ext=mp4], mergeFormat is mkv', () => {
+  it('source-max + 2160 → formatArg contains exact height=2160 but NOT [ext=mp4], mergeFormat is mkv', () => {
     const result = buildYtdlpFormatSelector({
       profile: 'source-max',
       resolutionLimit: 2160,
       fallbackPolicy: 'reject',
     });
-    expect(result.formatArg).toContain('height<=2160');
+    expect(result.formatArg).toContain('height=2160');
+    expect(result.formatArg).not.toContain('height<=');
     expect(result.formatArg).not.toContain('[ext=mp4]');
     expect(result.mergeFormat).toBe('mkv');
   });
@@ -42,8 +43,31 @@ describe('buildYtdlpFormatSelector — source-max profile', () => {
       fallbackPolicy: 'reject',
     });
     expect(result.formatArg).not.toContain('[ext=mp4]');
-    expect(result.formatArg).toContain('height<=1080');
+    expect(result.formatArg).toContain('height=1080');
+    expect(result.formatArg).not.toContain('height<=');
     expect(result.mergeFormat).toBe('mkv');
+  });
+});
+
+describe('buildYtdlpFormatSelector — no silent downgrade', () => {
+  it('source-max + max uses video-containing source fallback, not lower progressive best fallback', () => {
+    const result = buildYtdlpFormatSelector({
+      profile: 'source-max',
+      resolutionLimit: 'max',
+      fallbackPolicy: 'reject',
+    });
+    expect(result.formatArg).toBe('bestvideo*+bestaudio/bestvideo*');
+    expect(result.formatArg.split('/')).not.toContain('best');
+  });
+
+  it('mp4-compatible + 720 never asks for height<=720', () => {
+    const result = buildYtdlpFormatSelector({
+      profile: 'mp4-compatible',
+      resolutionLimit: 720,
+      fallbackPolicy: 'reject',
+    });
+    expect(result.formatArg).toContain('height=720');
+    expect(result.formatArg).not.toContain('height<=');
   });
 });
 

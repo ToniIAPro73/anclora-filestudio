@@ -1,0 +1,143 @@
+{
+  "sourceKind": "dash",
+  "sourceType": "dash",
+  "analysisStatus": "resolved",
+  "videoVariantCount": 10,
+  "audioVariantCount": 1,
+  "heights": [
+    2160,
+    1080,
+    720,
+    576,
+    432,
+    360,
+    270,
+    180
+  ],
+  "bestVideo": {
+    "formatId": "bbb_30fps_3840x2160_12000k",
+    "width": 3840,
+    "height": 2160,
+    "protocol": "http_dash_segments",
+    "ext": "mp4",
+    "vcodec": "avc1.640033",
+    "acodec": null,
+    "isVideoOnly": true,
+    "tbr": 14931.538
+  },
+  "bestAudio": {
+    "formatId": "bbb_a64k",
+    "protocol": "http_dash_segments",
+    "ext": "m4a",
+    "acodec": "mp4a.40.5",
+    "abr": 67.071,
+    "sampleRate": 48000,
+    "channels": null,
+    "fileSizeBytes": null,
+    "hasAudio": true
+  },
+  "muxRequired": true,
+  "videoSample": [
+    {
+      "formatId": "bbb_30fps_320x180_200k",
+      "width": 320,
+      "height": 180,
+      "protocol": "http_dash_segments",
+      "ext": "mp4",
+      "vcodec": "avc1.64000d",
+      "acodec": null,
+      "isVideoOnly": true,
+      "tbr": 254.32
+    },
+    {
+      "formatId": "bbb_30fps_320x180_400k",
+      "width": 320,
+      "height": 180,
+      "protocol": "http_dash_segments",
+      "ext": "mp4",
+      "vcodec": "avc1.64000d",
+      "acodec": null,
+      "isVideoOnly": true,
+      "tbr": 507.246
+    },
+    {
+      "formatId": "bbb_30fps_480x270_600k",
+      "width": 480,
+      "height": 270,
+      "protocol": "http_dash_segments",
+      "ext": "mp4",
+      "vcodec": "avc1.640015",
+      "acodec": null,
+      "isVideoOnly": true,
+      "tbr": 759.798
+    },
+    {
+      "formatId": "bbb_30fps_640x360_800k",
+      "width": 640,
+      "height": 360,
+      "protocol": "http_dash_segments",
+      "ext": "mp4",
+      "vcodec": "avc1.64001e",
+      "acodec": null,
+      "isVideoOnly": true,
+      "tbr": 1013.31
+    },
+    {
+      "formatId": "bbb_30fps_640x360_1000k",
+      "width": 640,
+      "height": 360,
+      "protocol": "http_dash_segments",
+      "ext": "mp4",
+      "vcodec": "avc1.64001e",
+      "acodec": null,
+      "isVideoOnly": true,
+      "tbr": 1254.758
+    },
+    {
+      "formatId": "bbb_30fps_768x432_1500k",
+      "width": 768,
+      "height": 432,
+      "protocol": "http_dash_segments",
+      "ext": "mp4",
+      "vcodec": "avc1.64001e",
+      "acodec": null,
+      "isVideoOnly": true,
+      "tbr": 1883.7
+    },
+    {
+      "formatId": "bbb_30fps_1024x576_2500k",
+      "width": 1024,
+      "height": 576,
+      "protocol": "http_dash_segments",
+      "ext": "mp4",
+      "vcodec": "avc1.64001f",
+      "acodec": null,
+      "isVideoOnly": true,
+      "tbr": 3134.488
+    },
+    {
+      "formatId": "bbb_30fps_1280x720_4000k",
+      "width": 1280,
+      "height": 720,
+      "protocol": "http_dash_segments",
+      "ext": "mp4",
+      "vcodec": "avc1.64001f",
+      "acodec": null,
+      "isVideoOnly": true,
+      "tbr": 4952.892
+    }
+  ],
+  "audioSample": [
+    {
+      "formatId": "bbb_a64k",
+      "protocol": "http_dash_segments",
+      "ext": "m4a",
+      "acodec": "mp4a.40.5",
+      "abr": 67.071,
+      "sampleRate": 48000,
+      "channels": null,
+      "fileSizeBytes": null,
+      "hasAudio": true
+    }
+  ]
+}

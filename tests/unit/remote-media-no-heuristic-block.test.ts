@@ -65,6 +65,104 @@ const VALID_META = {
   ],
 };
 
+const HLS_ABR_META = {
+  ...VALID_META,
+  videoId: "playlist",
+  title: "Sintel HLS ABR",
+  availableHeights: [1080, 720, 480],
+  videoFormats: [
+    {
+      formatId: "669",
+      protocol: "m3u8_native",
+      width: 854,
+      height: 480,
+      fps: null,
+      ext: "mp4",
+      vcodec: "h264",
+      acodec: "aac",
+      isVideoOnly: false,
+      fileSizeBytes: null,
+      fileSizeApproxBytes: null,
+      tbr: 669,
+      abr: null,
+      vbr: null,
+    },
+    {
+      formatId: "1170",
+      protocol: "m3u8_native",
+      width: 1280,
+      height: 720,
+      fps: null,
+      ext: "mp4",
+      vcodec: "h264",
+      acodec: "aac",
+      isVideoOnly: false,
+      fileSizeBytes: null,
+      fileSizeApproxBytes: null,
+      tbr: 1170,
+      abr: null,
+      vbr: null,
+    },
+    {
+      formatId: "2249",
+      protocol: "m3u8_native",
+      width: 1920,
+      height: 1080,
+      fps: null,
+      ext: "mp4",
+      vcodec: "h264",
+      acodec: "aac",
+      isVideoOnly: false,
+      fileSizeBytes: null,
+      fileSizeApproxBytes: null,
+      tbr: 2249,
+      abr: null,
+      vbr: null,
+    },
+  ],
+};
+
+const DASH_SEPARATE_META = {
+  ...VALID_META,
+  videoId: "manifest",
+  title: "DASH Separate",
+  availableHeights: [1080, 360],
+  videoFormats: [
+    {
+      formatId: "combined-360",
+      protocol: "https",
+      width: 640,
+      height: 360,
+      fps: 30,
+      ext: "mp4",
+      vcodec: "avc1",
+      acodec: "mp4a.40.2",
+      isVideoOnly: false,
+      fileSizeBytes: null,
+      fileSizeApproxBytes: null,
+      tbr: 800,
+      abr: 128,
+      vbr: 672,
+    },
+    {
+      formatId: "video-1080",
+      protocol: "http_dash_segments",
+      width: 1920,
+      height: 1080,
+      fps: 30,
+      ext: "mp4",
+      vcodec: "avc1",
+      acodec: null,
+      isVideoOnly: true,
+      fileSizeBytes: null,
+      fileSizeApproxBytes: null,
+      tbr: 4500,
+      abr: null,
+      vbr: 4500,
+    },
+  ],
+};
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 async function mockYtdlpSuccess() {
@@ -137,6 +235,34 @@ describe("no heuristic pre-blocking: yt-dlp is always attempted", () => {
     expect(result.videoVariants.length).toBeGreaterThan(0);
   });
 
+  it("HLS ABR variants are preserved instead of returning an empty list", async () => {
+    await setKind("hls");
+    const { getVideoMetadata } = await import("../../src/lib/media/metadata");
+    vi.mocked(getVideoMetadata).mockResolvedValue(HLS_ABR_META);
+
+    const { analyzeRemoteMedia } = await import("../../src/lib/remote-media/remote-media-analyzer");
+    const result = await analyzeRemoteMedia("https://example.com/playlist.m3u8");
+
+    expect(getVideoMetadata).toHaveBeenCalledOnce();
+    expect(result.sourceKind).toBe("hls");
+    expect(result.videoVariants.map((v) => v.height)).toEqual([480, 720, 1080]);
+    expect(new Set(result.videoVariants.map((v) => v.protocol))).toContain("m3u8_native");
+  });
+
+  it("DASH video-only variants remain valid for later mux with best audio", async () => {
+    await setKind("dash");
+    const { getVideoMetadata } = await import("../../src/lib/media/metadata");
+    vi.mocked(getVideoMetadata).mockResolvedValue(DASH_SEPARATE_META);
+
+    const { analyzeRemoteMedia } = await import("../../src/lib/remote-media/remote-media-analyzer");
+    const result = await analyzeRemoteMedia("https://example.com/manifest.mpd");
+
+    expect(getVideoMetadata).toHaveBeenCalledOnce();
+    expect(result.sourceKind).toBe("dash");
+    expect(result.videoVariants.some((v) => v.height === 1080 && v.isVideoOnly)).toBe(true);
+    expect(result.videoVariants.some((v) => v.height === 360 && !v.isVideoOnly)).toBe(true);
+  });
+
   it("a URL classified as 'unsupported' still reaches yt-dlp", async () => {
     await setKind("unsupported-or-protected", {
       isPubliclyAccessible: false, // classifier pessimistic — but yt-dlp still tried
@@ -167,17 +293,19 @@ describe("no heuristic pre-blocking: yt-dlp is always attempted", () => {
     expect(result.videoVariants[0].ext).toBe("mp4");
   });
 
-  it("a public HLS URL is passed through without calling yt-dlp", async () => {
+  it("a public HLS URL invokes yt-dlp so adaptive variants are available", async () => {
     await setKind("hls");
+    const { getVideoMetadata } = await import("../../src/lib/media/metadata");
+    vi.mocked(getVideoMetadata).mockResolvedValue(HLS_ABR_META);
 
     const { analyzeRemoteMedia } = await import("../../src/lib/remote-media/remote-media-analyzer");
     const result = await analyzeRemoteMedia("https://stream.example.com/playlist.m3u8");
 
-    const { getVideoMetadata } = await import("../../src/lib/media/metadata");
-    expect(getVideoMetadata).not.toHaveBeenCalled();
+    expect(getVideoMetadata).toHaveBeenCalledOnce();
     expect(result.ssrfBlocked).toBe(false);
     expect(result.classifiedError).toBeUndefined();
     expect(result.drmDetected).toBe(false);
+    expect(result.videoVariants.map((v) => v.height)).toEqual([480, 720, 1080]);
   });
 
   it("SSRF blocks private network URL without calling yt-dlp", async () => {

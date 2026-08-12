@@ -1,0 +1,230 @@
+{
+  "date": "2026-08-12",
+  "scope": "UX v4 multimedia remediation plus prior Windows gate context",
+  "final": "FAIL",
+  "poppler": {
+    "windowsNative": "BLOCKED - Windows runtime unavailable in this environment",
+    "windowsBundledPdftoppm": "PASS - tools/poppler/Library/bin/pdftoppm.exe present in ZIP",
+    "windowsPopplerVersionLocked": "PASS - Poppler 26.02.0-0, sha256 993e4a94376ed712fafc7058d724ea0b943d118bbd2305cd9ed55174eb85cda5",
+    "windowsRuntimeAvailability": "BLOCKED - native execution not run",
+    "linuxNative": "PASS - pdftoppm 24.02.0 at /usr/bin/pdftoppm",
+    "pdfToPngLinuxReal": "PASS",
+    "pdfMultipageLinuxReal": "PASS",
+    "pathWithSpacesLinuxReal": "PASS",
+    "pdfToPngWindowsReal": "BLOCKED",
+    "pdfMultipageWindowsReal": "BLOCKED",
+    "pathWithSpacesWindowsReal": "BLOCKED",
+    "qpdfRasterizationBindings": 0,
+    "routingUnsafeIntermediate": "PASS"
+  },
+  "windowsPortable": {
+    "qaFolder": "artifacts/ux-v4/windows-real-qa-20260812T195355Z",
+    "zip": "dist/windows/Anclora-FileStudio-Windows-x64-Core.zip",
+    "zipSha256": "adb4b40a667e7d6493b0289e1ac7caef4ed9cd9303787dba93b2e50b3047d15d",
+    "build": "PASS",
+    "verify": "PASS - 98 checks",
+    "smoke": "STRUCTURAL PASS - 42/42; native Windows acceptance skipped because powershell.exe unavailable",
+    "launcher": "STRUCTURAL PASS",
+    "health": "BLOCKED - native runtime not started",
+    "rootHttp": "BLOCKED - native runtime not started",
+    "stopCleanup": "BLOCKED - native runtime not started",
+    "toolsBundled": "PASS"
+  },
+  "acquisition": {
+    "status": "PARTIAL PASS",
+    "docxToPdfLocalVisible": "PASS",
+    "docxToPdfVideoUrlHidden": "PASS",
+    "docxToPdfWebUrlHidden": "PASS - no generic web URL shown",
+    "pngToWebpLocalVisible": "PASS",
+    "pngToWebpVideoUrlHidden": "PASS",
+    "mp4VideoUrlVisible": "PASS",
+    "singleModeNoTabs": "PASS",
+    "googleDrive": "PASS - hidden",
+    "oneDrive": "PASS - hidden",
+    "directUrl": "NOT CERTIFIED - no separate direct-url mode implemented in tested UI",
+    "webUrl": "NOT CERTIFIED - no separate web-url mode implemented in tested UI"
+  },
+  "media": {
+    "status": "PASS",
+    "testSource": "https://docs.evostream.com/sample_content/assets/hls-sintel-abr3/playlist.m3u8",
+    "ytdlpVersionBefore": "2024.04.09 local PATH",
+    "ytdlpVersionAfter": "2024.04.09 local PATH; no toolchain lock change; Windows portable remains locked to 2026.06.09",
+    "hlsAnalysis": {
+      "status": "PASS",
+      "sourceKind": "hls",
+      "sourceType": "hls",
+      "videoVariantCount": 3,
+      "audioVariantCount": 0,
+      "resolutions": [
+        1080,
+        720,
+        480
+      ],
+      "bestVideo": {
+        "formatId": "2249",
+        "width": 1920,
+        "height": 1080,
+        "protocol": "m3u8_native"
+      }
+    },
+    "dashAnalysis": {
+      "status": "PASS",
+      "evostreamSeparateParsed": {
+        "videoVariantCount": 1,
+        "audioVariantCount": 1,
+        "muxRequired": true
+      },
+      "akamaiSeparateParsed": {
+        "videoVariantCount": 10,
+        "audioVariantCount": 1,
+        "resolutions": [
+          2160,
+          1080,
+          720,
+          576,
+          432,
+          360,
+          270,
+          180
+        ],
+        "muxRequired": true
+      }
+    },
+    "videoQualitySelect": "PASS - agent-browser UI showed Mejor disponible, 480p, 720p, 1080p from real HLS analysis",
+    "explicit720Execution": "PASS - ffprobe confirmed 1280x720 h264+aac",
+    "bestAvailableVideo": "PASS - ffprobe confirmed 1920x1080 h264+aac for HLS best",
+    "audioQuality": "PASS - best maps to MP3 VBR 0, not VBR 7; real output approximately 224 kbps",
+    "separateVideoAudioMux": "PASS - Akamai demuxed DASH selected 720p video-only + audio-only and ffprobe confirmed final video+audio MP4",
+    "noSilentLowQualityFallback": "PASS - selectors use exact height=N and no height<= fallback; best uses bestvideo*+bestaudio/bestvideo*",
+    "uiSmoke": {
+      "status": "PASS",
+      "browser": "agent-browser 0.34.0 global",
+      "origin": "http://localhost:3000",
+      "screenshots": [
+        "artifacts/ux-v4/media-remediation/ui-url-loaded.png",
+        "artifacts/ux-v4/media-remediation/ui-quality-selector.png",
+        "artifacts/ux-v4/media-remediation/ui-quality-720-selected.png",
+        "artifacts/ux-v4/media-remediation/ui-quality-best-selected.png"
+      ]
+    },
+    "evidence": [
+      "artifacts/ux-v4/media-remediation/hls-analysis.json",
+      "artifacts/ux-v4/media-remediation/dash-akamai-analysis.json",
+      "artifacts/ux-v4/media-remediation/hls-720.ffprobe.json",
+      "artifacts/ux-v4/media-remediation/hls-best.ffprobe.json",
+      "artifacts/ux-v4/media-remediation/dash-akamai-720-mux.ffprobe.json",
+      "artifacts/ux-v4/media-remediation/hls-audio-best.ffprobe.json"
+    ]
+  },
+  "multistep": {
+    "status": "BLOCKED/FAIL",
+    "effectiveVisibleRoutes": "NONE FOUND",
+    "rawGraphMultistepRoutes": "FOUND - mostly audio chains, but not surfaced as effective user routes",
+    "routeVisibleBeforeStart": "NOT CERTIFIED",
+    "progressStepXOfY": "NOT CERTIFIED",
+    "resultValid": "NOT CERTIFIED",
+    "cleanup": "NOT CERTIFIED",
+    "reason": "Current effective destination selection prefers direct routes; jobs endpoint recomputes best route, so no visible executable multistep E2E flow was available."
+  },
+  "quickConverter": {
+    "status": "PASS",
+    "sourceOnly": "PASS - DOCX filtered targets",
+    "targetOnly": "PASS - PDF filtered sources",
+    "sourceAndTarget": "PASS - DOCX to PDF navigated to workspace",
+    "bidirectionalFiltering": "PASS",
+    "invalidPair": "PASS - invalid pair not selectable via filtered lists",
+    "aliasSearch": "PASS by existing automated coverage"
+  },
+  "results": {
+    "singleResult": "PARTIAL PASS - automated coverage passed; manual browser E2E not run",
+    "multipleResults": "PARTIAL PASS - automated coverage passed; manual browser E2E not run",
+    "batchOptions": "PASS by automated coverage and component inspection",
+    "renameUx": "PASS by automated coverage and component inspection"
+  },
+  "favicon": {
+    "directAssets": "PASS",
+    "assets": {
+      "/favicon.ico": {
+        "status": 200,
+        "contentType": "image/x-icon",
+        "sha256": "7488c656bbfe0ccb9093121463d3ed5e7a7c6ac94938288c4698bf9e56f27a0b",
+        "visual": "ICO, 6 icons"
+      },
+      "/favicon-32.png": {
+        "status": 200,
+        "contentType": "image/png",
+        "sha256": "dae79a4eb5e87187d0fc4b68a92821bf5bdccc3047f29c374efde83bc9a346a2",
+        "dimensions": "32x32"
+      },
+      "/favicon-512.png": {
+        "status": 200,
+        "contentType": "image/png",
+        "sha256": "dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73",
+        "dimensions": "512x512"
+      },
+      "/icon.png": {
+        "status": 200,
+        "contentType": "image/png",
+        "sha256": "dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73",
+        "dimensions": "512x512"
+      },
+      "/apple-touch-icon.png": {
+        "status": 200,
+        "contentType": "image/png",
+        "sha256": "8886697996420e1072c906b5d29d6e356ea712457fecffe3f94cc078e7edf8b0",
+        "dimensions": "180x180"
+      }
+    },
+    "cacheBustingImplementation": "PASS - metadata uses content hash",
+    "cacheInvalidationRuntimeScenario": "BLOCKED - old build to new build same-origin Windows scenario not run",
+    "windows": "BLOCKED",
+    "incognito": "BLOCKED"
+  },
+  "validation": {
+    "typecheck": "PASS",
+    "lint": "PASS - 0 errors, 3 existing warnings",
+    "tests": "PASS - 895 passed, 1 skipped",
+    "build": "PASS - Turbopack NFT tracing warnings",
+    "targetedPopplerRouterFavicon": "PASS - 52 tests",
+    "targetedMediaQualityContracts": "PASS - 72 focused tests"
+  },
+  "blockers": [
+    "No native Windows runtime available for launcher, health, HTTP root, stop/cleanup, Poppler execution, favicon Windows or portable native smoke.",
+    "No visible effective multistep route available for E2E certification.",
+    "Favicon old-build/new-build cache invalidation scenario not run on Windows."
+  ],
+  "remainingRisks": [
+    "Windows structural packaging evidence is strong but not equivalent to native QA.",
+    "Linux PATH yt-dlp is 2024.04.09 while Windows candidate bundles 2026.06.09.",
+    "Manual result/batch browser E2E remains a QA gap.",
+    "Local PATH yt-dlp remains 2024.04.09; no toolchain lock update was made in this phase.",
+    "EvoStream bunny DASH mux still fails with local yt-dlp/ffmpeg, but Akamai demuxed DASH mux passes and no silent downgrade path remains."
+  ],
+  "commits": "NONE",
+  "push": "NONE",
+  "release": "NONE",
+  "versionChanged": false,
+  "portable": {
+    "windowsBuild": "NOT RUN - no toolchain changes in multimedia phase",
+    "windowsVerify": "NOT RUN - no toolchain changes in multimedia phase",
+    "linuxBuild": "NOT RUN - no toolchain changes in multimedia phase",
+    "linuxVerify": "NOT RUN - no toolchain changes in multimedia phase"
+  },
+  "multimediaRemediation": {
+    "status": "PASS",
+    "rootCause": [
+      "HLS/DASH analyzer returned empty variants for adaptive streams instead of using yt-dlp metadata.",
+      "Metadata parser discarded HLS variants when yt-dlp omitted vcodec/acodec fields.",
+      "DASH audio-only formats were not represented canonically.",
+      "Video selectors used height<= fallbacks that could silently downgrade selected quality.",
+      "Audio best mapped to MP3 --audio-quality 7."
+    ],
+    "fixes": [
+      "Adaptive HLS/DASH now goes through yt-dlp metadata analysis.",
+      "Parser preserves height-bearing HLS variants with implicit codecs.",
+      "Parser exposes audioFormats and analyzer exposes bestVideo, bestAudio, muxRequired and sourceType.",
+      "Selectors use bestvideo* and exact height=N semantics.",
+      "Audio quality UI and command builder distinguish best/high/standard/light; best MP3 maps to VBR 0."
+    ]
+  }
+}

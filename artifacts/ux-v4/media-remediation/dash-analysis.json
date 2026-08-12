@@ -1,0 +1,59 @@
+{
+  "sourceKind": "dash",
+  "sourceType": "dash",
+  "analysisStatus": "resolved",
+  "videoVariantCount": 1,
+  "audioVariantCount": 1,
+  "heights": [
+    240
+  ],
+  "bestVideo": {
+    "formatId": "bunnyVideo0",
+    "width": 424,
+    "height": 240,
+    "protocol": "http_dash_segments",
+    "ext": "mp4",
+    "vcodec": "avc1.42c01e",
+    "acodec": null,
+    "isVideoOnly": true,
+    "tbr": null
+  },
+  "bestAudio": {
+    "formatId": "bunnyAudio0",
+    "protocol": "http_dash_segments",
+    "ext": "m4a",
+    "acodec": "mp4a.40.2",
+    "abr": null,
+    "sampleRate": 48000,
+    "channels": null,
+    "fileSizeBytes": null,
+    "hasAudio": true
+  },
+  "muxRequired": true,
+  "videoSample": [
+    {
+      "formatId": "bunnyVideo0",
+      "width": 424,
+      "height": 240,
+      "protocol": "http_dash_segments",
+      "ext": "mp4",
+      "vcodec": "avc1.42c01e",
+      "acodec": null,
+      "isVideoOnly": true,
+      "tbr": null
+    }
+  ],
+  "audioSample": [
+    {
+      "formatId": "bunnyAudio0",
+      "protocol": "http_dash_segments",
+      "ext": "m4a",
+      "acodec": "mp4a.40.2",
+      "abr": null,
+      "sampleRate": 48000,
+      "channels": null,
+      "fileSizeBytes": null,
+      "hasAudio": true
+    }
+  ]
+}

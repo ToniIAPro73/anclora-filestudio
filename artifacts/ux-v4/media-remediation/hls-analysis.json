@@ -1,0 +1,59 @@
+{
+  "sourceKind": "hls",
+  "sourceType": "hls",
+  "analysisStatus": "resolved",
+  "videoVariantCount": 3,
+  "audioVariantCount": 0,
+  "heights": [
+    1080,
+    720,
+    480
+  ],
+  "bestVideo": {
+    "formatId": "2249",
+    "width": 1920,
+    "height": 1080,
+    "protocol": "m3u8_native",
+    "ext": "mp4",
+    "vcodec": null,
+    "acodec": null,
+    "isVideoOnly": false,
+    "tbr": 2249.468
+  },
+  "muxRequired": false,
+  "variants": [
+    {
+      "formatId": "669",
+      "width": 854,
+      "height": 480,
+      "protocol": "m3u8_native",
+      "ext": "mp4",
+      "vcodec": null,
+      "acodec": null,
+      "isVideoOnly": false,
+      "tbr": 669
+    },
+    {
+      "formatId": "1170",
+      "width": 1280,
+      "height": 720,
+      "protocol": "m3u8_native",
+      "ext": "mp4",
+      "vcodec": null,
+      "acodec": null,
+      "isVideoOnly": false,
+      "tbr": 1170.492
+    },
+    {
+      "formatId": "2249",
+      "width": 1920,
+      "height": 1080,
+      "protocol": "m3u8_native",
+      "ext": "mp4",
+      "vcodec": null,
+      "acodec": null,
+      "isVideoOnly": false,
+      "tbr": 2249.468
+    }
+  ]
+}

@@ -88,6 +88,71 @@ const VALID_METADATA_JSON = JSON.stringify({
   ],
 });
 
+const HLS_METADATA_WITH_IMPLICIT_CODECS_JSON = JSON.stringify({
+  id: "playlist",
+  title: "Sintel HLS ABR",
+  uploader: "EvoStream",
+  thumbnail: "https://example.com/thumb.jpg",
+  duration: 53,
+  formats: [
+    {
+      format_id: "669",
+      protocol: "m3u8_native",
+      height: 480,
+      width: 854,
+      ext: "mp4",
+      tbr: 669,
+    },
+    {
+      format_id: "1170",
+      protocol: "m3u8_native",
+      height: 720,
+      width: 1280,
+      ext: "mp4",
+      tbr: 1170.492,
+    },
+    {
+      format_id: "2249",
+      protocol: "m3u8_native",
+      height: 1080,
+      width: 1920,
+      ext: "mp4",
+      tbr: 2249.468,
+    },
+  ],
+});
+
+const DASH_SEPARATE_METADATA_JSON = JSON.stringify({
+  id: "manifest",
+  title: "DASH Separate",
+  uploader: "Akamai",
+  thumbnail: "https://example.com/thumb.jpg",
+  duration: 634,
+  formats: [
+    {
+      format_id: "bbb_30fps_1280x720_4000k",
+      protocol: "http_dash_segments",
+      vcodec: "avc1.64001f",
+      acodec: "none",
+      height: 720,
+      width: 1280,
+      ext: "mp4",
+      tbr: 4952.892,
+    },
+    {
+      format_id: "bbb_a64k",
+      protocol: "http_dash_segments",
+      vcodec: "none",
+      acodec: "mp4a.40.5",
+      ext: "m4a",
+      tbr: 67.071,
+      abr: 67.071,
+      asr: 48000,
+      audio_channels: 2,
+    },
+  ],
+});
+
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
 describe("getVideoMetadata — success path", () => {
@@ -179,6 +244,53 @@ describe("getVideoMetadata — success path", () => {
 
     await promise;
     expect(capturedOptions.shell).toBe(false);
+  });
+
+  it("preserves HLS variants when yt-dlp omits vcodec/acodec fields", async () => {
+    const spawnMock = vi.mocked(child_process.spawn);
+    const proc = makeFakeProcess();
+    spawnMock.mockReturnValue(proc as unknown as ReturnType<typeof child_process.spawn>);
+
+    const { getVideoMetadata } = await import("../../src/lib/media/metadata");
+    const promise = getVideoMetadata("https://example.com/playlist.m3u8");
+
+    proc.stdout.emit("data", HLS_METADATA_WITH_IMPLICIT_CODECS_JSON);
+    proc.emit("close", 0);
+
+    const result = await promise;
+    expect(result.videoFormats.map((format) => format.height)).toEqual([480, 720, 1080]);
+    expect(result.videoFormats.every((format) => format.protocol === "m3u8_native")).toBe(true);
+    expect(result.videoFormats.every((format) => format.isVideoOnly === false)).toBe(true);
+  });
+
+  it("separates DASH audio-only formats into audioFormats", async () => {
+    const spawnMock = vi.mocked(child_process.spawn);
+    const proc = makeFakeProcess();
+    spawnMock.mockReturnValue(proc as unknown as ReturnType<typeof child_process.spawn>);
+
+    const { getVideoMetadata } = await import("../../src/lib/media/metadata");
+    const promise = getVideoMetadata("https://example.com/manifest.mpd");
+
+    proc.stdout.emit("data", DASH_SEPARATE_METADATA_JSON);
+    proc.emit("close", 0);
+
+    const result = await promise;
+    expect(result.videoFormats).toHaveLength(1);
+    expect(result.videoFormats[0]).toMatchObject({
+      height: 720,
+      isVideoOnly: true,
+      protocol: "http_dash_segments",
+    });
+    const audioFormats = result.audioFormats ?? [];
+    expect(audioFormats).toHaveLength(1);
+    expect(audioFormats[0]).toMatchObject({
+      formatId: "bbb_a64k",
+      acodec: "mp4a.40.5",
+      abr: 67.071,
+      sampleRate: 48000,
+      channels: 2,
+      hasAudio: true,
+    });
   });
 });
 
