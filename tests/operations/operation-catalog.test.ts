@@ -42,19 +42,23 @@ describe("OPERATION_CATALOG — structure", () => {
     expect(unique.size).toBe(ids.length);
   });
 
-  it("PDF operations use qpdf or tesseract engine", () => {
+  it("PDF operations use a real PDF/OCR/raster engine and never assign rasterization to QPDF", () => {
     const pdfOps = OPERATION_CATALOG.filter((o) => o.category === "pdf");
     expect(pdfOps.length).toBeGreaterThan(0);
     for (const op of pdfOps) {
-      expect(["qpdf", "tesseract"]).toContain(op.engineId);
+      expect(["qpdf", "tesseract", "poppler", "browser"]).toContain(op.engineId);
     }
+    const pdfToPng = OPERATION_CATALOG.find((op) => op.id === "pdf:to-png");
+    expect(pdfToPng?.engineId).not.toBe("qpdf");
+    expect(pdfToPng?.enabled).toBe(false);
+    expect(pdfToPng?.implemented).toBe(false);
   });
 
-  it("image operations use sharp-image engine", () => {
+  it("image operations use an image-capable engine", () => {
     const imgOps = OPERATION_CATALOG.filter((o) => o.category === "image");
     expect(imgOps.length).toBeGreaterThan(0);
     for (const op of imgOps) {
-      expect(op.engineId).toBe("sharp-image");
+      expect(["sharp-image", "browser"]).toContain(op.engineId);
     }
   });
 

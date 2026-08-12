@@ -27,6 +27,8 @@ export interface OperationDefinition {
   mobilePortability: MobilePortability;
   resourceProfile: ResourceProfile;
   supportsBatch: boolean;
+  enabled?: boolean;
+  implemented?: boolean;
 }
 
 export interface OperationOptionsSchema {
@@ -132,12 +134,14 @@ const PDF_OPERATIONS: OperationDefinition[] = [
     descriptionKey: "op.pdf.to-png.desc",
     inputFormats: ["pdf"],
     outputFormats: ["png"],
-    engineId: "qpdf",
-    dependencies: ["qpdf", "pdftoppm"],
+    engineId: "poppler",
+    dependencies: ["pdftoppm"],
     lossProfile: "lossy-controlled",
     mobilePortability: "desktop-only",
     resourceProfile: "medium",
     supportsBatch: false,
+    enabled: false,
+    implemented: false,
     optionsSchema: {
       type: "object",
       properties: {
@@ -371,6 +375,26 @@ const MEDIA_OPERATIONS: OperationDefinition[] = [
     },
   },
   {
+    id: "media:create-gif",
+    category: "video",
+    labelKey: "op.media.create-gif",
+    descriptionKey: "op.media.create-gif.desc",
+    inputFormats: ["mp4", "webm", "mkv", "avi", "mov"],
+    outputFormats: ["gif"],
+    engineId: "ffmpeg-media",
+    dependencies: ["ffmpeg"],
+    lossProfile: "lossy",
+    mobilePortability: "desktop-only",
+    resourceProfile: "medium",
+    supportsBatch: false,
+    optionsSchema: {
+      type: "object",
+      properties: {
+        width: { type: "number", label: "Ancho", default: 480, min: 160, max: 1280 },
+      },
+    },
+  },
+  {
     id: "media:normalize-audio",
     category: "audio",
     labelKey: "op.media.normalize-audio",
@@ -427,6 +451,126 @@ const DOCUMENT_OPERATIONS: OperationDefinition[] = [
   },
 ];
 
+const STRUCTURED_DATA_OPERATIONS: OperationDefinition[] = [
+  {
+    id: "data:convert",
+    category: "structured-data",
+    labelKey: "op.data.convert",
+    descriptionKey: "op.data.convert.desc",
+    inputFormats: ["json", "yaml", "toml", "xml", "csv", "tsv"],
+    outputFormats: ["json", "yaml", "toml", "xml", "csv", "tsv"],
+    engineId: "data-ts",
+    dependencies: ["data-ts"],
+    lossProfile: "structural-risk",
+    mobilePortability: "portable-domain",
+    resourceProfile: "low",
+    supportsBatch: true,
+    optionsSchema: { type: "object", properties: {} },
+  },
+];
+
+const EBOOK_OPERATIONS: OperationDefinition[] = [
+  {
+    id: "ebook:convert",
+    category: "ebook",
+    labelKey: "op.ebook.convert",
+    descriptionKey: "op.ebook.convert.desc",
+    inputFormats: ["epub", "mobi", "azw3", "html", "docx"],
+    outputFormats: ["epub", "mobi", "azw3", "pdf"],
+    engineId: "calibre",
+    dependencies: ["ebook-convert"],
+    lossProfile: "structural-risk",
+    mobilePortability: "desktop-only",
+    resourceProfile: "medium",
+    supportsBatch: true,
+    optionsSchema: { type: "object", properties: {} },
+  },
+];
+
+const ARCHIVE_OPERATIONS: OperationDefinition[] = [
+  {
+    id: "archive:repack",
+    category: "archive",
+    labelKey: "op.archive.repack",
+    descriptionKey: "op.archive.repack.desc",
+    inputFormats: ["zip", "7z", "tar", "gz", "bz2", "xz"],
+    outputFormats: ["zip", "7z", "tar"],
+    engineId: "sevenzip",
+    dependencies: ["7z"],
+    lossProfile: "lossless",
+    mobilePortability: "desktop-only",
+    resourceProfile: "medium",
+    supportsBatch: false,
+    optionsSchema: { type: "object", properties: {} },
+  },
+];
+
+const OCR_OPERATIONS: OperationDefinition[] = [
+  {
+    id: "ocr:image-to-text",
+    category: "ocr",
+    labelKey: "op.ocr.image-to-text",
+    descriptionKey: "op.ocr.image-to-text.desc",
+    inputFormats: ["png", "jpeg", "jpg", "tiff", "tif", "webp"],
+    outputFormats: ["txt"],
+    engineId: "tesseract",
+    dependencies: ["tesseract"],
+    lossProfile: "lossy",
+    mobilePortability: "desktop-only",
+    resourceProfile: "high",
+    supportsBatch: false,
+    optionsSchema: { type: "object", properties: {} },
+  },
+  {
+    id: "ocr:image-to-pdf",
+    category: "ocr",
+    labelKey: "op.ocr.image-to-pdf",
+    descriptionKey: "op.ocr.image-to-pdf.desc",
+    inputFormats: ["png", "jpeg", "jpg", "tiff", "tif", "webp"],
+    outputFormats: ["pdf"],
+    engineId: "tesseract",
+    dependencies: ["tesseract"],
+    lossProfile: "lossy",
+    mobilePortability: "desktop-only",
+    resourceProfile: "high",
+    supportsBatch: false,
+    optionsSchema: { type: "object", properties: {} },
+  },
+];
+
+const BROWSER_OPERATIONS: OperationDefinition[] = [
+  {
+    id: "browser:image-convert",
+    category: "image",
+    labelKey: "op.browser.image-convert",
+    descriptionKey: "op.browser.image-convert.desc",
+    inputFormats: ["jpeg", "jpg", "png", "webp"],
+    outputFormats: ["jpeg", "jpg", "png", "webp"],
+    engineId: "browser",
+    dependencies: ["browser"],
+    lossProfile: "lossy-controlled",
+    mobilePortability: "portable-domain",
+    resourceProfile: "low",
+    supportsBatch: true,
+    optionsSchema: { type: "object", properties: {} },
+  },
+  {
+    id: "browser:images-to-pdf",
+    category: "pdf",
+    labelKey: "op.browser.images-to-pdf",
+    descriptionKey: "op.browser.images-to-pdf.desc",
+    inputFormats: ["jpeg", "jpg", "png", "webp"],
+    outputFormats: ["pdf"],
+    engineId: "browser",
+    dependencies: ["browser"],
+    lossProfile: "lossy-controlled",
+    mobilePortability: "portable-domain",
+    resourceProfile: "low",
+    supportsBatch: false,
+    optionsSchema: { type: "object", properties: {} },
+  },
+];
+
 // ── Automation Recipe schema ──────────────────────────────────────────────────
 
 export interface RecipeDefinition {
@@ -457,6 +601,11 @@ export const OPERATION_CATALOG: OperationDefinition[] = [
   ...IMAGE_OPERATIONS,
   ...MEDIA_OPERATIONS,
   ...DOCUMENT_OPERATIONS,
+  ...STRUCTURED_DATA_OPERATIONS,
+  ...EBOOK_OPERATIONS,
+  ...ARCHIVE_OPERATIONS,
+  ...OCR_OPERATIONS,
+  ...BROWSER_OPERATIONS,
 ];
 
 /** Returns operations compatible with a given input format */
@@ -466,6 +615,7 @@ export function getCompatibleOperations(
 ): OperationDefinition[] {
   return OPERATION_CATALOG.filter(
     (op) =>
+      op.enabled !== false &&
       op.inputFormats.includes(inputFormat) &&
       availableEngines.has(op.engineId) &&
       op.dependencies.every((dep) => availableEngines.has(dep) || dep === "sharp")
@@ -476,6 +626,7 @@ export function getCompatibleOperations(
 export function getOutputFormats(inputFormat: string): string[] {
   const formats = new Set<string>();
   for (const op of OPERATION_CATALOG) {
+    if (op.enabled === false) continue;
     if (op.inputFormats.includes(inputFormat)) {
       for (const fmt of op.outputFormats) formats.add(fmt);
     }
