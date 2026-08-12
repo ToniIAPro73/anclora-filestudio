@@ -87,7 +87,7 @@ const INPUT_FORMATS: Record<string, LoCategory> = {
   // Spreadsheet
   xlsx: "spreadsheet", xls: "spreadsheet", ods: "spreadsheet",
   // Presentation
-  pptx: "presentation", ppt: "presentation",
+  pptx: "presentation", ppt: "presentation", odp: "presentation",
 };
 
 const OUTPUT_BY_CATEGORY: Record<LoCategory, LoFormatDef[]> = {
@@ -95,6 +95,7 @@ const OUTPUT_BY_CATEGORY: Record<LoCategory, LoFormatDef[]> = {
     { loFilter: "pdf", ext: "pdf", mime: "application/pdf", label: "PDF", category: "document" },
     { loFilter: "odt", ext: "odt", mime: "application/vnd.oasis.opendocument.text", label: "ODT", category: "document" },
     { loFilter: "docx", ext: "docx", mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", label: "Word DOCX", category: "document" },
+    { loFilter: "rtf", ext: "rtf", mime: "application/rtf", label: "RTF", category: "document" },
   ],
   spreadsheet: [
     { loFilter: "pdf", ext: "pdf", mime: "application/pdf", label: "PDF", category: "spreadsheet" },
@@ -275,6 +276,16 @@ export class LibreOfficeEngine implements ConversionEngine {
       fs.closeSync(fd);
       const isPdf = buf.toString("ascii") === "%PDF-";
       checks.push({ name: "pdf-magic-bytes", passed: isPdf, detail: buf.toString("ascii") });
+    }
+
+    // RTF magic bytes
+    if (plan.outputFormat === "rtf") {
+      const buf = Buffer.alloc(5);
+      const fd = fs.openSync(outputPath, "r");
+      fs.readSync(fd, buf, 0, 5, 0);
+      fs.closeSync(fd);
+      const isRtf = buf.toString("ascii") === "{\\rtf";
+      checks.push({ name: "rtf-magic-bytes", passed: isRtf, detail: buf.toString("ascii") });
     }
 
     return { valid: checks.every((c) => c.passed), checks };
