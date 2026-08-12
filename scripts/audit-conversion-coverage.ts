@@ -33,6 +33,8 @@ const DESKTOP_ENGINES = new Set([
   "poppler",
   "tesseract",
   "pdftoppm",
+  "pdftotext",
+  "pdftohtml",
   "calibre",
   "ebook-convert",
   "sevenzip",

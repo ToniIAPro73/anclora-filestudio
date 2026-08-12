@@ -1,0 +1,102 @@
+- region "Notifications alt+T" [ref=e1]
+- generic
+  - banner
+    - image "Anclora FileStudio"
+    - heading "Anclora FileStudio" [level=1, ref=e3]
+      - StaticText "Anclora FileStudio"
+    - StaticText "Desktop PRO"
+    - StaticText "100% local"
+    - paragraph
+      - StaticText "Todo lo de la Web, más motores nativos, lotes pesados, historial local, diagnóstico y portables Windows/Linux."
+  - navigation "Navegación principal FileStudio" [ref=e2]
+    - tab "Inicio" [ref=e4]
+      - StaticText "Inicio"
+    - tab "Convertir" [selected, ref=e5]
+      - StaticText "Convertir"
+    - tab "Herramientas" [ref=e6]
+      - StaticText "Herramientas"
+    - tab "Historial" [ref=e7]
+      - StaticText "Historial"
+    - tab "Diagnóstico" [ref=e8]
+      - StaticText "Diagnóstico"
+  - generic
+    - heading "Convertir" [level=2, ref=e9]
+    - paragraph
+      - StaticText "Explora conversiones por tipo de resultado."
+    - LabelText
+      - StaticText "Buscar formato"
+      - textbox "Buscar formato" [ref=e10]
+    - tablist "Categorías de destino"
+      - tab "Documentos 12 destinos" [ref=e11]
+        - StaticText "Documentos"
+        - StaticText "12"
+        - StaticText " destinos"
+      - tab "Imágenes 6 destinos" [ref=e12]
+        - StaticText "Imágenes"
+        - StaticText "6"
+        - StaticText " destinos"
+      - tab "Audio 6 destinos" [selected, ref=e13]
+        - StaticText "Audio"
+        - StaticText "6"
+        - StaticText " destinos"
+      - tab "Vídeo 3 destinos" [ref=e14]
+        - StaticText "Vídeo"
+        - StaticText "3"
+        - StaticText " destinos"
+      - tab "Ebooks 3 destinos" [ref=e15]
+        - StaticText "Ebooks"
+        - StaticText "3"
+        - StaticText " destinos"
+      - tab "Archivos comprimidos 3 destinos" [ref=e16]
+        - StaticText "Archivos comprimidos"
+        - StaticText "3"
+        - StaticText " destinos"
+      - tab "Datos 6 destinos" [ref=e17]
+        - StaticText "Datos"
+        - StaticText "6"
+        - StaticText " destinos"
+    - button "Convertir a AAC .AAC 12 orígenes compatibles" [ref=e18]
+      - StaticText "Convertir a "
+      - StaticText "AAC"
+      - StaticText "."
+      - StaticText "AAC"
+      - StaticText "12"
+      - StaticText " orígenes compatibles"
+    - button "Convertir a FLAC .FLAC 12 orígenes compatibles" [ref=e19]
+      - StaticText "Convertir a "
+      - StaticText "FLAC"
+      - StaticText "."
+      - StaticText "FLAC"
+      - StaticText "12"
+      - StaticText " orígenes compatibles"
+    - button "Convertir a M4A .M4A 12 orígenes compatibles" [ref=e20]
+      - StaticText "Convertir a "
+      - StaticText "M4A"
+      - StaticText "."
+      - StaticText "M4A"
+      - StaticText "12"
+      - StaticText " orígenes compatibles"
+    - button "Convertir a MP3 .MP3 12 orígenes compatibles" [ref=e21]
+      - StaticText "Convertir a "
+      - StaticText "MP3"
+      - StaticText "."
+      - StaticText "MP3"
+      - StaticText "12"
+      - StaticText " orígenes compatibles"
+    - button "Convertir a OGG .OGG 12 orígenes compatibles" [ref=e22]
+      - StaticText "Convertir a "
+      - StaticText "OGG"
+      - StaticText "."
+      - StaticText "OGG"
+      - StaticText "12"
+      - StaticText " orígenes compatibles"
+    - button "Convertir a WAV .WAV 12 orígenes compatibles" [ref=e23]
+      - StaticText "Convertir a "
+      - StaticText "WAV"
+      - StaticText "."
+      - StaticText "WAV"
+      - StaticText "12"
+      - StaticText " orígenes compatibles"
+- button "Open Next.js Dev Tools" [expanded=false, ref=e24]
+  - image
+- alert

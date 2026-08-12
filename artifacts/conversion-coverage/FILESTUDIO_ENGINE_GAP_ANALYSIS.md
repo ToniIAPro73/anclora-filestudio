@@ -1,6 +1,6 @@
 # FileStudio Engine Gap Analysis
 
-Generated: 2026-08-12T22:32:57.751Z
+Generated: 2026-08-12T23:23:26.133Z
 
 ## New Engine / Library Candidates
 
@@ -35,42 +35,9 @@ Generated: 2026-08-12T22:32:57.751Z
 | Conversion | Tier | Current pipeline | Current blocker | Existing engine | Existing candidates | New dependency | New candidates | Expected quality | Complexity | Portable impact | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | pdf->docx | TIER 1 | None | No PDF layout extraction to DOCX adapter. | PARTIAL | LibreOffice PDF import is not reliable for headless production, Poppler can extract text/raster but not DOCX layout | YES | pdf2docx, PyMuPDF/MuPDF commercial, Unstructured/Docling pipeline | MEDIUM | MEDIUM | MEDIUM | INVESTIGATE pdf2docx for MVP; avoid AGPL MuPDF/PyMuPDF unless commercial licensing is accepted. |
-| pdf->txt | TIER 1 | Poppler raster/OCR only; no text extraction route in standard conversion | No pdf->txt adapter bound to Poppler text/html tools. | YES | Poppler pdftotext, Poppler pdftohtml | NO | - | HIGH for text PDFs, LOW for scanned PDFs without OCR | LOW | LOW | ADOPT existing Poppler utilities after versioned Windows bundle confirms pdftotext/pdftohtml are included. |
-| pdf->md | TIER 1 | None | Needs PDF text/layout extraction followed by Markdown normalization. | PARTIAL | Poppler pdftotext + Markdown adapter, Pandoc after HTML extraction | NO | MarkItDown as optional future library | MEDIUM | MEDIUM | LOW to MEDIUM | ADOPT Poppler text extraction first; INVESTIGATE MarkItDown for richer Markdown. |
-| pdf->html | TIER 1 | Poppler raster/OCR only; no text extraction route in standard conversion | No pdf->html adapter bound to Poppler text/html tools. | YES | Poppler pdftotext, Poppler pdftohtml | NO | - | MEDIUM | LOW | LOW | ADOPT existing Poppler utilities after versioned Windows bundle confirms pdftotext/pdftohtml are included. |
-| docx->rtf | TIER 1 | LibreOffice installed, but matrix omits DOCX->RTF. | No certified edge/probe for DOCX->RTF. | YES | LibreOffice | NO | - | MEDIUM | LOW | LOW | QUICK WIN candidate pending real DOCX->RTF probe. |
-| odp->pdf | TIER 1 | LibreOffice installed, but presentation matrix omits ODP source. | No certified edge/probe for odp->pdf. | YES | LibreOffice | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real ODP probe. |
-| odp->pptx | TIER 1 | LibreOffice installed, but presentation matrix omits ODP source. | No certified edge/probe for odp->pptx. | YES | LibreOffice | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real ODP probe. |
-| png->pdf | TIER 1 | pdf-lib is already installed; browser image-to-PDF exists only for Web. | No Desktop adapter for image embedding into PDF. | YES | pdf-lib, Sharp for image normalization | NO | - | MEDIUM | LOW | LOW | QUICK WIN candidate pending image->PDF adapter and E2E probes. |
-| jpg->pdf | TIER 1 | pdf-lib is already installed; browser image-to-PDF exists only for Web. | No Desktop adapter for image embedding into PDF. | YES | pdf-lib, Sharp for image normalization | NO | - | MEDIUM | LOW | LOW | QUICK WIN candidate pending image->PDF adapter and E2E probes. |
-| webp->pdf | TIER 1 | pdf-lib is already installed; browser image-to-PDF exists only for Web. | No Desktop adapter for image embedding into PDF. | YES | pdf-lib, Sharp for image normalization | NO | - | MEDIUM | LOW | LOW | QUICK WIN candidate pending image->PDF adapter and E2E probes. |
-| tiff->pdf | TIER 1 | pdf-lib is already installed; browser image-to-PDF exists only for Web. | No Desktop adapter for image embedding into PDF. | YES | pdf-lib, Sharp for image normalization | NO | - | MEDIUM | LOW | LOW | QUICK WIN candidate pending image->PDF adapter and E2E probes. |
-| mp3->aac | TIER 1 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| wav->aac | TIER 1 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| flac->aac | TIER 1 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| m4a->aac | TIER 1 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| ogg->aac | TIER 1 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| aac->mp3 | TIER 1 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| aac->wav | TIER 1 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| aac->flac | TIER 1 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| aac->m4a | TIER 1 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| aac->ogg | TIER 1 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| wmv->mp4 | TIER 2 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| wmv->webm | TIER 2 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| wmv->mkv | TIER 2 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| ts->mp4 | TIER 2 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| ts->webm | TIER 2 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
-| ts->mkv | TIER 2 | FFmpeg installed but matrix omits one side of the format. | Canonical edge not declared/certified. | YES | FFmpeg/FFprobe | NO | - | HIGH | LOW | LOW | QUICK WIN candidate pending real media probes. |
 | epub->docx | TIER 2 | None | No effective canonical route within two intermediates. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
-| epub->txt | TIER 2 | None | No effective canonical route within two intermediates. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
-| epub->html | TIER 2 | None | No effective canonical route within two intermediates. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
-| epub->md | TIER 2 | None | No effective canonical route within two intermediates. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
 | pdf->epub | TIER 3 | None | No structured PDF extraction/reflow adapter is implemented. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
 | pdf->odt | TIER 3 | None | No structured PDF extraction/reflow adapter is implemented. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
-| png->txt | TIER 3 | None | No effective canonical route within two intermediates. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
-| jpg->txt | TIER 3 | None | No effective canonical route within two intermediates. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
-| tiff->txt | TIER 3 | None | No effective canonical route within two intermediates. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
-| webp->txt | TIER 3 | None | No effective canonical route within two intermediates. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
 
 ## Requirements For Future Native Dependencies
 

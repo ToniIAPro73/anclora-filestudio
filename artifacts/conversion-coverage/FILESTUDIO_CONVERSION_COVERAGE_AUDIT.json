@@ -1,25 +1,25 @@
 {
-  "generatedAt": "2026-08-12T22:32:57.751Z",
+  "generatedAt": "2026-08-12T23:23:26.133Z",
   "canonicalFormats": 50,
   "totalPossibleOrderedPairs": 2450,
-  "directSupportedPairs": 192,
-  "multistepSupportedPairs": 129,
-  "totalEffectivePairs": 321,
+  "directSupportedPairs": 238,
+  "multistepSupportedPairs": 202,
+  "totalEffectivePairs": 440,
   "tierMetrics": {
     "tier1": {
       "required": 152,
-      "supported": 131,
-      "coveragePercent": 86.2
+      "supported": 151,
+      "coveragePercent": 99.3
     },
     "tier2": {
       "required": 40,
-      "supported": 30,
-      "coveragePercent": 75
+      "supported": 39,
+      "coveragePercent": 97.5
     },
     "tier3": {
       "required": 6,
-      "supported": 0,
-      "coveragePercent": 0
+      "supported": 4,
+      "coveragePercent": 66.7
     }
   },
   "recommendedCompetitiveThreshold": {
@@ -70,53 +70,60 @@
       "format": "aac",
       "category": "audio",
       "asSource": {
-        "directTargets": [],
+        "directTargets": [
+          "mp3",
+          "ogg",
+          "wav",
+          "flac",
+          "m4a"
+        ],
         "oneIntermediateTargets": [],
         "twoIntermediateTargets": [],
-        "allEffectiveTargets": []
+        "allEffectiveTargets": [
+          "mp3",
+          "ogg",
+          "wav",
+          "flac",
+          "m4a"
+        ]
       },
       "asTarget": {
-        "directSources": [],
+        "directSources": [
+          "avi",
+          "flac",
+          "m4a",
+          "mkv",
+          "mov",
+          "mp3",
+          "mp4",
+          "ogg",
+          "ts",
+          "wav",
+          "webm",
+          "wmv"
+        ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
-        "allEffectiveSources": []
+        "allEffectiveSources": [
+          "avi",
+          "flac",
+          "m4a",
+          "mkv",
+          "mov",
+          "mp3",
+          "mp4",
+          "ogg",
+          "ts",
+          "wav",
+          "webm",
+          "wmv"
+        ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "mp3",
-          "tier": "TIER 1",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        },
-        {
-          "target": "wav",
-          "tier": "TIER 1",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        },
-        {
-          "target": "flac",
-          "tier": "TIER 1",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        },
-        {
-          "target": "m4a",
-          "tier": "TIER 1",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        },
-        {
-          "target": "ogg",
-          "tier": "TIER 1",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "avi",
@@ -125,6 +132,7 @@
         "directTargets": [
           "mp4",
           "webm",
+          "aac",
           "flac",
           "m4a",
           "mkv",
@@ -140,10 +148,13 @@
           "tiff",
           "webp"
         ],
-        "twoIntermediateTargets": [],
+        "twoIntermediateTargets": [
+          "pdf"
+        ],
         "allEffectiveTargets": [
           "mp4",
           "webm",
+          "aac",
           "flac",
           "m4a",
           "mkv",
@@ -155,7 +166,8 @@
           "jpg",
           "png",
           "tiff",
-          "webp"
+          "webp",
+          "pdf"
         ]
       },
       "asTarget": {
@@ -181,14 +193,24 @@
           "jpg",
           "tiff"
         ],
-        "oneIntermediateTargets": [],
-        "twoIntermediateTargets": [],
+        "oneIntermediateTargets": [
+          "pdf"
+        ],
+        "twoIntermediateTargets": [
+          "txt",
+          "html",
+          "md"
+        ],
         "allEffectiveTargets": [
           "png",
           "webp",
           "gif",
           "jpg",
-          "tiff"
+          "tiff",
+          "pdf",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -204,7 +226,9 @@
           "mkv",
           "mov",
           "mp4",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ],
         "twoIntermediateSources": [],
         "allEffectiveSources": [
@@ -217,7 +241,9 @@
           "mkv",
           "mov",
           "mp4",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ]
       },
       "highValueMissingConversions": [],
@@ -240,7 +266,10 @@
         "twoIntermediateTargets": [
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ],
         "allEffectiveTargets": [
           "epub",
@@ -248,7 +277,10 @@
           "pdf",
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -370,12 +402,13 @@
         "directTargets": [
           "odt",
           "pdf",
-          "docx"
+          "docx",
+          "rtf"
         ],
         "oneIntermediateTargets": [
+          "txt",
           "html",
           "md",
-          "txt",
           "jpg",
           "png",
           "tiff",
@@ -390,10 +423,11 @@
         "allEffectiveTargets": [
           "odt",
           "pdf",
+          "txt",
           "html",
           "md",
-          "txt",
           "docx",
+          "rtf",
           "jpg",
           "png",
           "tiff",
@@ -425,11 +459,12 @@
           "pdf",
           "html",
           "md",
-          "txt",
+          "rtf",
           "epub",
           "rst"
         ],
         "oneIntermediateTargets": [
+          "txt",
           "jpg",
           "png",
           "tiff",
@@ -441,9 +476,10 @@
         "allEffectiveTargets": [
           "odt",
           "pdf",
+          "txt",
           "html",
           "md",
-          "txt",
+          "rtf",
           "jpg",
           "png",
           "tiff",
@@ -479,18 +515,11 @@
           "txt"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "rtf",
-          "tier": "TIER 1",
-          "blocker": "No certified edge/probe for DOCX->RTF.",
-          "recommendation": "QUICK WIN candidate pending real DOCX->RTF probe."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "epub",
@@ -504,7 +533,10 @@
         "oneIntermediateTargets": [
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
@@ -513,7 +545,10 @@
           "azw3",
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -553,24 +588,6 @@
           "tier": "TIER 2",
           "blocker": "No effective canonical route within two intermediates.",
           "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-        },
-        {
-          "target": "txt",
-          "tier": "TIER 2",
-          "blocker": "No effective canonical route within two intermediates.",
-          "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-        },
-        {
-          "target": "html",
-          "tier": "TIER 2",
-          "blocker": "No effective canonical route within two intermediates.",
-          "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-        },
-        {
-          "target": "md",
-          "tier": "TIER 2",
-          "blocker": "No effective canonical route within two intermediates.",
-          "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
         }
       ],
       "engineGap": "See highValueMissingConversions and engine gap analysis.",
@@ -586,6 +603,7 @@
           "mp3",
           "ogg",
           "wav",
+          "aac",
           "m4a"
         ],
         "oneIntermediateTargets": [],
@@ -594,11 +612,13 @@
           "mp3",
           "ogg",
           "wav",
+          "aac",
           "m4a"
         ]
       },
       "asTarget": {
         "directSources": [
+          "aac",
           "avi",
           "m4a",
           "mkv",
@@ -606,12 +626,15 @@
           "mp3",
           "mp4",
           "ogg",
+          "ts",
           "wav",
-          "webm"
+          "webm",
+          "wmv"
         ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
         "allEffectiveSources": [
+          "aac",
           "avi",
           "m4a",
           "mkv",
@@ -619,22 +642,17 @@
           "mp3",
           "mp4",
           "ogg",
+          "ts",
           "wav",
-          "webm"
+          "webm",
+          "wmv"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "aac",
-          "tier": "TIER 1",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "gif",
@@ -647,14 +665,24 @@
           "jpg",
           "tiff"
         ],
-        "oneIntermediateTargets": [],
-        "twoIntermediateTargets": [],
+        "oneIntermediateTargets": [
+          "pdf"
+        ],
+        "twoIntermediateTargets": [
+          "txt",
+          "html",
+          "md"
+        ],
         "allEffectiveTargets": [
           "avif",
           "png",
           "webp",
           "jpg",
-          "tiff"
+          "tiff",
+          "pdf",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -668,7 +696,9 @@
           "mkv",
           "mov",
           "mp4",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
@@ -682,7 +712,9 @@
           "mkv",
           "mov",
           "mp4",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ]
       },
       "highValueMissingConversions": [],
@@ -734,6 +766,7 @@
         ],
         "oneIntermediateTargets": [
           "pdf",
+          "rtf",
           "azw3",
           "mobi",
           "tex"
@@ -751,6 +784,7 @@
           "epub",
           "odt",
           "rst",
+          "rtf",
           "jpg",
           "png",
           "tiff",
@@ -763,25 +797,58 @@
         "directSources": [
           "docx",
           "md",
+          "pdf",
           "rst",
           "tex",
           "txt"
         ],
         "oneIntermediateSources": [
           "doc",
+          "jpg",
+          "odp",
+          "ods",
           "odt",
-          "rtf"
+          "png",
+          "ppt",
+          "pptx",
+          "rtf",
+          "tiff",
+          "webp",
+          "xls",
+          "xlsx",
+          "epub"
         ],
-        "twoIntermediateSources": [],
+        "twoIntermediateSources": [
+          "avif",
+          "gif",
+          "azw3",
+          "mobi"
+        ],
         "allEffectiveSources": [
           "docx",
           "md",
+          "pdf",
           "rst",
           "tex",
           "txt",
           "doc",
+          "jpg",
+          "odp",
+          "ods",
           "odt",
-          "rtf"
+          "png",
+          "ppt",
+          "pptx",
+          "rtf",
+          "tiff",
+          "webp",
+          "xls",
+          "xlsx",
+          "epub",
+          "avif",
+          "gif",
+          "azw3",
+          "mobi"
         ]
       },
       "highValueMissingConversions": [],
@@ -799,16 +866,25 @@
           "png",
           "webp",
           "gif",
+          "pdf",
           "tiff"
         ],
-        "oneIntermediateTargets": [],
+        "oneIntermediateTargets": [
+          "txt",
+          "html",
+          "md"
+        ],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
           "avif",
           "png",
           "webp",
           "gif",
-          "tiff"
+          "pdf",
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -823,6 +899,7 @@
         "oneIntermediateSources": [
           "doc",
           "docx",
+          "odp",
           "ods",
           "odt",
           "ppt",
@@ -834,7 +911,9 @@
           "mkv",
           "mov",
           "mp4",
+          "ts",
           "webm",
+          "wmv",
           "epub"
         ],
         "twoIntermediateSources": [
@@ -853,6 +932,7 @@
           "webp",
           "doc",
           "docx",
+          "odp",
           "ods",
           "odt",
           "ppt",
@@ -864,7 +944,9 @@
           "mkv",
           "mov",
           "mp4",
+          "ts",
           "webm",
+          "wmv",
           "epub",
           "html",
           "md",
@@ -873,24 +955,11 @@
           "mobi"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "pdf",
-          "tier": "TIER 1",
-          "blocker": "No Desktop adapter for image embedding into PDF.",
-          "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-        },
-        {
-          "target": "txt",
-          "tier": "TIER 3",
-          "blocker": "No effective canonical route within two intermediates.",
-          "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
-      "adapterGap": "Adapter missing",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
+      "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "json",
@@ -945,6 +1014,7 @@
           "mp3",
           "ogg",
           "wav",
+          "aac",
           "flac"
         ],
         "oneIntermediateTargets": [],
@@ -953,11 +1023,13 @@
           "mp3",
           "ogg",
           "wav",
+          "aac",
           "flac"
         ]
       },
       "asTarget": {
         "directSources": [
+          "aac",
           "avi",
           "flac",
           "mkv",
@@ -965,12 +1037,15 @@
           "mp3",
           "mp4",
           "ogg",
+          "ts",
           "wav",
-          "webm"
+          "webm",
+          "wmv"
         ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
         "allEffectiveSources": [
+          "aac",
           "avi",
           "flac",
           "mkv",
@@ -978,22 +1053,17 @@
           "mp3",
           "mp4",
           "ogg",
+          "ts",
           "wav",
-          "webm"
+          "webm",
+          "wmv"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "aac",
-          "tier": "TIER 1",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "md",
@@ -1009,6 +1079,7 @@
         ],
         "oneIntermediateTargets": [
           "pdf",
+          "rtf",
           "epub"
         ],
         "twoIntermediateTargets": [
@@ -1026,6 +1097,7 @@
           "odt",
           "rst",
           "tex",
+          "rtf",
           "jpg",
           "png",
           "tiff",
@@ -1038,25 +1110,58 @@
         "directSources": [
           "docx",
           "html",
+          "pdf",
           "rst",
           "tex",
           "txt"
         ],
         "oneIntermediateSources": [
           "doc",
+          "jpg",
+          "odp",
+          "ods",
           "odt",
-          "rtf"
+          "png",
+          "ppt",
+          "pptx",
+          "rtf",
+          "tiff",
+          "webp",
+          "xls",
+          "xlsx",
+          "epub"
         ],
-        "twoIntermediateSources": [],
+        "twoIntermediateSources": [
+          "avif",
+          "gif",
+          "azw3",
+          "mobi"
+        ],
         "allEffectiveSources": [
           "docx",
           "html",
+          "pdf",
           "rst",
           "tex",
           "txt",
           "doc",
+          "jpg",
+          "odp",
+          "ods",
           "odt",
-          "rtf"
+          "png",
+          "ppt",
+          "pptx",
+          "rtf",
+          "tiff",
+          "webp",
+          "xls",
+          "xlsx",
+          "epub",
+          "avif",
+          "gif",
+          "azw3",
+          "mobi"
         ]
       },
       "highValueMissingConversions": [],
@@ -1072,6 +1177,7 @@
         "directTargets": [
           "mp4",
           "webm",
+          "aac",
           "flac",
           "m4a",
           "mp3",
@@ -1086,10 +1192,13 @@
           "tiff",
           "webp"
         ],
-        "twoIntermediateTargets": [],
+        "twoIntermediateTargets": [
+          "pdf"
+        ],
         "allEffectiveTargets": [
           "mp4",
           "webm",
+          "aac",
           "flac",
           "m4a",
           "mp3",
@@ -1100,7 +1209,8 @@
           "jpg",
           "png",
           "tiff",
-          "webp"
+          "webp",
+          "pdf"
         ]
       },
       "asTarget": {
@@ -1108,7 +1218,9 @@
           "avi",
           "mov",
           "mp4",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
@@ -1116,7 +1228,9 @@
           "avi",
           "mov",
           "mp4",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ]
       },
       "highValueMissingConversions": [],
@@ -1139,7 +1253,10 @@
         "twoIntermediateTargets": [
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ],
         "allEffectiveTargets": [
           "epub",
@@ -1147,7 +1264,10 @@
           "azw3",
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -1195,6 +1315,7 @@
         "directTargets": [
           "mp4",
           "webm",
+          "aac",
           "flac",
           "m4a",
           "mkv",
@@ -1210,10 +1331,13 @@
           "tiff",
           "webp"
         ],
-        "twoIntermediateTargets": [],
+        "twoIntermediateTargets": [
+          "pdf"
+        ],
         "allEffectiveTargets": [
           "mp4",
           "webm",
+          "aac",
           "flac",
           "m4a",
           "mkv",
@@ -1225,7 +1349,8 @@
           "jpg",
           "png",
           "tiff",
-          "webp"
+          "webp",
+          "pdf"
         ]
       },
       "asTarget": {
@@ -1247,6 +1372,7 @@
         "directTargets": [
           "ogg",
           "wav",
+          "aac",
           "flac",
           "m4a"
         ],
@@ -1255,12 +1381,14 @@
         "allEffectiveTargets": [
           "ogg",
           "wav",
+          "aac",
           "flac",
           "m4a"
         ]
       },
       "asTarget": {
         "directSources": [
+          "aac",
           "avi",
           "flac",
           "m4a",
@@ -1268,12 +1396,15 @@
           "mov",
           "mp4",
           "ogg",
+          "ts",
           "wav",
-          "webm"
+          "webm",
+          "wmv"
         ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
         "allEffectiveSources": [
+          "aac",
           "avi",
           "flac",
           "m4a",
@@ -1281,22 +1412,17 @@
           "mov",
           "mp4",
           "ogg",
+          "ts",
           "wav",
-          "webm"
+          "webm",
+          "wmv"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "aac",
-          "tier": "TIER 1",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "mp4",
@@ -1304,6 +1430,7 @@
       "asSource": {
         "directTargets": [
           "webm",
+          "aac",
           "flac",
           "m4a",
           "mkv",
@@ -1319,9 +1446,12 @@
           "tiff",
           "webp"
         ],
-        "twoIntermediateTargets": [],
+        "twoIntermediateTargets": [
+          "pdf"
+        ],
         "allEffectiveTargets": [
           "webm",
+          "aac",
           "flac",
           "m4a",
           "mkv",
@@ -1333,7 +1463,8 @@
           "jpg",
           "png",
           "tiff",
-          "webp"
+          "webp",
+          "pdf"
         ]
       },
       "asTarget": {
@@ -1341,7 +1472,9 @@
           "avi",
           "mkv",
           "mov",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
@@ -1349,7 +1482,9 @@
           "avi",
           "mkv",
           "mov",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ]
       },
       "highValueMissingConversions": [],
@@ -1362,10 +1497,29 @@
       "format": "odp",
       "category": "presentation",
       "asSource": {
-        "directTargets": [],
-        "oneIntermediateTargets": [],
+        "directTargets": [
+          "pdf",
+          "pptx"
+        ],
+        "oneIntermediateTargets": [
+          "jpg",
+          "png",
+          "tiff",
+          "txt",
+          "html",
+          "md"
+        ],
         "twoIntermediateTargets": [],
-        "allEffectiveTargets": []
+        "allEffectiveTargets": [
+          "pdf",
+          "pptx",
+          "jpg",
+          "png",
+          "tiff",
+          "txt",
+          "html",
+          "md"
+        ]
       },
       "asTarget": {
         "directSources": [],
@@ -1373,24 +1527,11 @@
         "twoIntermediateSources": [],
         "allEffectiveSources": []
       },
-      "highValueMissingConversions": [
-        {
-          "target": "pdf",
-          "tier": "TIER 1",
-          "blocker": "No certified edge/probe for odp->pdf.",
-          "recommendation": "QUICK WIN candidate pending real ODP probe."
-        },
-        {
-          "target": "pptx",
-          "tier": "TIER 1",
-          "blocker": "No certified edge/probe for odp->pptx.",
-          "recommendation": "QUICK WIN candidate pending real ODP probe."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "ods",
@@ -1403,7 +1544,10 @@
         "oneIntermediateTargets": [
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
@@ -1411,7 +1555,10 @@
           "xlsx",
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -1438,12 +1585,13 @@
       "asSource": {
         "directTargets": [
           "pdf",
-          "docx"
+          "docx",
+          "rtf"
         ],
         "oneIntermediateTargets": [
+          "txt",
           "html",
           "md",
-          "txt",
           "jpg",
           "png",
           "tiff",
@@ -1457,10 +1605,11 @@
         ],
         "allEffectiveTargets": [
           "pdf",
+          "txt",
           "html",
           "md",
-          "txt",
           "docx",
+          "rtf",
           "jpg",
           "png",
           "tiff",
@@ -1509,6 +1658,7 @@
         "directTargets": [
           "mp3",
           "wav",
+          "aac",
           "flac",
           "m4a"
         ],
@@ -1517,12 +1667,14 @@
         "allEffectiveTargets": [
           "mp3",
           "wav",
+          "aac",
           "flac",
           "m4a"
         ]
       },
       "asTarget": {
         "directSources": [
+          "aac",
           "avi",
           "flac",
           "m4a",
@@ -1530,12 +1682,15 @@
           "mov",
           "mp3",
           "mp4",
+          "ts",
           "wav",
-          "webm"
+          "webm",
+          "wmv"
         ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
         "allEffectiveSources": [
+          "aac",
           "avi",
           "flac",
           "m4a",
@@ -1543,22 +1698,17 @@
           "mov",
           "mp3",
           "mp4",
+          "ts",
           "wav",
-          "webm"
+          "webm",
+          "wmv"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "aac",
-          "tier": "TIER 1",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "pdf",
@@ -1566,31 +1716,44 @@
       "asSource": {
         "directTargets": [
           "png",
+          "txt",
           "jpg",
-          "tiff"
+          "tiff",
+          "html",
+          "md"
         ],
         "oneIntermediateTargets": [],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
           "png",
+          "txt",
           "jpg",
-          "tiff"
+          "tiff",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
         "directSources": [
           "doc",
           "docx",
+          "jpg",
+          "odp",
           "ods",
           "odt",
+          "png",
           "ppt",
           "pptx",
           "rtf",
+          "tiff",
+          "webp",
           "xls",
           "xlsx",
           "epub"
         ],
         "oneIntermediateSources": [
+          "avif",
+          "gif",
           "html",
           "md",
           "rst",
@@ -1598,25 +1761,46 @@
           "mobi"
         ],
         "twoIntermediateSources": [
+          "avi",
+          "mkv",
+          "mov",
+          "mp4",
+          "ts",
+          "webm",
+          "wmv",
           "tex",
           "txt"
         ],
         "allEffectiveSources": [
           "doc",
           "docx",
+          "jpg",
+          "odp",
           "ods",
           "odt",
+          "png",
           "ppt",
           "pptx",
           "rtf",
+          "tiff",
+          "webp",
           "xls",
           "xlsx",
           "epub",
+          "avif",
+          "gif",
           "html",
           "md",
           "rst",
           "azw3",
           "mobi",
+          "avi",
+          "mkv",
+          "mov",
+          "mp4",
+          "ts",
+          "webm",
+          "wmv",
           "tex",
           "txt"
         ]
@@ -1627,24 +1811,6 @@
           "tier": "TIER 1",
           "blocker": "No PDF layout extraction to DOCX adapter.",
           "recommendation": "INVESTIGATE pdf2docx for MVP; avoid AGPL MuPDF/PyMuPDF unless commercial licensing is accepted."
-        },
-        {
-          "target": "txt",
-          "tier": "TIER 1",
-          "blocker": "No pdf->txt adapter bound to Poppler text/html tools.",
-          "recommendation": "ADOPT existing Poppler utilities after versioned Windows bundle confirms pdftotext/pdftohtml are included."
-        },
-        {
-          "target": "md",
-          "tier": "TIER 1",
-          "blocker": "Needs PDF text/layout extraction followed by Markdown normalization.",
-          "recommendation": "ADOPT Poppler text extraction first; INVESTIGATE MarkItDown for richer Markdown."
-        },
-        {
-          "target": "html",
-          "tier": "TIER 1",
-          "blocker": "No pdf->html adapter bound to Poppler text/html tools.",
-          "recommendation": "ADOPT existing Poppler utilities after versioned Windows bundle confirms pdftotext/pdftohtml are included."
         },
         {
           "target": "epub",
@@ -1673,16 +1839,25 @@
           "webp",
           "gif",
           "jpg",
+          "pdf",
           "tiff"
         ],
-        "oneIntermediateTargets": [],
+        "oneIntermediateTargets": [
+          "txt",
+          "html",
+          "md"
+        ],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
           "avif",
           "webp",
           "gif",
           "jpg",
-          "tiff"
+          "pdf",
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -1697,6 +1872,7 @@
         "oneIntermediateSources": [
           "doc",
           "docx",
+          "odp",
           "ods",
           "odt",
           "ppt",
@@ -1708,7 +1884,9 @@
           "mkv",
           "mov",
           "mp4",
+          "ts",
           "webm",
+          "wmv",
           "epub"
         ],
         "twoIntermediateSources": [
@@ -1727,6 +1905,7 @@
           "webp",
           "doc",
           "docx",
+          "odp",
           "ods",
           "odt",
           "ppt",
@@ -1738,7 +1917,9 @@
           "mkv",
           "mov",
           "mp4",
+          "ts",
           "webm",
+          "wmv",
           "epub",
           "html",
           "md",
@@ -1747,24 +1928,11 @@
           "mobi"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "pdf",
-          "tier": "TIER 1",
-          "blocker": "No Desktop adapter for image embedding into PDF.",
-          "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-        },
-        {
-          "target": "txt",
-          "tier": "TIER 3",
-          "blocker": "No effective canonical route within two intermediates.",
-          "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
-      "adapterGap": "Adapter missing",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
+      "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "ppt",
@@ -1777,7 +1945,10 @@
         "oneIntermediateTargets": [
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
@@ -1785,7 +1956,10 @@
           "pptx",
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -1810,23 +1984,31 @@
         "oneIntermediateTargets": [
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
           "pdf",
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
         "directSources": [
+          "odp",
           "ppt"
         ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
         "allEffectiveSources": [
+          "odp",
           "ppt"
         ]
       },
@@ -1850,6 +2032,7 @@
         ],
         "oneIntermediateTargets": [
           "pdf",
+          "rtf",
           "epub"
         ],
         "twoIntermediateTargets": [
@@ -1867,6 +2050,7 @@
           "docx",
           "odt",
           "tex",
+          "rtf",
           "jpg",
           "png",
           "tiff",
@@ -1916,9 +2100,9 @@
           "docx"
         ],
         "oneIntermediateTargets": [
+          "txt",
           "html",
           "md",
-          "txt",
           "jpg",
           "png",
           "tiff",
@@ -1933,9 +2117,9 @@
         "allEffectiveTargets": [
           "odt",
           "pdf",
+          "txt",
           "html",
           "md",
-          "txt",
           "docx",
           "jpg",
           "png",
@@ -1948,10 +2132,30 @@
         ]
       },
       "asTarget": {
-        "directSources": [],
-        "oneIntermediateSources": [],
-        "twoIntermediateSources": [],
-        "allEffectiveSources": []
+        "directSources": [
+          "doc",
+          "docx",
+          "odt"
+        ],
+        "oneIntermediateSources": [
+          "html",
+          "md",
+          "rst"
+        ],
+        "twoIntermediateSources": [
+          "tex",
+          "txt"
+        ],
+        "allEffectiveSources": [
+          "doc",
+          "docx",
+          "odt",
+          "html",
+          "md",
+          "rst",
+          "tex",
+          "txt"
+        ]
       },
       "highValueMissingConversions": [],
       "engineGap": "No Tier gap identified by this audit.",
@@ -2015,6 +2219,7 @@
         ],
         "twoIntermediateTargets": [
           "pdf",
+          "rtf",
           "azw3",
           "mobi"
         ],
@@ -2027,6 +2232,7 @@
           "epub",
           "odt",
           "rst",
+          "rtf",
           "azw3",
           "mobi"
         ]
@@ -2072,16 +2278,25 @@
           "png",
           "webp",
           "gif",
-          "jpg"
+          "jpg",
+          "pdf"
         ],
-        "oneIntermediateTargets": [],
+        "oneIntermediateTargets": [
+          "txt",
+          "html",
+          "md"
+        ],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
           "avif",
           "png",
           "webp",
           "gif",
-          "jpg"
+          "jpg",
+          "pdf",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -2096,6 +2311,7 @@
         "oneIntermediateSources": [
           "doc",
           "docx",
+          "odp",
           "ods",
           "odt",
           "ppt",
@@ -2107,7 +2323,9 @@
           "mkv",
           "mov",
           "mp4",
+          "ts",
           "webm",
+          "wmv",
           "epub"
         ],
         "twoIntermediateSources": [
@@ -2126,6 +2344,7 @@
           "webp",
           "doc",
           "docx",
+          "odp",
           "ods",
           "odt",
           "ppt",
@@ -2137,7 +2356,9 @@
           "mkv",
           "mov",
           "mp4",
+          "ts",
           "webm",
+          "wmv",
           "epub",
           "html",
           "md",
@@ -2146,24 +2367,11 @@
           "mobi"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "pdf",
-          "tier": "TIER 1",
-          "blocker": "No Desktop adapter for image embedding into PDF.",
-          "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-        },
-        {
-          "target": "txt",
-          "tier": "TIER 3",
-          "blocker": "No effective canonical route within two intermediates.",
-          "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
-      "adapterGap": "Adapter missing",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
+      "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "toml",
@@ -2214,10 +2422,46 @@
       "format": "ts",
       "category": "video",
       "asSource": {
-        "directTargets": [],
-        "oneIntermediateTargets": [],
-        "twoIntermediateTargets": [],
-        "allEffectiveTargets": []
+        "directTargets": [
+          "mp4",
+          "webm",
+          "aac",
+          "flac",
+          "m4a",
+          "mkv",
+          "mp3",
+          "ogg",
+          "wav",
+          "gif"
+        ],
+        "oneIntermediateTargets": [
+          "avif",
+          "jpg",
+          "png",
+          "tiff",
+          "webp"
+        ],
+        "twoIntermediateTargets": [
+          "pdf"
+        ],
+        "allEffectiveTargets": [
+          "mp4",
+          "webm",
+          "aac",
+          "flac",
+          "m4a",
+          "mkv",
+          "mp3",
+          "ogg",
+          "wav",
+          "gif",
+          "avif",
+          "jpg",
+          "png",
+          "tiff",
+          "webp",
+          "pdf"
+        ]
       },
       "asTarget": {
         "directSources": [],
@@ -2225,27 +2469,8 @@
         "twoIntermediateSources": [],
         "allEffectiveSources": []
       },
-      "highValueMissingConversions": [
-        {
-          "target": "mp4",
-          "tier": "TIER 2",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        },
-        {
-          "target": "webm",
-          "tier": "TIER 2",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        },
-        {
-          "target": "mkv",
-          "tier": "TIER 2",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
       "qualityRisk": "Low"
@@ -2312,6 +2537,7 @@
         ],
         "twoIntermediateTargets": [
           "pdf",
+          "rtf",
           "azw3",
           "mobi"
         ],
@@ -2324,33 +2550,67 @@
           "odt",
           "rst",
           "tex",
+          "rtf",
           "azw3",
           "mobi"
         ]
       },
       "asTarget": {
         "directSources": [
-          "docx",
+          "pdf",
           "html",
           "md",
           "rst"
         ],
         "oneIntermediateSources": [
           "doc",
+          "docx",
+          "jpg",
+          "odp",
+          "ods",
           "odt",
+          "png",
+          "ppt",
+          "pptx",
           "rtf",
+          "tiff",
+          "webp",
+          "xls",
+          "xlsx",
+          "epub",
           "tex"
         ],
-        "twoIntermediateSources": [],
+        "twoIntermediateSources": [
+          "avif",
+          "gif",
+          "azw3",
+          "mobi"
+        ],
         "allEffectiveSources": [
-          "docx",
+          "pdf",
           "html",
           "md",
           "rst",
           "doc",
+          "docx",
+          "jpg",
+          "odp",
+          "ods",
           "odt",
+          "png",
+          "ppt",
+          "pptx",
           "rtf",
-          "tex"
+          "tiff",
+          "webp",
+          "xls",
+          "xlsx",
+          "epub",
+          "tex",
+          "avif",
+          "gif",
+          "azw3",
+          "mobi"
         ]
       },
       "highValueMissingConversions": [],
@@ -2366,6 +2626,7 @@
         "directTargets": [
           "mp3",
           "ogg",
+          "aac",
           "flac",
           "m4a"
         ],
@@ -2374,12 +2635,14 @@
         "allEffectiveTargets": [
           "mp3",
           "ogg",
+          "aac",
           "flac",
           "m4a"
         ]
       },
       "asTarget": {
         "directSources": [
+          "aac",
           "avi",
           "flac",
           "m4a",
@@ -2388,11 +2651,14 @@
           "mp3",
           "mp4",
           "ogg",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
         "allEffectiveSources": [
+          "aac",
           "avi",
           "flac",
           "m4a",
@@ -2401,21 +2667,16 @@
           "mp3",
           "mp4",
           "ogg",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "aac",
-          "tier": "TIER 1",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "webm",
@@ -2423,6 +2684,7 @@
       "asSource": {
         "directTargets": [
           "mp4",
+          "aac",
           "flac",
           "m4a",
           "mkv",
@@ -2438,9 +2700,12 @@
           "tiff",
           "webp"
         ],
-        "twoIntermediateTargets": [],
+        "twoIntermediateTargets": [
+          "pdf"
+        ],
         "allEffectiveTargets": [
           "mp4",
+          "aac",
           "flac",
           "m4a",
           "mkv",
@@ -2452,7 +2717,8 @@
           "jpg",
           "png",
           "tiff",
-          "webp"
+          "webp",
+          "pdf"
         ]
       },
       "asTarget": {
@@ -2460,7 +2726,9 @@
           "avi",
           "mkv",
           "mov",
-          "mp4"
+          "mp4",
+          "ts",
+          "wmv"
         ],
         "oneIntermediateSources": [],
         "twoIntermediateSources": [],
@@ -2468,7 +2736,9 @@
           "avi",
           "mkv",
           "mov",
-          "mp4"
+          "mp4",
+          "ts",
+          "wmv"
         ]
       },
       "highValueMissingConversions": [],
@@ -2486,16 +2756,25 @@
           "png",
           "gif",
           "jpg",
+          "pdf",
           "tiff"
         ],
-        "oneIntermediateTargets": [],
+        "oneIntermediateTargets": [
+          "txt",
+          "html",
+          "md"
+        ],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
           "avif",
           "png",
           "gif",
           "jpg",
-          "tiff"
+          "pdf",
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -2511,7 +2790,9 @@
           "mkv",
           "mov",
           "mp4",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ],
         "twoIntermediateSources": [],
         "allEffectiveSources": [
@@ -2524,36 +2805,61 @@
           "mkv",
           "mov",
           "mp4",
-          "webm"
+          "ts",
+          "webm",
+          "wmv"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "pdf",
-          "tier": "TIER 1",
-          "blocker": "No Desktop adapter for image embedding into PDF.",
-          "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-        },
-        {
-          "target": "txt",
-          "tier": "TIER 3",
-          "blocker": "No effective canonical route within two intermediates.",
-          "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
-      "adapterGap": "Adapter missing",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
+      "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "wmv",
       "category": "video",
       "asSource": {
-        "directTargets": [],
-        "oneIntermediateTargets": [],
-        "twoIntermediateTargets": [],
-        "allEffectiveTargets": []
+        "directTargets": [
+          "mp4",
+          "webm",
+          "aac",
+          "flac",
+          "m4a",
+          "mkv",
+          "mp3",
+          "ogg",
+          "wav",
+          "gif"
+        ],
+        "oneIntermediateTargets": [
+          "avif",
+          "jpg",
+          "png",
+          "tiff",
+          "webp"
+        ],
+        "twoIntermediateTargets": [
+          "pdf"
+        ],
+        "allEffectiveTargets": [
+          "mp4",
+          "webm",
+          "aac",
+          "flac",
+          "m4a",
+          "mkv",
+          "mp3",
+          "ogg",
+          "wav",
+          "gif",
+          "avif",
+          "jpg",
+          "png",
+          "tiff",
+          "webp",
+          "pdf"
+        ]
       },
       "asTarget": {
         "directSources": [],
@@ -2561,27 +2867,8 @@
         "twoIntermediateSources": [],
         "allEffectiveSources": []
       },
-      "highValueMissingConversions": [
-        {
-          "target": "mp4",
-          "tier": "TIER 2",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        },
-        {
-          "target": "webm",
-          "tier": "TIER 2",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        },
-        {
-          "target": "mkv",
-          "tier": "TIER 2",
-          "blocker": "Canonical edge not declared/certified.",
-          "recommendation": "QUICK WIN candidate pending real media probes."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
       "qualityRisk": "Low"
@@ -2598,7 +2885,10 @@
         "oneIntermediateTargets": [
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
@@ -2607,7 +2897,10 @@
           "xlsx",
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -2633,7 +2926,10 @@
         "oneIntermediateTargets": [
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ],
         "twoIntermediateTargets": [],
         "allEffectiveTargets": [
@@ -2641,7 +2937,10 @@
           "pdf",
           "jpg",
           "png",
-          "tiff"
+          "tiff",
+          "txt",
+          "html",
+          "md"
         ]
       },
       "asTarget": {
@@ -2872,35 +3171,63 @@
       "qualityExpectation": "medium",
       "notes": "Expected from a competitive document converter; PDF input quality depends on text/scanned/mixed analysis.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "pdf",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "pdf -> txt",
+        "enginePath": "poppler",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "pdf",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "pdf -> txt",
+        "enginePath": "poppler",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "Poppler raster/OCR only; no text extraction route in standard conversion",
-        "currentBlocker": "No pdf->txt adapter bound to Poppler text/html tools.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "Poppler pdftotext",
-          "Poppler pdftohtml"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH for text PDFs, LOW for scanned PDFs without OCR",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "ADOPT existing Poppler utilities after versioned Windows bundle confirms pdftotext/pdftohtml are included."
-      }
+      "gap": null
     },
     {
       "source": "pdf",
@@ -2910,37 +3237,63 @@
       "qualityExpectation": "medium",
       "notes": "Expected from a competitive document converter; PDF input quality depends on text/scanned/mixed analysis.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "pdf",
+          "destination": "md",
+          "steps": [
+            {
+              "source": "pdf",
+              "target": "md",
+              "operationId": "pdf:extract-markdown",
+              "engineId": "poppler",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.6,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "pdf -> md",
+        "enginePath": "poppler",
+        "risk": "high",
+        "score": 0.6
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "pdf",
+          "destination": "md",
+          "steps": [
+            {
+              "source": "pdf",
+              "target": "md",
+              "operationId": "pdf:extract-markdown",
+              "engineId": "poppler",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.6,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "pdf -> md",
+        "enginePath": "poppler",
+        "risk": "high",
+        "score": 0.6
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "Needs PDF text/layout extraction followed by Markdown normalization.",
-        "existingEngineCanHandle": "PARTIAL",
-        "existingEngineCandidates": [
-          "Poppler pdftotext + Markdown adapter",
-          "Pandoc after HTML extraction"
-        ],
-        "newRequired": false,
-        "candidates": [
-          "MarkItDown as optional future library"
-        ],
-        "expectedQuality": "MEDIUM",
-        "complexity": "MEDIUM",
-        "portableImpact": "LOW to MEDIUM",
-        "recommendation": "ADOPT Poppler text extraction first; INVESTIGATE MarkItDown for richer Markdown."
-      }
+      "gap": null
     },
     {
       "source": "pdf",
@@ -2950,35 +3303,63 @@
       "qualityExpectation": "medium",
       "notes": "Expected from a competitive document converter; PDF input quality depends on text/scanned/mixed analysis.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "pdf",
+          "destination": "html",
+          "steps": [
+            {
+              "source": "pdf",
+              "target": "html",
+              "operationId": "pdf:extract-html",
+              "engineId": "poppler",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.6,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "pdf -> html",
+        "enginePath": "poppler",
+        "risk": "high",
+        "score": 0.6
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "pdf",
+          "destination": "html",
+          "steps": [
+            {
+              "source": "pdf",
+              "target": "html",
+              "operationId": "pdf:extract-html",
+              "engineId": "poppler",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.6,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "pdf -> html",
+        "enginePath": "poppler",
+        "risk": "high",
+        "score": 0.6
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "Poppler raster/OCR only; no text extraction route in standard conversion",
-        "currentBlocker": "No pdf->html adapter bound to Poppler text/html tools.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "Poppler pdftotext",
-          "Poppler pdftohtml"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "MEDIUM",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "ADOPT existing Poppler utilities after versioned Windows bundle confirms pdftotext/pdftohtml are included."
-      }
+      "gap": null
     },
     {
       "source": "docx",
@@ -3055,55 +3436,75 @@
       "notes": "Core Office/document export workflow.",
       "windows": {
         "status": "supported",
-        "kind": "direct",
+        "kind": "one-intermediate",
         "route": {
           "source": "docx",
           "destination": "txt",
           "steps": [
             {
               "source": "docx",
+              "target": "pdf",
+              "operationId": "office:to-pdf",
+              "engineId": "libreoffice",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
               "target": "txt",
-              "operationId": "doc:convert",
-              "engineId": "pandoc",
-              "lossProfile": "structural-risk",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
               "resourceProfile": "medium"
             }
           ],
-          "intermediateFormats": [],
-          "score": 0.6,
-          "classification": "lossy",
-          "risk": "high"
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.7290000000000001,
+          "classification": "multistep",
+          "risk": "low"
         },
-        "routeText": "docx -> txt",
-        "enginePath": "pandoc",
-        "risk": "high",
-        "score": 0.6
+        "routeText": "docx -> pdf -> txt",
+        "enginePath": "libreoffice + poppler",
+        "risk": "low",
+        "score": 0.7290000000000001
       },
       "linux": {
         "status": "supported",
-        "kind": "direct",
+        "kind": "one-intermediate",
         "route": {
           "source": "docx",
           "destination": "txt",
           "steps": [
             {
               "source": "docx",
+              "target": "pdf",
+              "operationId": "office:to-pdf",
+              "engineId": "libreoffice",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
               "target": "txt",
-              "operationId": "doc:convert",
-              "engineId": "pandoc",
-              "lossProfile": "structural-risk",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
               "resourceProfile": "medium"
             }
           ],
-          "intermediateFormats": [],
-          "score": 0.6,
-          "classification": "lossy",
-          "risk": "high"
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.7290000000000001,
+          "classification": "multistep",
+          "risk": "low"
         },
-        "routeText": "docx -> txt",
-        "enginePath": "pandoc",
-        "risk": "high",
-        "score": 0.6
+        "routeText": "docx -> pdf -> txt",
+        "enginePath": "libreoffice + poppler",
+        "risk": "low",
+        "score": 0.7290000000000001
       },
       "web": {
         "status": "missing",
@@ -4236,34 +4637,63 @@
       "qualityExpectation": "medium",
       "notes": "Legacy document compatibility.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "docx",
+          "destination": "rtf",
+          "steps": [
+            {
+              "source": "docx",
+              "target": "rtf",
+              "operationId": "office:convert",
+              "engineId": "libreoffice",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "docx -> rtf",
+        "enginePath": "libreoffice",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "docx",
+          "destination": "rtf",
+          "steps": [
+            {
+              "source": "docx",
+              "target": "rtf",
+              "operationId": "office:convert",
+              "engineId": "libreoffice",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "docx -> rtf",
+        "enginePath": "libreoffice",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "LibreOffice installed, but matrix omits DOCX->RTF.",
-        "currentBlocker": "No certified edge/probe for DOCX->RTF.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "LibreOffice"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "MEDIUM",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real DOCX->RTF probe."
-      }
+      "gap": null
     },
     {
       "source": "txt",
@@ -5198,7 +5628,7 @@
             {
               "source": "ppt",
               "target": "pptx",
-              "operationId": "office:to-pdf",
+              "operationId": "office:convert",
               "engineId": "libreoffice",
               "lossProfile": "lossy-controlled",
               "resourceProfile": "medium"
@@ -5224,7 +5654,7 @@
             {
               "source": "ppt",
               "target": "pptx",
-              "operationId": "office:to-pdf",
+              "operationId": "office:convert",
               "engineId": "libreoffice",
               "lossProfile": "lossy-controlled",
               "resourceProfile": "medium"
@@ -5255,34 +5685,63 @@
       "qualityExpectation": "high",
       "notes": "Presentation export/interoperability.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "odp",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "odp",
+              "target": "pdf",
+              "operationId": "office:to-pdf",
+              "engineId": "libreoffice",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "odp -> pdf",
+        "enginePath": "libreoffice",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "odp",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "odp",
+              "target": "pdf",
+              "operationId": "office:to-pdf",
+              "engineId": "libreoffice",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "odp -> pdf",
+        "enginePath": "libreoffice",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "LibreOffice installed, but presentation matrix omits ODP source.",
-        "currentBlocker": "No certified edge/probe for odp->pdf.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "LibreOffice"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real ODP probe."
-      }
+      "gap": null
     },
     {
       "source": "odp",
@@ -5292,34 +5751,63 @@
       "qualityExpectation": "high",
       "notes": "Presentation export/interoperability.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "odp",
+          "destination": "pptx",
+          "steps": [
+            {
+              "source": "odp",
+              "target": "pptx",
+              "operationId": "office:convert",
+              "engineId": "libreoffice",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "odp -> pptx",
+        "enginePath": "libreoffice",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "odp",
+          "destination": "pptx",
+          "steps": [
+            {
+              "source": "odp",
+              "target": "pptx",
+              "operationId": "office:convert",
+              "engineId": "libreoffice",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "odp -> pptx",
+        "enginePath": "libreoffice",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "LibreOffice installed, but presentation matrix omits ODP source.",
-        "currentBlocker": "No certified edge/probe for odp->pptx.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "LibreOffice"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real ODP probe."
-      }
+      "gap": null
     },
     {
       "source": "png",
@@ -5851,14 +6339,56 @@
       "qualityExpectation": "medium",
       "notes": "Image to PDF is expected in a general converter.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "png",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "png",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "png -> pdf",
+        "enginePath": "sharp-image",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "png",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "png",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "png -> pdf",
+        "enginePath": "sharp-image",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "supported",
@@ -5886,21 +6416,7 @@
         "risk": "low",
         "score": 0.9
       },
-      "gap": {
-        "currentPipeline": "pdf-lib is already installed; browser image-to-PDF exists only for Web.",
-        "currentBlocker": "No Desktop adapter for image embedding into PDF.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "pdf-lib",
-          "Sharp for image normalization"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "MEDIUM",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-      }
+      "gap": null
     },
     {
       "source": "jpg",
@@ -5910,14 +6426,56 @@
       "qualityExpectation": "medium",
       "notes": "Image to PDF is expected in a general converter.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "jpg",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "jpg",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "jpg -> pdf",
+        "enginePath": "sharp-image",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "jpg",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "jpg",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "jpg -> pdf",
+        "enginePath": "sharp-image",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "supported",
@@ -5945,21 +6503,7 @@
         "risk": "low",
         "score": 0.9
       },
-      "gap": {
-        "currentPipeline": "pdf-lib is already installed; browser image-to-PDF exists only for Web.",
-        "currentBlocker": "No Desktop adapter for image embedding into PDF.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "pdf-lib",
-          "Sharp for image normalization"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "MEDIUM",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-      }
+      "gap": null
     },
     {
       "source": "webp",
@@ -5969,14 +6513,56 @@
       "qualityExpectation": "medium",
       "notes": "Image to PDF is expected in a general converter.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "webp",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "webp",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "webp -> pdf",
+        "enginePath": "sharp-image",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "webp",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "webp",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "webp -> pdf",
+        "enginePath": "sharp-image",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "supported",
@@ -6004,21 +6590,7 @@
         "risk": "low",
         "score": 0.9
       },
-      "gap": {
-        "currentPipeline": "pdf-lib is already installed; browser image-to-PDF exists only for Web.",
-        "currentBlocker": "No Desktop adapter for image embedding into PDF.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "pdf-lib",
-          "Sharp for image normalization"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "MEDIUM",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-      }
+      "gap": null
     },
     {
       "source": "tiff",
@@ -6028,35 +6600,63 @@
       "qualityExpectation": "medium",
       "notes": "Image to PDF is expected in a general converter.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "tiff",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "tiff",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "tiff -> pdf",
+        "enginePath": "sharp-image",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "tiff",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "tiff",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "tiff -> pdf",
+        "enginePath": "sharp-image",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "pdf-lib is already installed; browser image-to-PDF exists only for Web.",
-        "currentBlocker": "No Desktop adapter for image embedding into PDF.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "pdf-lib",
-          "Sharp for image normalization"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "MEDIUM",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-      }
+      "gap": null
     },
     {
       "source": "tiff",
@@ -7320,34 +7920,63 @@
       "qualityExpectation": "high",
       "notes": "Core audio transcoding set.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "mp3",
+          "destination": "aac",
+          "steps": [
+            {
+              "source": "mp3",
+              "target": "aac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "mp3 -> aac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "mp3",
+          "destination": "aac",
+          "steps": [
+            {
+              "source": "mp3",
+              "target": "aac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "mp3 -> aac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "wav",
@@ -7621,34 +8250,63 @@
       "qualityExpectation": "high",
       "notes": "Core audio transcoding set.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "wav",
+          "destination": "aac",
+          "steps": [
+            {
+              "source": "wav",
+              "target": "aac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "wav -> aac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "wav",
+          "destination": "aac",
+          "steps": [
+            {
+              "source": "wav",
+              "target": "aac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "wav -> aac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "flac",
@@ -7922,34 +8580,63 @@
       "qualityExpectation": "high",
       "notes": "Core audio transcoding set.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "flac",
+          "destination": "aac",
+          "steps": [
+            {
+              "source": "flac",
+              "target": "aac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "flac -> aac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "flac",
+          "destination": "aac",
+          "steps": [
+            {
+              "source": "flac",
+              "target": "aac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "flac -> aac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "m4a",
@@ -8223,34 +8910,63 @@
       "qualityExpectation": "high",
       "notes": "Core audio transcoding set.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "m4a",
+          "destination": "aac",
+          "steps": [
+            {
+              "source": "m4a",
+              "target": "aac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "m4a -> aac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "m4a",
+          "destination": "aac",
+          "steps": [
+            {
+              "source": "m4a",
+              "target": "aac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "m4a -> aac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "ogg",
@@ -8524,34 +9240,63 @@
       "qualityExpectation": "high",
       "notes": "Core audio transcoding set.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "ogg",
+          "destination": "aac",
+          "steps": [
+            {
+              "source": "ogg",
+              "target": "aac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "ogg -> aac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "ogg",
+          "destination": "aac",
+          "steps": [
+            {
+              "source": "ogg",
+              "target": "aac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "ogg -> aac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "aac",
@@ -8561,34 +9306,63 @@
       "qualityExpectation": "high",
       "notes": "Core audio transcoding set.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "aac",
+          "destination": "mp3",
+          "steps": [
+            {
+              "source": "aac",
+              "target": "mp3",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "aac -> mp3",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "aac",
+          "destination": "mp3",
+          "steps": [
+            {
+              "source": "aac",
+              "target": "mp3",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "aac -> mp3",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "aac",
@@ -8598,34 +9372,63 @@
       "qualityExpectation": "high",
       "notes": "Core audio transcoding set.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "aac",
+          "destination": "wav",
+          "steps": [
+            {
+              "source": "aac",
+              "target": "wav",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "aac -> wav",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "aac",
+          "destination": "wav",
+          "steps": [
+            {
+              "source": "aac",
+              "target": "wav",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "aac -> wav",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "aac",
@@ -8635,34 +9438,63 @@
       "qualityExpectation": "high",
       "notes": "Core audio transcoding set.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "aac",
+          "destination": "flac",
+          "steps": [
+            {
+              "source": "aac",
+              "target": "flac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "aac -> flac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "aac",
+          "destination": "flac",
+          "steps": [
+            {
+              "source": "aac",
+              "target": "flac",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "aac -> flac",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "aac",
@@ -8672,34 +9504,63 @@
       "qualityExpectation": "high",
       "notes": "Core audio transcoding set.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "aac",
+          "destination": "m4a",
+          "steps": [
+            {
+              "source": "aac",
+              "target": "m4a",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "aac -> m4a",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "aac",
+          "destination": "m4a",
+          "steps": [
+            {
+              "source": "aac",
+              "target": "m4a",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "aac -> m4a",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "aac",
@@ -8709,34 +9570,63 @@
       "qualityExpectation": "high",
       "notes": "Core audio transcoding set.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "aac",
+          "destination": "ogg",
+          "steps": [
+            {
+              "source": "aac",
+              "target": "ogg",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "aac -> ogg",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "aac",
+          "destination": "ogg",
+          "steps": [
+            {
+              "source": "aac",
+              "target": "ogg",
+              "operationId": "media:convert-audio",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "aac -> ogg",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "mp4",
@@ -11188,34 +12078,63 @@
       "qualityExpectation": "medium",
       "notes": "Legacy/broadcast video interoperability.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "wmv",
+          "destination": "mp4",
+          "steps": [
+            {
+              "source": "wmv",
+              "target": "mp4",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "wmv -> mp4",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "wmv",
+          "destination": "mp4",
+          "steps": [
+            {
+              "source": "wmv",
+              "target": "mp4",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "wmv -> mp4",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "wmv",
@@ -11225,34 +12144,63 @@
       "qualityExpectation": "medium",
       "notes": "Legacy/broadcast video interoperability.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "wmv",
+          "destination": "webm",
+          "steps": [
+            {
+              "source": "wmv",
+              "target": "webm",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "wmv -> webm",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "wmv",
+          "destination": "webm",
+          "steps": [
+            {
+              "source": "wmv",
+              "target": "webm",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "wmv -> webm",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "wmv",
@@ -11262,34 +12210,63 @@
       "qualityExpectation": "medium",
       "notes": "Legacy/broadcast video interoperability.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "wmv",
+          "destination": "mkv",
+          "steps": [
+            {
+              "source": "wmv",
+              "target": "mkv",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "wmv -> mkv",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "wmv",
+          "destination": "mkv",
+          "steps": [
+            {
+              "source": "wmv",
+              "target": "mkv",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "wmv -> mkv",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "ts",
@@ -11299,34 +12276,63 @@
       "qualityExpectation": "medium",
       "notes": "Legacy/broadcast video interoperability.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "ts",
+          "destination": "mp4",
+          "steps": [
+            {
+              "source": "ts",
+              "target": "mp4",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "ts -> mp4",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "ts",
+          "destination": "mp4",
+          "steps": [
+            {
+              "source": "ts",
+              "target": "mp4",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "ts -> mp4",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "ts",
@@ -11336,34 +12342,63 @@
       "qualityExpectation": "medium",
       "notes": "Legacy/broadcast video interoperability.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "ts",
+          "destination": "webm",
+          "steps": [
+            {
+              "source": "ts",
+              "target": "webm",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "ts -> webm",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "ts",
+          "destination": "webm",
+          "steps": [
+            {
+              "source": "ts",
+              "target": "webm",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "ts -> webm",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "ts",
@@ -11373,34 +12408,63 @@
       "qualityExpectation": "medium",
       "notes": "Legacy/broadcast video interoperability.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "ts",
+          "destination": "mkv",
+          "steps": [
+            {
+              "source": "ts",
+              "target": "mkv",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "ts -> mkv",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "ts",
+          "destination": "mkv",
+          "steps": [
+            {
+              "source": "ts",
+              "target": "mkv",
+              "operationId": "media:convert-video",
+              "engineId": "ffmpeg-media",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "ts -> mkv",
+        "enginePath": "ffmpeg-media",
+        "risk": "low",
+        "score": 0.9
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
-        "currentBlocker": "Canonical edge not declared/certified.",
-        "existingEngineCanHandle": "YES",
-        "existingEngineCandidates": [
-          "FFmpeg/FFprobe"
-        ],
-        "newRequired": false,
-        "candidates": [],
-        "expectedQuality": "HIGH",
-        "complexity": "LOW",
-        "portableImpact": "LOW",
-        "recommendation": "QUICK WIN candidate pending real media probes."
-      }
+      "gap": null
     },
     {
       "source": "mp4",
@@ -12535,32 +13599,83 @@
       "qualityExpectation": "medium",
       "notes": "Ebook extraction/editing workflow.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "epub",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "epub",
+              "target": "pdf",
+              "operationId": "ebook:convert",
+              "engineId": "calibre",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.48600000000000004,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "epub -> pdf -> txt",
+        "enginePath": "calibre + poppler",
+        "risk": "high",
+        "score": 0.48600000000000004
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "epub",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "epub",
+              "target": "pdf",
+              "operationId": "ebook:convert",
+              "engineId": "calibre",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.48600000000000004,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "epub -> pdf -> txt",
+        "enginePath": "calibre + poppler",
+        "risk": "high",
+        "score": 0.48600000000000004
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No effective canonical route within two intermediates.",
-        "existingEngineCanHandle": "NO",
-        "existingEngineCandidates": [],
-        "newRequired": true,
-        "candidates": [],
-        "expectedQuality": "UNKNOWN",
-        "complexity": "MEDIUM",
-        "portableImpact": "UNKNOWN",
-        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-      }
+      "gap": null
     },
     {
       "source": "epub",
@@ -12570,32 +13685,83 @@
       "qualityExpectation": "medium",
       "notes": "Ebook extraction/editing workflow.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "epub",
+          "destination": "html",
+          "steps": [
+            {
+              "source": "epub",
+              "target": "pdf",
+              "operationId": "ebook:convert",
+              "engineId": "calibre",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "html",
+              "operationId": "pdf:extract-html",
+              "engineId": "poppler",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.324,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "epub -> pdf -> html",
+        "enginePath": "calibre + poppler",
+        "risk": "high",
+        "score": 0.324
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "epub",
+          "destination": "html",
+          "steps": [
+            {
+              "source": "epub",
+              "target": "pdf",
+              "operationId": "ebook:convert",
+              "engineId": "calibre",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "html",
+              "operationId": "pdf:extract-html",
+              "engineId": "poppler",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.324,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "epub -> pdf -> html",
+        "enginePath": "calibre + poppler",
+        "risk": "high",
+        "score": 0.324
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No effective canonical route within two intermediates.",
-        "existingEngineCanHandle": "NO",
-        "existingEngineCandidates": [],
-        "newRequired": true,
-        "candidates": [],
-        "expectedQuality": "UNKNOWN",
-        "complexity": "MEDIUM",
-        "portableImpact": "UNKNOWN",
-        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-      }
+      "gap": null
     },
     {
       "source": "epub",
@@ -12605,32 +13771,83 @@
       "qualityExpectation": "medium",
       "notes": "Ebook extraction/editing workflow.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "epub",
+          "destination": "md",
+          "steps": [
+            {
+              "source": "epub",
+              "target": "pdf",
+              "operationId": "ebook:convert",
+              "engineId": "calibre",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "md",
+              "operationId": "pdf:extract-markdown",
+              "engineId": "poppler",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.324,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "epub -> pdf -> md",
+        "enginePath": "calibre + poppler",
+        "risk": "high",
+        "score": 0.324
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "epub",
+          "destination": "md",
+          "steps": [
+            {
+              "source": "epub",
+              "target": "pdf",
+              "operationId": "ebook:convert",
+              "engineId": "calibre",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "md",
+              "operationId": "pdf:extract-markdown",
+              "engineId": "poppler",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.324,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "epub -> pdf -> md",
+        "enginePath": "calibre + poppler",
+        "risk": "high",
+        "score": 0.324
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No effective canonical route within two intermediates.",
-        "existingEngineCanHandle": "NO",
-        "existingEngineCandidates": [],
-        "newRequired": true,
-        "candidates": [],
-        "expectedQuality": "UNKNOWN",
-        "complexity": "MEDIUM",
-        "portableImpact": "UNKNOWN",
-        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-      }
+      "gap": null
     },
     {
       "source": "json",
@@ -15590,32 +16807,83 @@
       "qualityExpectation": "low",
       "notes": "OCR is useful but quality depends heavily on image source and language.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "png",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "png",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.7290000000000001,
+          "classification": "multistep",
+          "risk": "low"
+        },
+        "routeText": "png -> pdf -> txt",
+        "enginePath": "sharp-image + poppler",
+        "risk": "low",
+        "score": 0.7290000000000001
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "png",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "png",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.7290000000000001,
+          "classification": "multistep",
+          "risk": "low"
+        },
+        "routeText": "png -> pdf -> txt",
+        "enginePath": "sharp-image + poppler",
+        "risk": "low",
+        "score": 0.7290000000000001
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No effective canonical route within two intermediates.",
-        "existingEngineCanHandle": "NO",
-        "existingEngineCandidates": [],
-        "newRequired": true,
-        "candidates": [],
-        "expectedQuality": "UNKNOWN",
-        "complexity": "MEDIUM",
-        "portableImpact": "UNKNOWN",
-        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-      }
+      "gap": null
     },
     {
       "source": "jpg",
@@ -15625,32 +16893,83 @@
       "qualityExpectation": "low",
       "notes": "OCR is useful but quality depends heavily on image source and language.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "jpg",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "jpg",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.7290000000000001,
+          "classification": "multistep",
+          "risk": "low"
+        },
+        "routeText": "jpg -> pdf -> txt",
+        "enginePath": "sharp-image + poppler",
+        "risk": "low",
+        "score": 0.7290000000000001
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "jpg",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "jpg",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.7290000000000001,
+          "classification": "multistep",
+          "risk": "low"
+        },
+        "routeText": "jpg -> pdf -> txt",
+        "enginePath": "sharp-image + poppler",
+        "risk": "low",
+        "score": 0.7290000000000001
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No effective canonical route within two intermediates.",
-        "existingEngineCanHandle": "NO",
-        "existingEngineCandidates": [],
-        "newRequired": true,
-        "candidates": [],
-        "expectedQuality": "UNKNOWN",
-        "complexity": "MEDIUM",
-        "portableImpact": "UNKNOWN",
-        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-      }
+      "gap": null
     },
     {
       "source": "tiff",
@@ -15660,32 +16979,83 @@
       "qualityExpectation": "low",
       "notes": "OCR is useful but quality depends heavily on image source and language.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "tiff",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "tiff",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.7290000000000001,
+          "classification": "multistep",
+          "risk": "low"
+        },
+        "routeText": "tiff -> pdf -> txt",
+        "enginePath": "sharp-image + poppler",
+        "risk": "low",
+        "score": 0.7290000000000001
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "tiff",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "tiff",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.7290000000000001,
+          "classification": "multistep",
+          "risk": "low"
+        },
+        "routeText": "tiff -> pdf -> txt",
+        "enginePath": "sharp-image + poppler",
+        "risk": "low",
+        "score": 0.7290000000000001
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No effective canonical route within two intermediates.",
-        "existingEngineCanHandle": "NO",
-        "existingEngineCandidates": [],
-        "newRequired": true,
-        "candidates": [],
-        "expectedQuality": "UNKNOWN",
-        "complexity": "MEDIUM",
-        "portableImpact": "UNKNOWN",
-        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-      }
+      "gap": null
     },
     {
       "source": "webp",
@@ -15695,45 +17065,92 @@
       "qualityExpectation": "low",
       "notes": "OCR is useful but quality depends heavily on image source and language.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "webp",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "webp",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.7290000000000001,
+          "classification": "multistep",
+          "risk": "low"
+        },
+        "routeText": "webp -> pdf -> txt",
+        "enginePath": "sharp-image + poppler",
+        "risk": "low",
+        "score": 0.7290000000000001
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "webp",
+          "destination": "txt",
+          "steps": [
+            {
+              "source": "webp",
+              "target": "pdf",
+              "operationId": "image:to-pdf",
+              "engineId": "sharp-image",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "txt",
+              "operationId": "pdf:extract-text",
+              "engineId": "poppler",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.7290000000000001,
+          "classification": "multistep",
+          "risk": "low"
+        },
+        "routeText": "webp -> pdf -> txt",
+        "enginePath": "sharp-image + poppler",
+        "risk": "low",
+        "score": 0.7290000000000001
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No effective canonical route within two intermediates.",
-        "existingEngineCanHandle": "NO",
-        "existingEngineCandidates": [],
-        "newRequired": true,
-        "candidates": [],
-        "expectedQuality": "UNKNOWN",
-        "complexity": "MEDIUM",
-        "portableImpact": "UNKNOWN",
-        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-      }
+      "gap": null
     }
   ],
   "familyCoverage": {
     "DOCUMENTS": {
       "required": 25,
-      "supported": 19,
-      "coveragePercent": 76,
+      "supported": 23,
+      "coveragePercent": 92,
       "biggestGaps": [
         "pdf->docx",
-        "pdf->txt",
-        "pdf->md",
-        "pdf->html",
-        "docx->rtf",
         "pdf->odt"
       ]
     },
@@ -15745,45 +17162,23 @@
     },
     "AUDIO": {
       "required": 30,
-      "supported": 20,
-      "coveragePercent": 66.7,
-      "biggestGaps": [
-        "mp3->aac",
-        "wav->aac",
-        "flac->aac",
-        "m4a->aac",
-        "ogg->aac",
-        "aac->mp3",
-        "aac->wav",
-        "aac->flac",
-        "aac->m4a",
-        "aac->ogg"
-      ]
+      "supported": 30,
+      "coveragePercent": 100,
+      "biggestGaps": []
     },
     "VIDEO": {
       "required": 18,
-      "supported": 12,
-      "coveragePercent": 66.7,
-      "biggestGaps": [
-        "wmv->mp4",
-        "wmv->webm",
-        "wmv->mkv",
-        "ts->mp4",
-        "ts->webm",
-        "ts->mkv"
-      ]
+      "supported": 18,
+      "coveragePercent": 100,
+      "biggestGaps": []
     },
     "EBOOKS": {
       "required": 27,
-      "supported": 20,
-      "coveragePercent": 74.1,
+      "supported": 24,
+      "coveragePercent": 88.9,
       "biggestGaps": [
         "pdf->docx",
-        "pdf->txt",
-        "pdf->html",
         "epub->docx",
-        "epub->txt",
-        "epub->html",
         "pdf->epub"
       ]
     },
@@ -15800,275 +17195,7 @@
       "biggestGaps": []
     }
   },
-  "quickWinsWithoutNewDependencies": [
-    {
-      "conversion": "pdf->txt",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "Poppler pdftotext",
-        "Poppler pdftohtml"
-      ],
-      "expectedQuality": "HIGH for text PDFs, LOW for scanned PDFs without OCR",
-      "implementationComplexity": "LOW",
-      "recommendation": "ADOPT existing Poppler utilities after versioned Windows bundle confirms pdftotext/pdftohtml are included."
-    },
-    {
-      "conversion": "pdf->md",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "Poppler pdftotext + Markdown adapter",
-        "Pandoc after HTML extraction"
-      ],
-      "expectedQuality": "MEDIUM",
-      "implementationComplexity": "MEDIUM",
-      "recommendation": "ADOPT Poppler text extraction first; INVESTIGATE MarkItDown for richer Markdown."
-    },
-    {
-      "conversion": "pdf->html",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "Poppler pdftotext",
-        "Poppler pdftohtml"
-      ],
-      "expectedQuality": "MEDIUM",
-      "implementationComplexity": "LOW",
-      "recommendation": "ADOPT existing Poppler utilities after versioned Windows bundle confirms pdftotext/pdftohtml are included."
-    },
-    {
-      "conversion": "docx->rtf",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "LibreOffice"
-      ],
-      "expectedQuality": "MEDIUM",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real DOCX->RTF probe."
-    },
-    {
-      "conversion": "odp->pdf",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "LibreOffice"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real ODP probe."
-    },
-    {
-      "conversion": "odp->pptx",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "LibreOffice"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real ODP probe."
-    },
-    {
-      "conversion": "png->pdf",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "pdf-lib",
-        "Sharp for image normalization"
-      ],
-      "expectedQuality": "MEDIUM",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-    },
-    {
-      "conversion": "jpg->pdf",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "pdf-lib",
-        "Sharp for image normalization"
-      ],
-      "expectedQuality": "MEDIUM",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-    },
-    {
-      "conversion": "webp->pdf",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "pdf-lib",
-        "Sharp for image normalization"
-      ],
-      "expectedQuality": "MEDIUM",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-    },
-    {
-      "conversion": "tiff->pdf",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "pdf-lib",
-        "Sharp for image normalization"
-      ],
-      "expectedQuality": "MEDIUM",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
-    },
-    {
-      "conversion": "mp3->aac",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "wav->aac",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "flac->aac",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "m4a->aac",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "ogg->aac",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "aac->mp3",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "aac->wav",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "aac->flac",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "aac->m4a",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "aac->ogg",
-      "tier": "TIER 1",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "wmv->mp4",
-      "tier": "TIER 2",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "wmv->webm",
-      "tier": "TIER 2",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "wmv->mkv",
-      "tier": "TIER 2",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "ts->mp4",
-      "tier": "TIER 2",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "ts->webm",
-      "tier": "TIER 2",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    },
-    {
-      "conversion": "ts->mkv",
-      "tier": "TIER 2",
-      "existingEngineCandidates": [
-        "FFmpeg/FFprobe"
-      ],
-      "expectedQuality": "HIGH",
-      "implementationComplexity": "LOW",
-      "recommendation": "QUICK WIN candidate pending real media probes."
-    }
-  ],
+  "quickWinsWithoutNewDependencies": [],
   "tier1RequiringNewDependencies": [
     {
       "conversion": "pdf->docx",

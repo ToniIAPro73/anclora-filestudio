@@ -1,0 +1,97 @@
+{
+  "generatedAt": "2026-08-13",
+  "phase": "Tier 1 quick wins — no new dependencies",
+  "quickWins": {
+    "identified": 26,
+    "reviewed": 26,
+    "implemented": 26,
+    "blocked": 0,
+    "blockedDetails": []
+  },
+  "pdf": {
+    "pdfToTxt": { "status": "IMPLEMENTED", "engine": "poppler", "tool": "pdftotext", "e2e": ["PDFTXT-001", "PDFTXT-002", "PDFTXT-003", "PDFTXT-004", "PDFTXT-005"] },
+    "pdfToHtml": { "status": "IMPLEMENTED", "engine": "poppler", "tool": "pdftohtml", "delivery": "single HTML; ZIP with assets only when images are present", "e2e": ["PDFHTML-001", "PDFHTML-002"] },
+    "pdfToMd": { "status": "IMPLEMENTED", "engine": "poppler+pandoc", "pipeline": "pdftotext scanned guard → pdftohtml -s -noframes -i → pandoc gfm", "e2e": ["PDFMD-001", "PDFMD-002"] },
+    "scannedBehavior": "Controlled failure (success=false, output removed) with OCR hint message; never an empty TXT/MD success.",
+    "pdfToDocx": { "status": "UNAVAILABLE", "reason": "No PDF layout extraction adapter; extraction edges are supportsAsIntermediate=false so no mediocre multistep pipeline inflates coverage (§79)." }
+  },
+  "media": {
+    "aacCoverageAdded": ["mp3→aac", "wav→aac", "flac→aac", "m4a→aac", "ogg→aac", "aac→mp3", "aac→wav", "aac→flac", "aac→m4a", "aac→ogg"],
+    "wmvCoverageAdded": ["wmv→mp4", "wmv→webm", "wmv→mkv"],
+    "tsCoverageAdded": ["ts→mp4", "ts→webm", "ts→mkv"],
+    "remuxPolicy": "MKV targets remux (stream copy); MP4/WebM transcode (codec/container incompatible)."
+  },
+  "office": {
+    "docxToRtf": { "status": "IMPLEMENTED", "e2e": ["DOCXRTF-001"] },
+    "odpToPdf": { "status": "IMPLEMENTED", "e2e": ["ODPPDF-001"] },
+    "odpToPptx": { "status": "IMPLEMENTED", "e2e": ["ODPPPTX-001"] }
+  },
+  "imageToPdf": {
+    "coverage": ["png→pdf", "jpg→pdf", "webp→pdf", "tiff→pdf"],
+    "semantics": "single image → single-page PDF, page sized to image",
+    "e2e": ["IMG2PDF png", "IMG2PDF jpg", "IMG2PDF webp", "IMG2PDF tiff"],
+    "bmp": "NOT DECLARED — bmp is not a canonical catalog format and Sharp does not decode BMP in this runtime."
+  },
+  "popplerRuntime": {
+    "pdftoppm": "present (Linux /usr/bin, Windows bundle Library/bin)",
+    "pdftotext": "present — same Poppler distribution",
+    "pdftohtml": "present — same Poppler distribution",
+    "resolver": "single unified resolver (diagnostics = discovery = routing = execution)",
+    "linuxInventory": { "pdftoppm": "24.02.0", "pdftotext": "24.02.0", "pdftohtml": "24.02.0" },
+    "windowsBundleReady": true,
+    "windowsBundleEvidence": "scripts/.cache/windows-portable/poppler-26.02.0-0-windows.zip contains Library/bin/pdftoppm.exe + pdftotext.exe + pdftohtml.exe; build-windows-portable.sh now hard-fails if any of the three is missing after extraction. No new dependency: same pinned Poppler 26.02.0 distribution in toolchain.lock.json."
+  },
+  "regressions": {
+    "sourceContract": "PASS (SOURCE-001..006)",
+    "executionAlignment": "PASS (single Poppler resolver)",
+    "pdfToPng": "PASS (PDFRAST-001)",
+    "multistepDocxPdfPng": "PASS (MULTISTEP-REG-001)",
+    "mediaRegression": "PASS (gate2b suite in pnpm test)"
+  },
+  "agentBrowserSmoke": {
+    "status": "PASS",
+    "evidence": [
+      "artifacts/conversion-coverage/quick-wins/agent-browser/pdf-to-txt-completed-snapshot.txt",
+      "artifacts/conversion-coverage/quick-wins/agent-browser/pdf-to-txt-completed.png",
+      "artifacts/conversion-coverage/quick-wins/agent-browser/convert-audio-targets-snapshot.txt"
+    ],
+    "observations": [
+      "Source selector lists AAC/TS/WMV/ODP without UI hardcodes.",
+      "PDF→TXT full UI flow: upload → direct route → conversion completed → downloadable TXT.",
+      "AAC destination shows 12 compatible sources (5 audio + 7 video inputs incl. WMV/TS).",
+      "Document destinations grew to 12 (TXT/HTML/MD now include PDF source; RTF includes DOCX; PDF 31 sources incl. ODP and images)."
+    ]
+  },
+  "coverage": {
+    "before": {
+      "directSupportedPairs": 192,
+      "multistepSupportedPairs": 129,
+      "totalEffectivePairs": 321,
+      "tier1": { "required": 152, "supported": 131, "coveragePercent": 86.2 }
+    },
+    "after": {
+      "directSupportedPairs": 238,
+      "multistepSupportedPairs": 202,
+      "totalEffectivePairs": 440,
+      "tier1": { "required": 152, "supported": 151, "coveragePercent": 99.3 },
+      "tier2": { "required": 40, "supported": 39, "coveragePercent": 97.5 },
+      "tier3": { "required": 6, "supported": 4, "coveragePercent": 66.7 }
+    },
+    "tier1RemainingGaps": ["pdf→docx (requires new dependency — next phase)"],
+    "tier2RemainingGaps": ["epub→docx"],
+    "tier3RemainingGaps": ["pdf→epub", "pdf→odt"]
+  },
+  "checks": {
+    "typecheck": "PASS",
+    "lint": "PASS (0 errors, 3 pre-existing warnings in unrelated component)",
+    "tests": "PASS (987 passed — includes 33 matrix quick-win tests + 34 real E2E)",
+    "build": "PASS"
+  },
+  "windows": {
+    "staticPackagingReadiness": "PASS (bundle inventory + build script guard)",
+    "windowsSpecificBlocker": "NONE",
+    "portableGenerated": false,
+    "finalWindowsBuildRequiredNow": false
+  },
+  "nextPhaseRecommendation": "PDF→DOCX dependency evaluation (pdf2docx vs alternatives) — do not start automatically."
+}
