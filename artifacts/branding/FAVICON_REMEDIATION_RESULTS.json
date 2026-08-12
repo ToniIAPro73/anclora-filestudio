@@ -1,0 +1,112 @@
+{
+  "status": "PASS",
+  "sourceCanonicalLogo": {
+    "path": "public/brand/anclora-filestudio.png",
+    "format": "png",
+    "dimensions": "1254x1254",
+    "sha256": "c77d7040faa2a500ec353f10f6a54c10f22986beab2673a8f1d7a9d29a01b5b4"
+  },
+  "generatedAssets": [
+    {
+      "path": "public/favicon-32.png",
+      "format": "png",
+      "dimensions": "32x32",
+      "sha256": "dae79a4eb5e87187d0fc4b68a92821bf5bdccc3047f29c374efde83bc9a346a2"
+    },
+    {
+      "path": "public/favicon-512.png",
+      "format": "png",
+      "dimensions": "512x512",
+      "sha256": "dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73"
+    },
+    {
+      "path": "public/icon.png",
+      "format": "png",
+      "dimensions": "512x512",
+      "sha256": "dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73"
+    },
+    {
+      "path": "public/apple-touch-icon.png",
+      "format": "png",
+      "dimensions": "180x180",
+      "sha256": "8886697996420e1072c906b5d29d6e356ea712457fecffe3f94cc078e7edf8b0"
+    },
+    {
+      "path": "src/app/icon.png",
+      "format": "png",
+      "dimensions": "512x512",
+      "sha256": "dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73"
+    },
+    {
+      "path": "src/app/apple-icon.png",
+      "format": "png",
+      "dimensions": "180x180",
+      "sha256": "8886697996420e1072c906b5d29d6e356ea712457fecffe3f94cc078e7edf8b0"
+    },
+    {
+      "path": "public/favicon.ico",
+      "format": "ico",
+      "dimensions": "16x16,32x32,48x48,64x64,128x128,256x256",
+      "sha256": "7488c656bbfe0ccb9093121463d3ed5e7a7c6ac94938288c4698bf9e56f27a0b"
+    }
+  ],
+  "icoValidation": {
+    "path": "public/favicon.ico",
+    "headerHex": "00000100",
+    "reserved": 0,
+    "type": 1,
+    "count": 6,
+    "entries": [
+      { "size": "16x16", "pngEncoded": true },
+      { "size": "32x32", "pngEncoded": true },
+      { "size": "48x48", "pngEncoded": true },
+      { "size": "64x64", "pngEncoded": true },
+      { "size": "128x128", "pngEncoded": true },
+      { "size": "256x256", "pngEncoded": true }
+    ]
+  },
+  "staleHashCheck": {
+    "staleSha256": "f2951f31666919dc57525f5f4aa31c7f7010e54652f93f79362799f716eda948",
+    "activeIconAssetsMatchStaleHash": false,
+    "removed": ["src/assets/logo.png"]
+  },
+  "nextMetadataCheck": {
+    "layout": "src/app/layout.tsx",
+    "referencedAssetsExist": [
+      "/favicon-32.png",
+      "/favicon-512.png",
+      "/favicon.ico",
+      "/apple-touch-icon.png"
+    ],
+    "automaticAppIcons": [
+      "src/app/icon.png",
+      "src/app/apple-icon.png"
+    ],
+    "metadataChanged": false
+  },
+  "windowsPortableCheck": {
+    "build": "PASS",
+    "verify": "PASS",
+    "artifact": "dist/windows/Anclora-FileStudio-Windows-x64-Core.zip",
+    "sha256": "4d0063e8ccead51871e207146143c4250d919607d71acf1b289e7f61945cb265",
+    "iconHashesMatchLocalGeneratedAssets": true
+  },
+  "linuxPortableCheck": {
+    "build": "PASS",
+    "verify": "PASS",
+    "artifact": "dist/linux/Anclora-FileStudio-Linux-x64.tar.zst",
+    "sha256": "91c6e9a4eacc8a643dfc13ee5faf5544b0273a272f84ce157debe2e5f51fa987",
+    "iconHashesMatchLocalGeneratedAssets": true
+  },
+  "commands": {
+    "typecheck": "PASS",
+    "lint": "PASS_WITH_WARNINGS",
+    "test": "PASS",
+    "build": "PASS",
+    "buildPortableWindows": "PASS",
+    "verifyPortableWindows": "PASS",
+    "buildPortableLinux": "PASS",
+    "verifyPortableLinux": "PASS"
+  },
+  "final": "FILESTUDIO FAVICON REMEDIATION: PASS"
+}
