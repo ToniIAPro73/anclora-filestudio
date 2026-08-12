@@ -5,6 +5,7 @@ import type { CapabilityInfo, CapabilityLossProfile } from "@/lib/domain/unified
 import { normalizeCapabilityInfo } from "@/lib/domain/unified-analysis";
 import type { ConversionCapability, EngineId } from "@/lib/domain/engines";
 import type { LossProfile } from "@/lib/domain/operations";
+import { normalizeFormatId } from "@/lib/domain/format-catalog";
 import {
   EDGE_QUALITY_WEIGHTS,
   getAvailableDestinations,
@@ -187,14 +188,16 @@ async function attachConversionRoutes(
     >(serverModule);
     const availableEngineIds = await getAvailableEngineIds();
 
-    const routes = getAvailableDestinations(inputFormat, availableEngineIds);
+    const canonicalInput = normalizeFormatId(inputFormat) ?? inputFormat;
+    const routes = getAvailableDestinations(canonicalInput, availableEngineIds);
     if (routes.length === 0) return normalizedCaps;
 
     const recommendedSet = getRecommendedDestinations(inputFormat, routes);
     const routeByDestination = new Map(routes.map((r) => [r.destination, r]));
 
     const result = normalizedCaps.map((cap) => {
-      const route = routeByDestination.get(cap.outputFormat);
+      const canonicalOutput = normalizeFormatId(cap.outputFormat) ?? cap.outputFormat;
+      const route = routeByDestination.get(canonicalOutput);
       if (!route) return cap;
       return {
         ...cap,
@@ -202,7 +205,9 @@ async function attachConversionRoutes(
       };
     });
 
-    const coveredDestinations = new Set(normalizedCaps.map((cap) => cap.outputFormat));
+    const coveredDestinations = new Set(
+      normalizedCaps.map((cap) => normalizeFormatId(cap.outputFormat) ?? cap.outputFormat)
+    );
     for (const route of routes) {
       if (coveredDestinations.has(route.destination)) continue;
       // Only offer reliable multistep routes as normal options (spec §57)
@@ -210,7 +215,7 @@ async function attachConversionRoutes(
       if (qualityBand(route.score) === "not-recommended") continue;
 
       result.push({
-        id: `${ROUTE_CAPABILITY_PREFIX}${inputFormat}-${route.destination}`,
+        id: `${ROUTE_CAPABILITY_PREFIX}${canonicalInput}-${route.destination}`,
         outputFormat: route.destination,
         outputLabel: route.destination.toUpperCase(),
         state: "available",

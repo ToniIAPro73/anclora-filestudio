@@ -287,25 +287,21 @@ describe("Capabilities API — unknown category", () => {
 // ── Conversion routing (deterministic: full catalog engine set, no probing) ──
 
 describe("Capabilities API — conversion routing", () => {
-  it("a direct destination route from jpeg classifies as direct", () => {
+  it("a direct destination route from jpeg normalizes to jpg and classifies as direct", () => {
     const routes = getAvailableDestinations("jpeg", ALL_CATALOG_ENGINES);
     const png = routes.find((r) => r.destination === "png");
 
     expect(png).toBeDefined();
+    expect(png?.source).toBe("jpg");
     expect(png?.classification).toBe("direct");
     expect(png?.steps).toHaveLength(1);
     expect(qualityBand(png!.score)).toBe("excellent");
   });
 
-  it("a destination without a direct edge is reachable via a multistep route", () => {
-    // gif has no direct edge to ico in the operation catalog;
-    // gif → png → ico requires one intermediate.
+  it("does not expose invalid favicon routes without an executable ICO implementation", () => {
     const routes = getAvailableDestinations("gif", ALL_CATALOG_ENGINES);
     const ico = routes.find((r) => r.destination === "ico");
 
-    expect(ico).toBeDefined();
-    expect(ico?.classification).toBe("multistep");
-    expect(ico?.intermediateFormats).toHaveLength(1);
-    expect(qualityBand(ico!.score)).not.toBe("not-recommended");
+    expect(ico).toBeUndefined();
   });
 });

@@ -20,6 +20,7 @@ import {
   parseRouteCapabilityId,
   qualityBand,
 } from "@/lib/conversion-routing";
+import { normalizeFormatId } from "@/lib/domain/format-catalog";
 import { getAvailableEngineIds } from "@/lib/conversion-routing/server";
 import {
   processMultistepJob,
@@ -347,12 +348,13 @@ async function handleMultistepJob(
     },
     inputId!,
   );
-  const resolvedInputFormat = resolveInputFormatForJob(descriptor);
+  const resolvedInputFormat = normalizeFormatId(resolveInputFormatForJob(descriptor)) ?? resolveInputFormatForJob(descriptor);
 
   // Recompute the best route with current engine availability
   const availableEngineIds = await getAvailableEngineIds();
   const routes = getAvailableDestinations(resolvedInputFormat, availableEngineIds);
-  const route = routes.find((r) => r.destination === routeRef.destination);
+  const routeDestination = normalizeFormatId(routeRef.destination) ?? routeRef.destination;
+  const route = routes.find((r) => r.destination === routeDestination);
 
   if (!route || qualityBand(route.score) === "not-recommended") {
     return NextResponse.json(

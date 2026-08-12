@@ -214,21 +214,21 @@ describe("buildConversionGraph (real catalog)", () => {
   it("builds without throwing and produces edges", () => {
     const graph = buildConversionGraph(allEngines);
     expect(graph.size).toBeGreaterThan(0);
-    expect(graph.get("jpeg")?.length).toBeGreaterThan(0);
+    expect(graph.get("jpg")?.length).toBeGreaterThan(0);
   });
 
   it("excludes edges whose engine is unavailable", () => {
     const graph = buildConversionGraph(new Set(["sharp-image"]));
 
-    expect(graph.get("jpeg")?.length).toBeGreaterThan(0);
+    expect(graph.get("jpg")?.length).toBeGreaterThan(0);
     expect(graph.get("pdf")).toBeUndefined();
     expect(graph.get("mp3")).toBeUndefined();
   });
 
   it("excludes edges whose dependencies are unavailable", () => {
-    // pdf:to-png depends on qpdf + pdftoppm; with qpdf only it must be absent.
+    // pdf:to-png is disabled until a real Poppler adapter exists.
     const withoutDep = buildConversionGraph(new Set(["qpdf"]));
-    const withDep = buildConversionGraph(new Set(["qpdf", "pdftoppm"]));
+    const withDep = buildConversionGraph(new Set(["poppler", "pdftoppm"]));
 
     const allEdges = (graph: Map<string, ConversionEdge[]>) =>
       [...graph.values()].flat();
@@ -237,6 +237,6 @@ describe("buildConversionGraph (real catalog)", () => {
     ).toBe(false);
     expect(
       allEdges(withDep).some((e) => e.operationId === "pdf:to-png")
-    ).toBe(true);
+    ).toBe(false);
   });
 });

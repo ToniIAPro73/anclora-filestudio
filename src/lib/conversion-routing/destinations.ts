@@ -2,6 +2,7 @@
 // for a given source format.
 
 import { FORMAT_BY_EXTENSION, FORMAT_CATALOG } from "../domain/format-catalog";
+import { normalizeFormatId } from "../domain/format-catalog";
 import type { FileCategory } from "../domain/descriptors";
 import { buildConversionGraph } from "./graph";
 import {
@@ -15,6 +16,7 @@ import type {
   ConversionRouteSummary,
   RouteClassification,
 } from "./types";
+import type { ConversionEnvironment } from "../conversion-matrix";
 
 /** Curated recommended destinations per source format category. */
 const RECOMMENDED_BY_CATEGORY: Partial<Record<FileCategory, string[]>> = {
@@ -36,9 +38,10 @@ const CLASSIFICATION_RANK: Record<RouteClassification, number> = {
 };
 
 function sourceCategory(source: string): FileCategory | undefined {
+  const normalized = normalizeFormatId(source) ?? source;
   const format =
-    FORMAT_CATALOG.find((fmt) => fmt.id === source) ??
-    FORMAT_BY_EXTENSION.get(source);
+    FORMAT_CATALOG.find((fmt) => fmt.outputExtension === normalized || fmt.id === normalized) ??
+    FORMAT_BY_EXTENSION.get(normalized);
   return format?.category;
 }
 
@@ -64,14 +67,17 @@ export function getRecommendedDestinations(
  */
 export function getAvailableDestinations(
   source: string,
-  availableEngineIds: ReadonlySet<string>
+  availableEngineIds: ReadonlySet<string>,
+  options: { environment?: ConversionEnvironment; includeOcr?: boolean } = {}
 ): ConversionRoute[] {
-  const graph = buildConversionGraph(availableEngineIds);
+  const normalizedSource = normalizeFormatId(source);
+  if (!normalizedSource) return [];
+  const graph = buildConversionGraph(availableEngineIds, options);
 
   const maxEdges = MAX_INTERMEDIATES + 1;
   const reachable = new Set<string>();
-  const seen = new Set([source]);
-  const queue: Array<{ node: string; depth: number }> = [{ node: source, depth: 0 }];
+  const seen = new Set([normalizedSource]);
+  const queue: Array<{ node: string; depth: number }> = [{ node: normalizedSource, depth: 0 }];
   while (queue.length > 0) {
     const { node, depth } = queue.shift()!;
     if (depth >= maxEdges) continue;
@@ -86,12 +92,12 @@ export function getAvailableDestinations(
   const bestRoutes: ConversionRoute[] = [];
   for (const destination of reachable) {
     const best = selectBestConversionRoute(
-      findConversionRoutes(graph, source, destination)
+      findConversionRoutes(graph, normalizedSource, destination)
     );
     if (best) bestRoutes.push(best);
   }
 
-  const recommended = getRecommendedDestinations(source, bestRoutes);
+  const recommended = getRecommendedDestinations(normalizedSource, bestRoutes);
   return bestRoutes.sort((a, b) => {
     const recA = recommended.has(a.destination) ? 0 : 1;
     const recB = recommended.has(b.destination) ? 0 : 1;
@@ -102,6 +108,56 @@ export function getAvailableDestinations(
     if (b.score !== a.score) return b.score - a.score;
     return a.destination.localeCompare(b.destination);
   });
+}
+
+export function getTargetsForSource(
+  source: string,
+  availableEngineIds: ReadonlySet<string>,
+  options: { environment?: ConversionEnvironment; includeOcr?: boolean } = {}
+): ConversionRoute[] {
+  return getAvailableDestinations(source, availableEngineIds, options);
+}
+
+export function getSourcesForTarget(
+  target: string,
+  availableEngineIds: ReadonlySet<string>,
+  options: { environment?: ConversionEnvironment; includeOcr?: boolean } = {}
+): ConversionRoute[] {
+  const normalizedTarget = normalizeFormatId(target);
+  if (!normalizedTarget) return [];
+
+  const sources = new Set<string>();
+  const graph = buildConversionGraph(availableEngineIds, options);
+  for (const [source] of graph) sources.add(source);
+
+  const routes: ConversionRoute[] = [];
+  for (const source of sources) {
+    const best = selectBestConversionRoute(
+      findConversionRoutes(graph, source, normalizedTarget)
+    );
+    if (best) routes.push(best);
+  }
+
+  return routes.sort((a, b) => {
+    if (a.steps.length !== b.steps.length) return a.steps.length - b.steps.length;
+    if (b.score !== a.score) return b.score - a.score;
+    return a.source.localeCompare(b.source);
+  });
+}
+
+export function getBestRoute(
+  source: string,
+  target: string,
+  availableEngineIds: ReadonlySet<string>,
+  options: { environment?: ConversionEnvironment; includeOcr?: boolean } = {}
+): ConversionRoute | null {
+  const normalizedSource = normalizeFormatId(source);
+  const normalizedTarget = normalizeFormatId(target);
+  if (!normalizedSource || !normalizedTarget) return null;
+  const graph = buildConversionGraph(availableEngineIds, options);
+  return selectBestConversionRoute(
+    findConversionRoutes(graph, normalizedSource, normalizedTarget)
+  );
 }
 
 /**

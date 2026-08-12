@@ -102,26 +102,20 @@ describe("POST /api/capabilities — route enrichment", () => {
     expect(png).toBeDefined();
     expect(png?.route).toBeDefined();
     expect(png?.route?.classification).toBe("direct");
-    expect(png?.route?.steps).toEqual([{ source: "jpeg", target: "png" }]);
+    expect(png?.route?.steps).toEqual([{ source: "jpg", target: "png" }]);
     expect(png?.route?.recommended).toBe(true);
     // The summary must not leak engine or operation ids
     expect(JSON.stringify(png?.route)).not.toContain("sharp");
     expect(JSON.stringify(png?.route)).not.toContain("image:convert");
   });
 
-  it("synthesizes a multistep-only destination as a route capability", async () => {
+  it("does not synthesize invalid multistep-only destinations", async () => {
     const res = await POST(makeRequest(jpegDescriptor()));
     const body = await res.json();
     const caps = body.capabilities as CapabilityInfo[];
 
-    // jpeg → png → ico has no direct edge in the operation catalog
-    const ico = caps.find((c) => c.id === "route-jpeg-ico");
-    expect(ico).toBeDefined();
-    expect(ico?.outputFormat).toBe("ico");
-    expect(ico?.state).toBe("available");
-    expect(ico?.route?.classification).toBe("multistep");
-    expect(ico?.route?.steps).toHaveLength(2);
-    expect(ico?.route?.qualityBand).toBe("good");
+    const ico = caps.find((c) => c.outputFormat === "ico" || c.id.includes("ico"));
+    expect(ico).toBeUndefined();
   });
 
   it("never offers not-recommended routes as normal options", async () => {
