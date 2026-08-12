@@ -1,8 +1,10 @@
 // Sharp image conversion engine.
 // Handles: JPEG, PNG, WebP, AVIF, TIFF, GIF — convert, resize, optimize, strip metadata.
+// Also: single image → single-page PDF via Sharp normalization + pdf-lib embedding.
 // Security: pixel limits, frame limits, memory cap, no SVG rendering without sanitization.
 
 import fs from "fs";
+import { PDFDocument } from "pdf-lib";
 import type { ConversionEngine, EngineId, EngineProbeResult, ConversionCapability, ConversionPlan, ExecutionResult, ArtifactValidation } from "../../domain/engines";
 import type { UniversalFileDescriptor, ImageAttributes } from "../../domain/descriptors";
 
@@ -12,6 +14,8 @@ const MAX_MEGAPIXELS = 256;       // 16384×16384 pixels
 const MAX_ANIMATED_FRAMES = 200;
 const SUPPORTED_INPUT_FORMATS = new Set(["jpeg", "jpg", "png", "webp", "avif", "tiff", "gif"]);
 const SUPPORTED_OUTPUT_FORMATS = ["jpeg", "png", "webp", "avif", "tiff", "gif"] as const;
+// Image → PDF is certified for the Tier 1 subset (PNG/JPG/WEBP/TIFF inputs).
+const PDF_INPUT_FORMATS = new Set(["jpeg", "jpg", "png", "webp", "tiff"]);
 type OutputFormat = typeof SUPPORTED_OUTPUT_FORMATS[number];
 
 interface ImageConversionOptions {
@@ -157,7 +161,29 @@ export class SharpEngine implements ConversionEngine {
     }
     if (attrs.frames > MAX_ANIMATED_FRAMES) return [];
 
-    return SUPPORTED_OUTPUT_FORMATS.map((f) => buildCapability(f, descriptor, attrs, probeResult.available));
+    const caps = SUPPORTED_OUTPUT_FORMATS.map((f) => buildCapability(f, descriptor, attrs, probeResult.available));
+
+    if (PDF_INPUT_FORMATS.has(fmt)) {
+      caps.push({
+        id: `sharp-convert-${descriptor.id}-pdf`,
+        operation: "image-to-pdf",
+        outputFormat: "pdf",
+        outputMime: "application/pdf",
+        label: "Convertir a PDF",
+        description: "Una imagen → un PDF de una página con la imagen embebida",
+        lossProfile: "lossy",
+        state: probeResult.available ? "available" : "unavailable-tool",
+        recommended: false,
+        presets: [
+          { id: "pdf-page", label: "Página única", quality: "0", description: "Página dimensionada a la imagen", isRecommended: true },
+        ],
+        warnings: attrs.animated ? ["Las imágenes animadas se exportan usando solo el primer frame"] : [],
+        engineId: ENGINE_ID,
+        mobilePortability: "desktop-only",
+      });
+    }
+
+    return caps;
   }
 
   async execute(
@@ -166,6 +192,10 @@ export class SharpEngine implements ConversionEngine {
   ): Promise<ExecutionResult> {
     const start = Date.now();
     onProgress?.(5, "Cargando imagen");
+
+    if (plan.operation === "image-to-pdf") {
+      return this.executeImageToPdf(plan, start, onProgress);
+    }
 
     try {
       const sharp = (await import("sharp")).default;
@@ -254,6 +284,59 @@ export class SharpEngine implements ConversionEngine {
     }
   }
 
+  private async executeImageToPdf(
+    plan: ConversionPlan,
+    start: number,
+    onProgress?: (progress: number, stage: string) => void
+  ): Promise<ExecutionResult> {
+    try {
+      const sharp = (await import("sharp")).default;
+      // Single image → single-page PDF. Sharp normalizes any supported input
+      // (including TIFF/WebP) and honors EXIF orientation before embedding.
+      const normalized = sharp(plan.inputPath, { animated: false }).rotate();
+      const meta = await normalized.metadata();
+      const width = meta.width;
+      const height = meta.height;
+      if (!width || !height) {
+        throw new Error("No se pudieron leer las dimensiones de la imagen");
+      }
+
+      onProgress?.(40, "Normalizando imagen");
+      const hasAlpha = meta.hasAlpha === true;
+      const imageBytes = hasAlpha
+        ? await normalized.png().toBuffer()
+        : await normalized.jpeg({ quality: 92, mozjpeg: true }).toBuffer();
+
+      onProgress?.(70, "Generando PDF");
+      const doc = await PDFDocument.create();
+      const embedded = hasAlpha ? await doc.embedPng(imageBytes) : await doc.embedJpg(imageBytes);
+      const page = doc.addPage([width, height]);
+      page.drawImage(embedded, { x: 0, y: 0, width, height });
+      fs.writeFileSync(plan.outputPath, await doc.save());
+
+      const stat = fs.statSync(plan.outputPath);
+      onProgress?.(100, "Completado");
+      return {
+        success: true,
+        outputPath: plan.outputPath,
+        outputSizeBytes: stat.size,
+        durationMs: Date.now() - start,
+        logs: [],
+        warnings: [],
+      };
+    } catch (err) {
+      return {
+        success: false,
+        outputPath: plan.outputPath,
+        outputSizeBytes: 0,
+        durationMs: Date.now() - start,
+        logs: [],
+        warnings: [],
+        error: String(err),
+      };
+    }
+  }
+
   async validate(outputPath: string, plan: ConversionPlan): Promise<ArtifactValidation> {
     const checks: ArtifactValidation["checks"] = [];
 
@@ -265,6 +348,18 @@ export class SharpEngine implements ConversionEngine {
     // Size > 0
     const stat = fs.statSync(outputPath);
     checks.push({ name: "size-nonzero", passed: stat.size > 0, detail: `${stat.size} bytes` });
+
+    if (plan.outputFormat === "pdf") {
+      const header = fs.readFileSync(outputPath).subarray(0, 5).toString("ascii");
+      checks.push({ name: "pdf-magic-bytes", passed: header === "%PDF-", detail: header });
+      try {
+        const doc = await PDFDocument.load(fs.readFileSync(outputPath));
+        checks.push({ name: "pdf-page-count", passed: doc.getPageCount() === 1, detail: `${doc.getPageCount()} páginas` });
+      } catch (err) {
+        checks.push({ name: "pdf-loadable", passed: false, detail: String(err) });
+      }
+      return { valid: checks.every((c) => c.passed), checks };
+    }
 
     // Sharp metadata validation
     try {
