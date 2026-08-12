@@ -7,7 +7,10 @@ import {
   INPUT_ACCEPT_ATTR,
   FORMATS_BY_CATEGORY,
   FORMAT_BY_EXTENSION,
+  FORMAT_ALIAS_DEFINITIONS,
   MIME_TO_FORMAT,
+  isCanonicalFormatId,
+  normalizeFormatId,
 } from "../../src/lib/domain/format-catalog";
 import type { FileCategory } from "../../src/lib/domain/descriptors";
 
@@ -217,5 +220,47 @@ describe("Format Catalog — new formats not in old lists", () => {
     for (const ext of newExtensions) {
       expect(ALL_ALLOWED_EXTENSIONS.has(ext), `New extension ".${ext}" should be in ALL_ALLOWED_EXTENSIONS`).toBe(true);
     }
+  });
+});
+
+describe("Format Catalog — canonical normalization", () => {
+  it("normalizes audited aliases to deterministic canonical ids", () => {
+    const expectations: Record<string, string | null> = {
+      jpeg: "jpg",
+      jpg: "jpg",
+      ".JPEG": "jpg",
+      markdown: "md",
+      md: "md",
+      latex: "tex",
+      tex: "tex",
+      yml: "yaml",
+      yaml: "yaml",
+      htm: "html",
+      html: "html",
+      tif: "tiff",
+      tiff: "tiff",
+      ico: null,
+      svg: null,
+      srt: null,
+      unknown: null,
+    };
+
+    for (const [input, expected] of Object.entries(expectations)) {
+      expect(normalizeFormatId(input), input).toBe(expected);
+    }
+  });
+
+  it("exposes classifications for audited noncanonical formats", () => {
+    const byId = new Map(FORMAT_ALIAS_DEFINITIONS.map((alias) => [alias.id, alias]));
+    expect(byId.get("ico")?.classification).toBe("MISSING_CANONICAL_FORMAT");
+    expect(byId.get("svg")?.classification).toBe("MISSING_CANONICAL_FORMAT");
+    expect(byId.get("rar")?.classification).toBe("MISSING_CANONICAL_FORMAT");
+    expect(byId.get("jpeg")?.canonicalId).toBe("jpg");
+  });
+
+  it("does not treat aliases as duplicate canonical ids", () => {
+    expect(isCanonicalFormatId("jpg")).toBe(true);
+    expect(isCanonicalFormatId("md")).toBe(true);
+    expect(isCanonicalFormatId("tex")).toBe(true);
   });
 });

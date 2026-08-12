@@ -43,6 +43,20 @@ export interface FormatLimits {
   maxDurationSeconds: number | null;
 }
 
+export type AliasClassification =
+  | "ALIAS"
+  | "MISSING_CANONICAL_FORMAT"
+  | "LEGACY"
+  | "ENGINE_INTERNAL"
+  | "INVALID";
+
+export interface FormatAliasDefinition {
+  id: string;
+  classification: AliasClassification;
+  canonicalId: string | null;
+  reason: string;
+}
+
 // ── All Format Definitions ───────────────────────────────────────────────────
 
 const FORMAT_CATALOG: FormatDefinition[] = [
@@ -815,6 +829,86 @@ export const MIME_TO_FORMAT: ReadonlyMap<string, FormatDefinition> = (() => {
   }
   return map;
 })();
+
+/**
+ * Canonical conversion IDs are the user-facing output extensions. This keeps
+ * legacy catalog IDs such as "jpeg" and "markdown" usable while preventing
+ * routing from mixing aliases with canonical graph nodes.
+ */
+export const FORMAT_ALIAS_DEFINITIONS: readonly FormatAliasDefinition[] = [
+  { id: "jpeg", classification: "ALIAS", canonicalId: "jpg", reason: "Catalog ID for JPEG; canonical output extension is jpg." },
+  { id: "jpg", classification: "ALIAS", canonicalId: "jpg", reason: "Canonical JPEG extension." },
+  { id: "markdown", classification: "ALIAS", canonicalId: "md", reason: "Catalog ID for Markdown; operation graph uses md." },
+  { id: "md", classification: "ALIAS", canonicalId: "md", reason: "Canonical Markdown extension." },
+  { id: "latex", classification: "ALIAS", canonicalId: "tex", reason: "Pandoc reader name alias for TeX/LaTeX files." },
+  { id: "tex", classification: "ALIAS", canonicalId: "tex", reason: "Canonical TeX extension." },
+  { id: "yml", classification: "ALIAS", canonicalId: "yaml", reason: "Common YAML extension alias." },
+  { id: "htm", classification: "ALIAS", canonicalId: "html", reason: "HTML extension alias." },
+  { id: "tif", classification: "ALIAS", canonicalId: "tiff", reason: "TIFF extension alias." },
+  { id: "jpg-large", classification: "INVALID", canonicalId: null, reason: "Not a stable format; URL/download artifact suffix." },
+  { id: "opus", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Detector legacy audio extension without current catalog format or output binding." },
+  { id: "aiff", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Detector legacy audio extension without current catalog format or output binding." },
+  { id: "wma", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Detector legacy audio extension without current catalog format or output binding." },
+  { id: "alac", classification: "ENGINE_INTERNAL", canonicalId: null, reason: "Codec-like audio identifier; not a user-facing container conversion target." },
+  { id: "flv", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Detector legacy video extension without current catalog format or output binding." },
+  { id: "m4v", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Detector legacy video extension without current catalog format or output binding." },
+  { id: "mts", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Detector legacy video extension without current catalog format or output binding." },
+  { id: "bmp", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Detector image extension without current catalog format or Sharp output binding." },
+  { id: "ico", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Declared as favicon output but no executable canonical implementation exists." },
+  { id: "svg", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Declared as favicon input but not in current catalog and not safely rasterized by SharpEngine." },
+  { id: "heic", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Detector image extension without current catalog format or output binding." },
+  { id: "heif", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Detector image extension without current catalog format or output binding." },
+  { id: "azw", classification: "LEGACY", canonicalId: null, reason: "Legacy Kindle extension; current executable Calibre path covers azw3, not azw." },
+  { id: "fb2", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "Detector ebook extension without current catalog or Calibre binding." },
+  { id: "rar", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "7-Zip can read in practice, but catalog does not yet model RAR as canonical input." },
+  { id: "wim", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "7-Zip can read in practice, but catalog does not yet model WIM as canonical input." },
+  { id: "lz4", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "7-Zip can read in practice, but catalog does not yet model LZ4 as canonical input." },
+  { id: "srt", classification: "MISSING_CANONICAL_FORMAT", canonicalId: null, reason: "FFmpeg subtitle extraction output; tool artifact, not conversion matrix target yet." },
+] as const;
+
+const EXPLICIT_FORMAT_ALIASES: ReadonlyMap<string, string> = new Map(
+  FORMAT_ALIAS_DEFINITIONS
+    .filter((alias): alias is FormatAliasDefinition & { canonicalId: string } => alias.canonicalId !== null)
+    .map((alias) => [alias.id, alias.canonicalId])
+);
+
+const CANONICAL_FORMAT_IDS: ReadonlySet<string> = new Set(
+  FORMAT_CATALOG.map((format) => format.outputExtension.toLowerCase())
+);
+
+/** Returns the canonical conversion-format ID, or null for unknown/noncanonical formats. */
+export function normalizeFormatId(input: string | null | undefined): string | null {
+  const raw = input?.trim().toLowerCase().replace(/^\./, "");
+  if (!raw) return null;
+  const explicit = EXPLICIT_FORMAT_ALIASES.get(raw);
+  if (explicit) return explicit;
+
+  const byExtension = FORMAT_BY_EXTENSION.get(raw);
+  if (byExtension) return byExtension.outputExtension.toLowerCase();
+
+  const byCatalogId = FORMAT_CATALOG.find((format) => format.id === raw);
+  if (byCatalogId) return byCatalogId.outputExtension.toLowerCase();
+
+  return null;
+}
+
+export function isCanonicalFormatId(input: string): boolean {
+  return CANONICAL_FORMAT_IDS.has(input.toLowerCase());
+}
+
+export function requireCanonicalFormatId(input: string): string {
+  const normalized = normalizeFormatId(input);
+  if (!normalized) {
+    throw new Error(`Unknown FileStudio format: ${input}`);
+  }
+  return normalized;
+}
+
+export function getFormatByCanonicalId(input: string): FormatDefinition | null {
+  const canonical = normalizeFormatId(input);
+  if (!canonical) return null;
+  return FORMAT_CATALOG.find((format) => format.outputExtension.toLowerCase() === canonical) ?? null;
+}
 
 /** The raw catalog array for direct iteration if needed */
 export { FORMAT_CATALOG };

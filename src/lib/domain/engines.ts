@@ -4,14 +4,17 @@ import type { UniversalFileDescriptor, FileCategory, LossProfile } from "./descr
 
 export type EngineId =
   | "ffmpeg-media"
+  | "ffprobe"
   | "sharp-image"
   | "qpdf"
+  | "poppler"
   | "sevenzip"
   | "data-ts"
   | "pandoc"
   | "libreoffice"
   | "calibre"
   | "tesseract"
+  | "browser"
   | "background-removal";
 
 export type CapabilityState =
