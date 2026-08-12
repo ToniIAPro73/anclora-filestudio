@@ -397,7 +397,12 @@ rm -rf "$TMP_POPPLER"
 # Validate using the same multi-layout search (Library\bin, bin, root) — works with Poppler ≤25.x and 26.x+
 POPPLER_INSTALLED="$(find "$TOOLS_DIR/poppler" \( -path "*/Library/bin/pdftoppm.exe" -o -path "*/bin/pdftoppm.exe" -o -name "pdftoppm.exe" \) | head -1)"
 [[ -n "$POPPLER_INSTALLED" ]] || die "Poppler extraction failed: pdftoppm.exe not found in tools/poppler/"
-ok "Poppler ${POPPLER_VERSION} extracted"
+# Tier 1 quick wins also require the text/HTML extraction tools from the same Poppler distribution
+for tool in pdftotext.exe pdftohtml.exe; do
+  FOUND="$(find "$TOOLS_DIR/poppler" \( -path "*/Library/bin/$tool" -o -path "*/bin/$tool" -o -name "$tool" \) | head -1)"
+  [[ -n "$FOUND" ]] || die "Poppler extraction failed: $tool not found in tools/poppler/ (required for PDF→TXT/HTML/MD)"
+done
+ok "Poppler ${POPPLER_VERSION} extracted (pdftoppm + pdftotext + pdftohtml)"
 
 # 7-Zip — optional, no pinned SHA in lockfile, best-effort
 SEVENZIP_VERSION="${SEVENZIP_VERSION:-2601}"
