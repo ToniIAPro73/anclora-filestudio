@@ -1,0 +1,18 @@
+- region "Notifications alt+T" [ref=e1]
+- heading "Anclora FileStudio" [level=1, ref=e3]
+- navigation "Navegación principal FileStudio" [ref=e2]
+  - tab "Inicio" [selected, ref=e4]
+  - tab "Convertir" [ref=e5]
+  - tab "Herramientas" [ref=e6]
+  - tab "Historial" [ref=e7]
+  - tab "Diagnóstico" [ref=e8]
+- heading "¿Qué quieres convertir?" [level=2, ref=e9]
+- combobox "De" [expanded=false, ref=e15]: Seleccionar formato
+  - option "Seleccionar formato" [selected, ref=e17]
+- textbox "Buscar por alias" [ref=e13]
+- combobox "A" [expanded=false, ref=e16]: Seleccionar formato
+  - option "Seleccionar formato" [selected, ref=e18]
+- textbox "Buscar por alias" [ref=e14]
+- button "Continuar" [disabled, ref=e10]
+- heading "Convertir" [level=2, ref=e11]
+- heading "Herramientas" [level=2, ref=e12]

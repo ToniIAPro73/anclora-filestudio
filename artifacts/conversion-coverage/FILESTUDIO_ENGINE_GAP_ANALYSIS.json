@@ -1,0 +1,1522 @@
+{
+  "generatedAt": "2026-08-12T22:32:57.751Z",
+  "dependencyCandidates": [
+    {
+      "name": "Poppler text/html utilities (pdftotext, pdftohtml)",
+      "classification": "ALREADY BUNDLED / SYSTEM OPTIONAL",
+      "decision": "ADOPT",
+      "coverageGain": [
+        "PDF->TXT",
+        "PDF->HTML",
+        "PDF->MD via text/html normalization"
+      ],
+      "qualityGain": "High for text PDFs; low for scanned PDFs unless OCR is selected.",
+      "license": "GPL family through Poppler distribution",
+      "source": "https://poppler.freedesktop.org/",
+      "portableImpact": "Low if utilities are already in the Windows Poppler bundle; otherwise low/medium to include additional Poppler executables.",
+      "security": "Untrusted PDF parser; run with timeouts, temp isolation and output validation.",
+      "rationale": "Same toolchain family as existing Poppler/pdftoppm; best immediate PDF text extraction path."
+    },
+    {
+      "name": "pdf2docx",
+      "classification": "NEW PYTHON LIBRARY",
+      "decision": "INVESTIGATE",
+      "coverageGain": [
+        "PDF->DOCX"
+      ],
+      "qualityGain": "Medium for text/layout PDFs; weak for scanned PDFs without OCR.",
+      "license": "MIT per current upstream notice; project status says no longer actively maintained.",
+      "source": "https://github.com/artifexsoftware/pdf2docx",
+      "portableImpact": "Medium: Python runtime/library packaging, transitive dependencies and Windows smoke needed.",
+      "security": "PDF parser surface plus Python dependency supply chain; strict sandbox/temp cleanup required.",
+      "rationale": "Most direct permissive candidate for PDF->DOCX, but maintenance status blocks immediate adoption."
+    },
+    {
+      "name": "OCRmyPDF",
+      "classification": "NEW PYTHON LIBRARY / SYSTEM OPTIONAL",
+      "decision": "INVESTIGATE",
+      "coverageGain": [
+        "Scanned PDF preprocessing",
+        "searchable PDF",
+        "better OCR route for PDF->TXT/DOCX pipelines"
+      ],
+      "qualityGain": "High for OCR preprocessing, not an editable DOCX converter by itself.",
+      "license": "MPL-2.0 for OCRmyPDF core.",
+      "source": "https://ocrmypdf.readthedocs.io/",
+      "portableImpact": "High: Python, Ghostscript/Tesseract dependencies and Windows packaging complexity.",
+      "security": "Untrusted PDF/image pipeline; high need for resource limits and temp isolation.",
+      "rationale": "Strong scanned-PDF foundation, but should follow text-PDF extraction work."
+    },
+    {
+      "name": "MarkItDown",
+      "classification": "NEW PYTHON LIBRARY",
+      "decision": "INVESTIGATE",
+      "coverageGain": [
+        "PDF/DOCX/HTML/EPUB->MD"
+      ],
+      "qualityGain": "Medium; optimized for Markdown extraction/RAG rather than layout-preserving conversion.",
+      "license": "Open-source project; exact version/license must be locked before adoption.",
+      "source": "https://github.com/microsoft/markitdown",
+      "portableImpact": "Medium: Python packaging and optional plugin decisions.",
+      "security": "Avoid network/LLM plugins by default; local-only mode required.",
+      "rationale": "Promising Markdown coverage boost if kept local and dependency footprint is acceptable."
+    },
+    {
+      "name": "MuPDF / PyMuPDF",
+      "classification": "NEW NATIVE BINARY / NEW PYTHON LIBRARY",
+      "decision": "REJECT",
+      "coverageGain": [
+        "PDF parsing/extraction/rendering"
+      ],
+      "qualityGain": "High potential.",
+      "license": "AGPL/commercial.",
+      "source": "https://mupdf.readthedocs.io/en/1.27.0/license.html",
+      "portableImpact": "Medium.",
+      "security": "Untrusted PDF parser; strong isolation required.",
+      "rationale": "Licensing risk is too high for default Desktop bundling unless Anclora chooses a commercial license."
+    },
+    {
+      "name": "wkhtmltopdf / wkhtmltoimage",
+      "classification": "NEW NATIVE BINARY",
+      "decision": "REJECT",
+      "coverageGain": [
+        "HTML->PDF",
+        "HTML->PNG"
+      ],
+      "qualityGain": "Medium for old WebKit rendering.",
+      "license": "LGPLv3, but project warns about stale WebKit/untrusted HTML risk.",
+      "source": "https://wkhtmltopdf.org/status.html",
+      "portableImpact": "Medium to high.",
+      "security": "Project warns not to use with untrusted HTML.",
+      "rationale": "Security/maintenance profile is a bad fit for user-supplied files."
+    }
+  ],
+  "requirementsAudit": [
+    {
+      "source": "pdf",
+      "target": "docx",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "medium",
+      "notes": "Expected from a competitive document converter; PDF input quality depends on text/scanned/mixed analysis.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No PDF layout extraction to DOCX adapter.",
+        "existingEngineCanHandle": "PARTIAL",
+        "existingEngineCandidates": [
+          "LibreOffice PDF import is not reliable for headless production",
+          "Poppler can extract text/raster but not DOCX layout"
+        ],
+        "newRequired": true,
+        "candidates": [
+          "pdf2docx",
+          "PyMuPDF/MuPDF commercial",
+          "Unstructured/Docling pipeline"
+        ],
+        "expectedQuality": "MEDIUM",
+        "complexity": "MEDIUM",
+        "portableImpact": "MEDIUM",
+        "recommendation": "INVESTIGATE pdf2docx for MVP; avoid AGPL MuPDF/PyMuPDF unless commercial licensing is accepted."
+      }
+    },
+    {
+      "source": "pdf",
+      "target": "txt",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "medium",
+      "notes": "Expected from a competitive document converter; PDF input quality depends on text/scanned/mixed analysis.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "Poppler raster/OCR only; no text extraction route in standard conversion",
+        "currentBlocker": "No pdf->txt adapter bound to Poppler text/html tools.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "Poppler pdftotext",
+          "Poppler pdftohtml"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH for text PDFs, LOW for scanned PDFs without OCR",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "ADOPT existing Poppler utilities after versioned Windows bundle confirms pdftotext/pdftohtml are included."
+      }
+    },
+    {
+      "source": "pdf",
+      "target": "md",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "medium",
+      "notes": "Expected from a competitive document converter; PDF input quality depends on text/scanned/mixed analysis.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "Needs PDF text/layout extraction followed by Markdown normalization.",
+        "existingEngineCanHandle": "PARTIAL",
+        "existingEngineCandidates": [
+          "Poppler pdftotext + Markdown adapter",
+          "Pandoc after HTML extraction"
+        ],
+        "newRequired": false,
+        "candidates": [
+          "MarkItDown as optional future library"
+        ],
+        "expectedQuality": "MEDIUM",
+        "complexity": "MEDIUM",
+        "portableImpact": "LOW to MEDIUM",
+        "recommendation": "ADOPT Poppler text extraction first; INVESTIGATE MarkItDown for richer Markdown."
+      }
+    },
+    {
+      "source": "pdf",
+      "target": "html",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "medium",
+      "notes": "Expected from a competitive document converter; PDF input quality depends on text/scanned/mixed analysis.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "Poppler raster/OCR only; no text extraction route in standard conversion",
+        "currentBlocker": "No pdf->html adapter bound to Poppler text/html tools.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "Poppler pdftotext",
+          "Poppler pdftohtml"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "MEDIUM",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "ADOPT existing Poppler utilities after versioned Windows bundle confirms pdftotext/pdftohtml are included."
+      }
+    },
+    {
+      "source": "docx",
+      "target": "rtf",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "medium",
+      "notes": "Legacy document compatibility.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "LibreOffice installed, but matrix omits DOCX->RTF.",
+        "currentBlocker": "No certified edge/probe for DOCX->RTF.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "LibreOffice"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "MEDIUM",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real DOCX->RTF probe."
+      }
+    },
+    {
+      "source": "odp",
+      "target": "pdf",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Presentation export/interoperability.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "LibreOffice installed, but presentation matrix omits ODP source.",
+        "currentBlocker": "No certified edge/probe for odp->pdf.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "LibreOffice"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real ODP probe."
+      }
+    },
+    {
+      "source": "odp",
+      "target": "pptx",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Presentation export/interoperability.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "LibreOffice installed, but presentation matrix omits ODP source.",
+        "currentBlocker": "No certified edge/probe for odp->pptx.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "LibreOffice"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real ODP probe."
+      }
+    },
+    {
+      "source": "png",
+      "target": "pdf",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "medium",
+      "notes": "Image to PDF is expected in a general converter.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "png",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "png",
+              "target": "pdf",
+              "operationId": "browser:images-to-pdf",
+              "engineId": "browser",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "png -> pdf",
+        "enginePath": "browser",
+        "risk": "low",
+        "score": 0.9
+      },
+      "gap": {
+        "currentPipeline": "pdf-lib is already installed; browser image-to-PDF exists only for Web.",
+        "currentBlocker": "No Desktop adapter for image embedding into PDF.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "pdf-lib",
+          "Sharp for image normalization"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "MEDIUM",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
+      }
+    },
+    {
+      "source": "jpg",
+      "target": "pdf",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "medium",
+      "notes": "Image to PDF is expected in a general converter.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "jpg",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "jpg",
+              "target": "pdf",
+              "operationId": "browser:images-to-pdf",
+              "engineId": "browser",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "jpg -> pdf",
+        "enginePath": "browser",
+        "risk": "low",
+        "score": 0.9
+      },
+      "gap": {
+        "currentPipeline": "pdf-lib is already installed; browser image-to-PDF exists only for Web.",
+        "currentBlocker": "No Desktop adapter for image embedding into PDF.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "pdf-lib",
+          "Sharp for image normalization"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "MEDIUM",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
+      }
+    },
+    {
+      "source": "webp",
+      "target": "pdf",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "medium",
+      "notes": "Image to PDF is expected in a general converter.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "webp",
+          "destination": "pdf",
+          "steps": [
+            {
+              "source": "webp",
+              "target": "pdf",
+              "operationId": "browser:images-to-pdf",
+              "engineId": "browser",
+              "lossProfile": "lossy-controlled",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.9,
+          "classification": "direct",
+          "risk": "low"
+        },
+        "routeText": "webp -> pdf",
+        "enginePath": "browser",
+        "risk": "low",
+        "score": 0.9
+      },
+      "gap": {
+        "currentPipeline": "pdf-lib is already installed; browser image-to-PDF exists only for Web.",
+        "currentBlocker": "No Desktop adapter for image embedding into PDF.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "pdf-lib",
+          "Sharp for image normalization"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "MEDIUM",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
+      }
+    },
+    {
+      "source": "tiff",
+      "target": "pdf",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "medium",
+      "notes": "Image to PDF is expected in a general converter.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "pdf-lib is already installed; browser image-to-PDF exists only for Web.",
+        "currentBlocker": "No Desktop adapter for image embedding into PDF.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "pdf-lib",
+          "Sharp for image normalization"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "MEDIUM",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending image->PDF adapter and E2E probes."
+      }
+    },
+    {
+      "source": "mp3",
+      "target": "aac",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Core audio transcoding set.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "wav",
+      "target": "aac",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Core audio transcoding set.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "flac",
+      "target": "aac",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Core audio transcoding set.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "m4a",
+      "target": "aac",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Core audio transcoding set.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "ogg",
+      "target": "aac",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Core audio transcoding set.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "aac",
+      "target": "mp3",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Core audio transcoding set.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "aac",
+      "target": "wav",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Core audio transcoding set.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "aac",
+      "target": "flac",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Core audio transcoding set.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "aac",
+      "target": "m4a",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Core audio transcoding set.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "aac",
+      "target": "ogg",
+      "tier": "TIER 1",
+      "userValue": "high",
+      "qualityExpectation": "high",
+      "notes": "Core audio transcoding set.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "wmv",
+      "target": "mp4",
+      "tier": "TIER 2",
+      "userValue": "medium",
+      "qualityExpectation": "medium",
+      "notes": "Legacy/broadcast video interoperability.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "wmv",
+      "target": "webm",
+      "tier": "TIER 2",
+      "userValue": "medium",
+      "qualityExpectation": "medium",
+      "notes": "Legacy/broadcast video interoperability.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "wmv",
+      "target": "mkv",
+      "tier": "TIER 2",
+      "userValue": "medium",
+      "qualityExpectation": "medium",
+      "notes": "Legacy/broadcast video interoperability.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "ts",
+      "target": "mp4",
+      "tier": "TIER 2",
+      "userValue": "medium",
+      "qualityExpectation": "medium",
+      "notes": "Legacy/broadcast video interoperability.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "ts",
+      "target": "webm",
+      "tier": "TIER 2",
+      "userValue": "medium",
+      "qualityExpectation": "medium",
+      "notes": "Legacy/broadcast video interoperability.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "ts",
+      "target": "mkv",
+      "tier": "TIER 2",
+      "userValue": "medium",
+      "qualityExpectation": "medium",
+      "notes": "Legacy/broadcast video interoperability.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "FFmpeg installed but matrix omits one side of the format.",
+        "currentBlocker": "Canonical edge not declared/certified.",
+        "existingEngineCanHandle": "YES",
+        "existingEngineCandidates": [
+          "FFmpeg/FFprobe"
+        ],
+        "newRequired": false,
+        "candidates": [],
+        "expectedQuality": "HIGH",
+        "complexity": "LOW",
+        "portableImpact": "LOW",
+        "recommendation": "QUICK WIN candidate pending real media probes."
+      }
+    },
+    {
+      "source": "epub",
+      "target": "docx",
+      "tier": "TIER 2",
+      "userValue": "medium",
+      "qualityExpectation": "medium",
+      "notes": "Ebook extraction/editing workflow.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No effective canonical route within two intermediates.",
+        "existingEngineCanHandle": "NO",
+        "existingEngineCandidates": [],
+        "newRequired": true,
+        "candidates": [],
+        "expectedQuality": "UNKNOWN",
+        "complexity": "MEDIUM",
+        "portableImpact": "UNKNOWN",
+        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
+      }
+    },
+    {
+      "source": "epub",
+      "target": "txt",
+      "tier": "TIER 2",
+      "userValue": "medium",
+      "qualityExpectation": "medium",
+      "notes": "Ebook extraction/editing workflow.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No effective canonical route within two intermediates.",
+        "existingEngineCanHandle": "NO",
+        "existingEngineCandidates": [],
+        "newRequired": true,
+        "candidates": [],
+        "expectedQuality": "UNKNOWN",
+        "complexity": "MEDIUM",
+        "portableImpact": "UNKNOWN",
+        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
+      }
+    },
+    {
+      "source": "epub",
+      "target": "html",
+      "tier": "TIER 2",
+      "userValue": "medium",
+      "qualityExpectation": "medium",
+      "notes": "Ebook extraction/editing workflow.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No effective canonical route within two intermediates.",
+        "existingEngineCanHandle": "NO",
+        "existingEngineCandidates": [],
+        "newRequired": true,
+        "candidates": [],
+        "expectedQuality": "UNKNOWN",
+        "complexity": "MEDIUM",
+        "portableImpact": "UNKNOWN",
+        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
+      }
+    },
+    {
+      "source": "epub",
+      "target": "md",
+      "tier": "TIER 2",
+      "userValue": "medium",
+      "qualityExpectation": "medium",
+      "notes": "Ebook extraction/editing workflow.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No effective canonical route within two intermediates.",
+        "existingEngineCanHandle": "NO",
+        "existingEngineCandidates": [],
+        "newRequired": true,
+        "candidates": [],
+        "expectedQuality": "UNKNOWN",
+        "complexity": "MEDIUM",
+        "portableImpact": "UNKNOWN",
+        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
+      }
+    },
+    {
+      "source": "pdf",
+      "target": "epub",
+      "tier": "TIER 3",
+      "userValue": "specialist",
+      "qualityExpectation": "low",
+      "notes": "PDF reflow to editable/ebook formats is high-risk without layout extraction.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No structured PDF extraction/reflow adapter is implemented.",
+        "existingEngineCanHandle": "NO",
+        "existingEngineCandidates": [],
+        "newRequired": true,
+        "candidates": [],
+        "expectedQuality": "UNKNOWN",
+        "complexity": "MEDIUM",
+        "portableImpact": "UNKNOWN",
+        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
+      }
+    },
+    {
+      "source": "pdf",
+      "target": "odt",
+      "tier": "TIER 3",
+      "userValue": "specialist",
+      "qualityExpectation": "low",
+      "notes": "PDF reflow to editable/ebook formats is high-risk without layout extraction.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No structured PDF extraction/reflow adapter is implemented.",
+        "existingEngineCanHandle": "NO",
+        "existingEngineCandidates": [],
+        "newRequired": true,
+        "candidates": [],
+        "expectedQuality": "UNKNOWN",
+        "complexity": "MEDIUM",
+        "portableImpact": "UNKNOWN",
+        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
+      }
+    },
+    {
+      "source": "png",
+      "target": "txt",
+      "tier": "TIER 3",
+      "userValue": "specialist",
+      "qualityExpectation": "low",
+      "notes": "OCR is useful but quality depends heavily on image source and language.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No effective canonical route within two intermediates.",
+        "existingEngineCanHandle": "NO",
+        "existingEngineCandidates": [],
+        "newRequired": true,
+        "candidates": [],
+        "expectedQuality": "UNKNOWN",
+        "complexity": "MEDIUM",
+        "portableImpact": "UNKNOWN",
+        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
+      }
+    },
+    {
+      "source": "jpg",
+      "target": "txt",
+      "tier": "TIER 3",
+      "userValue": "specialist",
+      "qualityExpectation": "low",
+      "notes": "OCR is useful but quality depends heavily on image source and language.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No effective canonical route within two intermediates.",
+        "existingEngineCanHandle": "NO",
+        "existingEngineCandidates": [],
+        "newRequired": true,
+        "candidates": [],
+        "expectedQuality": "UNKNOWN",
+        "complexity": "MEDIUM",
+        "portableImpact": "UNKNOWN",
+        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
+      }
+    },
+    {
+      "source": "tiff",
+      "target": "txt",
+      "tier": "TIER 3",
+      "userValue": "specialist",
+      "qualityExpectation": "low",
+      "notes": "OCR is useful but quality depends heavily on image source and language.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No effective canonical route within two intermediates.",
+        "existingEngineCanHandle": "NO",
+        "existingEngineCandidates": [],
+        "newRequired": true,
+        "candidates": [],
+        "expectedQuality": "UNKNOWN",
+        "complexity": "MEDIUM",
+        "portableImpact": "UNKNOWN",
+        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
+      }
+    },
+    {
+      "source": "webp",
+      "target": "txt",
+      "tier": "TIER 3",
+      "userValue": "specialist",
+      "qualityExpectation": "low",
+      "notes": "OCR is useful but quality depends heavily on image source and language.",
+      "windows": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "linux": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "web": {
+        "status": "missing",
+        "route": null,
+        "routeText": null
+      },
+      "gap": {
+        "currentPipeline": "None",
+        "currentBlocker": "No effective canonical route within two intermediates.",
+        "existingEngineCanHandle": "NO",
+        "existingEngineCandidates": [],
+        "newRequired": true,
+        "candidates": [],
+        "expectedQuality": "UNKNOWN",
+        "complexity": "MEDIUM",
+        "portableImpact": "UNKNOWN",
+        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
+      }
+    }
+  ]
+}
