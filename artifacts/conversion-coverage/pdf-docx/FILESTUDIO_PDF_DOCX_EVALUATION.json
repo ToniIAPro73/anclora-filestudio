@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-13",
+  "candidates": [
+    {
+      "name": "LibreOffice writer_pdf_import",
+      "type": "existing native engine feature",
+      "runtime": "soffice headless (C++)",
+      "license": "MPL-2.0",
+      "commercialUse": "allowed",
+      "redistribution": "allowed — already bundled with notices",
+      "windows": "supported (portable soffice already in toolchain)",
+      "linux": "verified 24.2.7.2",
+      "headless": true,
+      "cli": "--headless --convert-to docx --infilter=writer_pdf_import",
+      "installSizeBytes": 0,
+      "newDependency": false,
+      "quality": { "text": 3, "headings": 1, "paragraphs": 1, "tables": 1, "images": 3, "layout": 2, "multipage": 3, "unicode": 3, "stability": 2 },
+      "recommendation": "ADOPT"
+    },
+    {
+      "name": "pdf2docx",
+      "version": "0.5.13",
+      "type": "python library",
+      "license": "MIT (library) but mandatory dependency PyMuPDF>=1.26.7 is AGPL-3.0 / Artifex commercial",
+      "commercialUse": "blocked without Artifex commercial license",
+      "redistribution": "AGPL-3.0 incompatible with proprietary portable bundle",
+      "transitiveDependencies": ["PyMuPDF>=1.26.7", "python-docx>=0.8.10", "fonttools>=4.24.0", "numpy>=1.17.2", "opencv-python-headless>=4.5", "fire>=0.3.0"],
+      "pythonRequired": true,
+      "bundleImpact": "Python runtime + ~300-500MB native deps",
+      "installedForEvaluation": false,
+      "recommendation": "REJECT — AGPL contamination via PyMuPDF + bundle complexity"
+    },
+    {
+      "name": "Calibre ebook-convert",
+      "type": "native CLI",
+      "license": "GPL-3.0",
+      "qualityFindings": [
+        "injects 'Table of Contents' content not present in source",
+        "appends 'Document Outline' sections",
+        "flattens tables to plain text",
+        "reflows layout ebook-style"
+      ],
+      "recommendation": "REJECT — quality below threshold (injected content)"
+    },
+    {
+      "name": "pdfplumber + python-docx custom pipeline",
+      "type": "python library stack",
+      "license": "MIT (clean)",
+      "recommendation": "INVESTIGATE — future candidate if table reconstruction required; needs Python bundle strategy"
+    },
+    {
+      "name": "MuPDF / PyMuPDF direct",
+      "license": "AGPL-3.0 or Artifex commercial",
+      "recommendation": "REJECT — license confirmed incompatible with default bundling"
+    },
+    {
+      "name": "SaaS converters (CloudConvert/Adobe/Aspose Cloud/ConvertAPI)",
+      "recommendation": "REJECT — violates local-first policy; documented for comparison only"
+    }
+  ],
+  "selectedCandidate": "LibreOffice writer_pdf_import",
+  "licenseStatus": "ACCEPTABLE — MPL-2.0, execution-only integration, zero new dependency",
+  "qualityScale": "0=absent, 1=degraded, 2=acceptable, 3=faithful"
+}
