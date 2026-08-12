@@ -4,6 +4,8 @@ import fs from "fs";
 import path from "path";
 import sharp from "sharp";
 import { FILESTUDIO_BRAND } from "../../src/lib/filestudio-brand";
+import { buildFileStudioWebManifest } from "../../src/app/site.webmanifest/route";
+import { iconManifestHash, publicAssetHash, versionedPublicAsset } from "../../src/lib/branding/icon-metadata";
 
 const ROOT = path.resolve(__dirname, "../..");
 const CANONICAL_LOGO = path.join(ROOT, "public/brand/anclora-filestudio.png");
@@ -118,11 +120,57 @@ describe("canonical FileStudio logo contract", () => {
     for (const asset of [
       "/favicon-32.png",
       "/favicon-512.png",
+      "/icon.png",
       "/favicon.ico",
       "/apple-touch-icon.png",
     ]) {
       expect(layoutSource).toContain(asset);
       expect(fs.existsSync(path.join(ROOT, "public", asset.slice(1)))).toBe(true);
+    }
+    expect(layoutSource).toContain("/site.webmanifest");
+  });
+
+  it("ICON-001 and ICON-005 use content-hashed rendered metadata URLs", () => {
+    expect(versionedPublicAsset("/favicon-32.png")).toBe(`/favicon-32.png?v=${publicAssetHash("/favicon-32.png")}`);
+    expect(versionedPublicAsset("/favicon.ico")).toBe(`/favicon.ico?v=${publicAssetHash("/favicon.ico")}`);
+    expect(iconManifestHash()).toMatch(/^[0-9a-f]{12}$/);
+  });
+
+  it("ICON-002 manifest icons use current hashed branding assets", () => {
+    const webManifest = buildFileStudioWebManifest();
+    const iconSources = webManifest.icons?.map((icon) => icon.src) ?? [];
+
+    expect(iconSources).toContain(versionedPublicAsset("/favicon-32.png"));
+    expect(iconSources).toContain(versionedPublicAsset("/icon.png"));
+    expect(iconSources).toContain(versionedPublicAsset("/apple-touch-icon.png"));
+    expect(JSON.stringify(webManifest)).not.toContain("@/assets/logo.png");
+    expect(JSON.stringify(webManifest)).not.toContain("favicon-old");
+  });
+
+  it("ICON-003 has no stale legacy icon packaged in public or app metadata", () => {
+    const iconFiles = [
+      "public/favicon-32.png",
+      "public/favicon-512.png",
+      "public/favicon.ico",
+      "public/icon.png",
+      "public/apple-touch-icon.png",
+      "src/app/icon.png",
+      "src/app/apple-icon.png",
+    ];
+    for (const relativePath of iconFiles) {
+      expect(sha256(path.join(ROOT, relativePath)), relativePath).not.toBe(STALE_LOGO_HASH);
+    }
+  });
+
+  it("ICON-004 content hash changes when icon content changes", () => {
+    const current = publicAssetHash("/favicon-32.png");
+    const tempPath = path.join(ROOT, "public/favicon-32.png.__hash-test__");
+    fs.writeFileSync(tempPath, Buffer.from("different icon bytes"));
+    try {
+      const changed = crypto.createHash("sha256").update(fs.readFileSync(tempPath)).digest("hex").slice(0, 12);
+      expect(changed).not.toBe(current);
+    } finally {
+      fs.rmSync(tempPath, { force: true });
     }
   });
 });

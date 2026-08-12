@@ -1,11 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import crypto from "crypto";
-import fs from "fs";
-import path from "path";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { FILESTUDIO_BRAND } from "@/lib/filestudio-brand";
+import { iconManifestHash, versionedPublicAsset } from "@/lib/branding/icon-metadata";
 
 // ANCLORA_BRANDING_TYPOGRAPHY: las apps internas usan Inter como --font-sans.
 const inter = Inter({
@@ -21,22 +19,10 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-function assetHash(publicPath: string): string {
-  try {
-    const filePath = path.join(process.cwd(), "public", publicPath.replace(/^\//, ""));
-    return crypto.createHash("sha256").update(fs.readFileSync(filePath)).digest("hex").slice(0, 12);
-  } catch {
-    return "missing";
-  }
-}
-
-const faviconVersion = assetHash("/favicon-32.png");
-const iconVersion = assetHash("/icon.png");
-const appleIconVersion = assetHash("/apple-touch-icon.png");
-
 export const metadata: Metadata = {
   metadataBase: new URL(FILESTUDIO_BRAND.siteUrl),
   applicationName: FILESTUDIO_BRAND.name,
+  manifest: `/site.webmanifest?v=${iconManifestHash()}`,
   title: {
     default: FILESTUDIO_BRAND.name,
     template: `%s | ${FILESTUDIO_BRAND.name}`,
@@ -44,12 +30,13 @@ export const metadata: Metadata = {
   description: FILESTUDIO_BRAND.description,
   icons: {
     icon: [
-      { url: `/favicon-32.png?v=${faviconVersion}`, type: "image/png", sizes: "32x32" },
-      { url: `/favicon-512.png?v=${assetHash("/favicon-512.png")}`, type: "image/png", sizes: "512x512" },
-      { url: `/icon.png?v=${iconVersion}`, type: "image/png", sizes: "512x512" },
-      { url: `/favicon.ico?v=${assetHash("/favicon.ico")}`, sizes: "any" },
+      { url: versionedPublicAsset("/favicon-32.png"), type: "image/png", sizes: "32x32" },
+      { url: versionedPublicAsset("/favicon-512.png"), type: "image/png", sizes: "512x512" },
+      { url: versionedPublicAsset("/icon.png"), type: "image/png", sizes: "512x512" },
+      { url: versionedPublicAsset("/favicon.ico"), sizes: "any" },
     ],
-    apple: { url: `/apple-touch-icon.png?v=${appleIconVersion}`, type: "image/png", sizes: "180x180" },
+    shortcut: [{ url: versionedPublicAsset("/favicon.ico"), sizes: "any" }],
+    apple: { url: versionedPublicAsset("/apple-touch-icon.png"), type: "image/png", sizes: "180x180" },
   },
   openGraph: {
     type: "website",
