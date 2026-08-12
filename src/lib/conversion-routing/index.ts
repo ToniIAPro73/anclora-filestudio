@@ -24,10 +24,13 @@ export {
 } from "./router";
 export {
   getAvailableDestinations,
+  getAllEffectiveSources,
+  getAllEffectiveTargets,
   getBestRoute,
   getRecommendedDestinations,
   getSourcesForTarget,
   getTargetsForSource,
+  groupRoutesByIntermediateCount,
   parseRouteCapabilityId,
   toConversionRouteSummary,
   ROUTE_CAPABILITY_PREFIX,

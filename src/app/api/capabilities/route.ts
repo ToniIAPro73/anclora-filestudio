@@ -8,7 +8,7 @@ import type { LossProfile } from "@/lib/domain/operations";
 import { normalizeFormatId } from "@/lib/domain/format-catalog";
 import {
   EDGE_QUALITY_WEIGHTS,
-  getAvailableDestinations,
+  getAllEffectiveTargets,
   getRecommendedDestinations,
   qualityBand,
   toConversionRouteSummary,
@@ -206,11 +206,11 @@ function worstStepLossProfile(route: ConversionRoute): LossProfile {
 }
 
 /**
- * Attaches route summaries to direct capabilities and appends synthetic
- * entries for multistep-only destinations. Never throws: on any failure the
- * original capabilities are returned unchanged.
+ * Builds the Desktop conversion capabilities from the global route discovery
+ * graph. Engine-local capabilities are used only as metadata hints; discovery
+ * itself is FileStudio-level, not engine-level.
  */
-async function attachConversionRoutes(
+async function buildRouteDiscoveredCapabilities(
   normalizedCaps: CapabilityInfo[],
   inputFormat: string
 ): Promise<CapabilityInfo[]> {
@@ -222,47 +222,37 @@ async function attachConversionRoutes(
     const availableEngineIds = await getAvailableEngineIds();
 
     const canonicalInput = normalizeFormatId(inputFormat) ?? inputFormat;
-    const routes = getAvailableDestinations(canonicalInput, availableEngineIds);
+    const environment: ConversionEnvironment = process.platform === "win32" ? "windows" : "linux";
+    const routes = getAllEffectiveTargets(canonicalInput, availableEngineIds, { environment }).all;
     if (routes.length === 0) return normalizedCaps;
 
     const recommendedSet = getRecommendedDestinations(inputFormat, routes);
-    const routeByDestination = new Map(routes.map((r) => [r.destination, r]));
+    const metadataByDestination = new Map(
+      normalizedCaps.map((cap) => [normalizeFormatId(cap.outputFormat) ?? cap.outputFormat, cap])
+    );
 
-    const result = normalizedCaps.map((cap) => {
-      const canonicalOutput = normalizeFormatId(cap.outputFormat) ?? cap.outputFormat;
-      const route = routeByDestination.get(canonicalOutput);
-      if (!route) return cap;
+    return routes
+      .filter((route) => qualityBand(route.score) !== "not-recommended")
+      .map((route) => {
+        const metadata = metadataByDestination.get(route.destination);
+        const warnings = [
+          ...(metadata?.warnings ?? []),
+          ...(route.steps.length > 1 ? [`Conversión en ${route.steps.length} pasos.`] : []),
+        ];
       return {
-        ...cap,
+        id: `${ROUTE_CAPABILITY_PREFIX}${canonicalInput}-${route.destination}`,
+        outputFormat: route.destination,
+        outputLabel: metadata?.outputLabel ?? route.destination.toUpperCase(),
+        state: "available",
+        lossProfile: ROUTE_LOSS_TO_CAPABILITY[worstStepLossProfile(route)],
+        engineId: (route.steps[0]?.engineId ?? metadata?.engineId ?? "data-ts") as EngineId,
+        mobilePortability: metadata?.mobilePortability ?? "desktop-only",
+        warnings,
         route: toConversionRouteSummary(route, recommendedSet.has(route.destination)),
       };
     });
-
-    const coveredDestinations = new Set(
-      normalizedCaps.map((cap) => normalizeFormatId(cap.outputFormat) ?? cap.outputFormat)
-    );
-    for (const route of routes) {
-      if (coveredDestinations.has(route.destination)) continue;
-      // Only offer reliable multistep routes as normal options (spec §57)
-      if (route.classification !== "multistep") continue;
-      if (qualityBand(route.score) === "not-recommended") continue;
-
-      result.push({
-        id: `${ROUTE_CAPABILITY_PREFIX}${canonicalInput}-${route.destination}`,
-        outputFormat: route.destination,
-        outputLabel: route.destination.toUpperCase(),
-        state: "available",
-        lossProfile: ROUTE_LOSS_TO_CAPABILITY[worstStepLossProfile(route)],
-        engineId: (route.steps[0]?.engineId ?? "data-ts") as EngineId,
-        mobilePortability: "desktop-only",
-        warnings: [`Conversión en ${route.steps.length} pasos.`],
-        route: toConversionRouteSummary(route, recommendedSet.has(route.destination)),
-      });
-    }
-
-    return result;
   } catch (error) {
-    console.error("[capabilities] Route enrichment failed, returning base capabilities:", error);
+    console.error("[capabilities] Route discovery failed, returning base capabilities:", error);
     return normalizedCaps;
   }
 }
@@ -347,11 +337,13 @@ export async function POST(req: NextRequest) {
       // Normalize to CapabilityInfo
       const normalizedCaps: CapabilityInfo[] = capabilities.map(universalCapToCapabilityInfo);
 
-      // Enrich with conversion-route info (direct routes + synthetic multistep destinations)
+      // Route discovery is global: direct + 1/2 intermediate destinations.
       const inputFormat = descriptor.detectedFormat ?? descriptor.extension ?? "unknown";
-      const enrichedCaps = await attachConversionRoutes(normalizedCaps, inputFormat);
+      const enrichedCaps = await buildRouteDiscoveredCapabilities(normalizedCaps, inputFormat);
 
-      const recommended = enrichedCaps.find((c) => c.state === "available" && capabilities.find(ec => ec.id === c.id)?.recommended) ?? null;
+      const recommended = enrichedCaps.find((c) => c.state === "available" && c.route?.recommended) ??
+        enrichedCaps.find((c) => c.state === "available") ??
+        null;
 
       return NextResponse.json({
         capabilities: enrichedCaps,

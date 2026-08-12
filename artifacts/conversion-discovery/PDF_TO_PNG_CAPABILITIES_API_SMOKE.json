@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-08-12T21:50:17.985Z",
+  "analysis": {
+    "inputId": "f4b09b51a643b22edb2221225d11f57f",
+    "detectedFormat": "pdf",
+    "category": "pdf",
+    "mime": "application/pdf"
+  },
+  "pngCapability": {
+    "id": "route-pdf-png",
+    "outputFormat": "png",
+    "outputLabel": "Convertir PDF a PNG",
+    "state": "available",
+    "lossProfile": "lossy",
+    "engineId": "poppler",
+    "mobilePortability": "desktop-only",
+    "warnings": [
+      "Los PDF de varias páginas generan varias imágenes agrupadas en ZIP"
+    ],
+    "route": {
+      "steps": [
+        {
+          "source": "pdf",
+          "target": "png"
+        }
+      ],
+      "classification": "direct",
+      "risk": "low",
+      "qualityBand": "excellent",
+      "recommended": true
+    }
+  },
+  "job": {
+    "jobId": "af04b1726134009e47e7d1797dcf150b",
+    "status": "queued"
+  },
+  "final": {
+    "jobId": "af04b1726134009e47e7d1797dcf150b",
+    "status": "completed",
+    "stage": "Completado",
+    "progress": 100,
+    "error": null,
+    "inputTitle": "pdf-to-png-smoke input.pdf",
+    "outputFormat": "png",
+    "file": {
+      "name": "pdf-to-png-smoke input.png",
+      "mimeType": "image/png",
+      "sizeBytes": 623,
+      "quality": "0p",
+      "format": "png"
+    },
+    "downloadAvailable": true
+  }
+}

@@ -352,7 +352,8 @@ async function handleMultistepJob(
 
   // Recompute the best route with current engine availability
   const availableEngineIds = await getAvailableEngineIds();
-  const routes = getAvailableDestinations(resolvedInputFormat, availableEngineIds);
+  const environment = process.platform === "win32" ? "windows" : "linux";
+  const routes = getAvailableDestinations(resolvedInputFormat, availableEngineIds, { environment });
   const routeDestination = normalizeFormatId(routeRef.destination) ?? routeRef.destination;
   const route = routes.find((r) => r.destination === routeDestination);
 

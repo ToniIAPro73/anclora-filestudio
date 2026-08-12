@@ -92,14 +92,15 @@ describe("POST /api/capabilities — route enrichment", () => {
     vi.mocked(getAvailableEngineIds).mockResolvedValue(ALL_ENGINES);
   });
 
-  it("attaches a direct route summary to an existing direct capability", async () => {
+  it("returns direct route-discovered capabilities instead of engine-local ids", async () => {
     const res = await POST(makeRequest(jpegDescriptor()));
     expect(res.status).toBe(200);
     const body = await res.json();
     const caps = body.capabilities as CapabilityInfo[];
 
-    const png = caps.find((c) => c.id === DIRECT_PNG_CAPABILITY.id);
+    const png = caps.find((c) => c.id === "route-jpg-png");
     expect(png).toBeDefined();
+    expect(caps.some((c) => c.id === DIRECT_PNG_CAPABILITY.id)).toBe(false);
     expect(png?.route).toBeDefined();
     expect(png?.route?.classification).toBe("direct");
     expect(png?.route?.steps).toEqual([{ source: "jpg", target: "png" }]);
@@ -126,5 +127,40 @@ describe("POST /api/capabilities — route enrichment", () => {
     for (const cap of caps) {
       expect(cap.route?.qualityBand).not.toBe("not-recommended");
     }
+  });
+
+  it("DISCOVERY-013 exposes PDF→PNG from route discovery even when engine-local caps are empty", async () => {
+    vi.mocked(getCapabilities).mockResolvedValue([] as never);
+    const descriptor: UniversalFileDescriptor = {
+      ...jpegDescriptor(),
+      id: "pdf-1",
+      category: "pdf",
+      originalName: "input.pdf",
+      extension: "pdf",
+      detectedMimeType: "application/pdf",
+      detectedFormat: "pdf",
+      source: { kind: "local-upload", originalName: "input.pdf", storedRelativePath: "input.pdf" },
+      attributes: {
+        kind: "pdf",
+        pageCount: 1,
+        isEncrypted: false,
+        isLinearized: false,
+        pdfVersion: "1.7",
+        hasAnnotations: false,
+        hasForms: false,
+        hasEmbeddedFiles: false,
+      },
+    } as UniversalFileDescriptor;
+
+    const res = await POST(makeRequest(descriptor));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    const caps = body.capabilities as CapabilityInfo[];
+    const png = caps.find((c) => c.id === "route-pdf-png");
+
+    expect(png).toBeDefined();
+    expect(png?.state).toBe("available");
+    expect(png?.route?.classification).toBe("direct");
+    expect(png?.route?.steps).toEqual([{ source: "pdf", target: "png" }]);
   });
 });

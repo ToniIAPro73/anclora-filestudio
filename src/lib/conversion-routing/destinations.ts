@@ -18,6 +18,13 @@ import type {
 } from "./types";
 import type { ConversionEnvironment } from "../conversion-matrix";
 
+export interface EffectiveDiscoveryResult {
+  direct: ConversionRoute[];
+  oneIntermediate: ConversionRoute[];
+  twoIntermediates: ConversionRoute[];
+  all: ConversionRoute[];
+}
+
 /** Curated recommended destinations per source format category. */
 const RECOMMENDED_BY_CATEGORY: Partial<Record<FileCategory, string[]>> = {
   document: ["pdf", "html", "md", "odt", "txt"],
@@ -85,7 +92,9 @@ export function getAvailableDestinations(
       if (seen.has(edge.target)) continue;
       seen.add(edge.target);
       reachable.add(edge.target);
-      queue.push({ node: edge.target, depth: depth + 1 });
+      if (edge.supportsAsIntermediate) {
+        queue.push({ node: edge.target, depth: depth + 1 });
+      }
     }
   }
 
@@ -110,12 +119,39 @@ export function getAvailableDestinations(
   });
 }
 
+export function groupRoutesByIntermediateCount(routes: ConversionRoute[]): EffectiveDiscoveryResult {
+  const direct: ConversionRoute[] = [];
+  const oneIntermediate: ConversionRoute[] = [];
+  const twoIntermediates: ConversionRoute[] = [];
+
+  for (const route of routes) {
+    if (route.intermediateFormats.length === 0) direct.push(route);
+    else if (route.intermediateFormats.length === 1) oneIntermediate.push(route);
+    else if (route.intermediateFormats.length === 2) twoIntermediates.push(route);
+  }
+
+  return {
+    direct,
+    oneIntermediate,
+    twoIntermediates,
+    all: routes,
+  };
+}
+
+export function getAllEffectiveTargets(
+  source: string,
+  availableEngineIds: ReadonlySet<string>,
+  options: { environment?: ConversionEnvironment; includeOcr?: boolean } = {}
+): EffectiveDiscoveryResult {
+  return groupRoutesByIntermediateCount(getAvailableDestinations(source, availableEngineIds, options));
+}
+
 export function getTargetsForSource(
   source: string,
   availableEngineIds: ReadonlySet<string>,
   options: { environment?: ConversionEnvironment; includeOcr?: boolean } = {}
 ): ConversionRoute[] {
-  return getAvailableDestinations(source, availableEngineIds, options);
+  return getAllEffectiveTargets(source, availableEngineIds, options).all;
 }
 
 export function getSourcesForTarget(
@@ -143,6 +179,14 @@ export function getSourcesForTarget(
     if (b.score !== a.score) return b.score - a.score;
     return a.source.localeCompare(b.source);
   });
+}
+
+export function getAllEffectiveSources(
+  target: string,
+  availableEngineIds: ReadonlySet<string>,
+  options: { environment?: ConversionEnvironment; includeOcr?: boolean } = {}
+): EffectiveDiscoveryResult {
+  return groupRoutesByIntermediateCount(getSourcesForTarget(target, availableEngineIds, options));
 }
 
 export function getBestRoute(

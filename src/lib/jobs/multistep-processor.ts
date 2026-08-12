@@ -150,6 +150,7 @@ export async function processMultistepJob(jobId: string): Promise<void> {
     let lastEngineId: string | null = null;
     let lastEngineVersion: string | null = null;
     let lastDurationMs = 0;
+    let finalOutputPath = path.join(jobDir, `output.${route.destination}`);
     const allWarnings: string[] = [];
 
     for (let i = 0; i < totalSteps; i++) {
@@ -273,24 +274,37 @@ export async function processMultistepJob(jobId: string): Promise<void> {
         });
       }
 
-      if (!fs.existsSync(stepOutputPath) || fs.statSync(stepOutputPath).size === 0) {
+      const actualStepOutputPath = result.outputPath || stepOutputPath;
+      if (!isFinal && actualStepOutputPath !== stepOutputPath) {
+        throw createAppError(
+          "ENGINE_EXECUTE_FAILED",
+          `Intermediate step returned an unexpected output path`,
+          {
+            stage: "execution",
+            engineId: step.engineId,
+            technicalDetail: `Step ${failedStepLabel}: expected ${redact(stepOutputPath)}, got ${redact(actualStepOutputPath)}`,
+          },
+        );
+      }
+      if (!fs.existsSync(actualStepOutputPath) || fs.statSync(actualStepOutputPath).size === 0) {
         throw createAppError(
           "ENGINE_EXECUTE_FAILED",
           `Engine reported success but step output is missing or empty`,
           {
             stage: "execution",
             engineId: step.engineId,
-            technicalDetail: `Step ${failedStepLabel}: output missing/empty at ${redact(stepOutputPath)}`,
+            technicalDetail: `Step ${failedStepLabel}: output missing/empty at ${redact(actualStepOutputPath)}`,
           },
         );
+      }
+      if (isFinal) {
+        finalOutputPath = actualStepOutputPath;
       }
 
       lastDurationMs += result.durationMs;
       allWarnings.push(...result.warnings);
       log.push(`[multistep-job] Step ${i + 1}/${totalSteps} done (${step.engineId}, ${result.durationMs}ms)`);
     }
-
-    const finalOutputPath = path.join(jobDir, `output.${route.destination}`);
 
     // 7. Validate the final artifact (engine validation + deep validation)
     jobManager.updateJob(jobId, {
@@ -328,7 +342,8 @@ export async function processMultistepJob(jobId: string): Promise<void> {
       }
     }
 
-    const deepValidation = validateOutputArtifact(finalOutputPath, route.destination);
+    const finalOutputFormat = path.extname(finalOutputPath).toLowerCase() === ".zip" ? "zip" : route.destination;
+    const deepValidation = validateOutputArtifact(finalOutputPath, finalOutputFormat);
     if (!deepValidation.valid) {
       throw createAppError("ARTIFACT_VALIDATION_FAILED", `Deep validation failed`, {
         stage: "validation",
@@ -340,7 +355,7 @@ export async function processMultistepJob(jobId: string): Promise<void> {
     log.push(`[multistep-job] Validation passed`);
 
     // 8. Persist metadata + download token (same contract as universal jobs)
-    const outputMime = getOutputMimeType(route.destination);
+    const outputMime = getOutputMimeType(finalOutputFormat);
     const token = crypto.randomBytes(32).toString("hex");
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
     const relOutputPath = path.relative(CONFIG.media.tempDir, finalOutputPath);
@@ -349,10 +364,10 @@ export async function processMultistepJob(jobId: string): Promise<void> {
     const finalFileName = buildConvertedOutputFileName(
       currentJob?.input_title,
       jobId,
-      route.destination,
+      finalOutputFormat,
     );
 
-    const category = (FORMAT_BY_EXTENSION.get(route.destination)?.category ??
+    const category = (FORMAT_BY_EXTENSION.get(finalOutputFormat)?.category ??
       "unknown") as FileCategory;
 
     jobManager.updateJob(jobId, {

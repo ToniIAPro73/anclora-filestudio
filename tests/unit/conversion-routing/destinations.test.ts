@@ -3,10 +3,35 @@
 
 import { describe, it, expect } from "vitest";
 import {
+  getAllEffectiveSources,
+  getAllEffectiveTargets,
+  getSourcesForTarget,
+  getTargetsForSource,
   parseRouteCapabilityId,
   toConversionRouteSummary,
 } from "../../../src/lib/conversion-routing/destinations";
+import { FORMAT_CATALOG, normalizeFormatId } from "../../../src/lib/domain/format-catalog";
 import type { ConversionRoute } from "../../../src/lib/conversion-routing/types";
+
+const desktopEngines = new Set([
+  "libreoffice",
+  "pandoc",
+  "sharp-image",
+  "sharp",
+  "ffmpeg-media",
+  "ffmpeg",
+  "ffprobe",
+  "qpdf",
+  "poppler",
+  "tesseract",
+  "pdftoppm",
+  "calibre",
+  "ebook-convert",
+  "sevenzip",
+  "7z",
+  "data-ts",
+  "background-removal",
+]);
 
 describe("parseRouteCapabilityId", () => {
   it("parses a synthetic route capability id from the end", () => {
@@ -75,5 +100,93 @@ describe("toConversionRouteSummary", () => {
     expect(summary.recommended).toBe(true);
     expect(JSON.stringify(summary)).not.toContain("pandoc");
     expect(JSON.stringify(summary)).not.toContain("doc:convert");
+  });
+});
+
+describe("global effective conversion discovery", () => {
+  it("DISCOVERY-001 audits every canonical format through global discovery", () => {
+    const canonicalFormats = new Set(FORMAT_CATALOG.map((format) => normalizeFormatId(format.outputExtension)).filter(Boolean));
+
+    for (const format of canonicalFormats) {
+      const targets = getAllEffectiveTargets(format!, desktopEngines, { environment: "linux" });
+      const sources = getAllEffectiveSources(format!, desktopEngines, { environment: "linux" });
+      expect(Array.isArray(targets.all)).toBe(true);
+      expect(Array.isArray(sources.all)).toBe(true);
+    }
+  });
+
+  it("DISCOVERY-002 includes direct targets", () => {
+    const targets = getAllEffectiveTargets("pdf", desktopEngines, { environment: "windows" });
+    expect(targets.direct.map((route) => route.destination)).toContain("png");
+    expect(targets.direct.map((route) => route.destination)).toContain("jpg");
+  });
+
+  it("DISCOVERY-003 includes one-intermediate targets", () => {
+    const targets = getAllEffectiveTargets("docx", desktopEngines, { environment: "linux" });
+    const png = targets.oneIntermediate.find((route) => route.destination === "png");
+    expect(png?.steps.map((step) => `${step.source}->${step.target}`)).toEqual(["docx->pdf", "pdf->png"]);
+  });
+
+  it("DISCOVERY-004 includes two-intermediate targets", () => {
+    const targets = getAllEffectiveTargets("doc", desktopEngines, { environment: "linux" });
+    expect(targets.twoIntermediates.length).toBeGreaterThan(0);
+    expect(targets.twoIntermediates.every((route) => route.intermediateFormats.length === 2)).toBe(true);
+  });
+
+  it("DISCOVERY-005 excludes unsafe intermediate cardinality routes", () => {
+    const targets = getAllEffectiveTargets("pdf", desktopEngines, { environment: "linux" }).all;
+    for (const route of targets) {
+      for (const step of route.steps.slice(0, -1)) {
+        expect(step.target).not.toBe("png");
+        expect(step.target).not.toBe("jpg");
+        expect(step.target).not.toBe("tiff");
+      }
+    }
+  });
+
+  it("DISCOVERY-006 excludes runtime-unavailable routes", () => {
+    const withoutPoppler = new Set([...desktopEngines].filter((id) => id !== "poppler" && id !== "pdftoppm"));
+    const targets = getAllEffectiveTargets("pdf", withoutPoppler, { environment: "windows" });
+    expect(targets.all.map((route) => route.destination)).not.toContain("png");
+  });
+
+  it("DISCOVERY-007 normalizes aliases", () => {
+    const jpgTargets = getTargetsForSource("jpeg", desktopEngines, { environment: "linux" }).map((route) => route.destination);
+    const canonicalTargets = getTargetsForSource("jpg", desktopEngines, { environment: "linux" }).map((route) => route.destination);
+    expect(jpgTargets).toEqual(canonicalTargets);
+  });
+
+  it("DISCOVERY-008 keeps forward and reverse discovery coherent", () => {
+    const pdfTargets = getTargetsForSource("pdf", desktopEngines, { environment: "linux" });
+    for (const route of pdfTargets) {
+      const reverse = getSourcesForTarget(route.destination, desktopEngines, { environment: "linux" });
+      expect(reverse.some((candidate) => candidate.source === "pdf")).toBe(true);
+    }
+  });
+
+  it("DISCOVERY-011 returns unique destinations only", () => {
+    const targets = getTargetsForSource("docx", desktopEngines, { environment: "linux" });
+    const unique = new Set(targets.map((route) => route.destination));
+    expect(unique.size).toBe(targets.length);
+  });
+
+  it("DISCOVERY-012 applies environment filtering", () => {
+    const webTargets = getTargetsForSource("docx", new Set(["browser", "data-ts"]), { environment: "web" });
+    const desktopTargets = getTargetsForSource("docx", desktopEngines, { environment: "linux" });
+    expect(webTargets).toHaveLength(0);
+    expect(desktopTargets.length).toBeGreaterThan(0);
+  });
+
+  it("DISCOVERY-013 makes PDF→PNG effective on Windows when bundled Poppler is healthy", () => {
+    const targets = getAllEffectiveTargets("pdf", new Set(["poppler", "pdftoppm"]), { environment: "windows" });
+    const png = targets.direct.find((route) => route.destination === "png");
+    expect(png?.steps).toHaveLength(1);
+    expect(png?.steps[0].engineId).toBe("poppler");
+  });
+
+  it("DISCOVERY-014 keeps DOCX→PNG multistep discoverable", () => {
+    const targets = getAllEffectiveTargets("docx", desktopEngines, { environment: "linux" });
+    const png = targets.oneIntermediate.find((route) => route.destination === "png");
+    expect(png?.steps.map((step) => step.target)).toEqual(["pdf", "png"]);
   });
 });

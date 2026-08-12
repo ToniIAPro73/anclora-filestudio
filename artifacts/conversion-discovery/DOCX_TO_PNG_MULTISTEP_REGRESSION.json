@@ -1,0 +1,79 @@
+{
+  "timestamp": "2026-08-12T21:50:39.398Z",
+  "pngCapability": {
+    "id": "route-docx-png",
+    "outputFormat": "png",
+    "outputLabel": "PNG",
+    "state": "available",
+    "lossProfile": "lossy",
+    "engineId": "libreoffice",
+    "mobilePortability": "desktop-only",
+    "warnings": [
+      "Conversión en 2 pasos."
+    ],
+    "route": {
+      "steps": [
+        {
+          "source": "docx",
+          "target": "pdf"
+        },
+        {
+          "source": "pdf",
+          "target": "png"
+        }
+      ],
+      "classification": "multistep",
+      "risk": "low",
+      "qualityBand": "good",
+      "recommended": false
+    }
+  },
+  "job": {
+    "jobId": "19675fe19008f5a727ad8ec0ae4877f8",
+    "status": "queued"
+  },
+  "snapshots": [
+    {
+      "status": "processing",
+      "stage": "Paso 1 de 2 · DOCX → PDF",
+      "progress": 15
+    },
+    {
+      "status": "processing",
+      "stage": "Paso 1 de 2 · DOCX → PDF",
+      "progress": 15
+    },
+    {
+      "status": "processing",
+      "stage": "Paso 1 de 2 · DOCX → PDF",
+      "progress": 15
+    },
+    {
+      "status": "processing",
+      "stage": "Paso 1 de 2 · DOCX → PDF",
+      "progress": 15
+    },
+    {
+      "status": "completed",
+      "stage": "Completado",
+      "progress": 100
+    }
+  ],
+  "final": {
+    "jobId": "19675fe19008f5a727ad8ec0ae4877f8",
+    "status": "completed",
+    "stage": "Completado",
+    "progress": 100,
+    "error": null,
+    "inputTitle": "discovery-docx-multistep.docx",
+    "outputFormat": "png",
+    "file": {
+      "name": "discovery-docx-multistep.png",
+      "mimeType": "image/png",
+      "sizeBytes": 15556,
+      "quality": "0p",
+      "format": "png"
+    },
+    "downloadAvailable": true
+  }
+}
