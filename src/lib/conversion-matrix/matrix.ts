@@ -9,7 +9,7 @@ import type {
   RuntimeCapabilitySet,
 } from "./types";
 
-type EdgeInput = Omit<CanonicalConversionEdge, "id" | "source" | "target" | "declared" | "implemented" | "enabled" | "supportsOCR" | "mode" | "priority" | "dependencies" | "environments" | "costModel"> & {
+type EdgeInput = Omit<CanonicalConversionEdge, "id" | "source" | "target" | "declared" | "implemented" | "enabled" | "supportsOCR" | "mode" | "priority" | "dependencies" | "environments" | "costModel" | "outputCardinality" | "supportsAsIntermediate"> & {
   source: string;
   target: string;
   declared?: boolean;
@@ -21,6 +21,8 @@ type EdgeInput = Omit<CanonicalConversionEdge, "id" | "source" | "target" | "dec
   dependencies?: string[];
   environments?: ConversionEnvironment[];
   costModel?: CanonicalConversionEdge["costModel"];
+  outputCardinality?: CanonicalConversionEdge["outputCardinality"];
+  supportsAsIntermediate?: boolean;
 };
 
 const DESKTOP: ConversionEnvironment[] = ["windows", "linux"];
@@ -49,6 +51,8 @@ function edge(input: EdgeInput): CanonicalConversionEdge {
     implemented: input.implemented ?? true,
     priority: input.priority ?? 100,
     costModel: input.costModel ?? "included",
+    outputCardinality: input.outputCardinality ?? "single",
+    supportsAsIntermediate: input.supportsAsIntermediate ?? input.outputCardinality !== "multiple",
     notes: input.notes,
   };
 }
@@ -118,6 +122,16 @@ export const CANONICAL_CONVERSION_EDGES: readonly CanonicalConversionEdge[] = [
   ...cross(["png", "jpg", "tiff", "webp"], ["pdf"], { operationId: "ocr:image-to-pdf", implementationId: "tesseract-image-ocr-pdf", engineId: "tesseract", dependencies: ["tesseract"], lossProfile: "lossy", supportsOCR: true, mode: "ocr", priority: 55, declared: false }),
   ...cross(["pdf"], ["txt"], { operationId: "pdf:ocr", implementationId: "tesseract-pdf-ocr-text", engineId: "tesseract", dependencies: ["tesseract", "pdftoppm"], lossProfile: "lossy", supportsOCR: true, mode: "ocr", priority: 55 }),
   ...cross(["png", "jpg", "webp"], ["pdf"], { operationId: "browser:images-to-pdf", implementationId: "browser-pdf-images-to-pdf", engineId: "browser", dependencies: ["browser"], environments: ["web"], lossProfile: "lossy-controlled", priority: 75, declared: false }),
+  ...cross(["pdf"], ["png", "jpg", "tiff"], {
+    operationId: "pdf:rasterize",
+    implementationId: "poppler-pdftoppm-rasterize",
+    engineId: "poppler",
+    dependencies: ["pdftoppm"],
+    lossProfile: "lossy-controlled",
+    priority: 80,
+    outputCardinality: "multiple",
+    supportsAsIntermediate: false,
+  }),
   edge({
     source: "pdf",
     target: "png",

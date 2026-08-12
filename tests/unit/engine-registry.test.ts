@@ -57,9 +57,10 @@ describe("Engine registry — routing", () => {
   it("returns pdf capabilities for pdf descriptor", async () => {
     const caps = await getCapabilities(makeDesc("pdf", "pdf"));
     expect(caps.length).toBeGreaterThan(0);
-    // Both qpdf and tesseract (OCR) may provide capabilities for pdf category
+    // QPDF, Poppler and Tesseract (OCR) may provide capabilities for pdf category
     const engineIds = [...new Set(caps.map((c) => c.engineId))];
     expect(engineIds).toContain("qpdf");
+    expect(engineIds).toContain("poppler");
     const qpdfCaps = caps.filter((c) => c.engineId === "qpdf");
     expect(qpdfCaps.length).toBeGreaterThan(0);
   });
@@ -150,6 +151,10 @@ describe("Engine registry — getEngine", () => {
     expect(getEngine("qpdf")?.id).toBe("qpdf");
   });
 
+  it("resolves poppler engine by id", () => {
+    expect(getEngine("poppler")?.id).toBe("poppler");
+  });
+
   it("resolves sevenzip engine by id", () => {
     expect(getEngine("sevenzip")?.id).toBe("sevenzip");
   });
@@ -172,6 +177,7 @@ describe("Engine registry — diagnoseAllEngines", () => {
     expect(ids).toContain("sharp-image");
     expect(ids).toContain("data-ts");
     expect(ids).toContain("qpdf");
+    expect(ids).toContain("poppler");
     expect(ids).toContain("sevenzip");
     expect(ids).toContain("pandoc");
     expect(ids).toContain("libreoffice");

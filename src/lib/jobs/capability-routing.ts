@@ -27,6 +27,7 @@ export function extractEngineIdFromCapabilityId(capabilityId: string): string {
     ["data-ts", "data-ts"],
     ["pandoc", "pandoc"],
     ["qpdf", "qpdf"],
+    ["poppler", "poppler"],
     ["calibre", "calibre"],
     ["tesseract", "tesseract"],
   ];

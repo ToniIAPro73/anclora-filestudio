@@ -1,0 +1,155 @@
+{
+  "timestamp": "2026-08-12T20:54:25.005Z",
+  "fixture": "/home/toni/workspace/anclora/anclora-filestudio/tests/acceptance/fixtures/generated/fixture-docx.docx",
+  "inputId": "b69f55359660da69cfc97465843542b1",
+  "detectedFormat": "docx",
+  "capabilityCount": 10,
+  "routeCapabilities": [
+    {
+      "id": "route-docx-jpg",
+      "outputFormat": "jpg",
+      "route": {
+        "steps": [
+          {
+            "source": "docx",
+            "target": "pdf"
+          },
+          {
+            "source": "pdf",
+            "target": "jpg"
+          }
+        ],
+        "classification": "multistep",
+        "risk": "low",
+        "qualityBand": "good",
+        "recommended": false
+      }
+    },
+    {
+      "id": "route-docx-png",
+      "outputFormat": "png",
+      "route": {
+        "steps": [
+          {
+            "source": "docx",
+            "target": "pdf"
+          },
+          {
+            "source": "pdf",
+            "target": "png"
+          }
+        ],
+        "classification": "multistep",
+        "risk": "low",
+        "qualityBand": "good",
+        "recommended": false
+      }
+    },
+    {
+      "id": "route-docx-tiff",
+      "outputFormat": "tiff",
+      "route": {
+        "steps": [
+          {
+            "source": "docx",
+            "target": "pdf"
+          },
+          {
+            "source": "pdf",
+            "target": "tiff"
+          }
+        ],
+        "classification": "multistep",
+        "risk": "low",
+        "qualityBand": "good",
+        "recommended": false
+      }
+    }
+  ],
+  "selectedRouteCapability": {
+    "id": "route-docx-png",
+    "outputFormat": "png",
+    "outputLabel": "PNG",
+    "state": "available",
+    "lossProfile": "lossy",
+    "engineId": "libreoffice",
+    "mobilePortability": "desktop-only",
+    "warnings": [
+      "Conversión en 2 pasos."
+    ],
+    "route": {
+      "steps": [
+        {
+          "source": "docx",
+          "target": "pdf"
+        },
+        {
+          "source": "pdf",
+          "target": "png"
+        }
+      ],
+      "classification": "multistep",
+      "risk": "low",
+      "qualityBand": "good",
+      "recommended": false
+    }
+  },
+  "jobCreate": {
+    "jobId": "f371a576867aa26c4e9f832e4c687596",
+    "status": "queued"
+  },
+  "finalJob": {
+    "jobId": "f371a576867aa26c4e9f832e4c687596",
+    "status": "completed",
+    "stage": "Completado",
+    "progress": 100,
+    "error": null,
+    "inputTitle": "uxv4 multistep input.docx",
+    "outputFormat": "png",
+    "file": {
+      "name": "uxv4 multistep input.png",
+      "mimeType": "image/png",
+      "sizeBytes": 15556,
+      "quality": "0p",
+      "format": "png"
+    },
+    "downloadAvailable": true
+  },
+  "snapshots": [
+    {
+      "t": "2026-08-12T20:54:22.789Z",
+      "status": "processing",
+      "stage": "Paso 1 de 2 · DOCX → PDF",
+      "progress": 15
+    },
+    {
+      "t": "2026-08-12T20:54:23.880Z",
+      "status": "processing",
+      "stage": "Paso 1 de 2 · DOCX → PDF",
+      "progress": 15
+    },
+    {
+      "t": "2026-08-12T20:54:25.005Z",
+      "status": "completed",
+      "stage": "Completado",
+      "progress": 100
+    }
+  ],
+  "outputEvidence": {
+    "outputPath": "/home/toni/workspace/anclora/anclora-filestudio/.tmp/media/f371a576867aa26c4e9f832e4c687596/output.png",
+    "outputFileName": "uxv4 multistep input.png",
+    "mimeType": "image/png",
+    "format": "png",
+    "sizeBytes": 15556,
+    "sha256": "1eeaacafa00f9b9cf9fbf7821b31ee74e903ec9ef23da0e4c59cef8b0f9476b3",
+    "magic": "89504e470d0a1a0a0000000d49484452",
+    "fileCommand": "PNG image data, 1275 x 1650, 8-bit/color RGB, non-interlaced"
+  },
+  "progressCertification": {
+    "runtimePollCaptured": [
+      "Paso 1 de 2 · DOCX → PDF",
+      "Completado"
+    ],
+    "unitCoverage": "tests/unit/multistep-processor.test.ts reports per-step progress stages with Paso 1 de 2 and Paso 2 de 2"
+  }
+}

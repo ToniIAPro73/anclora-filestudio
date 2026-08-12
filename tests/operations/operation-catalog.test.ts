@@ -52,6 +52,9 @@ describe("OPERATION_CATALOG — structure", () => {
     expect(pdfToPng?.engineId).not.toBe("qpdf");
     expect(pdfToPng?.enabled).toBe(false);
     expect(pdfToPng?.implemented).toBe(false);
+    const rasterize = OPERATION_CATALOG.find((op) => op.id === "pdf:rasterize");
+    expect(rasterize?.engineId).toBe("poppler");
+    expect(rasterize?.outputFormats).toEqual(["png", "jpg", "tiff"]);
   });
 
   it("image operations use an image-capable engine", () => {

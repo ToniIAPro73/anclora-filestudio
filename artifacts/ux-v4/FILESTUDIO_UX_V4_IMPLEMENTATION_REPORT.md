@@ -206,3 +206,175 @@ Status: DIRECT ASSETS PASS, CACHE INVALIDATION REAL SCENARIO BLOCKED.
 - Local Linux PATH `yt-dlp` remains 2024.04.09 while Windows candidate bundles 2026.06.09; no toolchain lock update was made in this multimedia phase.
 - EvoStream bunny DASH mux still fails with local PATH `yt-dlp`/FFmpeg, but Akamai demuxed DASH mux passes and no silent downgrade path remains.
 - Result/batch UX has automated coverage but lacks a manual/browser E2E conversion result capture in this diagnosis.
+
+## Final Three Gates
+
+Date: 2026-08-12
+
+Scope:
+
+- Windows Native + Poppler preparation.
+- Multistep E2E real.
+- Favicon Windows preparation and cache invalidation evidence.
+
+### Multistep E2E
+
+Status: PASS on Linux, ready for Windows native QA.
+
+Effective productive route found:
+
+```text
+DOCX -> PDF -> PNG
+```
+
+Why it is valid:
+
+- No direct `DOCX -> PNG` edge exists in the effective graph for this engine set.
+- The selected route uses real production primitives:
+  - `DOCX -> PDF` via LibreOffice.
+  - `PDF -> PNG` via Poppler.
+- The UI showed the route before conversion as `DOCX PDF PNG` with `Conversión en varios pasos`.
+- The backend log showed both real steps:
+  - `Step 1/2 done (libreoffice, 4262ms)`
+  - `Step 2/2 done (poppler, 248ms)`
+- Final output: `fixture-docx.png`, PNG, 15 KB.
+
+Evidence:
+
+- `artifacts/ux-v4/final-gates-runtime-multistep.tmp.json`
+- `artifacts/ux-v4/final-gates/multistep-linux-e2e.json`
+- `artifacts/ux-v4/final-gates/multistep-ui-route-visible.png`
+- `artifacts/ux-v4/final-gates/multistep-ui-result.png`
+
+Safety:
+
+- Router tests cover `>2` intermediates rejected.
+- Router tests cover multi-output edges rejected as unsafe intermediates.
+- A focused real-catalog test now covers `DOCX -> PDF -> PNG` discovery.
+
+### Favicon
+
+Status: prepared in VPS; Windows old-build -> new-build remains native QA gate.
+
+Direct runtime assets from `http://localhost:3000`:
+
+- `/favicon.ico`: 200, `image/x-icon`, SHA256 `7488c656bbfe0ccb9093121463d3ed5e7a7c6ac94938288c4698bf9e56f27a0b`, ICO with 6 icons.
+- `/favicon-32.png`: 200, `image/png`, SHA256 `dae79a4eb5e87187d0fc4b68a92821bf5bdccc3047f29c374efde83bc9a346a2`, 32x32.
+- `/favicon-512.png`: 200, `image/png`, SHA256 `dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73`, 512x512.
+- `/icon.png`: 200, `image/png`, SHA256 `dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73`, 512x512.
+- `/apple-touch-icon.png`: 200, `image/png`, SHA256 `8886697996420e1072c906b5d29d6e356ea712457fecffe3f94cc078e7edf8b0`, 180x180.
+
+Rendered HTML metadata:
+
+```text
+/favicon-32.png?v=dae79a4eb5e8
+/favicon-512.png?v=dcebc03b88f0
+/icon.png?v=dcebc03b88f0
+/favicon.ico?v=7488c656bbfe
+/apple-touch-icon.png?v=888669799642
+```
+
+Cache invalidation:
+
+- The query value is derived from SHA-256 content hash, not a manual version.
+- Linux old-build -> new-build was not fully runnable because no old FileStudio build with legacy favicon is available in this VPS.
+- Windows native QA must run the full old-build -> new-build same-host/same-port browser profile scenario without clearing cache.
+
+Evidence:
+
+- `artifacts/ux-v4/final-gates/favicon-runtime-manifest.json`
+- `artifacts/ux-v4/final-gates/favicon-html-current.html`
+- `artifacts/ux-v4/final-gates/favicon-cache-invalidation-linux.json`
+- `artifacts/ux-v4/final-gates/favicon-512-visual.png`
+- `artifacts/ux-v4/final-gates/favicon-ico-visual.png`
+
+### Poppler Windows Preparation
+
+Status: prepared and packaged; native Windows execution remains required.
+
+Toolchain lock:
+
+```text
+Poppler: 26.02.0-0
+Distribution: oschwartz10612/poppler-windows
+Asset: Release-26.02.0-0.zip
+SHA256: 993e4a94376ed712fafc7058d724ea0b943d118bbd2305cd9ed55174eb85cda5
+License: GPL-2.0
+```
+
+Final ZIP inventory:
+
+- `tools/poppler/Library/bin/pdftoppm.exe`: present.
+- Poppler entries: 456.
+- Poppler DLLs: 26.
+- Favicon assets included in `app/public`.
+- QPDF rasterization active bindings: 0.
+
+Resolver policy:
+
+```text
+configured/bundled Poppler
+-> tools/poppler/Library/bin
+-> tools/poppler/bin
+-> tools/poppler root
+-> PATH fallback
+```
+
+The Windows launcher sets `ANCLORA_FILESTUDIO_POPPLER_PATH` to bundled `tools\poppler` and adds Poppler bin directories to PATH for DLL lookup.
+
+Evidence:
+
+- `artifacts/ux-v4/final-gates/poppler-windows-prep-manifest.json`
+- `artifacts/ux-v4/final-gates/windows-candidate-zip-inventory.json`
+
+### Regression And Candidate
+
+Regression:
+
+- `pnpm typecheck`: PASS.
+- `pnpm lint`: PASS, 0 errors, 3 existing `<img>` warnings.
+- `pnpm test`: PASS, 896 passed, 1 skipped.
+- `pnpm build`: PASS, Turbopack NFT tracing warnings.
+
+Windows portable:
+
+- Build: PASS.
+- Verify: PASS, 98 checks.
+- Smoke: PASS, 42/42 structural checks; native Windows acceptance skipped because `powershell.exe` is unavailable in the VPS.
+
+Final candidate:
+
+```text
+dist/windows/Anclora-FileStudio-Windows-x64-Core.zip
+Size: 245795211 bytes
+SHA256: 243427e485b6ded9b204ceb879455590bad337448faea75bfe4a129d4bcc9f85
+Build HEAD: 066001cf1238b843ae0ef9d331e184e0b95d632d
+```
+
+Windows native QA package:
+
+- `artifacts/ux-v4/final-gates/WINDOWS_NATIVE_QA_UXV4_FINAL.md`
+- `artifacts/ux-v4/final-gates/WINDOWS_NATIVE_QA_UXV4_FINAL.ps1`
+
+### Gate Status
+
+Pre-Windows-native result:
+
+```text
+MULTISTEP ROUTING: PASS
+MULTISTEP EXECUTOR: PASS
+MULTISTEP SAFETY: PASS
+
+FAVICON DIRECT ASSETS: PASS
+FAVICON HASHING: PASS
+FAVICON HTML METADATA: PASS
+FAVICON LINUX CACHE INVALIDATION: DOCUMENTED ENVIRONMENT LIMIT
+
+POPPLER WINDOWS BUNDLE: PASS
+POPPLER WINDOWS DEPENDENCIES: PASS
+POPPLER TOOLCHAIN LOCK: PASS
+POPPLER BUNDLED PRIORITY LOGIC: PASS
+
+WINDOWS NATIVE QA: BLOCKED IN VPS
+FILESTUDIO UX V4: FAIL until final candidate passes native Windows QA
+```

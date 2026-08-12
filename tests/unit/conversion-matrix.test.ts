@@ -39,6 +39,7 @@ const ALL_DESKTOP = new Set([
   "csv-parse",
   "csv-stringify",
   "tesseract",
+  "poppler",
   "pdftoppm",
 ]);
 
@@ -81,13 +82,22 @@ describe("Canonical conversion matrix", () => {
   it("never returns PDF to PNG via QPDF", () => {
     const runtime = runtimeCapabilitiesFromEngineIds(new Set(["qpdf", "pdftoppm"]), "linux");
     const direct = getDirectConversion("pdf", "png", runtime, { includeUnavailable: true });
-    expect(direct?.edge.engineId).toBe("qpdf");
-    expect(direct?.availability.available).toBe(false);
-    expect(direct?.availability.state).toBe("disabled");
+    expect(direct?.edge.engineId).toBe("poppler");
+    expect(direct?.availability.available).toBe(true);
+
+    const qpdfRaster = CANONICAL_CONVERSION_EDGES.find((edge) =>
+      edge.source === "pdf" &&
+      edge.target === "png" &&
+      edge.engineId === "qpdf"
+    );
+    expect(qpdfRaster).toBeDefined();
+    expect(getEffectiveAvailability(qpdfRaster!, runtime).available).toBe(false);
+    expect(getEffectiveAvailability(qpdfRaster!, runtime).state).toBe("disabled");
 
     const graph = buildConversionGraph(new Set(["qpdf", "pdftoppm"]));
     const routes = findConversionRoutes(graph, "pdf", "png");
-    expect(routes).toHaveLength(0);
+    expect(routes).toHaveLength(1);
+    expect(routes[0].steps[0].engineId).toBe("poppler");
   });
 
   it("reports implementation-only edges for migration diagnostics", () => {
@@ -145,7 +155,7 @@ describe("Canonical conversion routing APIs", () => {
     expect(withoutSharp).toBeNull();
 
     const pdfPng = getBestRoute("pdf", "png", ALL_DESKTOP);
-    expect(pdfPng).toBeNull();
+    expect(pdfPng?.steps[0].engineId).toBe("poppler");
 
     const first = getBestRoute("doc", "epub", ALL_DESKTOP);
     const second = getBestRoute("doc", "epub", ALL_DESKTOP);

@@ -8,6 +8,7 @@ import type { UniversalFileDescriptor } from "../domain/descriptors";
 import { sharpEngine } from "./image/sharp-engine";
 import { dataEngine } from "./data/data-engine";
 import { qpdfEngine } from "./pdf/qpdf-engine";
+import { popplerEngine } from "./pdf/poppler-engine";
 import { sevenZipEngine } from "./archive/sevenzip-engine";
 import { pandocEngine } from "./document/pandoc-engine";
 import { libreOfficeEngine } from "./document/libreoffice-engine";
@@ -35,6 +36,12 @@ const REGISTERED_ENGINES: EngineRegistration[] = [
     engine: qpdfEngine,
     categories: ["pdf"],
     requiredTools: ["qpdf"],
+    enabled: true,
+  },
+  {
+    engine: popplerEngine,
+    categories: ["pdf"],
+    requiredTools: ["pdftoppm"],
     enabled: true,
   },
   {

@@ -1,0 +1,2800 @@
+{
+  "engineResults": [
+    {
+      "engineId": "sharp-image",
+      "available": true,
+      "version": "0.35.1",
+      "capabilities": [
+        "jpeg",
+        "png",
+        "webp",
+        "tiff",
+        "magick",
+        "openslide",
+        "dz",
+        "ppm",
+        "fits",
+        "gif",
+        "svg",
+        "heif",
+        "pdf",
+        "vips",
+        "jp2",
+        "jxl",
+        "rad",
+        "dcraw",
+        "raw"
+      ]
+    },
+    {
+      "engineId": "data-ts",
+      "available": true,
+      "version": "typescript-native",
+      "capabilities": [
+        "yaml",
+        "smol-toml",
+        "fast-xml-parser",
+        "csv-parse",
+        "csv-stringify"
+      ]
+    },
+    {
+      "engineId": "qpdf",
+      "available": true,
+      "version": "11.9.0",
+      "capabilities": [
+        "linearize",
+        "extract-pages",
+        "rotate",
+        "decrypt"
+      ]
+    },
+    {
+      "engineId": "poppler",
+      "available": true,
+      "version": "24.02.0",
+      "capabilities": [
+        "pdf-to-png",
+        "pdf-to-jpg",
+        "pdf-to-tiff"
+      ]
+    },
+    {
+      "engineId": "sevenzip",
+      "available": true,
+      "version": "7-Zip 23.01 (x64) : Copyright (c) 1999-2023 Igor Pavlov : 2023-06-20",
+      "capabilities": [
+        "repack",
+        "extract"
+      ]
+    },
+    {
+      "engineId": "pandoc",
+      "available": true,
+      "version": "3.1.3",
+      "capabilities": [
+        "markdown",
+        "md",
+        "html",
+        "htm",
+        "rst",
+        "docx",
+        "odt",
+        "latex",
+        "tex",
+        "txt"
+      ]
+    },
+    {
+      "engineId": "libreoffice",
+      "available": true,
+      "version": "24.2.7.2",
+      "capabilities": [
+        "docx",
+        "doc",
+        "odt",
+        "rtf",
+        "xlsx",
+        "xls",
+        "ods",
+        "pptx",
+        "ppt"
+      ]
+    },
+    {
+      "engineId": "ffmpeg-media",
+      "available": true,
+      "version": "6.1.1-3ubuntu5",
+      "capabilities": [
+        "transcode-audio",
+        "transcode-video",
+        "extract-audio",
+        "normalize-audio",
+        "remux",
+        "trim",
+        "create-gif",
+        "extract-thumbnail",
+        "extract-frames",
+        "extract-subtitles"
+      ]
+    },
+    {
+      "engineId": "calibre",
+      "available": true,
+      "version": "7.6.0)",
+      "capabilities": [
+        "epub",
+        "mobi",
+        "azw3",
+        "html",
+        "docx"
+      ]
+    },
+    {
+      "engineId": "tesseract",
+      "available": true,
+      "version": "5.3.4",
+      "capabilities": [
+        "List of available languages in \"/.../tessdata/\" (2):",
+        "eng",
+        "osd",
+        "pdftoppm"
+      ]
+    },
+    {
+      "engineId": "background-removal",
+      "available": true,
+      "version": "bfs+sharp",
+      "capabilities": [
+        "deterministic"
+      ]
+    }
+  ],
+  "available": [
+    "List of available languages in \"/.../tessdata/\" (2):",
+    "azw3",
+    "background-removal",
+    "calibre",
+    "create-gif",
+    "csv-parse",
+    "csv-stringify",
+    "data-ts",
+    "dcraw",
+    "decrypt",
+    "deterministic",
+    "doc",
+    "docx",
+    "dz",
+    "eng",
+    "epub",
+    "extract",
+    "extract-audio",
+    "extract-frames",
+    "extract-pages",
+    "extract-subtitles",
+    "extract-thumbnail",
+    "fast-xml-parser",
+    "ffmpeg-media",
+    "fits",
+    "gif",
+    "heif",
+    "htm",
+    "html",
+    "jp2",
+    "jpeg",
+    "jxl",
+    "latex",
+    "libreoffice",
+    "linearize",
+    "magick",
+    "markdown",
+    "md",
+    "mobi",
+    "normalize-audio",
+    "ods",
+    "odt",
+    "openslide",
+    "osd",
+    "pandoc",
+    "pdf",
+    "pdf-to-jpg",
+    "pdf-to-png",
+    "pdf-to-tiff",
+    "pdftoppm",
+    "png",
+    "poppler",
+    "ppm",
+    "ppt",
+    "pptx",
+    "qpdf",
+    "rad",
+    "raw",
+    "remux",
+    "repack",
+    "rotate",
+    "rst",
+    "rtf",
+    "sevenzip",
+    "sharp-image",
+    "smol-toml",
+    "svg",
+    "tesseract",
+    "tex",
+    "tiff",
+    "transcode-audio",
+    "transcode-video",
+    "trim",
+    "txt",
+    "vips",
+    "webp",
+    "xls",
+    "xlsx",
+    "yaml"
+  ],
+  "productiveMultistep": [
+    {
+      "source": "doc",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "doc",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "doc",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "doc",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "doc",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "doc",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "docx",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 4
+    },
+    {
+      "source": "docx",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 4
+    },
+    {
+      "source": "docx",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 4
+    },
+    {
+      "source": "ods",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "ods",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "ods",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "ods",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "ods",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "ods",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "odt",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "odt",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "odt",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "odt",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "odt",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "odt",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "ppt",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "ppt",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "ppt",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "ppt",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "ppt",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "ppt",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "pptx",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "pptx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 1
+    },
+    {
+      "source": "pptx",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "pptx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 1
+    },
+    {
+      "source": "pptx",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "pptx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 1
+    },
+    {
+      "source": "rtf",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "rtf",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "rtf",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "rtf",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "rtf",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "rtf",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "xls",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "xls",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "xls",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "xls",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "xls",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "xls",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "xlsx",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "xlsx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "xlsx",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "xlsx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "xlsx",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "risk": "low",
+      "steps": [
+        {
+          "source": "xlsx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "avi",
+      "target": "avif",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "avi",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "avif",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "avi",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "avi",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "jpg",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "avi",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "avi",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "png",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "avi",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "avi",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "tiff",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "avi",
+      "target": "webp",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "avi",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "webp",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "mkv",
+      "target": "avif",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mkv",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "avif",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "mkv",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mkv",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "jpg",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "mkv",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mkv",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "png",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "mkv",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mkv",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "tiff",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "mkv",
+      "target": "webp",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mkv",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "webp",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "mov",
+      "target": "avif",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mov",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "avif",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "mov",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mov",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "jpg",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "mov",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mov",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "png",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "mov",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mov",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "tiff",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "mov",
+      "target": "webp",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mov",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "webp",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "mp4",
+      "target": "avif",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mp4",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "avif",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "mp4",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mp4",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "jpg",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "mp4",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mp4",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "png",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "mp4",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mp4",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "tiff",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "mp4",
+      "target": "webp",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "mp4",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "webp",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "webm",
+      "target": "avif",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "webm",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "avif",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "webm",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "webm",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "jpg",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "webm",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "webm",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "png",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "webm",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "webm",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "tiff",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "webm",
+      "target": "webp",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "risk": "medium",
+      "steps": [
+        {
+          "source": "webm",
+          "target": "gif",
+          "engineId": "ffmpeg-media",
+          "operationId": "media:create-gif",
+          "lossProfile": "lossy"
+        },
+        {
+          "source": "gif",
+          "target": "webp",
+          "engineId": "sharp-image",
+          "operationId": "image:convert",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "doc",
+      "target": "epub",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "doc",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "doc",
+      "target": "html",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "doc",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "html",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 5
+    },
+    {
+      "source": "doc",
+      "target": "md",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "doc",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "md",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 5
+    },
+    {
+      "source": "doc",
+      "target": "rst",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "doc",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "rst",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 4
+    },
+    {
+      "source": "doc",
+      "target": "txt",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "doc",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "txt",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 5
+    },
+    {
+      "source": "epub",
+      "target": "jpg",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "epub",
+          "target": "pdf",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 1
+    },
+    {
+      "source": "epub",
+      "target": "png",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "epub",
+          "target": "pdf",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 1
+    },
+    {
+      "source": "epub",
+      "target": "tiff",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "epub",
+          "target": "pdf",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 1
+    },
+    {
+      "source": "html",
+      "target": "pdf",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "html",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 11
+    },
+    {
+      "source": "md",
+      "target": "pdf",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "md",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 11
+    },
+    {
+      "source": "odt",
+      "target": "epub",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "odt",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "odt",
+      "target": "html",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "odt",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "html",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 4
+    },
+    {
+      "source": "odt",
+      "target": "md",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "odt",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "md",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 4
+    },
+    {
+      "source": "odt",
+      "target": "rst",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "odt",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "rst",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "odt",
+      "target": "txt",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "odt",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "txt",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 4
+    },
+    {
+      "source": "rst",
+      "target": "pdf",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "rst",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 11
+    },
+    {
+      "source": "rtf",
+      "target": "epub",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "rtf",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "rtf",
+      "target": "html",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "rtf",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "html",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 5
+    },
+    {
+      "source": "rtf",
+      "target": "md",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "rtf",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "md",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 5
+    },
+    {
+      "source": "rtf",
+      "target": "rst",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "rtf",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "rst",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 4
+    },
+    {
+      "source": "rtf",
+      "target": "txt",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "rtf",
+          "target": "docx",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "docx",
+          "target": "txt",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 5
+    },
+    {
+      "source": "html",
+      "target": "jpg",
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "html",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "html",
+      "target": "png",
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "html",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "html",
+      "target": "tiff",
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "html",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 3
+    },
+    {
+      "source": "md",
+      "target": "jpg",
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "md",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "md",
+      "target": "png",
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "md",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "md",
+      "target": "tiff",
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "md",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "rst",
+      "target": "jpg",
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "rst",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "jpg",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "rst",
+      "target": "png",
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "rst",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "png",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "rst",
+      "target": "tiff",
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "rst",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "docx",
+          "target": "pdf",
+          "engineId": "libreoffice",
+          "operationId": "office:to-pdf",
+          "lossProfile": "lossy-controlled"
+        },
+        {
+          "source": "pdf",
+          "target": "tiff",
+          "engineId": "poppler",
+          "operationId": "pdf:rasterize",
+          "lossProfile": "lossy-controlled"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "azw3",
+      "target": "mobi",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "azw3",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "epub",
+          "target": "mobi",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 1
+    },
+    {
+      "source": "azw3",
+      "target": "pdf",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "azw3",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "epub",
+          "target": "pdf",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 1
+    },
+    {
+      "source": "docx",
+      "target": "azw3",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "docx",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "epub",
+          "target": "azw3",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "docx",
+      "target": "mobi",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "docx",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "epub",
+          "target": "mobi",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "docx",
+      "target": "tex",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "docx",
+          "target": "md",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "md",
+          "target": "tex",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "html",
+      "target": "azw3",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "html",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "epub",
+          "target": "azw3",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "html",
+      "target": "mobi",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "html",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "epub",
+          "target": "mobi",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 2
+    },
+    {
+      "source": "html",
+      "target": "tex",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "html",
+          "target": "md",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "md",
+          "target": "tex",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 7
+    },
+    {
+      "source": "md",
+      "target": "epub",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "md",
+          "target": "html",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "html",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 9
+    },
+    {
+      "source": "mobi",
+      "target": "azw3",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "mobi",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "epub",
+          "target": "azw3",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 1
+    },
+    {
+      "source": "mobi",
+      "target": "pdf",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "mobi",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "epub",
+          "target": "pdf",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 1
+    },
+    {
+      "source": "rst",
+      "target": "epub",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "rst",
+          "target": "html",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "html",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 9
+    },
+    {
+      "source": "tex",
+      "target": "docx",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "tex",
+          "target": "md",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "md",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "tex",
+      "target": "epub",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "tex",
+          "target": "html",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "html",
+          "target": "epub",
+          "engineId": "calibre",
+          "operationId": "ebook:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 4
+    },
+    {
+      "source": "tex",
+      "target": "odt",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "tex",
+          "target": "md",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "md",
+          "target": "odt",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 10
+    },
+    {
+      "source": "tex",
+      "target": "rst",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "tex",
+          "target": "md",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "md",
+          "target": "rst",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 6
+    },
+    {
+      "source": "tex",
+      "target": "txt",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "tex",
+          "target": "md",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "md",
+          "target": "txt",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 8
+    },
+    {
+      "source": "txt",
+      "target": "docx",
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "risk": "high",
+      "steps": [
+        {
+          "source": "txt",
+          "target": "md",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        },
+        {
+          "source": "md",
+          "target": "docx",
+          "engineId": "pandoc",
+          "operationId": "doc:convert",
+          "lossProfile": "structural-risk"
+        }
+      ],
+      "alternatives": 8
+    }
+  ],
+  "productiveCount": 129
+}

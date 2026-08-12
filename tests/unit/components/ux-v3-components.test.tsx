@@ -16,6 +16,8 @@ const engines = new Set([
   "ffmpeg-media",
   "ffmpeg",
   "ffprobe",
+  "qpdf",
+  "poppler",
   "tesseract",
   "pdftoppm",
   "sevenzip",
@@ -33,10 +35,10 @@ describe("UX V3 components", () => {
     const onOpenTools = vi.fn();
     render(<FileStudioHome model={model} onOpenConvert={onOpenConvert} onOpenTools={onOpenTools} />);
 
-    expect(screen.getByText("¿Qué quieres hacer?")).toBeTruthy();
+    expect(screen.getByText("¿Qué quieres convertir?")).toBeTruthy();
     expect(screen.getByText("Convertir")).toBeTruthy();
     expect(screen.getByText("Herramientas")).toBeTruthy();
-    expect(screen.getByText("Cambia archivos de un formato a otro.")).toBeTruthy();
+    expect(screen.getByText("Explora conversiones por tipo de resultado.")).toBeTruthy();
   });
 
   it("NAV-006..011 does not expose retired top-level groups as tool categories", () => {
@@ -59,21 +61,21 @@ describe("UX V3 components", () => {
   });
 
   it("QUICK-001 filters destination when a source is selected", () => {
-    render(<ConversionHub model={model} selectedTarget={null} onSelectTarget={() => {}} />);
+    render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
 
-    fireEvent.change(screen.getByLabelText("Origen"), { target: { value: "docx" } });
-    const destination = screen.getByLabelText("Destino") as HTMLSelectElement;
+    fireEvent.change(screen.getByLabelText("De"), { target: { value: "docx" } });
+    const destination = screen.getByLabelText("A") as HTMLSelectElement;
     const values = Array.from(destination.options).map((option) => option.value);
 
     expect(values).toContain("pdf");
-    expect(values).not.toContain("png");
+    expect(values).toContain("png");
   });
 
   it("QUICK-002 filters source when target is selected first", () => {
-    render(<ConversionHub model={model} selectedTarget={null} onSelectTarget={() => {}} />);
+    render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
 
-    fireEvent.change(screen.getByLabelText("Destino"), { target: { value: "pdf" } });
-    const source = screen.getByLabelText("Origen") as HTMLSelectElement;
+    fireEvent.change(screen.getByLabelText("A"), { target: { value: "pdf" } });
+    const source = screen.getByLabelText("De") as HTMLSelectElement;
     const values = Array.from(source.options).map((option) => option.value);
 
     expect(values).toContain("docx");
@@ -82,8 +84,8 @@ describe("UX V3 components", () => {
   it("TOOLS-001, TOOLS-002 and TOOLS-005 classify tools separately", () => {
     render(<ToolHub model={model} onOpenTool={() => {}} />);
 
-    expect(screen.getByRole("button", { name: /PDF/i })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Imágenes/i })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Conversión con OCR/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^PDF/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^Imágenes/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^Conversión con OCR/i })).toBeTruthy();
   });
 });

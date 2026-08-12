@@ -1,0 +1,92 @@
+{
+  "timestamp": "2026-08-12T20:57:38.864Z",
+  "base": "http://localhost:3000",
+  "assets": [
+    {
+      "asset": "/favicon.ico",
+      "url": "http://localhost:3000/favicon.ico",
+      "status": 200,
+      "contentType": "image/x-icon",
+      "cacheControl": "public, max-age=0",
+      "etag": "W/\"2a6ad-19ff68fc221\"",
+      "lastModified": "Wed, 12 Aug 2026 15:20:44 GMT",
+      "bytes": 173741,
+      "sha256": "7488c656bbfe0ccb9093121463d3ed5e7a7c6ac94938288c4698bf9e56f27a0b",
+      "matchesPublicFile": true,
+      "dimensions": "",
+      "fileInfo": "MS Windows icon resource - 6 icons, 16x16 with PNG image data, 16 x 16, 8-bit/color RGBA, non-interlaced, 32 bits/pixel, 32x32 with \\012- PNG image data, 32 x 32, 8-bit/color RGBA, non-interlaced, 32 bits/pixel",
+      "savedPath": "/home/toni/workspace/anclora/anclora-filestudio/artifacts/ux-v4/final-gates/favicon-direct-favicon.ico"
+    },
+    {
+      "asset": "/favicon-32.png",
+      "url": "http://localhost:3000/favicon-32.png",
+      "status": 200,
+      "contentType": "image/png",
+      "cacheControl": "public, max-age=0",
+      "etag": "W/\"b1b-19ff68fbe48\"",
+      "lastModified": "Wed, 12 Aug 2026 15:20:43 GMT",
+      "bytes": 2843,
+      "sha256": "dae79a4eb5e87187d0fc4b68a92821bf5bdccc3047f29c374efde83bc9a346a2",
+      "matchesPublicFile": true,
+      "dimensions": "",
+      "fileInfo": "PNG image data, 32 x 32, 8-bit/color RGBA, non-interlaced",
+      "savedPath": "/home/toni/workspace/anclora/anclora-filestudio/artifacts/ux-v4/final-gates/favicon-direct-favicon-32.png"
+    },
+    {
+      "asset": "/favicon-512.png",
+      "url": "http://localhost:3000/favicon-512.png",
+      "status": 200,
+      "contentType": "image/png",
+      "cacheControl": "public, max-age=0",
+      "etag": "W/\"74f9e-19ff68fbec2\"",
+      "lastModified": "Wed, 12 Aug 2026 15:20:43 GMT",
+      "bytes": 479134,
+      "sha256": "dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73",
+      "matchesPublicFile": true,
+      "dimensions": "",
+      "fileInfo": "PNG image data, 512 x 512, 8-bit/color RGBA, non-interlaced",
+      "savedPath": "/home/toni/workspace/anclora/anclora-filestudio/artifacts/ux-v4/final-gates/favicon-direct-favicon-512.png"
+    },
+    {
+      "asset": "/icon.png",
+      "url": "http://localhost:3000/icon.png",
+      "status": 200,
+      "contentType": "image/png",
+      "cacheControl": "no-cache, must-revalidate",
+      "etag": "W/\"74f9e-19ff68fbfed\"",
+      "lastModified": "Wed, 12 Aug 2026 15:20:43 GMT",
+      "bytes": 479134,
+      "sha256": "dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73",
+      "matchesPublicFile": true,
+      "dimensions": "",
+      "fileInfo": "PNG image data, 512 x 512, 8-bit/color RGBA, non-interlaced",
+      "savedPath": "/home/toni/workspace/anclora/anclora-filestudio/artifacts/ux-v4/final-gates/favicon-direct-icon.png"
+    },
+    {
+      "asset": "/apple-touch-icon.png",
+      "url": "http://localhost:3000/apple-touch-icon.png",
+      "status": 200,
+      "contentType": "image/png",
+      "cacheControl": "public, max-age=0",
+      "etag": "W/\"f2a6-19ff68fbf84\"",
+      "lastModified": "Wed, 12 Aug 2026 15:20:43 GMT",
+      "bytes": 62118,
+      "sha256": "8886697996420e1072c906b5d29d6e356ea712457fecffe3f94cc078e7edf8b0",
+      "matchesPublicFile": true,
+      "dimensions": "",
+      "fileInfo": "PNG image data, 180 x 180, 8-bit/color RGBA, non-interlaced",
+      "savedPath": "/home/toni/workspace/anclora/anclora-filestudio/artifacts/ux-v4/final-gates/favicon-direct-apple-touch-icon.png"
+    }
+  ],
+  "html": {
+    "sha256": "4799fca0fa30f79505598bee4ea82dfcdfeff800aa4eb9410516823a203881ad",
+    "links": [
+      "<link rel=\"icon\" href=\"/favicon-32.png?v=dae79a4eb5e8\" type=\"image/png\" sizes=\"32x32\"/>",
+      "<link rel=\"icon\" href=\"/favicon-512.png?v=dcebc03b88f0\" type=\"image/png\" sizes=\"512x512\"/>",
+      "<link rel=\"icon\" href=\"/icon.png?v=dcebc03b88f0\" type=\"image/png\" sizes=\"512x512\"/>",
+      "<link rel=\"icon\" href=\"/favicon.ico?v=7488c656bbfe\" sizes=\"any\"/>",
+      "<link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png?v=888669799642\" type=\"image/png\" sizes=\"180x180\"/>"
+    ],
+    "hasContentHashQuery": true
+  }
+}

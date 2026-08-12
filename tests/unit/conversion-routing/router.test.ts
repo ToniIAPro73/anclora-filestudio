@@ -25,6 +25,8 @@ function edge(
     lossProfile: "lossless",
     resourceProfile: "low",
     experimental: false,
+    outputCardinality: "single",
+    supportsAsIntermediate: true,
     ...over,
   };
 }
@@ -110,6 +112,16 @@ describe("findConversionRoutes", () => {
     for (const route of routes) {
       expect(route.intermediateFormats.length).toBeLessThanOrEqual(MAX_INTERMEDIATES);
     }
+  });
+
+  it("does not use multi-output edges as intermediate steps", () => {
+    const graph = graphOf(
+      edge("pdf", "png", { outputCardinality: "multiple", supportsAsIntermediate: false }),
+      edge("png", "webp")
+    );
+
+    expect(findConversionRoutes(graph, "pdf", "png")).toHaveLength(1);
+    expect(findConversionRoutes(graph, "pdf", "webp")).toHaveLength(0);
   });
 
   it("prefers a higher-quality multistep route over a shorter lossy one", () => {
@@ -226,17 +238,30 @@ describe("buildConversionGraph (real catalog)", () => {
   });
 
   it("excludes edges whose dependencies are unavailable", () => {
-    // pdf:to-png is disabled until a real Poppler adapter exists.
     const withoutDep = buildConversionGraph(new Set(["qpdf"]));
     const withDep = buildConversionGraph(new Set(["poppler", "pdftoppm"]));
 
     const allEdges = (graph: Map<string, ConversionEdge[]>) =>
       [...graph.values()].flat();
     expect(
-      allEdges(withoutDep).some((e) => e.operationId === "pdf:to-png")
+      allEdges(withoutDep).some((e) => e.operationId === "pdf:rasterize")
     ).toBe(false);
     expect(
-      allEdges(withDep).some((e) => e.operationId === "pdf:to-png")
-    ).toBe(false);
+      allEdges(withDep).some((e) => e.operationId === "pdf:rasterize")
+    ).toBe(true);
+  });
+
+  it("discovers the effective DOCX → PDF → PNG route without a direct DOCX → PNG edge", () => {
+    const graph = buildConversionGraph(new Set(["libreoffice", "poppler", "pdftoppm"]));
+    const docxEdges = graph.get("docx") ?? [];
+
+    expect(docxEdges.some((e) => e.target === "png")).toBe(false);
+
+    const best = selectBestConversionRoute(findConversionRoutes(graph, "docx", "png"));
+    expect(best?.classification).toBe("multistep");
+    expect(best?.steps.map((step) => `${step.source}->${step.target}:${step.engineId}`)).toEqual([
+      "docx->pdf:libreoffice",
+      "pdf->png:poppler",
+    ]);
   });
 });

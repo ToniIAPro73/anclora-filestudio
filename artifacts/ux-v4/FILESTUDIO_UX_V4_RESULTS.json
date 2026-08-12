@@ -1,10 +1,10 @@
 {
   "date": "2026-08-12",
-  "scope": "UX v4 multimedia remediation plus prior Windows gate context",
-  "final": "FAIL",
+  "scope": "UX v4 multimedia PASS plus final three gates preparation",
+  "final": "FAIL - Windows native QA still required for final PASS",
   "poppler": {
-    "windowsNative": "BLOCKED - Windows runtime unavailable in this environment",
-    "windowsBundledPdftoppm": "PASS - tools/poppler/Library/bin/pdftoppm.exe present in ZIP",
+    "windowsNative": "BLOCKED - Windows runtime unavailable in VPS; use final candidate SHA256 243427e485b6ded9b204ceb879455590bad337448faea75bfe4a129d4bcc9f85",
+    "windowsBundledPdftoppm": "PASS - tools/poppler/Library/bin/pdftoppm.exe present in final ZIP",
     "windowsPopplerVersionLocked": "PASS - Poppler 26.02.0-0, sha256 993e4a94376ed712fafc7058d724ea0b943d118bbd2305cd9ed55174eb85cda5",
     "windowsRuntimeAvailability": "BLOCKED - native execution not run",
     "linuxNative": "PASS - pdftoppm 24.02.0 at /usr/bin/pdftoppm",
@@ -15,20 +15,21 @@
     "pdfMultipageWindowsReal": "BLOCKED",
     "pathWithSpacesWindowsReal": "BLOCKED",
     "qpdfRasterizationBindings": 0,
-    "routingUnsafeIntermediate": "PASS"
+    "routingUnsafeIntermediate": "PASS",
+    "windowsDependenciesBundled": "PASS - 26 Poppler DLLs bundled"
   },
   "windowsPortable": {
     "qaFolder": "artifacts/ux-v4/windows-real-qa-20260812T195355Z",
     "zip": "dist/windows/Anclora-FileStudio-Windows-x64-Core.zip",
-    "zipSha256": "adb4b40a667e7d6493b0289e1ac7caef4ed9cd9303787dba93b2e50b3047d15d",
+    "zipSha256": "243427e485b6ded9b204ceb879455590bad337448faea75bfe4a129d4bcc9f85",
     "build": "PASS",
     "verify": "PASS - 98 checks",
-    "smoke": "STRUCTURAL PASS - 42/42; native Windows acceptance skipped because powershell.exe unavailable",
+    "smoke": "PASS - 42/42 structural; native Windows acceptance skipped because powershell.exe unavailable in VPS",
     "launcher": "STRUCTURAL PASS",
     "health": "BLOCKED - native runtime not started",
     "rootHttp": "BLOCKED - native runtime not started",
     "stopCleanup": "BLOCKED - native runtime not started",
-    "toolsBundled": "PASS"
+    "toolsBundled": "PASS - Poppler, FFmpeg, yt-dlp, QPDF, Pandoc, 7-Zip inventory recorded"
   },
   "acquisition": {
     "status": "PARTIAL PASS",
@@ -117,14 +118,13 @@
     ]
   },
   "multistep": {
-    "status": "BLOCKED/FAIL",
-    "effectiveVisibleRoutes": "NONE FOUND",
-    "rawGraphMultistepRoutes": "FOUND - mostly audio chains, but not surfaced as effective user routes",
-    "routeVisibleBeforeStart": "NOT CERTIFIED",
-    "progressStepXOfY": "NOT CERTIFIED",
-    "resultValid": "NOT CERTIFIED",
-    "cleanup": "NOT CERTIFIED",
-    "reason": "Current effective destination selection prefers direct routes; jobs endpoint recomputes best route, so no visible executable multistep E2E flow was available."
+    "status": "PASS ON LINUX / READY FOR WINDOWS NATIVE QA",
+    "effectiveVisibleRoutes": "FOUND - DOCX -> PDF -> PNG",
+    "routeVisibleBeforeStart": "PASS - agent-browser UI text showed DOCX PDF PNG and Conversión en varios pasos",
+    "progressStepXOfY": "PASS - backend log shows Step 1/2 and Step 2/2; unit coverage verifies Paso 1 de 2 and Paso 2 de 2",
+    "resultValid": "PASS - PNG 1275x1650, SHA256 1eeaacafa00f9b9cf9fbf7821b31ee74e903ec9ef23da0e4c59cef8b0f9476b3",
+    "cleanup": "PASS - coordinated cleanup ran with 0 failures in dev log; no fake output",
+    "windowsNative": "BLOCKED - requires final ZIP on Windows real"
   },
   "quickConverter": {
     "status": "PASS",
@@ -175,32 +175,32 @@
         "dimensions": "180x180"
       }
     },
-    "cacheBustingImplementation": "PASS - metadata uses content hash",
-    "cacheInvalidationRuntimeScenario": "BLOCKED - old build to new build same-origin Windows scenario not run",
-    "windows": "BLOCKED",
-    "incognito": "BLOCKED"
+    "cacheBustingImplementation": "PASS - rendered HTML uses content hash query for all icon links",
+    "cacheInvalidationRuntimeScenario": "BLOCKED FOR WINDOWS - Linux mechanism/evidence recorded; old-build -> new-build real scenario must run on Windows",
+    "windows": "BLOCKED - requires final ZIP on Windows real",
+    "incognito": "BLOCKED - requires final ZIP on Windows real"
   },
   "validation": {
     "typecheck": "PASS",
     "lint": "PASS - 0 errors, 3 existing warnings",
-    "tests": "PASS - 895 passed, 1 skipped",
+    "tests": "PASS - 896 passed, 1 skipped",
     "build": "PASS - Turbopack NFT tracing warnings",
     "targetedPopplerRouterFavicon": "PASS - 52 tests",
-    "targetedMediaQualityContracts": "PASS - 72 focused tests"
+    "targetedMediaQualityContracts": "PASS - 72 focused tests",
+    "windowsPortableBuild": "PASS",
+    "windowsPortableVerify": "PASS - 98 checks",
+    "windowsPortableSmoke": "PASS - 42/42 structural; native skipped"
   },
   "blockers": [
-    "No native Windows runtime available for launcher, health, HTTP root, stop/cleanup, Poppler execution, favicon Windows or portable native smoke.",
-    "No visible effective multistep route available for E2E certification.",
-    "Favicon old-build/new-build cache invalidation scenario not run on Windows."
+    "Windows native QA cannot run in this Linux VPS. Poppler Windows native, Windows launcher/health, PDF conversions, multistep Windows E2E, favicon fresh/incognito and old-build -> new-build cache invalidation remain BLOCKED until the final ZIP is executed on Windows 10/11 x64."
   ],
   "remainingRisks": [
-    "Windows structural packaging evidence is strong but not equivalent to native QA.",
-    "Linux PATH yt-dlp is 2024.04.09 while Windows candidate bundles 2026.06.09.",
-    "Manual result/batch browser E2E remains a QA gap.",
-    "Local PATH yt-dlp remains 2024.04.09; no toolchain lock update was made in this phase.",
-    "EvoStream bunny DASH mux still fails with local yt-dlp/ffmpeg, but Akamai demuxed DASH mux passes and no silent downgrade path remains."
+    "Windows structural evidence is strong but not equivalent to native execution.",
+    "Favicon old-build -> new-build cache invalidation must be proven on normal Chrome/Edge profile without clearing cache.",
+    "DOCX -> PNG multistep relies on LibreOffice plus Poppler being effective in the Windows candidate; native QA must verify this route from UI.",
+    "Lint still reports three existing no-img-element warnings in compare-inspector-modal.tsx."
   ],
-  "commits": "NONE",
+  "commits": "PENDING LOCAL COMMIT",
   "push": "NONE",
   "release": "NONE",
   "versionChanged": false,
@@ -226,5 +226,84 @@
       "Selectors use bestvideo* and exact height=N semantics.",
       "Audio quality UI and command builder distinguish best/high/standard/light; best MP3 maps to VBR 0."
     ]
+  },
+  "finalThreeGates": {
+    "status": "READY_FOR_WINDOWS_NATIVE_QA",
+    "multimediaRegression": "NOT REOPENED - prior PASS; final changes did not touch media pipeline",
+    "multistep": {
+      "preparation": "PASS",
+      "effectiveRoute": "DOCX -> PDF -> PNG",
+      "productiveRouteHasNoDirectEdge": "PASS",
+      "linuxE2E": "PASS",
+      "uiRouteVisible": "PASS",
+      "progress": "PASS - backend log and unit coverage include Paso 1 de 2 and Paso 2 de 2; runtime polling captured Paso 1 before fast completion",
+      "finalOutput": {
+        "outputPath": "/home/toni/workspace/anclora/anclora-filestudio/.tmp/media/f371a576867aa26c4e9f832e4c687596/output.png",
+        "outputFileName": "uxv4 multistep input.png",
+        "mimeType": "image/png",
+        "format": "png",
+        "sizeBytes": 15556,
+        "sha256": "1eeaacafa00f9b9cf9fbf7821b31ee74e903ec9ef23da0e4c59cef8b0f9476b3",
+        "magic": "89504e470d0a1a0a0000000d49484452",
+        "fileCommand": "PNG image data, 1275 x 1650, 8-bit/color RGB, non-interlaced"
+      },
+      "safety": "PASS - router tests cover >2 intermediates rejected and multi-output intermediate rejected",
+      "evidence": [
+        "artifacts/ux-v4/final-gates-runtime-multistep.tmp.json",
+        "artifacts/ux-v4/final-gates/multistep-linux-e2e.json",
+        "artifacts/ux-v4/final-gates/multistep-ui-route-visible.png",
+        "artifacts/ux-v4/final-gates/multistep-ui-result.png"
+      ]
+    },
+    "favicon": {
+      "directAssets": "PASS",
+      "htmlMetadata": "PASS",
+      "contentHash": "PASS",
+      "linuxCacheTest": "DOCUMENTED_ENVIRONMENT_LIMIT - no old runnable FileStudio build with legacy favicon in VPS",
+      "windowsFreshSession": "BLOCKED - requires Windows native QA",
+      "windowsOldNewCacheInvalidation": "BLOCKED - requires Windows native QA with old build on same host/port",
+      "htmlLinks": [
+        "<link rel=\"icon\" href=\"/favicon-32.png?v=dae79a4eb5e8\" type=\"image/png\" sizes=\"32x32\"/>",
+        "<link rel=\"icon\" href=\"/favicon-512.png?v=dcebc03b88f0\" type=\"image/png\" sizes=\"512x512\"/>",
+        "<link rel=\"icon\" href=\"/icon.png?v=dcebc03b88f0\" type=\"image/png\" sizes=\"512x512\"/>",
+        "<link rel=\"icon\" href=\"/favicon.ico?v=7488c656bbfe\" sizes=\"any\"/>",
+        "<link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png?v=888669799642\" type=\"image/png\" sizes=\"180x180\"/>"
+      ],
+      "evidence": [
+        "artifacts/ux-v4/final-gates/favicon-runtime-manifest.json",
+        "artifacts/ux-v4/final-gates/favicon-html-current.html",
+        "artifacts/ux-v4/final-gates/favicon-512-visual.png",
+        "artifacts/ux-v4/final-gates/favicon-ico-visual.png",
+        "artifacts/ux-v4/final-gates/favicon-cache-invalidation-linux.json"
+      ]
+    },
+    "popplerWindows": {
+      "bundle": "PASS",
+      "dependencies": "PASS - 26 DLLs bundled",
+      "toolchainLock": "PASS",
+      "bundledPriorityLogic": "PASS",
+      "bundledPdftoppm": [
+        "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/pdftoppm.exe"
+      ],
+      "qpdfRasterizationActiveBindings": 0,
+      "native": "BLOCKED - requires Windows real runtime",
+      "evidence": [
+        "artifacts/ux-v4/final-gates/poppler-windows-prep-manifest.json",
+        "artifacts/ux-v4/final-gates/windows-candidate-zip-inventory.json"
+      ]
+    },
+    "windowsCandidate": {
+      "artifact": "/home/toni/workspace/anclora/anclora-filestudio/dist/windows/Anclora-FileStudio-Windows-x64-Core.zip",
+      "sizeBytes": 245795211,
+      "sha256": "243427e485b6ded9b204ceb879455590bad337448faea75bfe4a129d4bcc9f85",
+      "gitHead": "066001cf1238b843ae0ef9d331e184e0b95d632d",
+      "build": "PASS",
+      "verify": "PASS - 98 checks",
+      "smoke": "PASS - 42/42 structural; native skipped because powershell.exe unavailable in VPS",
+      "qaInstructions": [
+        "artifacts/ux-v4/final-gates/WINDOWS_NATIVE_QA_UXV4_FINAL.md",
+        "artifacts/ux-v4/final-gates/WINDOWS_NATIVE_QA_UXV4_FINAL.ps1"
+      ]
+    }
   }
 }

@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-08-12T21:05:40.290Z",
+  "toolchainLock": {
+    "id": "poppler",
+    "displayName": "Poppler (pdftoppm)",
+    "platform": "all",
+    "arch": "x64",
+    "license": "GPL-2.0",
+    "licenseUrl": "https://gitlab.freedesktop.org/poppler/poppler/-/blob/master/COPYING",
+    "requiredFor": [
+      "ocr-pdf",
+      "pdf-to-image"
+    ],
+    "redistribution": "bundled",
+    "versions": {
+      "win-x64": {
+        "version": "26.02.0-0",
+        "sourceUrl": "https://github.com/oschwartz10612/poppler-windows/releases/download/v26.02.0-0/Release-26.02.0-0.zip",
+        "sha256": "993e4a94376ed712fafc7058d724ea0b943d118bbd2305cd9ed55174eb85cda5"
+      }
+    }
+  },
+  "buildScriptCopiesWholeRoot": true,
+  "buildScriptFindsPdftoppm": true,
+  "launcherSetsPopplerBase": true,
+  "launcherAddsPopplerBinDirsToPath": true,
+  "engineResolverOrder": [
+    "CONFIG.media.binaries.poppler direct path",
+    "CONFIG.media.binaries.poppler/Library/bin/pdftoppm.exe",
+    "CONFIG.media.binaries.poppler/bin/pdftoppm.exe",
+    "CONFIG.media.binaries.poppler/pdftoppm.exe",
+    "process.cwd()/tools/poppler/Library/bin/pdftoppm.exe",
+    "process.cwd()/tools/poppler/bin/pdftoppm.exe",
+    "process.cwd()/tools/poppler/pdftoppm.exe",
+    "PATH fallback pdftoppm.exe/pdftoppm"
+  ],
+  "engineResolverBundledBeforePath": true,
+  "qpdfRasterizationActiveBindings": 0,
+  "tests": [
+    "tests/unit/poppler-engine.test.ts",
+    "tests/unit/toolchain-probe-windows.test.ts",
+    "tests/unit/conversion-matrix.test.ts",
+    "tests/operations/operation-catalog.test.ts"
+  ]
+}

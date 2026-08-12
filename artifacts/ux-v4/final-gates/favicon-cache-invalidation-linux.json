@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-08-12T20:58:41.654Z",
+  "directAssets": "PASS",
+  "htmlMetadata": "PASS",
+  "contentHash": "PASS",
+  "cacheBusting": {
+    "mechanism": "Next metadata emits favicon URLs with ?v=<sha256(content).slice(0,12)> from src/app/layout.tsx.",
+    "manualVersion": false,
+    "headers": [
+      {
+        "asset": "/favicon.ico",
+        "cacheControl": "public, max-age=0",
+        "etag": "W/\"2a6ad-19ff68fc221\"",
+        "lastModified": "Wed, 12 Aug 2026 15:20:44 GMT"
+      },
+      {
+        "asset": "/favicon-32.png",
+        "cacheControl": "public, max-age=0",
+        "etag": "W/\"b1b-19ff68fbe48\"",
+        "lastModified": "Wed, 12 Aug 2026 15:20:43 GMT"
+      },
+      {
+        "asset": "/favicon-512.png",
+        "cacheControl": "public, max-age=0",
+        "etag": "W/\"74f9e-19ff68fbec2\"",
+        "lastModified": "Wed, 12 Aug 2026 15:20:43 GMT"
+      },
+      {
+        "asset": "/icon.png",
+        "cacheControl": "no-cache, must-revalidate",
+        "etag": "W/\"74f9e-19ff68fbfed\"",
+        "lastModified": "Wed, 12 Aug 2026 15:20:43 GMT"
+      },
+      {
+        "asset": "/apple-touch-icon.png",
+        "cacheControl": "public, max-age=0",
+        "etag": "W/\"f2a6-19ff68fbf84\"",
+        "lastModified": "Wed, 12 Aug 2026 15:20:43 GMT"
+      }
+    ],
+    "linuxOldBuildNewBuild": "DOCUMENTED_ENVIRONMENT_LIMIT",
+    "reason": "No previous runnable FileStudio build with legacy favicon is available in this VPS. Windows native QA must run the full old build -> new candidate scenario on the same host/port without cache clearing.",
+    "limitedBrowserEvidence": [
+      "artifacts/ux-v4/final-gates/favicon-cache-query-current-url.txt",
+      "artifacts/ux-v4/final-gates/favicon-cache-query-versioned-url.png"
+    ]
+  },
+  "links": [
+    "<link rel=\"icon\" href=\"/favicon-32.png?v=dae79a4eb5e8\" type=\"image/png\" sizes=\"32x32\"/>",
+    "<link rel=\"icon\" href=\"/favicon-512.png?v=dcebc03b88f0\" type=\"image/png\" sizes=\"512x512\"/>",
+    "<link rel=\"icon\" href=\"/icon.png?v=dcebc03b88f0\" type=\"image/png\" sizes=\"512x512\"/>",
+    "<link rel=\"icon\" href=\"/favicon.ico?v=7488c656bbfe\" sizes=\"any\"/>",
+    "<link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png?v=888669799642\" type=\"image/png\" sizes=\"180x180\"/>"
+  ]
+}

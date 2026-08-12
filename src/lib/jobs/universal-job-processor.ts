@@ -337,19 +337,23 @@ export async function processUniversalJob(jobId: string): Promise<void> {
       });
     }
 
+    const actualOutputPath = result.outputPath || outputPath;
+    const actualOutputFormat = path.extname(actualOutputPath).toLowerCase() === ".zip" ? "zip" : outputFormat;
+    const actualPlan = actualOutputPath === outputPath ? plan : { ...plan, outputPath: actualOutputPath };
+
     // Guard: engine reported success but output file is missing or empty
-    if (!fs.existsSync(outputPath)) {
+    if (!fs.existsSync(actualOutputPath)) {
       throw createAppError(
         "ENGINE_EXECUTE_FAILED",
         `Engine reported success but output file was not created`,
         {
           stage: "execution",
           engineId,
-          technicalDetail: `outputPath missing after execute(): ${redact(outputPath)}. Logs: ${result.logs.map((l) => l.slice(0, 100)).join(" | ")}`,
+          technicalDetail: `outputPath missing after execute(): ${redact(actualOutputPath)}. Logs: ${result.logs.map((l) => l.slice(0, 100)).join(" | ")}`,
         },
       );
     }
-    const outputStat = fs.statSync(outputPath);
+    const outputStat = fs.statSync(actualOutputPath);
     if (outputStat.size === 0) {
       throw createAppError(
         "ENGINE_EXECUTE_FAILED",
@@ -357,7 +361,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
         {
           stage: "execution",
           engineId,
-          technicalDetail: `outputPath exists but 0 bytes: ${redact(outputPath)}. Logs: ${result.logs.map((l) => l.slice(0, 100)).join(" | ")}`,
+          technicalDetail: `outputPath exists but 0 bytes: ${redact(actualOutputPath)}. Logs: ${result.logs.map((l) => l.slice(0, 100)).join(" | ")}`,
         },
       );
     }
@@ -373,7 +377,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
       progress: 95,
     });
 
-    const validation = await engine.validate(outputPath, plan);
+    const validation = await engine.validate(actualOutputPath, actualPlan);
     if (!validation.valid) {
       const failedChecks = validation.checks
         .filter((c) => !c.passed)
@@ -387,7 +391,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
     }
 
     // Additional deep validation: check magic bytes, MIME, size
-    const deepValidation = validateOutputArtifact(outputPath, outputFormat);
+    const deepValidation = validateOutputArtifact(actualOutputPath, actualOutputFormat);
     if (!deepValidation.valid) {
       throw createAppError(
         "ARTIFACT_VALIDATION_FAILED",
@@ -403,7 +407,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
     log.push(`[universal-job] Validation passed`);
 
     // 10. Persist metadata
-    const outputMime = getOutputMimeType(outputFormat);
+    const outputMime = getOutputMimeType(actualOutputFormat);
     const inputFormat =
       job.input_format ??
       path.extname(inputPath).replace(".", "").toLowerCase() ??
@@ -419,7 +423,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
     );
 
     // Determine category from format catalog
-    const category = (FORMAT_BY_EXTENSION.get(outputFormat)?.category ??
+    const category = (FORMAT_BY_EXTENSION.get(actualOutputFormat)?.category ??
       "unknown") as FileCategory;
 
     // 11. Create download token
@@ -427,14 +431,14 @@ export async function processUniversalJob(jobId: string): Promise<void> {
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
 
     // Compute safe relative path
-    const relOutputPath = path.relative(CONFIG.media.tempDir, outputPath);
+    const relOutputPath = path.relative(CONFIG.media.tempDir, actualOutputPath);
 
     // Build output file name from input title or fallback
     const currentJob = jobManager.getJob(jobId);
     const finalFileName = buildConvertedOutputFileName(
       currentJob?.input_title,
       jobId,
-      outputFormat,
+      actualOutputFormat,
     );
 
     // 12. Update job to completed — ONLY after validation

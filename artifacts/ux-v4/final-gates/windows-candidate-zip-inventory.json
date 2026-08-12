@@ -1,0 +1,83 @@
+{
+  "timestamp": "2026-08-12T21:12:09.864167Z",
+  "zipPath": "/home/toni/workspace/anclora/anclora-filestudio/dist/windows/Anclora-FileStudio-Windows-x64-Core.zip",
+  "sizeBytes": 245795211,
+  "sha256": "243427e485b6ded9b204ceb879455590bad337448faea75bfe4a129d4bcc9f85",
+  "entryCount": 1938,
+  "popplerEntryCount": 456,
+  "pdftoppm": [
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/pdftoppm.exe"
+  ],
+  "popplerDllCount": 26,
+  "popplerDllSample": [
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/freetype.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/liblzma.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/pixman-1-0.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/zlib.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/jpeg8.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/tiff.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/poppler-cpp.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/cairo.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/libcurl.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/zstd.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/charset.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/expat.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/iconv.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/deflate.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/poppler.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/fontconfig-1.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/libssh2.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/poppler-glib.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/libpng16.dll",
+    "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/bin/libtiff.dll"
+  ],
+  "faviconAssets": [
+    "Anclora-FileStudio-Windows-x64-Core/app/public/favicon.ico",
+    "Anclora-FileStudio-Windows-x64-Core/app/public/favicon-512.png",
+    "Anclora-FileStudio-Windows-x64-Core/app/public/apple-touch-icon.png",
+    "Anclora-FileStudio-Windows-x64-Core/app/public/favicon-32.png",
+    "Anclora-FileStudio-Windows-x64-Core/app/public/icon.png"
+  ],
+  "toolSamples": {
+    "poppler": [
+      "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/include/poppler/NameToUnicodeTable.h",
+      "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/include/poppler/CachedFile.h",
+      "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/include/poppler/StructTreeRoot.h",
+      "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/include/poppler/PDFDocFactory.h",
+      "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/include/poppler/UnicodeCompTables.h",
+      "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/include/poppler/Function.h",
+      "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/include/poppler/UTF.h",
+      "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/include/poppler/PDFDoc.h",
+      "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/include/poppler/StructElement.h",
+      "Anclora-FileStudio-Windows-x64-Core/tools/poppler/Library/include/poppler/Annot.h"
+    ],
+    "ffmpeg": [
+      "Anclora-FileStudio-Windows-x64-Core/tools/ffmpeg/ffmpeg.exe",
+      "Anclora-FileStudio-Windows-x64-Core/tools/ffmpeg/ffprobe.exe"
+    ],
+    "yt-dlp": [
+      "Anclora-FileStudio-Windows-x64-Core/tools/yt-dlp/yt-dlp.exe"
+    ],
+    "qpdf": [
+      "Anclora-FileStudio-Windows-x64-Core/tools/qpdf/qpdf.exe",
+      "Anclora-FileStudio-Windows-x64-Core/tools/qpdf/msvcp140_atomic_wait.dll",
+      "Anclora-FileStudio-Windows-x64-Core/tools/qpdf/msvcp140_2.dll",
+      "Anclora-FileStudio-Windows-x64-Core/tools/qpdf/qpdf29.dll",
+      "Anclora-FileStudio-Windows-x64-Core/tools/qpdf/fix-qdf.exe",
+      "Anclora-FileStudio-Windows-x64-Core/tools/qpdf/msvcp140_1.dll",
+      "Anclora-FileStudio-Windows-x64-Core/tools/qpdf/vcruntime140_1.dll",
+      "Anclora-FileStudio-Windows-x64-Core/tools/qpdf/msvcp140.dll",
+      "Anclora-FileStudio-Windows-x64-Core/tools/qpdf/vcruntime140.dll",
+      "Anclora-FileStudio-Windows-x64-Core/tools/qpdf/concrt140.dll"
+    ],
+    "pandoc": [
+      "Anclora-FileStudio-Windows-x64-Core/tools/pandoc/pandoc.exe"
+    ],
+    "sevenzip": [
+      "Anclora-FileStudio-Windows-x64-Core/tools/sevenzip/7za.exe",
+      "Anclora-FileStudio-Windows-x64-Core/tools/sevenzip/7za.dll",
+      "Anclora-FileStudio-Windows-x64-Core/tools/sevenzip/7zxa.dll",
+      "Anclora-FileStudio-Windows-x64-Core/tools/sevenzip/7z.exe"
+    ]
+  }
+}

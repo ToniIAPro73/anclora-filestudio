@@ -31,6 +31,8 @@ export function buildConversionGraph(
       lossProfile: canonicalEdge.lossProfile,
       resourceProfile: "medium",
       experimental: false,
+      outputCardinality: canonicalEdge.outputCardinality,
+      supportsAsIntermediate: canonicalEdge.supportsAsIntermediate,
     };
     const list = graph.get(source) ?? [];
     list.push(edge);

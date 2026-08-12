@@ -20,6 +20,8 @@ function edge(over: Partial<ConversionEdge> = {}): ConversionEdge {
     lossProfile: "lossless",
     resourceProfile: "low",
     experimental: false,
+    outputCardinality: "single",
+    supportsAsIntermediate: true,
     ...over,
   };
 }

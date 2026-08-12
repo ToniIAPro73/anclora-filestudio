@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, RotateCcw, History, Loader2, Eye, Share2, Cloud, ArrowLeftRight } from "lucide-react";
+import { Download, RotateCcw, History, Loader2, Eye, ArrowLeftRight } from "lucide-react";
 import { CompareInspectorModal } from "@/components/inspector/compare-inspector-modal";
 import { t } from "@/i18n";
 
@@ -70,6 +70,7 @@ export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloa
 
   return (
     <div className="rounded-2xl border border-emerald-500/30 bg-[#1a1e25] p-5 space-y-4 animate-in fade-in slide-in-from-bottom-3 duration-400 motion-reduce:animate-none">
+      <h2 className="text-xl font-black text-stone-100">Conversión completada</h2>
       <div className="flex items-start gap-3">
         <div className="h-10 w-10 rounded-xl bg-emerald-500/15 flex items-center justify-center shrink-0">
           <Download className="h-5 w-5 text-emerald-400" aria-hidden="true" />
@@ -102,7 +103,7 @@ export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloa
             ) : (
               <>
                 <Download className="h-4 w-4" />
-                Descargar {format.toUpperCase()}
+                Descargar archivo
               </>
             )}
           </button>
@@ -146,37 +147,6 @@ export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloa
           >
             <History className="h-3.5 w-3.5" />
             Historial
-          </button>
-        </div>
-
-        {/* Cloud Workspace Connector & Export Tools */}
-        <div className="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-stone-400">
-          <button
-            type="button"
-            onClick={async () => {
-              try {
-                const url = await fetchUrl();
-                await navigator.clipboard.writeText(window.location.origin + url);
-                alert("Enlace seguro de descarga copiado al portapapeles.");
-              } catch {
-                alert("Error al copiar enlace.");
-              }
-            }}
-            className="inline-flex items-center gap-1 text-teal-400 hover:text-teal-300 transition-colors"
-          >
-            <Share2 className="h-3.5 w-3.5" />
-            Copiar enlace seguro
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              alert("Integración Cloud Workspace / Drive: guardando archivo en almacenamiento corporativo seguro...");
-            }}
-            className="inline-flex items-center gap-1 text-sky-400 hover:text-sky-300 transition-colors"
-          >
-            <Cloud className="h-3.5 w-3.5" />
-            Guardar en Google Drive / Cloud
           </button>
         </div>
       </div>

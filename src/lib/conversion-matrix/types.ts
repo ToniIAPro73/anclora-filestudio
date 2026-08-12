@@ -56,6 +56,8 @@ export interface CanonicalConversionEdge {
   implemented: boolean;
   priority: number;
   costModel?: CostModel;
+  outputCardinality: "single" | "multiple";
+  supportsAsIntermediate: boolean;
   notes?: string;
 }
 

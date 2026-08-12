@@ -10,7 +10,10 @@ interface SourceSelectorProps {
   onFileAnalyzed: (result: LocalAnalysisResult | UniversalAnalysisResult) => void;
   isLoading: boolean;
   setLoading: (v: boolean) => void;
+  acquisitionModes?: AcquisitionMode[];
 }
+
+export type AcquisitionMode = "local-file" | "direct-url" | "web-url" | "video-url" | "google-drive" | "onedrive";
 
 export interface RemoteAnalysisResult {
   kind: "remote-url";
@@ -84,8 +87,10 @@ export interface SubtitleStreamLite {
 
 type DragState = "idle" | "drag-valid" | "drag-invalid";
 
-export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLoading }: SourceSelectorProps) {
-  const [tab, setTab] = useState<"url" | "file">("url");
+export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLoading, acquisitionModes = ["local-file"] }: SourceSelectorProps) {
+  const canUseUrl = acquisitionModes.includes("video-url") || acquisitionModes.includes("direct-url") || acquisitionModes.includes("web-url");
+  const canUseFile = acquisitionModes.includes("local-file");
+  const [tab, setTab] = useState<"url" | "file">(canUseFile ? "file" : "url");
   const [urlInput, setUrlInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [dragState, setDragState] = useState<DragState>("idle");
@@ -225,53 +230,51 @@ export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLo
 
   return (
     <div className="space-y-3 rounded-[22px] border border-white/10 bg-[#1a1e25] p-3 shadow-[0_24px_90px_rgba(0,0,0,0.34)] backdrop-blur">
-      {/* Tab switcher */}
-      <div className="grid grid-cols-2 gap-2 rounded-[14px] border border-white/10 bg-black/20 p-1.5">
-        <button
-          type="button"
-          onClick={() => setTab("url")}
-          aria-label="Introducir un enlace URL"
-          className={`flex min-h-11 items-center justify-center gap-2 rounded-[10px] py-2.5 text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/70 motion-reduce:transition-none ${
-            tab === "url"
-              ? "bg-stone-100 text-[#101316]"
-              : "text-stone-400 hover:scale-[1.03] hover:bg-white/10 hover:text-stone-100 hover:shadow-[0_8px_22px_rgba(255,255,255,0.08),inset_0_1px_0_rgba(255,255,255,0.06)]"
-          }`}
-        >
-          <Link2 className="h-4 w-4" />
-          Desde enlace
-        </button>
-        <button
-          type="button"
-          onClick={() => setTab("file")}
-          aria-label="Subir un archivo local"
-          className={`flex min-h-11 items-center justify-center gap-2 rounded-[10px] py-2.5 text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/70 motion-reduce:transition-none ${
-            tab === "file"
-              ? "bg-stone-100 text-[#101316]"
-              : "text-stone-400 hover:scale-[1.03] hover:bg-white/10 hover:text-stone-100 hover:shadow-[0_8px_22px_rgba(255,255,255,0.08),inset_0_1px_0_rgba(255,255,255,0.06)]"
-          }`}
-        >
-          <Upload className="h-4 w-4" />
-          Archivo local
-        </button>
-      </div>
+      <h3 className="text-sm font-black text-stone-100">Añade el archivo</h3>
+      {canUseFile && canUseUrl && (
+        <div className="grid grid-cols-2 gap-2 rounded-[14px] border border-white/10 bg-black/20 p-1.5">
+          <button
+            type="button"
+            onClick={() => setTab("file")}
+            aria-label="Desde tu dispositivo"
+            className={`flex min-h-11 items-center justify-center gap-2 rounded-[10px] py-2.5 text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/70 motion-reduce:transition-none ${
+              tab === "file" ? "bg-stone-100 text-[#101316]" : "text-stone-400 hover:bg-white/10 hover:text-stone-100"
+            }`}
+          >
+            <Upload className="h-4 w-4" />
+            Dispositivo
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("url")}
+            aria-label="URL de vídeo"
+            className={`flex min-h-11 items-center justify-center gap-2 rounded-[10px] py-2.5 text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/70 motion-reduce:transition-none ${
+              tab === "url" ? "bg-stone-100 text-[#101316]" : "text-stone-400 hover:bg-white/10 hover:text-stone-100"
+            }`}
+          >
+            <Link2 className="h-4 w-4" />
+            URL
+          </button>
+        </div>
+      )}
 
       {/* URL input */}
-      {tab === "url" && (
+      {canUseUrl && tab === "url" && (
         <form onSubmit={handleUrlSubmit} className="space-y-2.5">
           <div>
             <label htmlFor="url-input" className="mb-1 block text-xs font-semibold text-stone-300/70">
-              URL de vídeo o página web
+              URL de vídeo
             </label>
             <input
               id="url-input"
               type="url"
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
-              placeholder="https://youtube.com/watch?v=... o cualquier URL de vídeo"
+              placeholder="https://youtube.com/watch?v=..."
               className="min-h-11 w-full rounded-xl border border-white/10 bg-[#0b0d10] px-4 py-2.5 text-sm text-stone-100 placeholder:text-stone-600 inset-shadow-sm focus:border-teal-300/40 focus:outline-none focus:ring-2 focus:ring-teal-300/40"
               autoComplete="off"
               disabled={isLoading}
-              aria-label="URL de vídeo o página web"
+              aria-label="URL de vídeo"
             />
           </div>
           <button
@@ -289,13 +292,13 @@ export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLo
             )}
           </button>
           <p className="text-center text-[10px] text-stone-600">
-            Pega una URL pública de vídeo, YouTube, Vimeo, página web con vídeo o stream HLS/DASH público · Algunos proveedores pueden requerir acceso o aplicar protecciones externas no compatibles
+            Primero analizamos la URL para obtener calidades disponibles.
           </p>
         </form>
       )}
 
       {/* File drop zone */}
-      {tab === "file" && (
+      {canUseFile && tab === "file" && (
         <div>
           <div
             onDragOver={handleDragOver}
@@ -324,9 +327,9 @@ export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLo
                       ? "Suelta el archivo aquí"
                       : dragState === "drag-invalid"
                         ? "Formato no soportado"
-                        : "Arrastra o haz clic para seleccionar"}
+                        : "Arrastra un archivo aquí"}
                   </p>
-                  <p className="mt-0.5 text-xs text-stone-400">Audio, vídeo, imágenes, documentos, datos y más</p>
+                  <p className="mt-0.5 text-xs text-stone-400">Elegir archivo</p>
                   <p className="text-[10px] text-stone-500">Tamaño máximo: 2 GB</p>
                 </div>
               </div>

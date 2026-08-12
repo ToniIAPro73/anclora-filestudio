@@ -296,6 +296,31 @@ export function buildToolCategories(
 
   if (environment === "web" || availableEngineIds.has("data-ts")) {
     tools.push({
+      id: "metadata",
+      label: "Metadata",
+      description: "Lee o elimina metadata cuando existe soporte real.",
+      operations: [
+        { id: "image:read-exif", label: "Leer metadata" },
+        { id: "image:strip-exif", label: "Eliminar metadata" },
+      ],
+    });
+  }
+
+  if (environment === "web" || availableEngineIds.has("sharp-image") || availableEngineIds.has("qpdf") || availableEngineIds.has("sevenzip")) {
+    tools.push({
+      id: "compression",
+      label: "Compresión",
+      description: "Reduce peso de imágenes, PDF o archivos comprimidos.",
+      operations: [
+        ...(availableEngineIds.has("sharp-image") || environment === "web" ? [{ id: "image:optimize", label: "Comprimir imagen" }] : []),
+        ...(availableEngineIds.has("qpdf") || environment === "web" ? [{ id: "pdf:compress", label: "Comprimir PDF" }] : []),
+        ...(availableEngineIds.has("sevenzip") ? [{ id: "archive:repack", label: "Reempaquetar archivo" }] : []),
+      ],
+    });
+  }
+
+  if (environment === "web" || availableEngineIds.has("data-ts")) {
+    tools.push({
       id: "utilities",
       label: "Utilidades",
       description: "Validación y transformaciones auxiliares que no son navegación principal.",

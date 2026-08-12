@@ -128,6 +128,26 @@ const PDF_OPERATIONS: OperationDefinition[] = [
     },
   },
   {
+    id: "pdf:rasterize",
+    category: "pdf",
+    labelKey: "op.pdf.rasterize",
+    descriptionKey: "op.pdf.rasterize.desc",
+    inputFormats: ["pdf"],
+    outputFormats: ["png", "jpg", "tiff"],
+    engineId: "poppler",
+    dependencies: ["pdftoppm"],
+    lossProfile: "lossy-controlled",
+    mobilePortability: "desktop-only",
+    resourceProfile: "medium",
+    supportsBatch: false,
+    optionsSchema: {
+      type: "object",
+      properties: {
+        dpi: { type: "number", label: "Resolución (DPI)", default: 150, min: 72, max: 600 },
+      },
+    },
+  },
+  {
     id: "pdf:to-png",
     category: "pdf",
     labelKey: "op.pdf.to-png",

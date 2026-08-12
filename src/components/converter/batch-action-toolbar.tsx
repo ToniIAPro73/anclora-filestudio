@@ -84,17 +84,22 @@ export function BatchActionToolbar({ jobs, onClearCompleted, onApplyPrefixSuffix
 
   if (jobs.length < 2) return null;
 
+  const previewOriginal = jobs[0]?.fileName ?? "archivo.pdf";
+  const previewResult = `${prefix}${previewOriginal.replace(/\.[^/.]+$/, "")}${suffix}${previewOriginal.match(/\.[^/.]+$/)?.[0] ?? ""}`;
+
   return (
-    <div className="rounded-xl border border-teal-500/20 bg-[#12161f] p-4 space-y-3 shadow-lg">
+    <details className="rounded-xl border border-white/10 bg-[#12161f] p-4 shadow-lg">
+      <summary className="cursor-pointer list-none text-sm font-bold text-stone-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60 [&::-webkit-details-marker]:hidden">
+        Opciones de lote
+      </summary>
+      <div className="mt-3 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
             <Archive className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-              Acciones de Lote ({jobs.length} Archivos)
-            </h4>
+            <h4 className="text-xs font-bold text-white">{jobs.length} archivos preparados</h4>
             <p className="text-[11px] text-stone-400">
               {completedJobs.length} de {jobs.length} conversiones completadas
             </p>
@@ -109,7 +114,7 @@ export function BatchActionToolbar({ jobs, onClearCompleted, onApplyPrefixSuffix
             className="h-8 text-xs bg-teal-600 hover:bg-teal-500 text-stone-950 font-bold gap-1.5 shadow-md"
           >
             <Download className="h-3.5 w-3.5" />
-            {isZipping ? "Generando ZIP..." : `Descargar Todo (ZIP)`}
+            {isZipping ? "Generando ZIP..." : "Descargar todo (.zip)"}
           </Button>
 
           <Button
@@ -119,7 +124,7 @@ export function BatchActionToolbar({ jobs, onClearCompleted, onApplyPrefixSuffix
             className="h-8 text-xs border-stone-700 text-stone-300 hover:bg-white/5 gap-1.5"
           >
             <Edit3 className="h-3.5 w-3.5 text-teal-400" />
-            Renombrar
+            Cambiar nombres
           </Button>
 
           {onClearCompleted && (
@@ -137,9 +142,9 @@ export function BatchActionToolbar({ jobs, onClearCompleted, onApplyPrefixSuffix
       </div>
 
       {showNamingOptions && (
-        <div className="pt-2 border-t border-stone-800 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
+        <div className="pt-2 border-t border-stone-800 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-end">
           <div>
-            <label className="text-[10px] text-stone-400">Prefijo de salida</label>
+            <label className="text-[10px] text-stone-300">Añadir al principio</label>
             <Input
               placeholder="Ej: web-"
               value={prefix}
@@ -148,7 +153,7 @@ export function BatchActionToolbar({ jobs, onClearCompleted, onApplyPrefixSuffix
             />
           </div>
           <div>
-            <label className="text-[10px] text-stone-400">Sufijo de salida</label>
+            <label className="text-[10px] text-stone-300">Añadir al final</label>
             <Input
               placeholder="Ej: -convertido"
               value={suffix}
@@ -161,10 +166,15 @@ export function BatchActionToolbar({ jobs, onClearCompleted, onApplyPrefixSuffix
             onClick={handleApplyNaming}
             className="h-8 text-xs bg-stone-800 hover:bg-stone-700 text-teal-300 font-semibold"
           >
-            Aplicar Regla
+            Aplicar a {jobs.length} archivos
           </Button>
+          <div className="rounded-md border border-white/10 bg-black/20 p-3 text-xs text-stone-300 sm:col-span-3">
+            <p><span className="text-stone-500">Original:</span> {previewOriginal}</p>
+            <p className="mt-1"><span className="text-stone-500">Resultado:</span> {previewResult}</p>
+          </div>
         </div>
       )}
-    </div>
+      </div>
+    </details>
   );
 }

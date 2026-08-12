@@ -1,0 +1,1 @@
+http://localhost:3000/favicon-32.png?v=dae79a4eb5e8

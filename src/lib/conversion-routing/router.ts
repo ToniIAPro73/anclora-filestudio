@@ -57,7 +57,7 @@ export function findConversionRoutes(
       const nextPath = [...path, edge];
       if (edge.target === destination) {
         routes.push(buildRoute(source, destination, nextPath));
-      } else {
+      } else if (edge.supportsAsIntermediate) {
         queue.push(nextPath);
       }
     }

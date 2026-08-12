@@ -1,0 +1,4987 @@
+{
+  "engineCount": 16,
+  "formatCount": 46,
+  "multistepPairs": 308,
+  "productiveCount": 129,
+  "bestMultistepCount": 129,
+  "productive": [
+    {
+      "source": "avi",
+      "target": "avif",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mkv:ffmpeg-media/media:convert-video",
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "avi",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mkv:ffmpeg-media/media:convert-video",
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "avi",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mkv:ffmpeg-media/media:convert-video",
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "avi",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mkv:ffmpeg-media/media:convert-video",
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "avi",
+      "target": "webp",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mkv:ffmpeg-media/media:convert-video",
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "azw3",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "azw3->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "azw3",
+      "target": "mobi",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "azw3->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "azw3",
+      "target": "pdf",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "azw3->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "azw3",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "azw3->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "azw3",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "azw3->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "azw3",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "epub",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "html",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert",
+            "md->html:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert",
+            "rst->html:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->txt:pandoc/doc:convert",
+            "txt->html:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "doc->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "md",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert",
+            "html->md:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert",
+            "rst->md:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->txt:pandoc/doc:convert",
+            "txt->md:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "mobi",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "doc->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "rst",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert",
+            "md->rst:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert",
+            "html->rst:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "tex",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "doc->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "txt",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->txt:pandoc/doc:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->txt:pandoc/doc:convert"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert",
+            "md->txt:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert",
+            "html->txt:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert",
+            "rst->txt:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "azw3",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "docx->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "docx->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "docx->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "mobi",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "docx->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "docx->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "docx->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "tex",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "docx->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->md:pandoc/doc:convert",
+            "md->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->html:pandoc/doc:convert",
+            "html->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->html:pandoc/doc:convert",
+            "html->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->rst:pandoc/doc:convert",
+            "rst->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->txt:pandoc/doc:convert",
+            "txt->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "docx->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "docx->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "epub",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "epub",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "epub",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "azw3",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "mobi",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "pdf",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->md:pandoc/doc:convert",
+            "md->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->md:pandoc/doc:convert",
+            "md->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->odt:pandoc/doc:convert",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->rst:pandoc/doc:convert",
+            "rst->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->rst:pandoc/doc:convert",
+            "rst->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "tex",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "html->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->md:pandoc/doc:convert",
+            "md->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->rst:pandoc/doc:convert",
+            "rst->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->txt:pandoc/doc:convert",
+            "txt->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "azw3",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.1728,
+      "multi": [
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "epub",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->rst:pandoc/doc:convert",
+            "rst->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->rst:pandoc/doc:convert",
+            "rst->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->tex:pandoc/doc:convert",
+            "tex->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->txt:pandoc/doc:convert",
+            "txt->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "mobi",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.1728,
+      "multi": [
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "pdf",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->rst:pandoc/doc:convert",
+            "rst->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->rst:pandoc/doc:convert",
+            "rst->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "mkv",
+      "target": "avif",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "mkv",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "mkv",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "mkv",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "mkv",
+      "target": "webp",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "mobi",
+      "target": "azw3",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "mobi->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    }
+  ],
+  "bestMulti": [
+    {
+      "source": "avi",
+      "target": "avif",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mkv:ffmpeg-media/media:convert-video",
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "avi",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mkv:ffmpeg-media/media:convert-video",
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "avi",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mkv:ffmpeg-media/media:convert-video",
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "avi",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mkv:ffmpeg-media/media:convert-video",
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "avi",
+      "target": "webp",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->mkv:ffmpeg-media/media:convert-video",
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "avi->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "azw3",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "azw3->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "azw3",
+      "target": "mobi",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "azw3->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "azw3",
+      "target": "pdf",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "azw3->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "azw3",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "azw3->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "azw3",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "azw3->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "azw3",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "epub",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "html",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert",
+            "md->html:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert",
+            "rst->html:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->txt:pandoc/doc:convert",
+            "txt->html:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "doc->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "md",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert",
+            "html->md:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert",
+            "rst->md:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->txt:pandoc/doc:convert",
+            "txt->md:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "mobi",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "doc->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "rst",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert",
+            "md->rst:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert",
+            "html->rst:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "tex",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.25920000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "doc->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "doc",
+      "target": "txt",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->txt:pandoc/doc:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->odt:libreoffice/office:to-pdf",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->txt:pandoc/doc:convert"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->md:pandoc/doc:convert",
+            "md->txt:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->html:pandoc/doc:convert",
+            "html->txt:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "doc->docx:libreoffice/office:to-pdf",
+            "docx->rst:pandoc/doc:convert",
+            "rst->txt:pandoc/doc:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "azw3",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "docx->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "docx->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "docx->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "mobi",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "docx->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "docx->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "docx->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "tex",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "docx->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->md:pandoc/doc:convert",
+            "md->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->html:pandoc/doc:convert",
+            "html->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->html:pandoc/doc:convert",
+            "html->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->rst:pandoc/doc:convert",
+            "rst->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->txt:pandoc/doc:convert",
+            "txt->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "docx",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "multistep",
+      "bestScore": 0.7290000000000001,
+      "multi": [
+        {
+          "steps": [
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.7290000000000001,
+          "class": "multistep",
+          "risk": "low"
+        },
+        {
+          "steps": [
+            "docx->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "docx->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.5832,
+          "class": "multistep",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "docx->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "epub",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "epub",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "epub",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "azw3",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "mobi",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "pdf",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->md:pandoc/doc:convert",
+            "md->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->md:pandoc/doc:convert",
+            "md->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->odt:pandoc/doc:convert",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->rst:pandoc/doc:convert",
+            "rst->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->rst:pandoc/doc:convert",
+            "rst->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "tex",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "html->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->md:pandoc/doc:convert",
+            "md->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->rst:pandoc/doc:convert",
+            "rst->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->rst:pandoc/doc:convert",
+            "rst->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->txt:pandoc/doc:convert",
+            "txt->md:pandoc/doc:convert",
+            "md->tex:pandoc/doc:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "html",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "html->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "html->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "azw3",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.1728,
+      "multi": [
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "epub",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->rst:pandoc/doc:convert",
+            "rst->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->rst:pandoc/doc:convert",
+            "rst->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->tex:pandoc/doc:convert",
+            "tex->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->txt:pandoc/doc:convert",
+            "txt->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->jpg:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "mobi",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.1728,
+      "multi": [
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->mobi:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "pdf",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.48600000000000004,
+      "multi": [
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->html:pandoc/doc:convert",
+            "html->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->odt:libreoffice/office:to-pdf",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->epub:calibre/ebook:convert",
+            "epub->pdf:calibre/ebook:convert"
+          ],
+          "score": 0.1728,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->docx:libreoffice/office:to-pdf",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->rst:pandoc/doc:convert",
+            "rst->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->rst:pandoc/doc:convert",
+            "rst->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf"
+          ],
+          "score": 0.25920000000000004,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->png:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "md",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 3,
+      "bestClass": "lossy",
+      "bestScore": 0.38880000000000003,
+      "multi": [
+        {
+          "steps": [
+            "md->docx:pandoc/doc:convert",
+            "docx->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        },
+        {
+          "steps": [
+            "md->odt:pandoc/doc:convert",
+            "odt->pdf:libreoffice/office:to-pdf",
+            "pdf->tiff:poppler/pdf:rasterize"
+          ],
+          "score": 0.38880000000000003,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    },
+    {
+      "source": "mkv",
+      "target": "avif",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->avif:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "mkv",
+      "target": "jpg",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->jpg:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "mkv",
+      "target": "png",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->png:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "mkv",
+      "target": "tiff",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert",
+            "webp->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->tiff:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "mkv",
+      "target": "webp",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.6075,
+      "multi": [
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.6075,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->mp4:ffmpeg-media/media:convert-video",
+            "mp4->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->webm:ffmpeg-media/media:convert-video",
+            "webm->gif:ffmpeg-media/media:create-gif",
+            "gif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->jpg:sharp-image/image:convert",
+            "jpg->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->png:sharp-image/image:convert",
+            "png->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->avif:sharp-image/image:convert",
+            "avif->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        },
+        {
+          "steps": [
+            "mkv->gif:ffmpeg-media/media:create-gif",
+            "gif->tiff:sharp-image/image:convert",
+            "tiff->webp:sharp-image/image:convert"
+          ],
+          "score": 0.48600000000000004,
+          "class": "lossy",
+          "risk": "medium"
+        }
+      ]
+    },
+    {
+      "source": "mobi",
+      "target": "azw3",
+      "direct": 0,
+      "bestSteps": 2,
+      "bestClass": "lossy",
+      "bestScore": 0.324,
+      "multi": [
+        {
+          "steps": [
+            "mobi->epub:calibre/ebook:convert",
+            "epub->azw3:calibre/ebook:convert"
+          ],
+          "score": 0.324,
+          "class": "lossy",
+          "risk": "high"
+        }
+      ]
+    }
+  ]
+}

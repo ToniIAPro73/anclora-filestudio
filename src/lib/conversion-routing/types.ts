@@ -35,6 +35,8 @@ export interface ConversionEdge {
   lossProfile: LossProfile;
   resourceProfile: ResourceProfile;
   experimental: boolean;
+  outputCardinality: "single" | "multiple";
+  supportsAsIntermediate: boolean;
 }
 
 /**

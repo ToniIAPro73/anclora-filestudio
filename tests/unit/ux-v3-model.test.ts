@@ -18,6 +18,7 @@ const desktopEngines = new Set([
   "ffmpeg",
   "ffprobe",
   "qpdf",
+  "poppler",
   "tesseract",
   "pdftoppm",
   "calibre",
@@ -67,7 +68,8 @@ describe("UX V3 canonical conversion model", () => {
 
     expect(docxTargets.has("pdf")).toBe(true);
     expect(pdfSources.has("docx")).toBe(true);
-    expect(docxTargets.has("png")).toBe(false);
+    expect(docxTargets.has("png")).toBe(true);
+    expect(model.routes.find((route) => route.source === "docx" && route.target === "png")?.route.steps.length).toBe(2);
   });
 
   it("QUICK-003 normalizes aliases in search", () => {
