@@ -16,10 +16,15 @@ import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { resolvePopplerBinary as resolveDiagnosticPopplerBinary } from "../../diagnostics/toolchain-probe";
 import { isAncloraWindowsRuntime } from "../../runtime-platform";
+import { findPandocBinary } from "../document/pandoc-engine";
 
 const ENGINE_ID: EngineId = "poppler";
 const OUTPUTS = ["png", "jpg", "tiff"] as const;
 type RasterOutputFormat = (typeof OUTPUTS)[number];
+type PopplerTool = "pdftotext" | "pdftohtml";
+
+const SCANNED_PDF_ERROR =
+  "Este PDF parece contener páginas escaneadas o sin texto extraíble. Para extraer texto, usa Conversión con OCR.";
 
 export function resolvePopplerRuntimeBinary(): string {
   const configured = CONFIG.media.binaries.poppler;
@@ -37,26 +42,67 @@ export function resolvePopplerRuntimeBinary(): string {
   return executable;
 }
 
+// Same Poppler runtime, sibling tools. pdftotext/pdftohtml ship in the same
+// Poppler distribution as pdftoppm, so resolution reuses the unified resolver
+// and falls back to PATH exactly like pdftoppm does.
+export function resolvePopplerTool(tool: PopplerTool): string {
+  const executable = isAncloraWindowsRuntime() ? `${tool}.exe` : tool;
+  const pdftoppm = resolvePopplerRuntimeBinary();
+  if (pdftoppm.includes("/") || pdftoppm.includes("\\")) {
+    const sibling = path.join(path.dirname(pdftoppm), executable);
+    if (fs.existsSync(sibling)) return sibling;
+  }
+  return executable;
+}
+
 export class PopplerEngine implements ConversionEngine {
   readonly id: EngineId = ENGINE_ID;
   readonly supportedCategories = ["pdf"] as const;
 
   private _probeResult: EngineProbeResult | null = null;
   private _runner: ProcessRunner | null = null;
+  private _txtRunner: ProcessRunner | null = null;
+  private _htmlRunner: ProcessRunner | null = null;
+  private _pandocRunner: ProcessRunner | null = null;
 
   private getRunner(): ProcessRunner {
     if (!this._runner) this._runner = new ProcessRunner(resolvePopplerRuntimeBinary(), 120_000);
     return this._runner;
   }
 
+  private getTxtRunner(): ProcessRunner {
+    if (!this._txtRunner) this._txtRunner = new ProcessRunner(resolvePopplerTool("pdftotext"), 120_000);
+    return this._txtRunner;
+  }
+
+  private getHtmlRunner(): ProcessRunner {
+    if (!this._htmlRunner) this._htmlRunner = new ProcessRunner(resolvePopplerTool("pdftohtml"), 120_000);
+    return this._htmlRunner;
+  }
+
+  private getPandocRunner(): ProcessRunner {
+    if (!this._pandocRunner) this._pandocRunner = new ProcessRunner(findPandocBinary(), 120_000);
+    return this._pandocRunner;
+  }
+
   async probe(): Promise<EngineProbeResult> {
     if (this._probeResult) return this._probeResult;
-    const result = await this.getRunner().probe(["-v"]);
+    const [result, txtResult, htmlResult, pandocResult] = await Promise.all([
+      this.getRunner().probe(["-v"]),
+      this.getTxtRunner().probe(["-v"]),
+      this.getHtmlRunner().probe(["-v"]),
+      this.getPandocRunner().probe(["--version"]),
+    ]);
+    const capabilities: string[] = [];
+    if (result.available) capabilities.push("pdftoppm", "pdf-to-png", "pdf-to-jpg", "pdf-to-tiff");
+    if (txtResult.available) capabilities.push("pdftotext", "pdf-to-txt");
+    if (htmlResult.available) capabilities.push("pdftohtml", "pdf-to-html");
+    if (htmlResult.available && pandocResult.available) capabilities.push("pandoc", "pdf-to-md");
     this._probeResult = {
       available: result.available,
       version: result.version,
       binaryPath: result.binaryPath,
-      capabilities: result.available ? ["pdf-to-png", "pdf-to-jpg", "pdf-to-tiff"] : [],
+      capabilities,
       error: result.available
         ? undefined
         : "pdftoppm no encontrado en PATH ni en tools/poppler",
@@ -69,7 +115,8 @@ export class PopplerEngine implements ConversionEngine {
     probeResult: EngineProbeResult,
   ): ConversionCapability[] {
     if (descriptor.category !== "pdf") return [];
-    return OUTPUTS.map((format) => ({
+    const has = (tool: string) => probeResult.capabilities.includes(tool);
+    const rasterCaps: ConversionCapability[] = OUTPUTS.map((format) => ({
       id: `poppler-${descriptor.id}-to-${format}`,
       operation: "rasterize",
       outputFormat: format,
@@ -98,6 +145,92 @@ export class PopplerEngine implements ConversionEngine {
       engineId: ENGINE_ID,
       mobilePortability: "desktop-only",
     }));
+
+    const textCaps: ConversionCapability[] = [
+      {
+        id: `poppler-${descriptor.id}-to-txt`,
+        operation: "extract-text",
+        outputFormat: "txt",
+        outputMime: "text/plain",
+        label: "Extraer texto (TXT)",
+        description: "Extrae el texto del PDF en UTF-8, sin conservar el layout",
+        lossProfile: "layout-risk",
+        state: has("pdftotext") ? "available" : "unavailable-tool",
+        unavailableReason: "pdftotext no encontrado en PATH ni en tools/poppler",
+        recommended: false,
+        presets: [
+          {
+            id: "txt-utf8",
+            label: "Texto plano",
+            quality: "0",
+            description: "Texto extraído en UTF-8",
+            isRecommended: true,
+          },
+        ],
+        warnings: [
+          "No conserva el layout ni las imágenes del PDF",
+          "Los PDF escaneados sin capa de texto requieren OCR",
+        ],
+        engineId: ENGINE_ID,
+        mobilePortability: "desktop-only",
+      },
+      {
+        id: `poppler-${descriptor.id}-to-html`,
+        operation: "extract-html",
+        outputFormat: "html",
+        outputMime: "text/html",
+        label: "Convertir PDF a HTML",
+        description: "Genera un HTML único; las imágenes se entregan junto al documento",
+        lossProfile: "structure-risk",
+        state: has("pdftohtml") ? "available" : "unavailable-tool",
+        unavailableReason: "pdftohtml no encontrado en PATH ni en tools/poppler",
+        recommended: false,
+        presets: [
+          {
+            id: "html-single",
+            label: "HTML único",
+            quality: "0",
+            description: "Un solo documento HTML; ZIP cuando hay assets",
+            isRecommended: true,
+          },
+        ],
+        warnings: [
+          "La fidelidad de layout es limitada frente al PDF original",
+          "Cuando el PDF contiene imágenes, HTML y assets se entregan en ZIP",
+        ],
+        engineId: ENGINE_ID,
+        mobilePortability: "desktop-only",
+      },
+      {
+        id: `poppler-${descriptor.id}-to-md`,
+        operation: "extract-markdown",
+        outputFormat: "md",
+        outputMime: "text/markdown",
+        label: "Convertir PDF a Markdown",
+        description: "Extrae el contenido vía HTML y lo normaliza a Markdown",
+        lossProfile: "structure-risk",
+        state: has("pdftohtml") && has("pandoc") ? "available" : "unavailable-tool",
+        unavailableReason: "Requiere pdftohtml y Pandoc disponibles en el runtime",
+        recommended: false,
+        presets: [
+          {
+            id: "md-gfm",
+            label: "Markdown (GFM)",
+            quality: "0",
+            description: "Markdown GitHub-Flavored generado con Pandoc",
+            isRecommended: true,
+          },
+        ],
+        warnings: [
+          "No conserva el layout visual del PDF",
+          "Los PDF escaneados sin capa de texto requieren OCR",
+        ],
+        engineId: ENGINE_ID,
+        mobilePortability: "desktop-only",
+      },
+    ];
+
+    return [...rasterCaps, ...textCaps];
   }
 
   async execute(
@@ -105,6 +238,10 @@ export class PopplerEngine implements ConversionEngine {
     onProgress?: (progress: number, stage: string) => void,
   ): Promise<ExecutionResult> {
     const start = Date.now();
+    if (plan.operation === "extract-text") return this.executeExtractText(plan, start, onProgress);
+    if (plan.operation === "extract-html") return this.executeExtractHtml(plan, start, onProgress);
+    if (plan.operation === "extract-markdown") return this.executeExtractMarkdown(plan, start, onProgress);
+
     const outputFormat = normalizeRasterFormat(plan.outputFormat);
     if (!outputFormat) {
       return failure(plan, start, `Formato de salida no soportado: ${plan.outputFormat}`);
@@ -167,6 +304,206 @@ export class PopplerEngine implements ConversionEngine {
     };
   }
 
+  private checkPaths(plan: ConversionPlan, start: number): ExecutionResult | null {
+    try {
+      ensurePathSafety(plan.inputPath);
+      ensurePathSafety(plan.outputPath);
+      return null;
+    } catch (err) {
+      return failure(plan, start, String(err));
+    }
+  }
+
+  private async executeExtractText(
+    plan: ConversionPlan,
+    start: number,
+    onProgress?: (progress: number, stage: string) => void,
+  ): Promise<ExecutionResult> {
+    const unsafe = this.checkPaths(plan, start);
+    if (unsafe) return unsafe;
+
+    onProgress?.(30, "Extrayendo texto del PDF");
+    const args = ["-enc", "UTF-8", plan.inputPath, plan.outputPath];
+    const result = await this.getTxtRunner().run({ args, timeoutMs: plan.timeoutMs });
+    if (result.exitCode !== 0) {
+      return failure(plan, start, `pdftotext exit ${result.exitCode}: ${result.stderr.slice(0, 300)}`, [
+        result.stdout,
+        result.stderr,
+      ]);
+    }
+
+    const text = fs.existsSync(plan.outputPath) ? fs.readFileSync(plan.outputPath, "utf8") : "";
+    if (!text.trim()) {
+      fs.rmSync(plan.outputPath, { force: true });
+      return failure(plan, start, SCANNED_PDF_ERROR, [result.stdout, result.stderr]);
+    }
+
+    const stat = fs.statSync(plan.outputPath);
+    onProgress?.(100, "Completado");
+    return {
+      success: true,
+      outputPath: plan.outputPath,
+      outputSizeBytes: stat.size,
+      durationMs: Date.now() - start,
+      logs: [result.stdout, result.stderr].filter(Boolean),
+      warnings: [],
+    };
+  }
+
+  private async executeExtractHtml(
+    plan: ConversionPlan,
+    start: number,
+    onProgress?: (progress: number, stage: string) => void,
+  ): Promise<ExecutionResult> {
+    const unsafe = this.checkPaths(plan, start);
+    if (unsafe) return unsafe;
+
+    const outputDir = path.dirname(plan.outputPath);
+    const workDir = path.join(outputDir, `.pdftohtml-${plan.jobId}`);
+    const inputBase = path.basename(plan.inputPath, path.extname(plan.inputPath));
+    fs.mkdirSync(workDir, { recursive: true });
+
+    onProgress?.(30, "Generando HTML");
+    const requestedHtml = path.join(workDir, `${inputBase}.html`);
+    const args = ["-s", "-noframes", plan.inputPath, requestedHtml];
+    const result = await this.getHtmlRunner().run({ args, timeoutMs: plan.timeoutMs });
+    if (result.exitCode !== 0) {
+      fs.rmSync(workDir, { recursive: true, force: true });
+      return failure(plan, start, `pdftohtml exit ${result.exitCode}: ${result.stderr.slice(0, 300)}`, [
+        result.stdout,
+        result.stderr,
+      ]);
+    }
+
+    const htmlEntry = fs.readdirSync(workDir).find((entry) => entry.toLowerCase().endsWith(".html"));
+    if (!htmlEntry) {
+      fs.rmSync(workDir, { recursive: true, force: true });
+      return failure(plan, start, "pdftohtml no generó el documento HTML", [result.stdout, result.stderr]);
+    }
+    const htmlPath = path.join(workDir, htmlEntry);
+    const assets = fs.readdirSync(workDir)
+      .filter((entry) => entry !== htmlEntry)
+      .map((entry) => path.join(workDir, entry));
+
+    // Scanned guard: no extractable text and no page images means empty result.
+    const textContent = fs.readFileSync(htmlPath, "utf8").replace(/<[^>]*>/g, "").trim();
+    if (!textContent && assets.length === 0) {
+      fs.rmSync(workDir, { recursive: true, force: true });
+      return failure(plan, start, SCANNED_PDF_ERROR, [result.stdout, result.stderr]);
+    }
+
+    onProgress?.(80, assets.length > 0 ? "Empaquetando HTML y assets" : "Preparando HTML");
+    let finalOutputPath = plan.outputPath;
+    if (assets.length === 0) {
+      fs.renameSync(htmlPath, plan.outputPath);
+    } else {
+      finalOutputPath = zipOutputPath(plan.outputPath, inputBase, "html" as RasterOutputFormat);
+      const zip = new JSZip();
+      zip.file(htmlEntry, fs.readFileSync(htmlPath));
+      for (const assetPath of assets) {
+        zip.file(path.basename(assetPath), fs.readFileSync(assetPath));
+      }
+      fs.writeFileSync(finalOutputPath, await zip.generateAsync({ type: "nodebuffer" }));
+    }
+
+    fs.rmSync(workDir, { recursive: true, force: true });
+    const stat = fs.statSync(finalOutputPath);
+    onProgress?.(100, "Completado");
+    return {
+      success: true,
+      outputPath: finalOutputPath,
+      outputSizeBytes: stat.size,
+      durationMs: Date.now() - start,
+      logs: [result.stdout, result.stderr].filter(Boolean),
+      warnings: assets.length > 0
+        ? [`HTML y ${assets.length} assets empaquetados en ZIP`]
+        : [],
+    };
+  }
+
+  private async executeExtractMarkdown(
+    plan: ConversionPlan,
+    start: number,
+    onProgress?: (progress: number, stage: string) => void,
+  ): Promise<ExecutionResult> {
+    const unsafe = this.checkPaths(plan, start);
+    if (unsafe) return unsafe;
+
+    // Ground-truth scanned check: pdftotext to stdout. If the PDF has no
+    // extractable text layer, fail controlled instead of emitting empty MD.
+    // Skipped gracefully when pdftotext itself is unavailable.
+    const probeText = await this.getTxtRunner().run({
+      args: ["-enc", "UTF-8", plan.inputPath, "-"],
+      timeoutMs: plan.timeoutMs,
+    });
+    if (probeText.exitCode === 0 && !probeText.stdout.trim()) {
+      return failure(plan, start, SCANNED_PDF_ERROR, [probeText.stderr]);
+    }
+
+    const outputDir = path.dirname(plan.outputPath);
+    const workDir = path.join(outputDir, `.pdftomd-${plan.jobId}`);
+    const inputBase = path.basename(plan.inputPath, path.extname(plan.inputPath));
+    fs.mkdirSync(workDir, { recursive: true });
+
+    onProgress?.(30, "Extrayendo contenido del PDF");
+    const htmlPath = path.join(workDir, `${inputBase}.html`);
+    const htmlResult = await this.getHtmlRunner().run({
+      args: ["-s", "-noframes", "-i", plan.inputPath, htmlPath],
+      timeoutMs: plan.timeoutMs,
+    });
+    if (htmlResult.exitCode !== 0) {
+      fs.rmSync(workDir, { recursive: true, force: true });
+      return failure(plan, start, `pdftohtml exit ${htmlResult.exitCode}: ${htmlResult.stderr.slice(0, 300)}`, [
+        htmlResult.stdout,
+        htmlResult.stderr,
+      ]);
+    }
+
+    const generatedHtml = fs.existsSync(htmlPath)
+      ? htmlPath
+      : (() => {
+          const entry = fs.readdirSync(workDir).find((e) => e.toLowerCase().endsWith(".html"));
+          return entry ? path.join(workDir, entry) : null;
+        })();
+    const textContent = generatedHtml && fs.existsSync(generatedHtml)
+      ? fs.readFileSync(generatedHtml, "utf8").replace(/<[^>]*>/g, "").trim()
+      : "";
+    if (!generatedHtml || !textContent) {
+      fs.rmSync(workDir, { recursive: true, force: true });
+      return failure(plan, start, SCANNED_PDF_ERROR, [htmlResult.stdout, htmlResult.stderr]);
+    }
+
+    onProgress?.(60, "Normalizando a Markdown");
+    const mdResult = await this.getPandocRunner().run({
+      args: ["-f", "html", "-t", "gfm", "--wrap=none", "-o", plan.outputPath, generatedHtml],
+      timeoutMs: plan.timeoutMs,
+    });
+    fs.rmSync(workDir, { recursive: true, force: true });
+    if (mdResult.exitCode !== 0) {
+      return failure(plan, start, `pandoc exit ${mdResult.exitCode}: ${mdResult.stderr.slice(0, 300)}`, [
+        mdResult.stdout,
+        mdResult.stderr,
+      ]);
+    }
+
+    const markdown = fs.existsSync(plan.outputPath) ? fs.readFileSync(plan.outputPath, "utf8") : "";
+    if (!markdown.trim()) {
+      fs.rmSync(plan.outputPath, { force: true });
+      return failure(plan, start, SCANNED_PDF_ERROR, [mdResult.stdout, mdResult.stderr]);
+    }
+
+    const stat = fs.statSync(plan.outputPath);
+    onProgress?.(100, "Completado");
+    return {
+      success: true,
+      outputPath: plan.outputPath,
+      outputSizeBytes: stat.size,
+      durationMs: Date.now() - start,
+      logs: [htmlResult.stderr, mdResult.stderr].filter(Boolean),
+      warnings: [],
+    };
+  }
+
   async validate(outputPath: string, plan: ConversionPlan): Promise<ArtifactValidation> {
     const checks: ArtifactValidation["checks"] = [];
     const exists = fs.existsSync(outputPath);
@@ -180,6 +517,24 @@ export class PopplerEngine implements ConversionEngine {
     if (ext === ".zip") {
       const isZip = fs.readFileSync(outputPath).subarray(0, 2).toString("ascii") === "PK";
       checks.push({ name: "zip-magic-bytes", passed: isZip });
+    } else if (ext === ".txt" || ext === ".md") {
+      try {
+        const content = fs.readFileSync(outputPath, "utf8");
+        checks.push({ name: "utf8-readable", passed: true });
+        checks.push({ name: "text-non-empty", passed: content.trim().length > 0 });
+      } catch {
+        checks.push({ name: "utf8-readable", passed: false });
+      }
+    } else if (ext === ".html") {
+      const head = fs.readFileSync(outputPath, "utf8").slice(0, 65536);
+      checks.push({
+        name: "html-document",
+        passed: /<!doctype html|<html[\s>]/i.test(head),
+      });
+      checks.push({
+        name: "text-non-empty",
+        passed: head.replace(/<[^>]*>/g, "").trim().length > 0,
+      });
     } else {
       checks.push({
         name: "image-extension",
