@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Toaster, toast } from "sonner";
 import {
   Archive,
+  ArrowLeftRight,
   BookOpen,
   CheckCircle2,
   FileText,
@@ -18,7 +19,9 @@ import {
 } from "lucide-react";
 import { SourceSelector, type AnalysisResult, type UniversalAnalysisResult, type RemoteAnalysisResult } from "@/components/converter/source-selector";
 import { InputAnalysisCard } from "@/components/converter/input-analysis-card";
-import { CompatibilityPanel } from "@/components/converter/compatibility-panel";
+import { DestinationPicker } from "@/components/converter/destination-picker";
+import { ConversionRouteSummary } from "@/components/converter/conversion-route-summary";
+import { TechnicalDetails } from "@/components/converter/technical-details";
 import { QualitySelector } from "@/components/converter/quality-selector";
 import { JobProgressCard } from "@/components/converter/job-progress-card";
 import { ArtifactResultCard } from "@/components/converter/artifact-result-card";
@@ -37,7 +40,7 @@ import { DESKTOP_PRO_GROUPS, type DesktopProGroupId } from "@/lib/capabilities/d
 import { FILESTUDIO_BRAND } from "@/lib/filestudio-brand";
 import { t } from "@/i18n";
 
-type DesktopTab = DesktopProGroupId | "history" | "diagnostics";
+type DesktopTab = "convert" | DesktopProGroupId | "history" | "diagnostics";
 type FlowStep = "source" | "analysis" | "format" | "progress" | "result";
 
 interface JobStatusData {
@@ -65,6 +68,7 @@ interface CapabilitiesData {
 }
 
 const TAB_ICONS: Record<DesktopTab, React.ReactNode> = {
+  convert: <ArrowLeftRight className="h-4 w-4" />,
   images: <ImageIcon className="h-4 w-4" />,
   pdf: <FileText className="h-4 w-4" />,
   media: <Film className="h-4 w-4" />,
@@ -78,7 +82,7 @@ const TAB_ICONS: Record<DesktopTab, React.ReactNode> = {
 };
 
 export function DesktopProShell() {
-  const [activeTab, setActiveTab] = useState<DesktopTab>("images");
+  const [activeTab, setActiveTab] = useState<DesktopTab>("convert");
   const [flowStep, setFlowStep] = useState<FlowStep>("source");
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -274,6 +278,14 @@ export function DesktopProShell() {
     }
   };
 
+  const handleConvertAnotherFormat = useCallback(() => {
+    // Reset to the format step keeping the same analyzed file
+    setJobId(null);
+    setJobStatus(null);
+    setIsConverting(false);
+    setFlowStep("format");
+  }, []);
+
   const handleCancel = async () => {
     if (!jobId) return;
     try {
@@ -318,7 +330,8 @@ export function DesktopProShell() {
           </p>
         </header>
 
-        <nav className="mb-5 grid grid-cols-2 gap-2 rounded-lg border border-white/8 bg-[#13161b]/90 p-2 shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:grid-cols-5 lg:grid-cols-10" aria-label="Herramientas Desktop PRO">
+        <nav className="mb-5 grid grid-cols-2 gap-2 rounded-lg border border-white/8 bg-[#13161b]/90 p-2 shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:grid-cols-6 lg:grid-cols-11" aria-label="Herramientas Desktop PRO">
+          <DesktopTabButton id="convert" active={activeTab === "convert"} onClick={() => handleTabChange("convert")} label={t("nav.convert")} />
           {DESKTOP_PRO_GROUPS.map((group) => (
             <DesktopTabButton
               key={group.id}
@@ -381,6 +394,7 @@ export function DesktopProShell() {
             onCapSelect={setSelectedCap}
             onStartConversion={handleStartConversion}
             onCancel={handleCancel}
+            onConvertAnother={handleConvertAnotherFormat}
             onViewHistory={() => handleTabChange("history")}
           />
         )}
@@ -441,6 +455,7 @@ function NativeConversionWorkspace(props: {
   onCapSelect: (capability: CapabilityInfo) => void;
   onStartConversion: () => void;
   onCancel: () => void;
+  onConvertAnother: () => void;
   onViewHistory: () => void;
 }) {
   const {
@@ -469,6 +484,7 @@ function NativeConversionWorkspace(props: {
     onCapSelect,
     onStartConversion,
     onCancel,
+    onConvertAnother,
     onViewHistory,
   } = props;
 
@@ -506,32 +522,55 @@ function NativeConversionWorkspace(props: {
         {(flowStep === "analysis" || flowStep === "format") && analysisResult && (
           <div className="space-y-5">
             <InputAnalysisCard result={analysisResult} onReset={onReset} />
-            {flowStep === "format" && (
-              <PresetSelector
-                category={activeGroup?.id}
-                onSelectPreset={(preset: ConversionPreset) => {
-                  if (capabilities?.capabilities) {
-                    const match = capabilities.capabilities.find(
-                      (c) => c.outputFormat.toLowerCase() === preset.targetFormat.toLowerCase()
-                    );
-                    if (match) {
-                      onCapSelect(match);
-                      if (preset.qualityProfile) {
-                        const profile: QualityProfile = preset.qualityProfile === "source-max" ? "source-max" : "mp4-compatible";
-                        onProfileChange(profile);
-                      }
-                    }
-                  }
-                }}
-              />
-            )}
-            {flowStep === "format" && capabilities && capabilities.capabilities.length > 0 && (
-              <CompatibilityPanel
+            {flowStep === "format" && capabilities && (
+              <DestinationPicker
                 capabilities={capabilities.capabilities}
                 recommended={capabilities.recommended}
                 onSelect={onCapSelect}
                 selectedKey={selectedKey}
               />
+            )}
+            {flowStep === "format" && selectedCap && (
+              <ConversionRouteSummary
+                cap={selectedCap}
+                inputName={
+                  analysisResult.kind === "universal-file" || analysisResult.kind === "local-media"
+                    ? (analysisResult as UniversalAnalysisResult).originalName
+                    : (analysisResult as RemoteAnalysisResult)?.title
+                }
+                inputFormat={capabilities?.inputFormat}
+              />
+            )}
+            {flowStep === "format" && selectedCap && (
+              <TechnicalDetails cap={selectedCap} />
+            )}
+            {flowStep === "format" && selectedCap && (
+              <details className="group rounded-xl border border-white/10 bg-[#1a1e25] px-4 py-2.5">
+                <summary className="min-h-8 cursor-pointer list-none text-xs font-semibold text-stone-400 transition-colors hover:text-stone-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60 [&::-webkit-details-marker]:hidden">
+                  {t("convert.advancedConfig")}
+                  <span className="ml-2 text-stone-600 group-open:hidden">+</span>
+                  <span className="ml-2 hidden text-stone-600 group-open:inline">−</span>
+                </summary>
+                <div className="pt-3">
+                  <PresetSelector
+                    category={activeGroup?.id}
+                    onSelectPreset={(preset: ConversionPreset) => {
+                      if (capabilities?.capabilities) {
+                        const match = capabilities.capabilities.find(
+                          (c) => c.outputFormat.toLowerCase() === preset.targetFormat.toLowerCase()
+                        );
+                        if (match) {
+                          onCapSelect(match);
+                          if (preset.qualityProfile) {
+                            const profile: QualityProfile = preset.qualityProfile === "source-max" ? "source-max" : "mp4-compatible";
+                            onProfileChange(profile);
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              </details>
             )}
             {flowStep === "format" && selectedCap && (selectedCap.outputFormat === "mp4" || selectedCap.outputFormat === "mkv" || selectedCap.outputFormat === "webm") && (
               <QualitySelector
@@ -551,7 +590,7 @@ function NativeConversionWorkspace(props: {
                 disabled={isConverting}
                 className="min-h-11 w-full rounded-md bg-teal-300 px-4 text-sm font-black text-[#071112] disabled:opacity-40"
               >
-                {isConverting ? "Procesando..." : `${t("convert.start")} → ${selectedCap.outputFormat.toUpperCase()}`}
+                {isConverting ? "Procesando..." : t("convert.startTo", { format: selectedCap.outputFormat.toUpperCase() })}
               </button>
             )}
           </div>
@@ -577,6 +616,7 @@ function NativeConversionWorkspace(props: {
             sizeBytes={jobStatus.file.sizeBytes}
             downloadTokenHash={Boolean(jobStatus.downloadAvailable)}
             onReset={onReset}
+            onConvertAnother={onConvertAnother}
             onViewHistory={onViewHistory}
             originalFileName={
               analysisResult?.kind === "universal-file" || analysisResult?.kind === "local-media"

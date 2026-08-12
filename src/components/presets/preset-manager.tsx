@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { t } from "@/i18n";
 
 export interface ConversionPreset {
   id: string;
@@ -97,9 +98,9 @@ export function usePresets() {
     try {
       const customOnly = updated.filter((p) => !p.isBuiltIn);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(customOnly));
-      toast.success(`Preset "${newPreset.name}" guardado con éxito`);
+      toast.success(t("config.savedOk", { name: newPreset.name }));
     } catch {
-      toast.error("Error al guardar preset en almacenamiento local");
+      toast.error(t("config.saveError"));
     }
 
     return newPreset;
@@ -111,7 +112,7 @@ export function usePresets() {
     try {
       const customOnly = updated.filter((p) => !p.isBuiltIn);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(customOnly));
-      toast.info("Preset eliminado");
+      toast.info(t("config.deleted"));
     } catch {
       // Ignore
     }
@@ -126,7 +127,7 @@ export function usePresets() {
     a.download = `anclora-presets-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Presets exportados como JSON");
+    toast.success(t("config.exported"));
   };
 
   const importPresetsJson = (file: File) => {
@@ -143,9 +144,9 @@ export function usePresets() {
         const combined = [...presets, ...sanitized];
         setPresets(combined);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(combined.filter((p) => !p.isBuiltIn)));
-        toast.success(`${sanitized.length} presets importados correctamente`);
+        toast.success(t("config.imported", { count: sanitized.length }));
       } catch {
-        toast.error("El archivo JSON de presets no es válido");
+        toast.error(t("config.importError"));
       }
     };
     reader.readAsText(file);
@@ -188,7 +189,7 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
       category: (category as ConversionPreset["category"]) || "all",
       targetFormat: newPresetFormat.toLowerCase(),
       qualityProfile: "web-balanced",
-      description: newPresetDesc || `Preset personalizado para ${newPresetFormat.toUpperCase()}`,
+      description: newPresetDesc || t("config.defaultDescription", { format: newPresetFormat.toUpperCase() }),
     });
 
     setNewPresetName("");
@@ -205,7 +206,7 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-teal-400" />
             <h4 className="text-xs font-bold uppercase tracking-wider text-teal-300">
-              Presets Rápidos de Conversión
+              {t("config.saved")}
             </h4>
           </div>
           <div className="flex items-center gap-1.5">
@@ -214,14 +215,14 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
               size="sm"
               onClick={exportPresetsJson}
               className="h-7 text-[11px] px-2 text-stone-400 hover:text-white"
-              title="Exportar Presets a JSON"
+              title={t("config.exportTitle")}
             >
               <Download className="h-3 w-3 mr-1" />
-              JSON
+              {t("config.export")}
             </Button>
             <label className="cursor-pointer inline-flex items-center justify-center rounded-md text-[11px] font-medium h-7 px-2 text-stone-400 hover:text-white hover:bg-white/5 transition-colors">
               <Upload className="h-3 w-3 mr-1" />
-              Importar
+              {t("config.import")}
               <input
                 type="file"
                 accept=".json"
@@ -236,7 +237,7 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
               className="h-7 text-[11px] px-2.5 border-teal-500/30 text-teal-300 hover:bg-teal-500/10"
             >
               <Plus className="h-3 w-3 mr-1" />
-              Nuevo
+              {t("config.create")}
             </Button>
           </div>
         </div>
@@ -247,7 +248,7 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
               <div className="flex items-center justify-between border-b border-stone-800 pb-3">
                 <h3 className="flex items-center gap-2 text-sm font-bold text-teal-400">
                   <Bookmark className="h-4 w-4" />
-                  Guardar Nuevo Preset
+                  {t("config.dialogTitle")}
                 </h3>
                 <button
                   onClick={() => setDialogOpen(false)}
@@ -260,11 +261,11 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
               <form onSubmit={handleCreatePreset} className="space-y-4 pt-1">
                 <div className="space-y-1.5">
                   <Label htmlFor="preset-name" className="text-xs text-stone-300">
-                    Nombre del Preset
+                    {t("config.name")}
                   </Label>
                   <Input
                     id="preset-name"
-                    placeholder="Ej: WebP Compresión Extrema"
+                    placeholder={t("config.namePlaceholder")}
                     value={newPresetName}
                     onChange={(e) => setNewPresetName(e.target.value)}
                     className="bg-black/40 border-stone-700 text-white text-xs h-9"
@@ -273,11 +274,11 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="preset-format" className="text-xs text-stone-300">
-                    Formato Destino
+                    {t("config.targetFormat")}
                   </Label>
                   <Input
                     id="preset-format"
-                    placeholder="webp, mp3, pdf, docx, json..."
+                    placeholder={t("config.formatPlaceholder")}
                     value={newPresetFormat}
                     onChange={(e) => setNewPresetFormat(e.target.value)}
                     className="bg-black/40 border-stone-700 text-white text-xs h-9"
@@ -286,11 +287,11 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="preset-desc" className="text-xs text-stone-300">
-                    Descripción Opcional
+                    {t("config.description")}
                   </Label>
                   <Input
                     id="preset-desc"
-                    placeholder="Breve nota de uso o calidad"
+                    placeholder={t("config.descriptionPlaceholder")}
                     value={newPresetDesc}
                     onChange={(e) => setNewPresetDesc(e.target.value)}
                     className="bg-black/40 border-stone-700 text-white text-xs h-9"
@@ -298,10 +299,10 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
                   <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} className="text-stone-400 text-xs h-8">
-                    Cancelar
+                    {t("config.cancel")}
                   </Button>
                   <Button type="submit" className="bg-teal-600 hover:bg-teal-500 text-stone-950 font-semibold text-xs h-8">
-                    Guardar Preset
+                    {t("config.save")}
                   </Button>
                 </div>
               </form>
@@ -318,7 +319,7 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
                 onClick={() => {
                   setActivePresetId(preset.id);
                   onSelectPreset(preset);
-                  toast.info(`Preset aplicado: ${preset.name}`);
+                  toast.info(t("config.applied", { name: preset.name }));
                 }}
                 className={`group relative cursor-pointer rounded-lg border p-2.5 transition-all ${
                   isSelected
@@ -347,7 +348,7 @@ export function PresetSelector({ category, onSelectPreset }: PresetSelectorProps
                           deleteCustomPreset(preset.id);
                         }}
                         className="opacity-0 group-hover:opacity-100 text-stone-500 hover:text-red-400 transition-opacity p-0.5"
-                        title="Eliminar preset"
+                        title={t("config.deleteTitle")}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Download, RotateCcw, History, Loader2, Eye, Share2, Cloud } from "lucide-react";
+import { Download, RotateCcw, History, Loader2, Eye, Share2, Cloud, ArrowLeftRight } from "lucide-react";
 import { CompareInspectorModal } from "@/components/inspector/compare-inspector-modal";
+import { t } from "@/i18n";
 
 function formatSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
@@ -19,11 +20,12 @@ interface Props {
   downloadTokenHash: boolean;
   onReset: () => void;
   onViewHistory: () => void;
+  onConvertAnother?: () => void;
   originalFileName?: string;
   originalSize?: number;
 }
 
-export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloadTokenHash, onReset, onViewHistory, originalFileName, originalSize }: Props) {
+export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloadTokenHash, onReset, onViewHistory, onConvertAnother, originalFileName, originalSize }: Props) {
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
@@ -125,8 +127,18 @@ export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloa
             className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl border border-white/10 text-white/50 hover:text-white/80 hover:border-white/25 text-sm transition-colors motion-reduce:transition-none"
           >
             <RotateCcw className="h-3.5 w-3.5" />
-            Nueva
+            {t("result.processAnother")}
           </button>
+          {onConvertAnother && (
+            <button
+              type="button"
+              onClick={onConvertAnother}
+              className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl border border-teal-500/30 text-teal-300 hover:bg-teal-500/10 text-sm font-medium transition-colors"
+            >
+              <ArrowLeftRight className="h-3.5 w-3.5" />
+              {t("result.convertAnother")}
+            </button>
+          )}
           <button
             type="button"
             onClick={onViewHistory}

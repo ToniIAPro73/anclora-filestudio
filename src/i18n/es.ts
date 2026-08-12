@@ -57,10 +57,68 @@ export const messages = {
 
   // Conversion
   "convert.start": "Convertir",
+  "convert.startTo": "Convertir a {format}",
   "convert.cancel": "Cancelar",
   "convert.download": "Descargar",
   "convert.new": "Nueva conversión",
   "convert.rights": "Confirmo que tengo derechos sobre este contenido",
+  "convert.advancedConfig": "Configuración avanzada",
+
+  // Destination picker
+  "destinations.title": "¿En qué formato quieres convertirlo?",
+  "destinations.recommended": "Recomendados para este archivo",
+  "destinations.all": "Todos los formatos disponibles",
+  "destinations.search": "Buscar formato…",
+  "destinations.empty": "No hay conversiones disponibles para este formato",
+  "destinations.showMore": "Ver {count} opciones más",
+  "destinations.showLess": "Mostrar menos",
+  "destinations.badge.recommended": "Recomendado",
+  "destinations.badge.direct": "Directa",
+  "destinations.badge.multistep": "Varios pasos",
+  "destinations.badge.lossy": "Puede perder formato",
+
+  // Conversion route summary
+  "route.direct": "Conversión directa",
+  "route.multistep": "Conversión en varios pasos",
+  "route.lossy": "Puede perder formato",
+  "route.quality.excellent": "Excelente",
+  "route.quality.good": "Buena",
+  "route.quality.formatLoss": "Puede perder formato",
+  "route.quality.notRecommended": "No recomendada",
+  "route.local": "100 % local — el archivo no sale de tu equipo",
+  "route.technicalDetails": "Detalles técnicos",
+  "route.engine": "Motor",
+  "route.processingLocal": "Procesamiento local en este equipo.",
+  "route.privacy": "Tu archivo no se sube a ningún servidor.",
+
+  // Saved configurations (presets)
+  "config.saved": "Configuraciones guardadas",
+  "config.export": "Exportar configuración",
+  "config.exportTitle": "Exportar configuraciones en formato JSON",
+  "config.import": "Importar configuración",
+  "config.create": "Crear configuración",
+  "config.dialogTitle": "Guardar nueva configuración",
+  "config.name": "Nombre de la configuración",
+  "config.namePlaceholder": "Ej: WebP compresión extrema",
+  "config.targetFormat": "Formato de destino",
+  "config.formatPlaceholder": "webp, mp3, pdf, docx, json…",
+  "config.description": "Descripción opcional",
+  "config.descriptionPlaceholder": "Breve nota de uso o calidad",
+  "config.cancel": "Cancelar",
+  "config.save": "Guardar configuración",
+  "config.applied": "Configuración aplicada: {name}",
+  "config.savedOk": "Configuración \"{name}\" guardada con éxito",
+  "config.saveError": "Error al guardar la configuración en almacenamiento local",
+  "config.deleted": "Configuración eliminada",
+  "config.exported": "Configuraciones exportadas como JSON",
+  "config.imported": "{count} configuraciones importadas correctamente",
+  "config.importError": "El archivo JSON de configuraciones no es válido",
+  "config.defaultDescription": "Configuración personalizada para {format}",
+  "config.deleteTitle": "Eliminar configuración",
+
+  // Result actions
+  "result.processAnother": "Procesar otro archivo",
+  "result.convertAnother": "Convertir a otro formato",
 
   // Diagnostics
   "diagnostics.title": "Diagnóstico de herramientas",

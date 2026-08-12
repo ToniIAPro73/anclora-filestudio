@@ -57,10 +57,68 @@ export const messages = {
 
   // Conversion
   "convert.start": "Convert",
+  "convert.startTo": "Convert to {format}",
   "convert.cancel": "Cancel",
   "convert.download": "Download",
   "convert.new": "New conversion",
   "convert.rights": "I confirm I have rights to this content",
+  "convert.advancedConfig": "Advanced configuration",
+
+  // Destination picker
+  "destinations.title": "What format do you want to convert it to?",
+  "destinations.recommended": "Recommended for this file",
+  "destinations.all": "All available formats",
+  "destinations.search": "Search format…",
+  "destinations.empty": "No conversions available for this format",
+  "destinations.showMore": "Show {count} more options",
+  "destinations.showLess": "Show less",
+  "destinations.badge.recommended": "Recommended",
+  "destinations.badge.direct": "Direct",
+  "destinations.badge.multistep": "Multi-step",
+  "destinations.badge.lossy": "May lose formatting",
+
+  // Conversion route summary
+  "route.direct": "Direct conversion",
+  "route.multistep": "Multi-step conversion",
+  "route.lossy": "May lose formatting",
+  "route.quality.excellent": "Excellent",
+  "route.quality.good": "Good",
+  "route.quality.formatLoss": "May lose formatting",
+  "route.quality.notRecommended": "Not recommended",
+  "route.local": "100% local — the file never leaves your device",
+  "route.technicalDetails": "Technical details",
+  "route.engine": "Engine",
+  "route.processingLocal": "Local processing on this device.",
+  "route.privacy": "Your file is not uploaded to any server.",
+
+  // Saved configurations (presets)
+  "config.saved": "Saved configurations",
+  "config.export": "Export configuration",
+  "config.exportTitle": "Export configurations in JSON format",
+  "config.import": "Import configuration",
+  "config.create": "Create configuration",
+  "config.dialogTitle": "Save new configuration",
+  "config.name": "Configuration name",
+  "config.namePlaceholder": "E.g.: Extreme WebP compression",
+  "config.targetFormat": "Target format",
+  "config.formatPlaceholder": "webp, mp3, pdf, docx, json…",
+  "config.description": "Optional description",
+  "config.descriptionPlaceholder": "Short usage or quality note",
+  "config.cancel": "Cancel",
+  "config.save": "Save configuration",
+  "config.applied": "Configuration applied: {name}",
+  "config.savedOk": "Configuration \"{name}\" saved successfully",
+  "config.saveError": "Error saving configuration to local storage",
+  "config.deleted": "Configuration deleted",
+  "config.exported": "Configurations exported as JSON",
+  "config.imported": "{count} configurations imported successfully",
+  "config.importError": "The configuration JSON file is not valid",
+  "config.defaultDescription": "Custom configuration for {format}",
+  "config.deleteTitle": "Delete configuration",
+
+  // Result actions
+  "result.processAnother": "Process another file",
+  "result.convertAnother": "Convert to another format",
 
   // Diagnostics
   "diagnostics.title": "Tool diagnostics",
