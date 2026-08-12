@@ -7,6 +7,7 @@ export const MetadataRequestSchema = z.object({
 
 export const VideoFormatSchema = z.object({
   formatId: z.string(),
+  protocol: z.string().nullable().optional(),
   width: z.number().nullable(),
   height: z.number().nullable(),
   fps: z.number().nullable(),
@@ -14,9 +15,26 @@ export const VideoFormatSchema = z.object({
   vcodec: z.string().nullable(),
   acodec: z.string().nullable(),
   isVideoOnly: z.boolean(),
+  isAudioOnly: z.boolean().optional(),
   fileSizeBytes: z.number().nullable(),
   fileSizeApproxBytes: z.number().nullable(),
   tbr: z.number().nullable(),
+  vbr: z.number().nullable().optional(),
+  abr: z.number().nullable().optional(),
+});
+
+export const AudioFormatSchema = z.object({
+  formatId: z.string(),
+  protocol: z.string().nullable().optional(),
+  ext: z.string(),
+  acodec: z.string().nullable(),
+  abr: z.number().nullable(),
+  sampleRate: z.number().nullable(),
+  channels: z.number().nullable(),
+  fileSizeBytes: z.number().nullable(),
+  fileSizeApproxBytes: z.number().nullable(),
+  tbr: z.number().nullable(),
+  hasAudio: z.boolean(),
 });
 
 export const MetadataResponseSchema = z.object({
@@ -29,6 +47,7 @@ export const MetadataResponseSchema = z.object({
   availableHeights: z.array(z.number()),
   supported: z.boolean(),
   videoFormats: z.array(VideoFormatSchema).default([]),
+  audioFormats: z.array(AudioFormatSchema).optional(),
 });
 
 export const JobRequestSchema = z.object({

@@ -34,14 +34,14 @@ export function buildYtdlpFormatSelector(selection: VideoQualitySelection): Form
   if (profile === 'source-max') {
     if (resolutionLimit === 'max') {
       return {
-        formatArg: 'bestvideo+bestaudio/best',
+        formatArg: 'bestvideo*+bestaudio/bestvideo*',
         mergeFormat: 'mkv',
         willRecode: false,
       };
     }
     // Numeric resolution limit — no [ext=mp4] constraint so WebM/VP9/AV1 streams are eligible
     return {
-      formatArg: `bestvideo[height<=${resolutionLimit}]+bestaudio/best[height<=${resolutionLimit}]`,
+      formatArg: `bestvideo*[height=${resolutionLimit}]+bestaudio/bestvideo*[height=${resolutionLimit}]`,
       mergeFormat: 'mkv',
       willRecode: false,
     };
@@ -51,7 +51,7 @@ export function buildYtdlpFormatSelector(selection: VideoQualitySelection): Form
   if (resolutionLimit === 'max') {
     return {
       formatArg:
-        'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio/bestvideo+bestaudio/best',
+        'bestvideo*[ext=mp4]+bestaudio[ext=m4a]/bestvideo*[ext=mp4]+bestaudio/bestvideo*+bestaudio/bestvideo*',
       mergeFormat: 'mp4',
       willRecode: false,
     };
@@ -60,10 +60,11 @@ export function buildYtdlpFormatSelector(selection: VideoQualitySelection): Form
   // mp4-compatible + numeric resolution limit
   return {
     formatArg: [
-      `bestvideo[height<=${resolutionLimit}][ext=mp4]+bestaudio[ext=m4a]`,
-      `bestvideo[height<=${resolutionLimit}][ext=mp4]+bestaudio`,
-      `bestvideo[height<=${resolutionLimit}]+bestaudio`,
-      `best[height<=${resolutionLimit}]`,
+      `bestvideo*[height=${resolutionLimit}][ext=mp4]+bestaudio[ext=m4a]`,
+      `bestvideo*[height=${resolutionLimit}][ext=mp4]+bestaudio`,
+      `bestvideo*[height=${resolutionLimit}]+bestaudio`,
+      `bestvideo*[height=${resolutionLimit}]`,
+      `best[height=${resolutionLimit}]`,
     ].join('/'),
     mergeFormat: 'mp4',
     willRecode: false,

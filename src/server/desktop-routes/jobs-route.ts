@@ -444,16 +444,31 @@ function handleLegacyMediaJob(
       );
     }
     const normalizedUrl = normalizeYoutubeUrl(rawUrl);
-    if (!normalizedUrl) {
+    let remoteUrl = normalizedUrl;
+    if (!remoteUrl) {
+      try {
+        const parsed = new URL(rawUrl);
+        if (!["http:", "https:"].includes(parsed.protocol)) {
+          throw new Error("unsupported protocol");
+        }
+        remoteUrl = parsed.toString();
+      } catch {
+        return NextResponse.json(
+          { error: ERROR_MESSAGES.INVALID_URL, code: ERROR_CODES.INVALID_URL },
+          { status: 400 },
+        );
+      }
+    }
+    if (!remoteUrl) {
       return NextResponse.json(
         { error: ERROR_MESSAGES.INVALID_URL, code: ERROR_CODES.INVALID_URL },
         { status: 400 },
       );
     }
-    inputReference = normalizedUrl;
+    inputReference = remoteUrl;
 
     // Fetch title asynchronously (non-blocking for job creation)
-    getVideoMetadata(normalizedUrl)
+    getVideoMetadata(remoteUrl)
       .then((meta) => {
         if (meta.title) {
           const currentJob = jobManager.getClientActiveJob(clientIp);
@@ -478,7 +493,7 @@ function handleLegacyMediaJob(
   // qualitySelection is serialized as JSON so processRemoteUrl can reconstruct it.
   const quality = data.qualitySelection
     ? JSON.stringify(data.qualitySelection)
-    : (data.quality ?? "5");
+    : (data.quality ?? (AUDIO_FORMATS.includes(format as (typeof AUDIO_FORMATS)[number]) ? "best" : "best"));
 
   const job = jobManager.createJob(
     inputReference,

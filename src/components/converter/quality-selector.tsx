@@ -15,7 +15,12 @@ interface QualitySelectorProps {
   videoFormats?: VideoFormat[];
 }
 
-const MP3_QUALITIES = ["128", "192", "256", "320"] as const;
+const MP3_QUALITIES = [
+  { id: "best", label: "Mejor disponible", detail: "Mejor fuente", bars: 4 },
+  { id: "high", label: "Alta", detail: "~256 kbps", bars: 3 },
+  { id: "standard", label: "Estándar", detail: "~192 kbps", bars: 2 },
+  { id: "light", label: "Ligera", detail: "~128 kbps", bars: 1 },
+] as const;
 
 const ALL_RESOLUTION_OPTIONS = ["max", 360, 480, 720, 1080, 1440, 2160] as const;
 type ResolutionOption = (typeof ALL_RESOLUTION_OPTIONS)[number];
@@ -60,24 +65,23 @@ export function QualitySelector({
 }: QualitySelectorProps) {
   // --- MP3 branch ---
   if (format === "mp3") {
-    const currentQualities: readonly string[] = MP3_QUALITIES;
     return (
       <div className="space-y-2.5">
         <label className="text-[10px] font-semibold uppercase tracking-[0.15em] text-white/35 ml-0.5">
-          Selecciona la calidad
+          Calidad de audio
         </label>
 
         <div className="flex gap-1.5 p-1.5 bg-white/2.5 border border-white/6 rounded-2xl backdrop-blur-sm">
-          {currentQualities.map((q, index) => {
-            const isActive = quality === q;
+          {MP3_QUALITIES.map((option) => {
+            const isActive = quality === option.id;
             const accent = getAccentClasses(format, isActive);
-            const filledBars = index + 1;
+            const filledBars = option.bars;
 
             return (
               <button
-                key={q}
+                key={option.id}
                 type="button"
-                onClick={() => onQualityChange(q)}
+                onClick={() => onQualityChange(option.id)}
                 className={cn(
                   "flex-1 flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl transition-all duration-300",
                   "border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20",
@@ -111,7 +115,7 @@ export function QualitySelector({
                     isActive ? accent.value : "text-white/40"
                   )}
                 >
-                  {q}
+                  {option.label}
                 </span>
                 <span
                   className={cn(
@@ -119,7 +123,7 @@ export function QualitySelector({
                     isActive ? accent.unit : "text-white/20"
                   )}
                 >
-                  kbps
+                  {option.detail}
                 </span>
               </button>
             );
@@ -140,25 +144,23 @@ export function QualitySelector({
   const showProfileToggle = !!onProfileChange;
 
   // Compute available resolution options
+  const exactHeights = new Set(
+    (videoFormats && videoFormats.length > 0
+      ? videoFormats.map((f) => f.height).filter((h): h is number => h !== null)
+      : availableHeights
+    ).filter((h) => h >= 144)
+  );
   const availableResolutions: ResolutionOption[] = ALL_RESOLUTION_OPTIONS.filter((h) => {
     if (h === "max") return true;
-    if (videoFormats && videoFormats.length > 0) {
-      return videoFormats.some((f) => f.height !== null && f.height >= h);
-    }
-    // Fall back to availableHeights if videoFormats not provided
-    return availableHeights.some((ah) => ah >= h) || h === 360;
+    return exactHeights.has(h);
   });
-
-  // When profile is source-max + max, skip resolution selector (any resolution applies)
-  const hideResolutionSelector =
-    activeProfile === "source-max" && quality === "max";
 
   const accent = getAccentClasses("mp4", true);
 
   return (
     <div className="space-y-3">
       <label className="text-[10px] font-semibold uppercase tracking-[0.15em] text-white/35 ml-0.5">
-        Selecciona la calidad
+        Calidad
       </label>
 
       {/* Section 1 — Delivery profile (only when parent handles profile changes) */}
@@ -190,7 +192,7 @@ export function QualitySelector({
                     )}
                   >
                     {profile === "source-max"
-                      ? "Máxima calidad original"
+                      ? "Mejor disponible"
                       : "MP4 compatible"}
                   </span>
                   <span
@@ -200,7 +202,7 @@ export function QualitySelector({
                     )}
                   >
                     {profile === "source-max"
-                      ? "Sin recodificación · preserva 4K/60fps · puede ser MKV/WebM"
+                      ? "Mejor video y audio compatible; mux si hace falta"
                       : "Compatible con más reproductores · puede requerir recodificación"}
                   </span>
                 </button>
@@ -211,7 +213,7 @@ export function QualitySelector({
       )}
 
       {/* Section 2 — Resolution limit */}
-      {!hideResolutionSelector && (
+      {availableResolutions.length > 1 && (
         <div className="space-y-1.5">
           {showProfileToggle && (
             <span className="text-[9px] font-semibold uppercase tracking-[0.12em] text-white/25 ml-0.5">
@@ -269,7 +271,7 @@ export function QualitySelector({
                       isActive ? resAccent.value : "text-white/40"
                     )}
                   >
-                    {res === "max" ? "Máx" : res}
+                    {res === "max" ? "Mejor disponible" : res}
                   </span>
                   <span
                     className={cn(
@@ -287,19 +289,8 @@ export function QualitySelector({
       )}
 
       <p className="text-[10px] text-white/25 italic ml-0.5 leading-relaxed">
-        Se utilizará la mejor alternativa si la resolución exacta no está disponible.
+        La lista sale del análisis real de la fuente.
       </p>
-
-      {/* On-Device Privacy & EXIF Metadata Scrubber */}
-      <div className="mt-3 rounded-xl border border-emerald-500/20 bg-emerald-500/8 p-3 flex items-center justify-between text-xs text-stone-200">
-        <div className="flex items-center gap-2">
-          <span className="text-emerald-400 font-bold">🛡️ Privacidad On-Device:</span>
-          <span className="text-stone-300 text-[11px]">Eliminar metadatos EXIF, GPS, datos de cámara y autor</span>
-        </div>
-        <span className="text-[10px] bg-emerald-400/20 text-emerald-300 font-semibold px-2 py-0.5 rounded-full border border-emerald-400/30">
-          Activado
-        </span>
-      </div>
     </div>
   );
 }

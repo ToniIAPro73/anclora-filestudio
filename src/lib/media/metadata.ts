@@ -8,6 +8,7 @@ import { getYtdlpCommonArgs } from "./command-builder";
 
 export interface VideoFormat {
   formatId: string;
+  protocol?: string | null;
   width: number | null;
   height: number | null;
   fps: number | null;
@@ -15,13 +16,31 @@ export interface VideoFormat {
   vcodec: string | null;
   acodec: string | null;
   isVideoOnly: boolean;
+  isAudioOnly?: boolean;
   fileSizeBytes: number | null;
   fileSizeApproxBytes: number | null;
   tbr: number | null;
+  vbr?: number | null;
+  abr?: number | null;
+}
+
+export interface AudioFormatVariant {
+  formatId: string;
+  protocol?: string | null;
+  ext: string;
+  acodec: string | null;
+  abr: number | null;
+  sampleRate: number | null;
+  channels: number | null;
+  fileSizeBytes: number | null;
+  fileSizeApproxBytes: number | null;
+  tbr: number | null;
+  hasAudio: boolean;
 }
 
 interface YtdlpFormat {
   format_id?: string;
+  protocol?: string;
   vcodec?: string;
   acodec?: string;
   height?: number;
@@ -31,6 +50,10 @@ interface YtdlpFormat {
   filesize?: number;
   filesize_approx?: number;
   tbr?: number;
+  vbr?: number;
+  abr?: number;
+  asr?: number;
+  audio_channels?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -352,19 +375,39 @@ export async function getVideoMetadata(url: string): Promise<MetadataResponse> {
         ).sort((a, b) => b - a);
 
         const videoFormats: VideoFormat[] = formats
-          .filter((f) => f.vcodec && f.vcodec !== "none" && f.height && f.height > 0)
+          .filter((f) => f.vcodec !== "none" && f.height && f.height > 0)
           .map((f) => ({
             formatId: f.format_id ?? "",
+            protocol: f.protocol ?? null,
             width: f.width ?? null,
             height: f.height ?? null,
             fps: f.fps ?? null,
             ext: f.ext ?? "",
             vcodec: f.vcodec ?? null,
             acodec: f.acodec && f.acodec !== "none" ? f.acodec : null,
-            isVideoOnly: !f.acodec || f.acodec === "none",
+            isVideoOnly: f.acodec === "none",
+            isAudioOnly: false,
             fileSizeBytes: f.filesize ?? null,
             fileSizeApproxBytes: f.filesize_approx ?? null,
             tbr: f.tbr ?? null,
+            vbr: f.vbr ?? null,
+            abr: f.abr ?? null,
+          }));
+
+        const audioFormats: AudioFormatVariant[] = formats
+          .filter((f) => (!f.vcodec || f.vcodec === "none") && f.acodec && f.acodec !== "none")
+          .map((f) => ({
+            formatId: f.format_id ?? "",
+            protocol: f.protocol ?? null,
+            ext: f.ext ?? "",
+            acodec: f.acodec ?? null,
+            abr: f.abr ?? f.tbr ?? null,
+            sampleRate: f.asr ?? null,
+            channels: f.audio_channels ?? null,
+            fileSizeBytes: f.filesize ?? null,
+            fileSizeApproxBytes: f.filesize_approx ?? null,
+            tbr: f.tbr ?? null,
+            hasAudio: true,
           }));
 
         resolve({
@@ -377,6 +420,7 @@ export async function getVideoMetadata(url: string): Promise<MetadataResponse> {
           availableHeights,
           supported: true,
           videoFormats,
+          audioFormats,
         });
       } catch {
         reject(

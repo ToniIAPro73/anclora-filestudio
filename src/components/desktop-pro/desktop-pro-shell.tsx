@@ -53,6 +53,8 @@ const UX_CATEGORY_TO_LEGACY_GROUP: Partial<Record<UxConversionCategoryId, Deskto
   data: "structured",
 };
 
+const mediaUrlTargets = new Set(["mp4", "webm", "mkv", "mp3", "m4a", "wav", "ogg"]);
+
 interface JobStatusData {
   jobId: string;
   status: string;
@@ -171,6 +173,9 @@ export function DesktopProShell() {
             (cap) => normalizeFormatId(cap.outputFormat) === canonicalTarget && cap.state === "available"
           ) ?? null;
           setSelectedCap(targetCapability);
+          if (targetCapability && ["mp3", "m4a", "wav", "flac", "ogg"].includes(targetCapability.outputFormat)) {
+            setQuality("best");
+          }
           setRouteValidationMessage(targetCapability ? null : `Este archivo no puede convertirse a ${canonicalTarget.toUpperCase()} con las capacidades disponibles.`);
         } else {
           setSelectedCap(null);
@@ -295,6 +300,7 @@ export function DesktopProShell() {
     setJobStatus({ jobId: "pending", status: "queued", stage: t("progress.queued"), progress: 0 });
 
     const isVideoFormat = selectedCap.outputFormat === "mp4" || selectedCap.outputFormat === "mkv" || selectedCap.outputFormat === "webm";
+    const isAudioFormat = selectedCap.outputFormat === "mp3" || selectedCap.outputFormat === "m4a" || selectedCap.outputFormat === "wav" || selectedCap.outputFormat === "flac" || selectedCap.outputFormat === "ogg";
     const qualitySelection = isVideoFormat
       ? VideoQualitySelectionSchema.parse({
           profile: qualityProfile,
@@ -313,10 +319,12 @@ export function DesktopProShell() {
         body.url = analysisResult.normalizedUrl;
         body.format = selectedCap.outputFormat;
         if (qualitySelection) body.qualitySelection = qualitySelection;
+        if (isAudioFormat) body.quality = quality;
       } else {
         body.localFilePath = analysisResult.storedRelativePath;
         body.format = selectedCap.outputFormat;
         if (qualitySelection) body.qualitySelection = qualitySelection;
+        if (isAudioFormat) body.quality = quality;
       }
 
       const response = await fetch("/api/jobs", {
@@ -405,10 +413,8 @@ export function DesktopProShell() {
           <FileStudioHome
             model={uxModel}
             onOpenConvert={handleOpenConvert}
-            onOpenTools={() => {
-              setActiveTab("tools");
-              setActiveTool(null);
-            }}
+            onSelectTarget={handleSelectTarget}
+            onOpenTool={handleOpenTool}
           />
         )}
 
@@ -611,6 +617,7 @@ function NativeConversionWorkspace(props: {
               onFileAnalyzed={onFileAnalyzed}
               isLoading={isLoading}
               setLoading={setLoading}
+              acquisitionModes={mediaUrlTargets.has(selectedTarget) ? ["local-file", "video-url"] : ["local-file"]}
             />
           </div>
         )}
@@ -674,6 +681,14 @@ function NativeConversionWorkspace(props: {
                 qualityProfile={qualityProfile}
                 onProfileChange={onProfileChange}
                 videoFormats={videoFormats.length > 0 ? videoFormats : undefined}
+              />
+            )}
+            {flowStep === "format" && selectedCap && (selectedCap.outputFormat === "mp3" || selectedCap.outputFormat === "m4a" || selectedCap.outputFormat === "wav" || selectedCap.outputFormat === "flac" || selectedCap.outputFormat === "ogg") && (
+              <QualitySelector
+                format="mp3"
+                quality={quality}
+                onQualityChange={onQualityChange}
+                availableHeights={[]}
               />
             )}
             {flowStep === "format" && selectedCap && (

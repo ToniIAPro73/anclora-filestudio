@@ -68,14 +68,14 @@ export function buildYtdlpArgs(options: YtdlpConversionOptions): string[] {
   if (audioFormats.includes(format as AudioOutputFormat)) {
     // Audio quality must be a string; VideoQualitySelection is not valid here.
     const qualityStr = typeof quality === "string" ? quality : "best";
-    return [
+    const args = [
       "--extract-audio",
       "--audio-format",
       format,
-      "--audio-quality",
-      mapAudioQuality(qualityStr, format as AudioOutputFormat),
       ...baseArgs,
     ];
+    const mappedQuality = mapAudioQuality(qualityStr, format as AudioOutputFormat);
+    return mappedQuality ? ["--audio-quality", mappedQuality, ...args] : args;
   }
 
   // Video: resolve typed selection or adapt legacy string
@@ -195,6 +195,27 @@ function normalizeVideoHeight(quality: string, format: VideoOutputFormat): numbe
 }
 
 function mapAudioQuality(quality: string, format: AudioOutputFormat): string {
+  const normalized = quality.trim().toLowerCase();
+  if (normalized === "best" || normalized === "max" || normalized === "") {
+    if (format === "mp3") return "0";
+    if (format === "ogg") return "10";
+    return "";
+  }
+  if (normalized === "high" || normalized === "alta") {
+    if (format === "mp3") return "2";
+    if (format === "ogg") return "8";
+    return "256K";
+  }
+  if (normalized === "standard" || normalized === "estandar" || normalized === "estándar") {
+    if (format === "mp3") return "5";
+    if (format === "ogg") return "5";
+    return "192K";
+  }
+  if (normalized === "light" || normalized === "ligera") {
+    if (format === "mp3") return "7";
+    if (format === "ogg") return "3";
+    return "128K";
+  }
   if (format === "mp3") {
     const bitrate = parseInt(quality, 10);
     if (bitrate >= 320) return "0";
