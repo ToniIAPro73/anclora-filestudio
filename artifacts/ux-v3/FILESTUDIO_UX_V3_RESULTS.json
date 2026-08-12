@@ -1,0 +1,86 @@
+{
+  "date": "2026-08-12",
+  "status": "PASS",
+  "navigation": ["Inicio", "Convertir", "Herramientas", "Historial", "Diagnóstico"],
+  "retiredTopLevel": ["Documentos", "Audio y vídeo", "OCR", "Archivos", "Ebooks", "Más herramientas"],
+  "desktopLinuxReference": {
+    "visibleFormats": 46,
+    "directAvailableNonOcrEdges": 190,
+    "reachableRoutes": 273,
+    "multistepRoutes": 84,
+    "categories": {
+      "documents": 11,
+      "images": 6,
+      "audio": 5,
+      "video": 3,
+      "ebooks": 3,
+      "archives": 3,
+      "data": 6
+    },
+    "tools": {
+      "pdf": 4,
+      "images": 6,
+      "ocr": 9,
+      "utilities": 1
+    }
+  },
+  "webReference": {
+    "visibleFormats": 10,
+    "directAvailableNonOcrEdges": 39,
+    "reachableRoutes": 39,
+    "multistepRoutes": 0,
+    "categories": {
+      "documents": 1,
+      "images": 3,
+      "data": 6
+    },
+    "tools": {
+      "pdf": 4,
+      "images": 5,
+      "utilities": 1
+    }
+  },
+  "matrixApisUsed": [
+    "getTargetsForSource",
+    "getSourcesForTarget",
+    "getBestRoute",
+    "getEffectiveAvailability"
+  ],
+  "testsAdded": [
+    "tests/unit/ux-v3-model.test.ts",
+    "tests/unit/components/ux-v3-components.test.tsx"
+  ],
+  "portableRequired": true,
+  "validation": {
+    "typecheck": "PASS",
+    "lint": "PASS_WITH_PRE_EXISTING_WARNINGS",
+    "tests": {
+      "status": "PASS",
+      "testFilesPassed": 70,
+      "testFilesSkipped": 1,
+      "testsPassed": 880,
+      "testsSkipped": 1
+    },
+    "build": "PASS"
+  },
+  "portable": {
+    "linux": {
+      "status": "PASS",
+      "checks": 54,
+      "sha256": "008bac0f8c0e53b7da7351c98da2645f915901ed858c80dc97aa3a447490438f",
+      "buildId": "13774d4"
+    },
+    "windows": {
+      "status": "PASS",
+      "checks": 98,
+      "sha256": "9484193dc13e4d4bdb523138ea0f129da569829a5ba898088d753c5c6094df12",
+      "buildId": "13774d4"
+    }
+  },
+  "faviconAssets": {
+    "faviconIco": "present",
+    "favicon32": "present",
+    "favicon512": "present",
+    "appleTouchIcon": "present"
+  }
+}
