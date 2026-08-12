@@ -1,0 +1,98 @@
+{
+  "audit": {
+    "repository": "/home/toni/workspace/anclora/anclora-filestudio",
+    "date": "2026-08-12",
+    "phase": "FASE 2 - Implementacion de Matriz Canonica de Conversion",
+    "result": "PASS"
+  },
+  "canonicalFormats": {
+    "total": 50,
+    "normalizationRule": "canonical conversion IDs use the catalog outputExtension",
+    "aliasesNormalized": {
+      "jpeg": "jpg",
+      "jpg": "jpg",
+      "markdown": "md",
+      "md": "md",
+      "latex": "tex",
+      "tex": "tex",
+      "yml": "yaml",
+      "htm": "html",
+      "tif": "tiff"
+    },
+    "classifiedNonCanonical": {
+      "MISSING_CANONICAL_FORMAT": ["opus", "aiff", "wma", "flv", "m4v", "mts", "bmp", "ico", "svg", "heic", "heif", "fb2", "rar", "wim", "lz4", "srt"],
+      "ENGINE_INTERNAL": ["alac"],
+      "LEGACY": ["azw"],
+      "INVALID": ["jpg-large"]
+    }
+  },
+  "matrix": {
+    "directEdges": 209,
+    "implementedEdges": 208,
+    "availableWindows": 199,
+    "availableLinux": 199,
+    "availableWeb": 39,
+    "declaredWithoutImplementation": 1,
+    "implementedButNotCanonicalDeclaration": 74,
+    "disabledInvalidEdges": 1,
+    "multistepAvailable": 84,
+    "invalidRoutesExcluded": ["pdf->png via qpdf", "gif/png->ico routes", "svg->ico routes", "tool-derived trim/thumbnail/resize routes"]
+  },
+  "pdfToPng": {
+    "status": "disabled",
+    "engine": "none",
+    "legacyInvalidEngine": "qpdf",
+    "runtimeProbe": {
+      "pdftoppm": "available",
+      "version": "24.02.0",
+      "path": "/usr/bin/pdftoppm"
+    },
+    "reason": "pdftoppm exists in runtime, but FileStudio has no standalone executable Poppler rasterization adapter bound to the conversion matrix. QPDF is no longer used for PDF rasterization."
+  },
+  "qpdf": {
+    "invalidBindingsFound": ["legacy pdf:to-png declaration"],
+    "currentRoutingBindings": []
+  },
+  "apis": {
+    "getTargetsForSource": "implemented in src/lib/conversion-routing/destinations.ts",
+    "getSourcesForTarget": "implemented in src/lib/conversion-routing/destinations.ts",
+    "getDirectConversion": "implemented in src/lib/conversion-matrix/matrix.ts",
+    "getEffectiveAvailability": "implemented in src/lib/conversion-matrix/matrix.ts",
+    "getBestRoute": "implemented in src/lib/conversion-routing/destinations.ts"
+  },
+  "duplicateRegistries": {
+    "migrated": [
+      "conversion-routing graph source",
+      "capabilities route multistep enrichment",
+      "desktop multistep job route recomputation",
+      "operation catalog PDF->PNG invalid QPDF binding"
+    ],
+    "pending": [
+      "engine-local capability matrices",
+      "browser tool capability display matrix",
+      "desktop capability groups",
+      "presets target format list",
+      "detector extension/MIME maps",
+      "legacy media supported-conversions",
+      "local-agent image format maps"
+    ]
+  },
+  "validation": {
+    "typecheck": "PASS - pnpm typecheck",
+    "lint": "PASS with 3 pre-existing next/no-img-element warnings in compare-inspector-modal.tsx",
+    "tests": "PASS - 865 passed, 1 skipped",
+    "build": "PASS - pnpm build",
+    "windowsPortable": {
+      "build": "PASS",
+      "verify": "PASS - 98 checks",
+      "artifact": "dist/windows/Anclora-FileStudio-Windows-x64-Core.zip",
+      "sha256": "8bf49ea5991a41d452923f7785c5932dc9ebfd546c031159fd437f61d5b03f60"
+    },
+    "linuxPortable": {
+      "build": "PASS",
+      "verify": "PASS - 54 checks",
+      "artifact": "dist/linux/Anclora-FileStudio-Linux-x64.tar.zst",
+      "sha256": "116267022cd1a149f417487bebe908e3a3dafae5ed86a1abc33c8a424074e0eb"
+    }
+  }
+}

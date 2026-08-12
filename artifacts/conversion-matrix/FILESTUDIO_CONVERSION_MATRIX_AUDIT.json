@@ -1,0 +1,235 @@
+{
+  "audit": {
+    "repository": "/home/toni/workspace/anclora/anclora-filestudio",
+    "date": "2026-08-12",
+    "scope": "canonical conversion matrix architecture audit",
+    "codeModified": false,
+    "result": "FAIL",
+    "reason": "Current conversion knowledge is split across format catalog, operation catalog, engine-local matrices, browser capability matrices, capabilities API enrichment, presets and UI helper maps. PDF to PNG is declared as QPDF but no QPDF rasterization implementation exists."
+  },
+  "counts": {
+    "formatCatalogFormats": 50,
+    "operationCatalogOperations": 18,
+    "operationCatalogDeclaredPairRows": 222,
+    "operationCatalogUniquePairs": 146,
+    "operationCatalogSources": 28,
+    "operationCatalogTargets": 20,
+    "implementedApproxDirectEdgeRows": 307,
+    "implementedApproxUniquePairs": 239,
+    "routerBestReachableRoutesWithAllCatalogDeps": 273,
+    "routerBestDirectRoutesWithAllCatalogDeps": 144,
+    "routerBestMultistepRoutesWithAllCatalogDeps": 129,
+    "browserStructuredRoutes": 17
+  },
+  "formats": {
+    "catalogIds": [
+      "mp3",
+      "m4a",
+      "wav",
+      "flac",
+      "ogg",
+      "aac",
+      "mp4",
+      "webm",
+      "mkv",
+      "avi",
+      "mov",
+      "wmv",
+      "ts",
+      "jpeg",
+      "png",
+      "webp",
+      "avif",
+      "tiff",
+      "gif",
+      "docx",
+      "doc",
+      "odt",
+      "rtf",
+      "xlsx",
+      "xls",
+      "ods",
+      "pptx",
+      "ppt",
+      "odp",
+      "pdf",
+      "epub",
+      "mobi",
+      "azw3",
+      "zip",
+      "7z",
+      "tar",
+      "gz",
+      "bz2",
+      "xz",
+      "json",
+      "yaml",
+      "toml",
+      "xml",
+      "csv",
+      "tsv",
+      "markdown",
+      "txt",
+      "html",
+      "rst",
+      "tex"
+    ],
+    "extraDetectedOrImplementedNotCanonical": [
+      "jpg",
+      "tif",
+      "opus",
+      "aiff",
+      "wma",
+      "alac",
+      "flv",
+      "m4v",
+      "mts",
+      "bmp",
+      "ico",
+      "svg",
+      "heic",
+      "heif",
+      "azw",
+      "fb2",
+      "rar",
+      "wim",
+      "lz4",
+      "yml",
+      "htm",
+      "latex",
+      "srt"
+    ],
+    "categoryConflicts": [
+      {
+        "format": "pdf",
+        "issue": "FileCategory has dedicated 'pdf', requested UX taxonomy may group under document; keep technical category separate and map to UX category later."
+      },
+      {
+        "format": "markdown/md",
+        "issue": "FORMAT_CATALOG id is markdown, OPERATION_CATALOG uses md. Routing treats md as source node; format catalog treats md as extension alias."
+      },
+      {
+        "format": "jpeg/jpg",
+        "issue": "FORMAT_CATALOG id is jpeg and outputExtension is jpg, engines and UI mix jpeg and jpg."
+      },
+      {
+        "format": "tex/latex",
+        "issue": "FORMAT_CATALOG id is tex, Pandoc engine canonical reader is latex, OPERATION_CATALOG uses tex."
+      }
+    ]
+  },
+  "engines": [
+    {
+      "id": "sharp-image",
+      "purpose": "image conversion, resize, optimize, metadata stripping; background-removal also depends on sharp",
+      "supportedInputs": ["jpeg", "jpg", "png", "webp", "avif", "tiff", "gif"],
+      "supportedOutputs": ["jpeg", "png", "webp", "avif", "tiff", "gif"],
+      "web": "browser has separate canvas implementation for jpeg/png/webp only",
+      "availability": "dynamic import('sharp')"
+    },
+    {
+      "id": "ffmpeg-media",
+      "purpose": "audio/video transcode, remux, trim, normalize, extract audio, thumbnails, frames, subtitles, gif",
+      "supportedInputs": ["mp3", "m4a", "wav", "flac", "ogg", "mp4", "webm", "mkv", "avi", "mov"],
+      "supportedOutputs": ["mp3", "m4a", "wav", "flac", "ogg", "mp4", "webm", "mkv", "gif", "jpg", "srt"],
+      "web": "no",
+      "availability": "ffmpeg -version and ffprobe -version via ProcessRunner"
+    },
+    {
+      "id": "qpdf",
+      "purpose": "PDF page/document operations only",
+      "supportedInputs": ["pdf"],
+      "supportedOutputs": ["pdf"],
+      "web": "browser has separate pdf-lib implementation for some PDF tools",
+      "availability": "qpdf --version via ProcessRunner"
+    },
+    {
+      "id": "poppler/pdftoppm",
+      "purpose": "PDF rasterization helper currently probed only inside TesseractEngine for PDF OCR",
+      "supportedInputs": ["pdf"],
+      "supportedOutputs": ["png pages"],
+      "web": "no",
+      "availability": "pdftoppm -v via TesseractEngine"
+    },
+    {
+      "id": "tesseract",
+      "purpose": "OCR image to text/searchable PDF and PDF to text via pdftoppm",
+      "supportedInputs": ["png", "jpeg", "jpg", "tiff", "tif", "webp", "pdf"],
+      "supportedOutputs": ["txt", "pdf"],
+      "web": "no",
+      "availability": "tesseract --version plus --list-langs; pdftoppm for PDF OCR"
+    },
+    {
+      "id": "pandoc",
+      "purpose": "document/plain-text conversion",
+      "supportedInputs": ["markdown", "md", "html", "htm", "rst", "docx", "odt", "latex", "tex", "txt"],
+      "supportedOutputs": ["md", "html", "docx", "odt", "rst", "tex", "txt"],
+      "web": "no",
+      "availability": "pandoc --version via ProcessRunner"
+    },
+    {
+      "id": "libreoffice",
+      "purpose": "Office/ODF to PDF and Office/ODF cross conversion",
+      "supportedInputs": ["docx", "doc", "odt", "rtf", "xlsx", "xls", "ods", "pptx", "ppt"],
+      "supportedOutputs": ["pdf", "odt", "docx", "ods", "xlsx", "pptx"],
+      "web": "no",
+      "availability": "libreoffice/soffice --version via ProcessRunner"
+    },
+    {
+      "id": "calibre",
+      "purpose": "ebook conversion",
+      "supportedInputs": ["epub", "mobi", "azw3", "html", "docx"],
+      "supportedOutputs": ["mobi", "azw3", "pdf", "epub"],
+      "web": "no",
+      "availability": "ebook-convert --version via ProcessRunner"
+    },
+    {
+      "id": "sevenzip",
+      "purpose": "archive extract and repack",
+      "supportedInputs": ["zip", "7z", "tar", "gz", "bz2", "xz", "rar", "wim", "lz4"],
+      "supportedOutputs": ["zip", "7z", "tar"],
+      "web": "no",
+      "availability": "7z i via ProcessRunner"
+    },
+    {
+      "id": "data-ts",
+      "purpose": "structured data conversion",
+      "supportedInputs": ["json", "yaml", "toml", "xml", "csv", "tsv"],
+      "supportedOutputs": ["json", "yaml", "toml", "xml", "csv", "tsv"],
+      "web": "yes, separate browser matrix",
+      "availability": "dynamic imports of yaml, smol-toml, fast-xml-parser, csv-parse, csv-stringify"
+    },
+    {
+      "id": "browser",
+      "purpose": "Vercel-safe browser tools for images, PDF tools and structured data",
+      "supportedInputs": ["jpeg", "jpg", "png", "webp", "pdf", "json", "yaml", "yml", "toml", "xml", "csv", "tsv"],
+      "supportedOutputs": ["jpeg", "jpg", "png", "webp", "pdf", "zip", "json", "yaml", "toml", "xml", "csv", "tsv"],
+      "web": "yes",
+      "availability": "runtime target plus browser APIs"
+    }
+  ],
+  "pdfToPngRootCause": {
+    "rootCause": "OPERATION_CATALOG declares pdf:to-png as engineId qpdf with dependencies qpdf and pdftoppm. QpdfEngine only exposes and executes PDF to PDF operations. No Poppler rasterization engine/capability exists. Router therefore emits a direct pdf->png edge that later fails engine capability revalidation/execution as QPDF.",
+    "severity": "HIGH",
+    "affectedRoutes": ["pdf->png", "docx->pdf->png", "html/md/rst/tex->pdf->png", "pdf->png->jpeg/webp/avif/tiff/ico"]
+  },
+  "duplicateRegistries": [
+    "src/lib/domain/format-catalog.ts",
+    "src/lib/detection/file-detector.ts EXT_CATEGORY/MIME_CATEGORY/MAGIC_TABLE",
+    "src/lib/domain/operations.ts OPERATION_CATALOG",
+    "src/lib/engines/*/*-engine.ts engine-local matrices",
+    "src/lib/browser-conversion/capabilities.ts BROWSER_CONVERSION_MATRIX",
+    "src/lib/browser-tools/capabilities.ts WEB_TOOL_CAPABILITIES",
+    "src/lib/capabilities/desktop-capabilities.ts DESKTOP_PRO_GROUPS",
+    "src/components/presets/preset-manager.tsx BUILT_IN_PRESETS",
+    "src/components/converter/format-selector.tsx FORMAT_ICON_MAP/FORMAT_GRADIENT_MAP",
+    "src/lib/media/supported-conversions.ts legacy media matrix",
+    "apps/local-agent/src/operations.ts image MIME/format maps"
+  ],
+  "canonicalRecommendation": {
+    "currentSourceOfTruth": "FORMAT_CATALOG for formats; OPERATION_CATALOG for a partial declared graph; engine registry for runtime probes. No single source of truth exists today for executable conversion edges.",
+    "proposedSourceOfTruth": "Evolve OPERATION_CATALOG into the canonical Conversion Matrix, backed by FORMAT_CATALOG and EngineRegistry capability probes. Do not create a second registry unless OPERATION_CATALOG cannot be migrated without breaking engine-local capabilities.",
+    "model": ["FormatDefinition", "ConversionEdge", "RuntimeCapability", "ConversionRoute", "OCRCapability", "OperationCost"],
+    "availabilityFormula": "declared edge + implementation binding + platform compatibility + engine available + dependency health + runtime constraints = available"
+  }
+}
