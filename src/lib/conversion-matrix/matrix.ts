@@ -77,8 +77,8 @@ function cross(
 const IMAGE_FORMATS = ["jpg", "png", "webp", "avif", "tiff", "gif"] as const;
 const BROWSER_IMAGE_FORMATS = ["jpg", "png", "webp"] as const;
 const DATA_FORMATS = ["json", "yaml", "toml", "xml", "csv", "tsv"] as const;
-const AUDIO_FORMATS = ["mp3", "m4a", "wav", "flac", "ogg"] as const;
-const VIDEO_INPUTS = ["mp4", "webm", "mkv", "avi", "mov"] as const;
+const AUDIO_FORMATS = ["mp3", "m4a", "wav", "flac", "ogg", "aac"] as const;
+const VIDEO_INPUTS = ["mp4", "webm", "mkv", "avi", "mov", "wmv", "ts"] as const;
 const VIDEO_OUTPUTS = ["mp4", "webm", "mkv"] as const;
 const ARCHIVE_INPUTS = ["zip", "7z", "tar", "gz", "bz2", "xz"] as const;
 const ARCHIVE_OUTPUTS = ["zip", "7z", "tar"] as const;
@@ -94,8 +94,10 @@ const PANDOC_EDGES: CanonicalConversionEdge[] = [
 
 const LIBREOFFICE_EDGES: CanonicalConversionEdge[] = [
   ...cross(["docx", "doc", "odt", "rtf"], ["pdf", "odt", "docx"], { operationId: "office:to-pdf", implementationId: "libreoffice-office-convert", engineId: "libreoffice", dependencies: ["libreoffice"], lossProfile: "lossy-controlled", priority: 95 }),
+  ...cross(["docx", "doc", "odt"], ["rtf"], { operationId: "office:convert", implementationId: "libreoffice-office-convert", engineId: "libreoffice", dependencies: ["libreoffice"], lossProfile: "lossy-controlled", priority: 85 }),
   ...cross(["xlsx", "xls", "ods"], ["pdf", "ods", "xlsx"], { operationId: "office:to-pdf", implementationId: "libreoffice-office-convert", engineId: "libreoffice", dependencies: ["libreoffice"], lossProfile: "lossy-controlled", priority: 95 }),
-  ...cross(["pptx", "ppt"], ["pdf", "pptx"], { operationId: "office:to-pdf", implementationId: "libreoffice-office-convert", engineId: "libreoffice", dependencies: ["libreoffice"], lossProfile: "lossy-controlled", priority: 95 }),
+  ...cross(["pptx", "ppt", "odp"], ["pdf"], { operationId: "office:to-pdf", implementationId: "libreoffice-office-convert", engineId: "libreoffice", dependencies: ["libreoffice"], lossProfile: "lossy-controlled", priority: 95 }),
+  ...cross(["pptx", "ppt", "odp"], ["pptx"], { operationId: "office:convert", implementationId: "libreoffice-office-convert", engineId: "libreoffice", dependencies: ["libreoffice"], lossProfile: "lossy-controlled", priority: 85 }),
 ];
 
 const CALIBRE_EDGES: CanonicalConversionEdge[] = [
@@ -134,6 +136,51 @@ export const CANONICAL_CONVERSION_EDGES: readonly CanonicalConversionEdge[] = [
   }),
   edge({
     source: "pdf",
+    target: "txt",
+    operationId: "pdf:extract-text",
+    implementationId: "poppler-pdftotext-extract-text",
+    engineId: "poppler",
+    dependencies: ["poppler", "pdftotext"],
+    lossProfile: "lossy-controlled",
+    priority: 75,
+    supportsAsIntermediate: false,
+    notes: "Text extraction without layout. Scanned PDFs without a text layer fail with a controlled OCR hint. Not an intermediate: extraction chains must not fake layout reconstruction (e.g. PDF→DOCX).",
+  }),
+  edge({
+    source: "pdf",
+    target: "html",
+    operationId: "pdf:extract-html",
+    implementationId: "poppler-pdftohtml-extract-html",
+    engineId: "poppler",
+    dependencies: ["poppler", "pdftohtml"],
+    lossProfile: "structural-risk",
+    priority: 75,
+    supportsAsIntermediate: false,
+    notes: "Single HTML via pdftohtml; image assets are delivered together (ZIP when present). Not an intermediate: lossy extraction must not feed reconstruction routes.",
+  }),
+  edge({
+    source: "pdf",
+    target: "md",
+    operationId: "pdf:extract-markdown",
+    implementationId: "poppler-pdftohtml-pandoc-markdown",
+    engineId: "poppler",
+    dependencies: ["poppler", "pdftohtml", "pandoc"],
+    lossProfile: "structural-risk",
+    priority: 75,
+    supportsAsIntermediate: false,
+    notes: "pdftohtml extraction normalized to GFM Markdown via Pandoc. No invented structure. Not an intermediate: PDF→DOCX via Markdown stays UNAVAILABLE by policy.",
+  }),
+  ...cross(["png", "jpg", "webp", "tiff"], ["pdf"], {
+    operationId: "image:to-pdf",
+    implementationId: "sharp-image-to-pdf",
+    engineId: "sharp-image",
+    dependencies: ["sharp-image", "sharp"],
+    lossProfile: "lossy-controlled",
+    priority: 70,
+    notes: "Single image → single-page PDF via Sharp normalization + pdf-lib embedding.",
+  }),
+  edge({
+    source: "pdf",
     target: "png",
     operationId: "pdf:to-png",
     implementationId: "qpdf-pdf-to-png-invalid",
@@ -169,6 +216,9 @@ function dependencyAvailable(dependency: string, runtime: RuntimeCapabilitySet):
   if (dependency === "pdftoppm") {
     return runtime.engines.get("poppler")?.state === "available" ||
       runtime.engines.get("tesseract")?.capabilities.includes("pdftoppm") === true;
+  }
+  if (dependency === "pdftotext" || dependency === "pdftohtml") {
+    return runtime.engines.get("poppler")?.capabilities.includes(dependency) === true;
   }
   if (dependency === "7z") return runtime.engines.get("sevenzip")?.state === "available";
   if (dependency === "ebook-convert") return runtime.engines.get("calibre")?.state === "available";

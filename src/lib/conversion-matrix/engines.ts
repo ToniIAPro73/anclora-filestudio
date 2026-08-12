@@ -21,7 +21,7 @@ export const CANONICAL_ENGINES: readonly CanonicalEngineDefinition[] = [
   { id: "ffmpeg-media", label: "FFmpeg", platforms: ["windows", "linux"], dependencies: ["ffmpeg", "ffprobe"], purpose: "Audio and video conversion" },
   { id: "ffprobe", label: "FFprobe", platforms: ["windows", "linux"], dependencies: ["ffprobe"], purpose: "Media probing dependency" },
   { id: "qpdf", label: "QPDF", platforms: ["windows", "linux"], dependencies: ["qpdf"], purpose: "PDF structural tools" },
-  { id: "poppler", label: "Poppler", platforms: ["windows", "linux"], dependencies: ["pdftoppm"], purpose: "PDF rasterization helper" },
+  { id: "poppler", label: "Poppler", platforms: ["windows", "linux"], dependencies: ["pdftoppm", "pdftotext", "pdftohtml"], purpose: "PDF rasterization and text/HTML extraction helper" },
   { id: "tesseract", label: "Tesseract", platforms: ["windows", "linux"], dependencies: ["tesseract"], purpose: "OCR" },
   { id: "calibre", label: "Calibre", platforms: ["windows", "linux"], dependencies: ["ebook-convert"], purpose: "Ebook conversion" },
   { id: "sevenzip", label: "7-Zip", platforms: ["windows", "linux"], dependencies: ["7z"], purpose: "Archive repacking" },
