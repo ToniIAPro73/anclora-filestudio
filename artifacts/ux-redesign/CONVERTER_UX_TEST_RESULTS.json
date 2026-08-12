@@ -1,0 +1,57 @@
+{
+  "date": "2026-08-12",
+  "commands": {
+    "typecheck": "pass",
+    "lint": "pass",
+    "test": "pass",
+    "build": "pass"
+  },
+  "testTotals": {
+    "passed": 849,
+    "skipped": 1,
+    "failed": 0,
+    "files": 68
+  },
+  "newTests": {
+    "conversionRouting": 30,
+    "multistepProcessor": 7,
+    "capabilitiesIntegration": 5,
+    "destinationPicker": 12
+  },
+  "regressionSubsets": {
+    "imageConversion": "pass (sharp-engine 15 + command-builder-quality 10)",
+    "pdfTools": "pass (qpdf-engine 2; PdfTool sin cambios)",
+    "metadataApi": "pass (metadata-api-contract 6 + metadata-getVideoMetadata 12)",
+    "extensionlessDetection": "pass (file-detector-epub + file-detector-markdown-yaml)",
+    "outputNaming": "pass (buildConvertedOutputFileName en universal-job-processor 36)",
+    "enginePresets": "pass (presets a nivel motor en sharp/supported-conversions)"
+  },
+  "acceptanceCriteria": {
+    "DESTINATION-FIRST FLOW": "pass",
+    "DIRECT CONVERSION": "pass",
+    "ONE-INTERMEDIATE ROUTING": "pass",
+    "TWO-INTERMEDIATE ROUTING": "pass",
+    ">2 INTERMEDIATES BLOCKED": "pass",
+    "CONVERSION / TOOLS SEPARATION": "pass",
+    "PRESETS ADVANCED ONLY": "pass",
+    "TECHNICAL DETAILS COLLAPSED": "pass",
+    "IMAGE TOOLS REGRESSION": "pass",
+    "PDF TOOLS REGRESSION": "pass",
+    "TYPECHECK": "pass",
+    "TESTS": "pass",
+    "BUILD": "pass"
+  },
+  "verdict": "FILESTUDIO CONVERTER UX REDESIGN: PASS",
+  "notes": [
+    "typecheck: tsc --noEmit limpio (exit 0).",
+    "lint: 0 errores; 3 warnings preexistentes de <img> en compare-inspector-modal.tsx (ajenos al rediseño).",
+    "test: suite completa 849 passed / 1 skipped / 0 failed en 68 archivos; el skip es preexistente (windows-tool-resolution).",
+    "build: next build exitoso (compilado 23.4s, 10/10 páginas estáticas). Warning preexistente de Turbopack sobre acceso fs dinámico en src/lib/config.ts / _desktop-route-loader; no introducido por este rediseño.",
+    "Subsets de regresión §70: 105/105 en sharp-engine, command-builder-quality, qpdf-engine, metadata-api-contract, metadata-getVideoMetadata, file-detector-epub, file-detector-markdown-yaml, universal-job-processor.",
+    "Nuevos tests: 54 en total (routing 30, multistep-processor 7, integración capacidades 5, componentes UI 12).",
+    "CONVERSION / TOOLS SEPARATION y PRESETS ADVANCED ONLY: evidencia por typecheck + revisión de código; sin test comportamental automatizado de la shell (pendiente E2E).",
+    "Smoke manual DOCX→EPUB de extremo a extremo pendiente: requiere binarios nativos y entorno desktop; cubierto por tests unitarios con motores mock e integración del endpoint con mocks.",
+    "Cobertura del grafo limitada a OPERATION_CATALOG: pocas rutas multistep reales hoy (p.ej. gif→png→ico); ico no tiene entrada en FORMAT_CATALOG (tolerado).",
+    "Sin commits: todos los cambios quedan en working tree a cargo del usuario."
+  ]
+}
