@@ -382,3 +382,124 @@ FILESTUDIO UX V4: FAIL until final candidate passes native Windows QA
 Commits after final-gates work:
 
 - af58357 test(release): cover UX v4 final runtime gates
+- bbe051b fix(discovery): derive conversions from routing graph
+- 7befe59 fix(branding): align site identity icon metadata
+
+## Global Conversion Discovery Remediation
+
+Date: 2026-08-13
+
+Root cause:
+
+- Universal `/api/capabilities` used engine-local capabilities as the primary discovery source and only appended synthetic route capabilities for `classification === "multistep"`.
+- This mixed engine discovery with FileStudio discovery. When the UI selected `PDF -> PNG`, the global route was available but could be lost if the engine-local capability list did not align in the Windows runtime path.
+- Discovery is now global and route based: direct + one intermediate + two intermediates from the canonical routing graph.
+
+Implemented:
+
+- `getAllEffectiveTargets(source, engines, environment)`.
+- `getAllEffectiveSources(target, engines, environment)`.
+- Capabilities API now returns route-discovered capabilities (`route-source-target`) for universal file conversion targets, direct and multistep.
+- Execution recomputes and executes `route-source-target` server-side, so client route data is not trusted.
+- Multistep processor now respects actual final `result.outputPath`, including ZIP packaging from multi-page Poppler output.
+
+Audit:
+
+- 50 canonical formats audited for Windows, Linux and Web.
+- Duplicate target/source problems: 0 on Windows, Linux and Web.
+- Artifacts:
+  - `artifacts/conversion-discovery/FILESTUDIO_GLOBAL_DISCOVERY_AUDIT.md`
+  - `artifacts/conversion-discovery/FILESTUDIO_GLOBAL_DISCOVERY_AUDIT.json`
+
+## Windows PDF Routing Remediation
+
+PDF Windows audit:
+
+```text
+PDF DIRECT TARGETS: png, jpg, tiff
+PDF MULTISTEP TARGETS: -
+PDF ALL EFFECTIVE TARGETS: png, jpg, tiff
+```
+
+Checked targets:
+
+```text
+PDF -> DOCX: UNAVAILABLE — No effective route within two intermediates
+PDF -> TXT: UNAVAILABLE — No effective route within two intermediates
+PDF -> MD: UNAVAILABLE — No effective route within two intermediates
+PDF -> HTML: UNAVAILABLE — No effective route within two intermediates
+PDF -> ODT: UNAVAILABLE — No effective route within two intermediates
+PDF -> EPUB: UNAVAILABLE — No effective route within two intermediates
+PDF -> PNG: AVAILABLE DIRECT — pdf -> png
+PDF -> JPG: AVAILABLE DIRECT — pdf -> jpg
+PDF -> TIFF: AVAILABLE DIRECT — pdf -> tiff
+```
+
+Linux runtime smoke:
+
+- `/api/capabilities` for PDF returned `route-pdf-png`, state `available`, direct route `pdf -> png`, engine `poppler`.
+- PDF -> PNG job completed through the route execution path.
+- DOCX -> PNG multistep regression still completed via `docx -> pdf -> png`.
+
+Artifacts:
+
+- `artifacts/conversion-discovery/PDF_TO_PNG_CAPABILITIES_API_SMOKE.json`
+- `artifacts/conversion-discovery/DOCX_TO_PNG_MULTISTEP_REGRESSION.json`
+
+## Site Identity Icon Remediation
+
+Root cause:
+
+- Tab favicon metadata was already content-hashed and correct.
+- Chrome site identity/PWA icon can use the web manifest icon namespace separately from the tab favicon cache.
+- The app did not expose a content-hashed web manifest link for this namespace.
+
+Implemented:
+
+- Added `/site.webmanifest` route.
+- Rendered HTML now links `/site.webmanifest?v=<content-hash>`.
+- Web manifest `icons[]` point to current branding assets with their own `?v=<content-hash>` query.
+- Added `rel="shortcut icon"` alongside regular icon links.
+
+Agent-browser smoke:
+
+- Rendered head contains `/site.webmanifest?v=bac3d15333c3`.
+- Manifest icons contain hashed current assets:
+  - `/favicon-32.png?v=dae79a4eb5e8`
+  - `/icon.png?v=dcebc03b88f0`
+  - `/apple-touch-icon.png?v=888669799642`
+
+Artifact:
+
+- `artifacts/conversion-discovery/ICON_METADATA_SMOKE.json`
+
+## New Windows Candidate
+
+```text
+Artifact: dist/windows/Anclora-FileStudio-Windows-x64-Core.zip
+Size: 245802426 bytes
+SHA256: 3bb4986433ba2164c97a282bbbf38ad0ef1b18a6608abbac278dce7bd7218fb3
+Poppler: 26.02.0-0
+Yt-dlp: 2026.06.09
+```
+
+Validation:
+
+- `pnpm typecheck`: PASS
+- `pnpm lint`: PASS, 0 errors, 3 existing warnings
+- `pnpm test`: PASS, 913 passed, 1 skipped
+- `pnpm build`: PASS
+- Windows portable build: PASS
+- Windows portable verify: PASS, 98 checks
+- Windows portable smoke: PASS, 42/42 structural; native skipped in VPS
+
+Ready for Windows retest: YES.
+
+## Global Discovery Remediation Commits
+
+Local commits for global discovery remediation:
+
+- bbe051b fix(discovery): derive conversions from routing graph
+- 7befe59 fix(branding): align site identity icon metadata
+
+- HEAD docs(release): record global discovery retest candidate

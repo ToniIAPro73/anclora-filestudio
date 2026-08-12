@@ -1,0 +1,60 @@
+Anclora FileStudio
+Desktop PRO
+100% local
+
+Todo lo de la Web, más motores nativos, lotes pesados, historial local, diagnóstico y portables Windows/Linux.
+
+Inicio
+Convertir
+Herramientas
+Historial
+Diagnóstico
+Volver a Convertir
+Convertir a MP4
+
+Selecciona el archivo que quieres convertir.
+
+Sistema Listo
+CPU: 13%
+Disco: 92% Libre
+Archivo
+Análisis
+3. Ruta
+4. Progreso
+5. Resultado
+
+playlist
+
+Audio
+Vídeo 1080p
+0:53
+▶ Ver detalles técnicos
+
+playlist · UNKNOWN
+
+UNKNOWN
+MP4
+
+100 % local — el archivo no sale de tu equipo
+
+Detalles técnicos+
+Configuración avanzada+
+CALIDAD
+PERFIL DE ENTREGA
+Mejor disponible
+Mejor video y audio compatible; mux si hace falta
+MP4 compatible
+Compatible con más reproductores · puede requerir recodificación
+RESOLUCIÓN MÁXIMA
+Mejor disponible
+DISP.
+480
+P
+720
+P
+1080
+P
+
+La lista sale del análisis real de la fuente.
+
+Convertir a MP4

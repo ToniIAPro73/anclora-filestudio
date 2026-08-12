@@ -1,7 +1,7 @@
 {
   "date": "2026-08-12",
-  "scope": "UX v4 multimedia PASS plus final three gates preparation",
-  "final": "FAIL - Windows native QA still required for final PASS",
+  "scope": "UX v4 global conversion discovery remediation plus Windows retest candidate",
+  "final": "FAIL - ready for Windows native retest; native gates not run in VPS",
   "poppler": {
     "windowsNative": "BLOCKED - Windows runtime unavailable in VPS; use final candidate SHA256 243427e485b6ded9b204ceb879455590bad337448faea75bfe4a129d4bcc9f85",
     "windowsBundledPdftoppm": "PASS - tools/poppler/Library/bin/pdftoppm.exe present in final ZIP",
@@ -21,15 +21,15 @@
   "windowsPortable": {
     "qaFolder": "artifacts/ux-v4/windows-real-qa-20260812T195355Z",
     "zip": "dist/windows/Anclora-FileStudio-Windows-x64-Core.zip",
-    "zipSha256": "243427e485b6ded9b204ceb879455590bad337448faea75bfe4a129d4bcc9f85",
+    "zipSha256": "3bb4986433ba2164c97a282bbbf38ad0ef1b18a6608abbac278dce7bd7218fb3",
     "build": "PASS",
     "verify": "PASS - 98 checks",
-    "smoke": "PASS - 42/42 structural; native Windows acceptance skipped because powershell.exe unavailable in VPS",
+    "smoke": "PASS - 42/42 structural; native skipped",
     "launcher": "STRUCTURAL PASS",
     "health": "BLOCKED - native runtime not started",
     "rootHttp": "BLOCKED - native runtime not started",
     "stopCleanup": "BLOCKED - native runtime not started",
-    "toolsBundled": "PASS - Poppler, FFmpeg, yt-dlp, QPDF, Pandoc, 7-Zip inventory recorded"
+    "toolsBundled": "PASS"
   },
   "acquisition": {
     "status": "PARTIAL PASS",
@@ -183,8 +183,8 @@
   "validation": {
     "typecheck": "PASS",
     "lint": "PASS - 0 errors, 3 existing warnings",
-    "tests": "PASS - 896 passed, 1 skipped",
-    "build": "PASS - Turbopack NFT tracing warnings",
+    "tests": "PASS - 913 passed, 1 skipped",
+    "build": "PASS",
     "targetedPopplerRouterFavicon": "PASS - 52 tests",
     "targetedMediaQualityContracts": "PASS - 72 focused tests",
     "windowsPortableBuild": "PASS",
@@ -192,15 +192,20 @@
     "windowsPortableSmoke": "PASS - 42/42 structural; native skipped"
   },
   "blockers": [
-    "Windows native QA cannot run in this Linux VPS. Poppler Windows native, Windows launcher/health, PDF conversions, multistep Windows E2E, favicon fresh/incognito and old-build -> new-build cache invalidation remain BLOCKED until the final ZIP is executed on Windows 10/11 x64."
+    "Windows native retest is still required. Do not mark PDF→PNG Windows, site identity icon Windows, or old→new cache invalidation PASS from VPS."
   ],
   "remainingRisks": [
-    "Windows structural evidence is strong but not equivalent to native execution.",
-    "Favicon old-build -> new-build cache invalidation must be proven on normal Chrome/Edge profile without clearing cache.",
-    "DOCX -> PNG multistep relies on LibreOffice plus Poppler being effective in the Windows candidate; native QA must verify this route from UI.",
-    "Lint still reports three existing no-img-element warnings in compare-inspector-modal.tsx."
+    "Native Windows must verify PDF→PNG no longer shows unavailable message and uses bundled Poppler.",
+    "Chrome site identity icon cache behavior must be retested in normal Windows Chrome profile.",
+    "Semver smoke script still warns package is 7.8.5 while expected text says 7.8.4; structural smoke passes."
   ],
-  "commits": "af58357 test(release): cover UX v4 final runtime gates",
+  "commits": [
+    "HEAD docs(release): record global discovery retest candidate",
+    "7befe59 fix(branding): align site identity icon metadata",
+    "bbe051b fix(discovery): derive conversions from routing graph",
+    "069642f docs(release): record UX v4 final gate status",
+    "af58357 test(release): cover UX v4 final runtime gates"
+  ],
   "push": "NONE",
   "release": "NONE",
   "versionChanged": false,
@@ -307,5 +312,139 @@
       "certificationCommit": "af58357 test(release): cover UX v4 final runtime gates",
       "buildHead": "066001cf1238b843ae0ef9d331e184e0b95d632d (candidate was built before committing the same source state)"
     }
+  },
+  "globalConversionDiscoveryRemediation": {
+    "status": "PASS",
+    "rootCause": "Universal capabilities endpoint used engine-local capability output as the primary discovery source and only appended synthetic entries for classification=multistep. A route-discovered direct PDF→PNG could be lost when engine-local capabilities and routing were not aligned. Discovery now comes from global routing graph for direct + one/two intermediates.",
+    "canonicalFormatCount": 50,
+    "windowsDuplicateProblems": 0,
+    "linuxDuplicateProblems": 0,
+    "webDuplicateProblems": 0,
+    "artifacts": [
+      "artifacts/conversion-discovery/FILESTUDIO_GLOBAL_DISCOVERY_AUDIT.md",
+      "artifacts/conversion-discovery/FILESTUDIO_GLOBAL_DISCOVERY_AUDIT.json",
+      "artifacts/conversion-discovery/PDF_TO_PNG_CAPABILITIES_API_SMOKE.json",
+      "artifacts/conversion-discovery/DOCX_TO_PNG_MULTISTEP_REGRESSION.json"
+    ]
+  },
+  "windowsPdfRoutingRemediation": {
+    "status": "READY_FOR_WINDOWS_RETEST",
+    "pdfDirectTargets": [
+      "png",
+      "jpg",
+      "tiff"
+    ],
+    "pdfMultistepTargets": [],
+    "pdfAllEffectiveTargets": [
+      "png",
+      "jpg",
+      "tiff"
+    ],
+    "checkedTargets": {
+      "docx": {
+        "status": "UNAVAILABLE",
+        "reason": "No effective route within two intermediates",
+        "directAvailability": "not-direct"
+      },
+      "txt": {
+        "status": "UNAVAILABLE",
+        "reason": "No effective route within two intermediates",
+        "directAvailability": "not-direct"
+      },
+      "md": {
+        "status": "UNAVAILABLE",
+        "reason": "No effective route within two intermediates",
+        "directAvailability": "not-direct"
+      },
+      "html": {
+        "status": "UNAVAILABLE",
+        "reason": "No effective route within two intermediates",
+        "directAvailability": "not-direct"
+      },
+      "odt": {
+        "status": "UNAVAILABLE",
+        "reason": "No effective route within two intermediates",
+        "directAvailability": "not-direct"
+      },
+      "epub": {
+        "status": "UNAVAILABLE",
+        "reason": "No effective route within two intermediates",
+        "directAvailability": "not-direct"
+      },
+      "png": {
+        "status": "AVAILABLE DIRECT",
+        "route": "pdf -> png",
+        "directAvailability": "available"
+      },
+      "jpg": {
+        "status": "AVAILABLE DIRECT",
+        "route": "pdf -> jpg",
+        "directAvailability": "available"
+      },
+      "tiff": {
+        "status": "AVAILABLE DIRECT",
+        "route": "pdf -> tiff",
+        "directAvailability": "available"
+      }
+    },
+    "pdfToPngCapabilitiesApi": "PASS - route-pdf-png available and Linux smoke executed Poppler",
+    "note": "PDF→DOCX/TXT/MD/HTML/ODT/EPUB are unavailable in the current canonical matrix; no routes were invented."
+  },
+  "siteIdentityIconRemediation": {
+    "status": "READY_FOR_WINDOWS_RETEST",
+    "rootCause": "Tab favicon used hashed icon links, but there was no explicit hashed web manifest for Chrome site identity/PWA icon namespace. Added /site.webmanifest?v=<content-hash> and manifest icons with hashed current-branding assets.",
+    "renderedLinks": [
+      "<link rel=\"manifest\" href=\"/site.webmanifest?v=bac3d15333c3\">",
+      "<link rel=\"shortcut icon\" href=\"/favicon.ico?v=7488c656bbfe\" sizes=\"any\">",
+      "<link rel=\"icon\" href=\"/favicon-32.png?v=dae79a4eb5e8\" type=\"image/png\" sizes=\"32x32\">",
+      "<link rel=\"icon\" href=\"/favicon-512.png?v=dcebc03b88f0\" type=\"image/png\" sizes=\"512x512\">",
+      "<link rel=\"icon\" href=\"/icon.png?v=dcebc03b88f0\" type=\"image/png\" sizes=\"512x512\">",
+      "<link rel=\"icon\" href=\"/favicon.ico?v=7488c656bbfe\" sizes=\"any\">",
+      "<link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png?v=888669799642\" type=\"image/png\" sizes=\"180x180\">"
+    ],
+    "manifestIcons": [
+      {
+        "src": "/favicon-32.png?v=dae79a4eb5e8",
+        "sizes": "32x32",
+        "type": "image/png",
+        "purpose": "any"
+      },
+      {
+        "src": "/icon.png?v=dcebc03b88f0",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+      },
+      {
+        "src": "/apple-touch-icon.png?v=888669799642",
+        "sizes": "180x180",
+        "type": "image/png",
+        "purpose": "any"
+      }
+    ],
+    "staleIconFound": false
+  },
+  "newWindowsCandidate": {
+    "artifact": "/home/toni/workspace/anclora/anclora-filestudio/dist/windows/Anclora-FileStudio-Windows-x64-Core.zip",
+    "sizeBytes": 245802426,
+    "sha256": "3bb4986433ba2164c97a282bbbf38ad0ef1b18a6608abbac278dce7bd7218fb3",
+    "gitHead": "069642fe19ecbce9ef80751ec684dc94dece3acb",
+    "poppler": "26.02.0-0",
+    "ytdlp": "2026.06.09",
+    "ffmpeg": "win64-gpl locked",
+    "faviconHashes": {
+      "public/favicon.ico": "7488c656bbfe0ccb9093121463d3ed5e7a7c6ac94938288c4698bf9e56f27a0b",
+      "public/favicon-32.png": "dae79a4eb5e87187d0fc4b68a92821bf5bdccc3047f29c374efde83bc9a346a2",
+      "public/favicon-512.png": "dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73",
+      "public/icon.png": "dcebc03b88f0807387975cb2853897b02ac2740b76ec08b56d63b4355356aa73",
+      "public/apple-touch-icon.png": "8886697996420e1072c906b5d29d6e356ea712457fecffe3f94cc078e7edf8b0"
+    },
+    "localCommitsAfterBuild": [
+      "HEAD docs(release): record global discovery retest candidate",
+      "7befe59 fix(branding): align site identity icon metadata",
+      "bbe051b fix(discovery): derive conversions from routing graph",
+      "069642f docs(release): record UX v4 final gate status",
+      "af58357 test(release): cover UX v4 final runtime gates"
+    ]
   }
 }

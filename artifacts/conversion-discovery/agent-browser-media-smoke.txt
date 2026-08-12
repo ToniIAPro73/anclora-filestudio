@@ -1,0 +1,28 @@
+Anclora FileStudio
+Desktop PRO
+100% local
+
+Todo lo de la Web, más motores nativos, lotes pesados, historial local, diagnóstico y portables Windows/Linux.
+
+Inicio
+Convertir
+Herramientas
+Historial
+Diagnóstico
+Volver a Convertir
+Convertir a MP4
+
+Selecciona el archivo que quieres convertir.
+
+Sistema Listo
+CPU: 18%
+Disco: 92% Libre
+Añade el archivo
+Dispositivo
+URL
+
+Arrastra un archivo aquí
+
+Elegir archivo
+
+Tamaño máximo: 2 GB
