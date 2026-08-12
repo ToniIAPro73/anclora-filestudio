@@ -12,6 +12,7 @@ import {
   probeDiagnosticBinary,
   resolvePopplerBinary,
 } from "../../src/lib/diagnostics/toolchain-probe";
+import { resolvePopplerRuntimeBinary } from "../../src/lib/engines/pdf/poppler-engine";
 import { isAncloraWindowsRuntime } from "../../src/lib/runtime-platform";
 import { findLibreofficeBinary } from "../../src/lib/engines/document/libreoffice-engine";
 
@@ -80,6 +81,30 @@ describe("resolvePopplerBinary — Windows", () => {
     const expected = path.join(spaceDir, "Library", "bin", "pdftoppm.exe");
     const result = resolvePopplerBinary(spaceDir, true, (p) => p === expected);
     expect(result).toBe(expected);
+  });
+});
+
+describe("ENGINE alignment — Poppler runtime resolver", () => {
+  it("ENGINE-003 uses the same bundled Windows path shape for diagnostics and execution", () => {
+    process.env.ANCLORA_FILESTUDIO_PLATFORM = "windows";
+    const previousPopplerPath = process.env.ANCLORA_FILESTUDIO_POPPLER_PATH;
+    const previousCwd = process.cwd();
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "anclora-poppler-align-"));
+    try {
+      const popplerRoot = path.join(tempDir, "tools", "poppler");
+      const bundled = path.join(popplerRoot, "Library", "bin", "pdftoppm.exe");
+      fs.mkdirSync(path.dirname(bundled), { recursive: true });
+      fs.writeFileSync(bundled, "");
+      delete process.env.ANCLORA_FILESTUDIO_POPPLER_PATH;
+      process.chdir(tempDir);
+
+      expect(resolvePopplerRuntimeBinary()).toBe(resolvePopplerBinary(popplerRoot, true));
+    } finally {
+      process.chdir(previousCwd);
+      if (previousPopplerPath === undefined) delete process.env.ANCLORA_FILESTUDIO_POPPLER_PATH;
+      else process.env.ANCLORA_FILESTUDIO_POPPLER_PATH = previousPopplerPath;
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 });
 

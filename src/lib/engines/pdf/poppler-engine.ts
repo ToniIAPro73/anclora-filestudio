@@ -14,37 +14,25 @@ import type { UniversalFileDescriptor } from "../../domain/descriptors";
 import { CONFIG } from "../../config";
 import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
+import { resolvePopplerBinary as resolveDiagnosticPopplerBinary } from "../../diagnostics/toolchain-probe";
+import { isAncloraWindowsRuntime } from "../../runtime-platform";
 
 const ENGINE_ID: EngineId = "poppler";
 const OUTPUTS = ["png", "jpg", "tiff"] as const;
 type RasterOutputFormat = (typeof OUTPUTS)[number];
 
-function resolvePopplerBinary(): string {
+export function resolvePopplerRuntimeBinary(): string {
   const configured = CONFIG.media.binaries.poppler;
-  const isWindows = process.platform === "win32";
+  const isWindows = isAncloraWindowsRuntime();
   const executable = isWindows ? "pdftoppm.exe" : "pdftoppm";
 
   if (configured) {
-    const candidates = [
-      configured,
-      path.join(configured, "Library", "bin", executable),
-      path.join(configured, "bin", executable),
-      path.join(configured, executable),
-    ];
-    for (const candidate of candidates) {
-      if (fs.existsSync(candidate)) return candidate;
-    }
+    if (fs.existsSync(configured) && fs.statSync(configured).isFile()) return configured;
+    return resolveDiagnosticPopplerBinary(configured, isWindows);
   }
 
   const portableRoot = path.resolve(process.cwd(), "tools", "poppler");
-  const portableCandidates = [
-    path.join(portableRoot, "Library", "bin", executable),
-    path.join(portableRoot, "bin", executable),
-    path.join(portableRoot, executable),
-  ];
-  for (const candidate of portableCandidates) {
-    if (fs.existsSync(candidate)) return candidate;
-  }
+  if (fs.existsSync(portableRoot)) return resolveDiagnosticPopplerBinary(portableRoot, isWindows);
 
   return executable;
 }
@@ -57,7 +45,7 @@ export class PopplerEngine implements ConversionEngine {
   private _runner: ProcessRunner | null = null;
 
   private getRunner(): ProcessRunner {
-    if (!this._runner) this._runner = new ProcessRunner(resolvePopplerBinary(), 120_000);
+    if (!this._runner) this._runner = new ProcessRunner(resolvePopplerRuntimeBinary(), 120_000);
     return this._runner;
   }
 

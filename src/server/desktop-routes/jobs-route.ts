@@ -23,6 +23,10 @@ import {
 import { normalizeFormatId } from "@/lib/domain/format-catalog";
 import { getAvailableEngineIds } from "@/lib/conversion-routing/server";
 import {
+  resolveInputFormatForJob,
+  validateExplicitRouteSource,
+} from "@/lib/jobs/source-format-contract";
+import {
   processMultistepJob,
   type MultistepRouteSpec,
 } from "@/lib/jobs/multistep-processor";
@@ -349,6 +353,16 @@ async function handleMultistepJob(
     inputId!,
   );
   const resolvedInputFormat = normalizeFormatId(resolveInputFormatForJob(descriptor)) ?? resolveInputFormatForJob(descriptor);
+  const explicitSourceValidation = validateExplicitRouteSource(routeRef.source, resolvedInputFormat);
+  if (!explicitSourceValidation.valid) {
+    return NextResponse.json(
+      {
+        error: `El archivo seleccionado es ${resolvedInputFormat.toUpperCase()}, pero esta conversión requiere ${explicitSourceValidation.expected.toUpperCase()}.`,
+        code: "SOURCE_FORMAT_MISMATCH",
+      },
+      { status: 422 },
+    );
+  }
 
   // Recompute the best route with current engine availability
   const availableEngineIds = await getAvailableEngineIds();
@@ -579,52 +593,6 @@ interface UniversalJobParams {
   inputMimeType: string;
   inputFormat: string;
   options: Record<string, unknown>;
-}
-
-/**
- * Resolves the inputFormat to pass to the engine.
- * Priority: extension (if known and authoritative) > detectedFormat > extension > "unknown".
- * Prevents content-based misdetections (e.g., .md detected as yaml) from reaching engines.
- */
-function resolveInputFormatForJob(descriptor: {
-  detectedFormat: string | null;
-  extension: string | null;
-}): string {
-  const ext = descriptor.extension?.toLowerCase() ?? null;
-  const detected = descriptor.detectedFormat?.toLowerCase() ?? null;
-
-  // Known extensions that must always map to their format, regardless of content detection.
-  // These are formats where content heuristics commonly produce false positives.
-  const EXTENSION_AUTHORITATIVE: Record<string, string> = {
-    md: "md",
-    markdown: "markdown",
-    html: "html",
-    htm: "html",
-    txt: "txt",
-    rst: "rst",
-    tex: "latex",
-    latex: "latex",
-  };
-
-  if (ext && EXTENSION_AUTHORITATIVE[ext]) {
-    return EXTENSION_AUTHORITATIVE[ext];
-  }
-
-  // If extension matches a known structured-data format, trust the extension
-  const STRUCTURED_DATA_EXTS = new Set([
-    "json",
-    "yaml",
-    "yml",
-    "toml",
-    "xml",
-    "csv",
-    "tsv",
-  ]);
-  if (ext && STRUCTURED_DATA_EXTS.has(ext)) {
-    return ext;
-  }
-
-  return detected ?? ext ?? "unknown";
 }
 
 function createUniversalJob(params: UniversalJobParams): JobRow {
