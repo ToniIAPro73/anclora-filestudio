@@ -15,6 +15,16 @@ import {
   extractEngineIdFromCapabilityId,
   extractOutputFormatFromCapabilityId,
 } from "@/lib/jobs/capability-routing";
+import {
+  getAvailableDestinations,
+  parseRouteCapabilityId,
+  qualityBand,
+} from "@/lib/conversion-routing";
+import { getAvailableEngineIds } from "@/lib/conversion-routing/server";
+import {
+  processMultistepJob,
+  type MultistepRouteSpec,
+} from "@/lib/jobs/multistep-processor";
 import { getDb } from "@/lib/infrastructure/db/database";
 import type { JobRow } from "@/lib/infrastructure/db/job-repository";
 import path from "path";
@@ -143,6 +153,12 @@ async function handleUniversalJob(
       },
       { status: 400 },
     );
+  }
+
+  // Multistep route jobs (synthetic `route-{source}-{destination}` capability ids)
+  const routeRef = parseRouteCapabilityId(capabilityId);
+  if (routeRef) {
+    return handleMultistepJob(data, clientIp, routeRef);
   }
 
   // Resolve the engine from the capability ID — NOT trusted from client
@@ -293,6 +309,96 @@ async function handleUniversalJob(
 
   // Route to universal processor
   processUniversalJob(job.id).catch(console.error);
+
+  return NextResponse.json({ jobId: job.id, status: job.status });
+}
+
+// ── Multistep route job handler ───────────────────────────────────────────────
+
+/**
+ * Handles jobs for synthetic `route-{source}-{destination}` capability ids.
+ * The route is recomputed server-side from current engine availability —
+ * client-supplied steps are never trusted.
+ */
+async function handleMultistepJob(
+  data: z.infer<typeof JobRequestSchema>,
+  clientIp: string,
+  routeRef: { source: string; destination: string },
+): Promise<NextResponse> {
+  const { capabilityId, inputId, options } = data;
+
+  const inputInfo = resolveInputFromId(inputId!);
+  if (!inputInfo) {
+    return NextResponse.json(
+      {
+        error: "Input no encontrado. Puede haber expirado.",
+        code: "INPUT_NOT_FOUND",
+      },
+      { status: 404 },
+    );
+  }
+
+  const descriptor = await buildDescriptor(
+    inputInfo.localPath,
+    {
+      kind: "local-upload",
+      originalName: inputInfo.originalName,
+      storedRelativePath: inputInfo.storedRelativePath,
+    },
+    inputId!,
+  );
+  const resolvedInputFormat = resolveInputFormatForJob(descriptor);
+
+  // Recompute the best route with current engine availability
+  const availableEngineIds = await getAvailableEngineIds();
+  const routes = getAvailableDestinations(resolvedInputFormat, availableEngineIds);
+  const route = routes.find((r) => r.destination === routeRef.destination);
+
+  if (!route || qualityBand(route.score) === "not-recommended") {
+    return NextResponse.json(
+      {
+        error: `No hay una ruta de conversión disponible de ${resolvedInputFormat} a ${routeRef.destination}.`,
+        code: "ROUTE_NOT_AVAILABLE",
+      },
+      { status: 422 },
+    );
+  }
+
+  const multistepRoute: MultistepRouteSpec = {
+    destination: route.destination,
+    steps: route.steps.map((step) => ({
+      source: step.source,
+      target: step.target,
+      operationId: step.operationId,
+      engineId: step.engineId,
+      lossProfile: step.lossProfile,
+    })),
+  };
+
+  console.log(
+    `[jobs-route] Multistep job: originalName=${inputInfo.originalName}` +
+      ` inputFormat=${resolvedInputFormat}` +
+      ` destination=${route.destination}` +
+      ` steps=${multistepRoute.steps.map((s) => `${s.source}->${s.target}`).join(",")}`,
+  );
+
+  const job = createUniversalJob({
+    inputReference: inputInfo.storedRelativePath,
+    outputFormat: route.destination,
+    quality: "0",
+    clientIp,
+    operation: "multistep-convert",
+    inputKind: "universal-file",
+    inputTitle: inputInfo.originalName,
+    capabilityId: capabilityId!,
+    engineId: route.steps[0]?.engineId ?? "unknown",
+    category: descriptor.category,
+    inputMimeType: descriptor.detectedMimeType ?? "application/octet-stream",
+    inputFormat: resolvedInputFormat,
+    options: { ...(options ?? {}), multistepRoute },
+  });
+
+  processMultistepJob(job.id).catch(console.error);
 
   return NextResponse.json({ jobId: job.id, status: job.status });
 }

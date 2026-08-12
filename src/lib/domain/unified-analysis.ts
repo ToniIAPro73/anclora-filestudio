@@ -4,6 +4,7 @@
 import type { FileCategory, FileAttributes } from "./descriptors";
 import type { MediaDescriptor } from "../media/probe";
 import type { EngineId, MobilePortability } from "./engines";
+import type { ConversionRouteSummary } from "../conversion-routing/types";
 
 // ── Discriminants ─────────────────────────────────────────────────────────────
 
@@ -108,6 +109,8 @@ export interface CapabilityInfo {
   mobilePortability: MobilePortability;
   /** Warnings specific to this capability */
   warnings: string[];
+  /** Route summary when this capability is (or is reachable via) a conversion route */
+  route?: ConversionRouteSummary;
 }
 
 // ── Type guards ───────────────────────────────────────────────────────────────
@@ -150,6 +153,7 @@ export function normalizeCapabilityInfo(
     mobilePortability: MobilePortability;
     warnings: string[];
     unavailableReason?: string;
+    route?: ConversionRouteSummary;
   }
 ): CapabilityInfo {
   // Map legacy state values to unified state
@@ -175,5 +179,6 @@ export function normalizeCapabilityInfo(
     engineId: cap.engineId,
     mobilePortability: cap.mobilePortability,
     warnings: cap.warnings ?? [],
+    ...(cap.route ? { route: cap.route } : {}),
   };
 }

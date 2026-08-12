@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { loadDesktopModule } from "@/app/api/_desktop-route-loader";
 import type { UniversalFileDescriptor } from "@/lib/domain/descriptors";
-import type { CapabilityInfo } from "@/lib/domain/unified-analysis";
+import type { CapabilityInfo, CapabilityLossProfile } from "@/lib/domain/unified-analysis";
 import { normalizeCapabilityInfo } from "@/lib/domain/unified-analysis";
-import type { ConversionCapability } from "@/lib/domain/engines";
+import type { ConversionCapability, EngineId } from "@/lib/domain/engines";
+import type { LossProfile } from "@/lib/domain/operations";
+import {
+  EDGE_QUALITY_WEIGHTS,
+  getAvailableDestinations,
+  getRecommendedDestinations,
+  qualityBand,
+  toConversionRouteSummary,
+  ROUTE_CAPABILITY_PREFIX,
+} from "@/lib/conversion-routing";
+import type { ConversionRoute } from "@/lib/conversion-routing";
 import { getWebCapabilitiesForExtension } from "@/lib/browser-conversion";
 import { WEB_TOOL_CAPABILITIES } from "@/lib/browser-tools/capabilities";
 import { isVercelWeb } from "@/lib/deployment-target";
@@ -141,6 +151,84 @@ function universalCapToCapabilityInfo(cap: ConversionCapability): CapabilityInfo
   });
 }
 
+// ── Conversion routing ────────────────────────────────────────────────────────
+
+/** Map an operation LossProfile to the client-facing CapabilityLossProfile. */
+const ROUTE_LOSS_TO_CAPABILITY: Record<LossProfile, CapabilityLossProfile> = {
+  lossless: "lossless",
+  "lossy-controlled": "lossy",
+  lossy: "lossy",
+  "structural-risk": "layout-risk",
+};
+
+function worstStepLossProfile(route: ConversionRoute): LossProfile {
+  return route.steps.reduce<LossProfile>(
+    (worst, step) =>
+      EDGE_QUALITY_WEIGHTS[step.lossProfile] < EDGE_QUALITY_WEIGHTS[worst]
+        ? step.lossProfile
+        : worst,
+    route.steps[0]?.lossProfile ?? "lossy"
+  );
+}
+
+/**
+ * Attaches route summaries to direct capabilities and appends synthetic
+ * entries for multistep-only destinations. Never throws: on any failure the
+ * original capabilities are returned unchanged.
+ */
+async function attachConversionRoutes(
+  normalizedCaps: CapabilityInfo[],
+  inputFormat: string
+): Promise<CapabilityInfo[]> {
+  try {
+    const serverModule = "@/lib/conversion-routing/server";
+    const { getAvailableEngineIds } = await loadDesktopModule<
+      typeof import("@/lib/conversion-routing/server")
+    >(serverModule);
+    const availableEngineIds = await getAvailableEngineIds();
+
+    const routes = getAvailableDestinations(inputFormat, availableEngineIds);
+    if (routes.length === 0) return normalizedCaps;
+
+    const recommendedSet = getRecommendedDestinations(inputFormat, routes);
+    const routeByDestination = new Map(routes.map((r) => [r.destination, r]));
+
+    const result = normalizedCaps.map((cap) => {
+      const route = routeByDestination.get(cap.outputFormat);
+      if (!route) return cap;
+      return {
+        ...cap,
+        route: toConversionRouteSummary(route, recommendedSet.has(route.destination)),
+      };
+    });
+
+    const coveredDestinations = new Set(normalizedCaps.map((cap) => cap.outputFormat));
+    for (const route of routes) {
+      if (coveredDestinations.has(route.destination)) continue;
+      // Only offer reliable multistep routes as normal options (spec §57)
+      if (route.classification !== "multistep") continue;
+      if (qualityBand(route.score) === "not-recommended") continue;
+
+      result.push({
+        id: `${ROUTE_CAPABILITY_PREFIX}${inputFormat}-${route.destination}`,
+        outputFormat: route.destination,
+        outputLabel: route.destination.toUpperCase(),
+        state: "available",
+        lossProfile: ROUTE_LOSS_TO_CAPABILITY[worstStepLossProfile(route)],
+        engineId: (route.steps[0]?.engineId ?? "data-ts") as EngineId,
+        mobilePortability: "desktop-only",
+        warnings: [`Conversión en ${route.steps.length} pasos.`],
+        route: toConversionRouteSummary(route, recommendedSet.has(route.destination)),
+      });
+    }
+
+    return result;
+  } catch (error) {
+    console.error("[capabilities] Route enrichment failed, returning base capabilities:", error);
+    return normalizedCaps;
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -221,12 +309,16 @@ export async function POST(req: NextRequest) {
       // Normalize to CapabilityInfo
       const normalizedCaps: CapabilityInfo[] = capabilities.map(universalCapToCapabilityInfo);
 
-      const recommended = normalizedCaps.find((c) => c.state === "available" && capabilities.find(ec => ec.id === c.id)?.recommended) ?? null;
+      // Enrich with conversion-route info (direct routes + synthetic multistep destinations)
+      const inputFormat = descriptor.detectedFormat ?? descriptor.extension ?? "unknown";
+      const enrichedCaps = await attachConversionRoutes(normalizedCaps, inputFormat);
+
+      const recommended = enrichedCaps.find((c) => c.state === "available" && capabilities.find(ec => ec.id === c.id)?.recommended) ?? null;
 
       return NextResponse.json({
-        capabilities: normalizedCaps,
+        capabilities: enrichedCaps,
         recommended,
-        inputFormat: descriptor.detectedFormat ?? descriptor.extension ?? "unknown",
+        inputFormat,
         inputCategory: descriptor.category,
       });
     }

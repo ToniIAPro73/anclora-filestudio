@@ -24,6 +24,7 @@ const desktopModuleImporters = isVercelBuild
       "fs": () => import("fs"),
       "@/lib/config": () => import("@/lib/config"),
       "@/lib/engines/registry": () => import("@/lib/engines/registry"),
+      "@/lib/conversion-routing/server": () => import("@/lib/conversion-routing/server"),
       "@/lib/diagnostics/toolchain-probe": () => import("@/lib/diagnostics/toolchain-probe"),
       "@/lib/media/supported-conversions": () => import("@/lib/media/supported-conversions"),
     };

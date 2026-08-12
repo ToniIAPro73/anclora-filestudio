@@ -5,7 +5,14 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { getCapabilities, invalidateProbeCache } from "../../src/lib/engines/registry";
 import type { UniversalFileDescriptor } from "../../src/lib/domain/descriptors";
+import { OPERATION_CATALOG } from "../../src/lib/domain/operations";
+import { getAvailableDestinations, qualityBand } from "../../src/lib/conversion-routing";
 import crypto from "crypto";
+
+/** All engine/tool ids referenced by the operation catalog (no probing). */
+const ALL_CATALOG_ENGINES = new Set(
+  OPERATION_CATALOG.flatMap((op) => [op.engineId, ...op.dependencies]),
+);
 
 // ── Descriptor factories ───────────────────────────────────────────────────────
 
@@ -274,5 +281,31 @@ describe("Capabilities API — unknown category", () => {
     const unknownDesc = makeDescriptor("unknown", "bin", { kind: "unknown" });
     const caps = await getCapabilities(unknownDesc);
     expect(caps).toHaveLength(0);
+  });
+});
+
+// ── Conversion routing (deterministic: full catalog engine set, no probing) ──
+
+describe("Capabilities API — conversion routing", () => {
+  it("a direct destination route from jpeg classifies as direct", () => {
+    const routes = getAvailableDestinations("jpeg", ALL_CATALOG_ENGINES);
+    const png = routes.find((r) => r.destination === "png");
+
+    expect(png).toBeDefined();
+    expect(png?.classification).toBe("direct");
+    expect(png?.steps).toHaveLength(1);
+    expect(qualityBand(png!.score)).toBe("excellent");
+  });
+
+  it("a destination without a direct edge is reachable via a multistep route", () => {
+    // gif has no direct edge to ico in the operation catalog;
+    // gif → png → ico requires one intermediate.
+    const routes = getAvailableDestinations("gif", ALL_CATALOG_ENGINES);
+    const ico = routes.find((r) => r.destination === "ico");
+
+    expect(ico).toBeDefined();
+    expect(ico?.classification).toBe("multistep");
+    expect(ico?.intermediateFormats).toHaveLength(1);
+    expect(qualityBand(ico!.score)).not.toBe("not-recommended");
   });
 });
