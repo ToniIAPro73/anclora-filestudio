@@ -17,8 +17,10 @@ const ENGINE_ID: EngineId = "ffmpeg-media";
 
 // ── Format definitions ───────────────────────────────────────────────────────
 
-type AudioFormat = "mp3" | "m4a" | "wav" | "flac" | "ogg";
+type AudioFormat = "mp3" | "m4a" | "wav" | "flac" | "ogg" | "aac";
 type VideoFormat = "mp4" | "webm" | "mkv";
+// Accepted video containers as inputs. Outputs stay limited to VideoFormat.
+type VideoInputFormat = VideoFormat | "avi" | "mov" | "wmv" | "ts";
 
 interface FormatDef {
   label: string;
@@ -33,6 +35,7 @@ const AUDIO_FORMATS: Record<AudioFormat, FormatDef> = {
   wav:  { label: "WAV",  mime: "audio/wav",  ext: "wav",  lossProfile: "lossless" },
   flac: { label: "FLAC", mime: "audio/flac", ext: "flac", lossProfile: "lossless" },
   ogg:  { label: "OGG",  mime: "audio/ogg",  ext: "ogg",  lossProfile: "lossy" },
+  aac:  { label: "AAC",  mime: "audio/aac",  ext: "aac",  lossProfile: "lossy" },
 };
 
 const VIDEO_FORMATS: Record<VideoFormat, FormatDef> = {
@@ -40,6 +43,17 @@ const VIDEO_FORMATS: Record<VideoFormat, FormatDef> = {
   webm: { label: "WebM", mime: "video/webm",          ext: "webm", lossProfile: "lossy" },
   mkv:  { label: "MKV",  mime: "video/x-matroska",    ext: "mkv",  lossProfile: "lossy" },
 };
+
+const VIDEO_INPUT_EXTRA_FORMATS: Record<Exclude<VideoInputFormat, VideoFormat>, FormatDef> = {
+  avi:  { label: "AVI",  mime: "video/x-msvideo",     ext: "avi",  lossProfile: "lossy" },
+  mov:  { label: "MOV",  mime: "video/quicktime",     ext: "mov",  lossProfile: "lossy" },
+  wmv:  { label: "WMV",  mime: "video/x-ms-wmv",      ext: "wmv",  lossProfile: "lossy" },
+  ts:   { label: "TS",   mime: "video/mp2t",          ext: "ts",   lossProfile: "lossy" },
+};
+
+function videoInputDef(format: VideoInputFormat): FormatDef {
+  return (VIDEO_FORMATS as Record<string, FormatDef>)[format] ?? VIDEO_INPUT_EXTRA_FORMATS[format as Exclude<VideoInputFormat, VideoFormat>];
+}
 
 const AUDIO_PRESETS: Record<AudioFormat, import("../../domain/engines").ConversionPreset[]> = {
   mp3: [
@@ -60,6 +74,10 @@ const AUDIO_PRESETS: Record<AudioFormat, import("../../domain/engines").Conversi
   ogg: [
     { id: "ogg-balanced", label: "Equilibrado", quality: "4", description: "Calidad OGG q4 — buena relación calidad/tamaño", isRecommended: true },
     { id: "ogg-high", label: "Alta calidad", quality: "8", description: "Calidad OGG q8 — máxima calidad Vorbis" },
+  ],
+  aac: [
+    { id: "aac-balanced", label: "Equilibrado", quality: "128", description: "128 kbps AAC — buena calidad, tamaño moderado", isRecommended: true },
+    { id: "aac-high", label: "Alta calidad", quality: "256", description: "256 kbps AAC — alta fidelidad" },
   ],
 };
 
@@ -103,11 +121,11 @@ function resolveAudioFormat(descriptor: UniversalFileDescriptor): AudioFormat | 
   return null;
 }
 
-function resolveVideoFormat(descriptor: UniversalFileDescriptor): VideoFormat | null {
+function resolveVideoFormat(descriptor: UniversalFileDescriptor): VideoInputFormat | null {
   const ext = (descriptor.extension ?? "").toLowerCase();
   const fmt = (descriptor.detectedFormat ?? "").toLowerCase();
-  if (ext in VIDEO_FORMATS) return ext as VideoFormat;
-  if (fmt in VIDEO_FORMATS) return fmt as VideoFormat;
+  if (ext in VIDEO_FORMATS || ext in VIDEO_INPUT_EXTRA_FORMATS) return ext as VideoInputFormat;
+  if (fmt in VIDEO_FORMATS || fmt in VIDEO_INPUT_EXTRA_FORMATS) return fmt as VideoInputFormat;
   return null;
 }
 
@@ -166,13 +184,14 @@ function buildNormalizeAudioCapability(
 }
 
 function buildVideoConvertCapability(
-  fromFmt: VideoFormat,
+  fromFmt: VideoInputFormat,
   toFmt: VideoFormat,
   descriptor: UniversalFileDescriptor,
   attrs: MediaAttributes,
   available: boolean,
 ): ConversionCapability {
   const toDef = VIDEO_FORMATS[toFmt];
+  const fromDef = videoInputDef(fromFmt);
   const operation = toFmt === "mkv" ? "remux" : "transcode-video";
   const isSameFormat = fromFmt === toFmt;
   const warnings: string[] = [];
@@ -194,7 +213,7 @@ function buildVideoConvertCapability(
     outputFormat: toDef.ext,
     outputMime: toDef.mime,
     label: `Convertir a ${toDef.label}`,
-    description: `${VIDEO_FORMATS[fromFmt].label} → ${toDef.label}`,
+    description: `${fromDef.label} → ${toDef.label}`,
     lossProfile: getVideoLossProfile(operation, toFmt),
     state: available ? "available" : "unavailable-tool",
     unavailableReason: available ? undefined : "FFmpeg no está instalado. Instálalo para convertir vídeo.",
@@ -321,7 +340,9 @@ function buildTrimCapability(
 ): ConversionCapability {
   const ext = (descriptor.extension ?? "mp4").toLowerCase();
   const isVideo = descriptor.category === "video";
-  const mime = isVideo ? (VIDEO_FORMATS[ext as VideoFormat]?.mime ?? "video/mp4") : (AUDIO_FORMATS[ext as AudioFormat]?.mime ?? "audio/mpeg");
+  const mime = isVideo
+    ? ((VIDEO_FORMATS as Record<string, FormatDef>)[ext]?.mime ?? VIDEO_INPUT_EXTRA_FORMATS[ext as Exclude<VideoInputFormat, VideoFormat>]?.mime ?? "video/mp4")
+    : (AUDIO_FORMATS[ext as AudioFormat]?.mime ?? "audio/mpeg");
 
   return {
     id: `ffmpeg-trim-${descriptor.id}`,
@@ -402,6 +423,9 @@ function buildAudioArgs(inputPath: string, outputPath: string, fromFmt: AudioFor
     case "ogg":
       args.push("-c:a", "libvorbis", "-q:a", quality || "4");
       break;
+    case "aac":
+      args.push("-c:a", "aac", "-b:a", `${quality || "128"}k`);
+      break;
   }
 
   args.push(outputPath);
@@ -477,6 +501,9 @@ function buildExtractAudioArgs(inputPath: string, outputPath: string, outputFmt:
       break;
     case "ogg":
       args.push("-c:a", "libvorbis", "-q:a", quality || "4");
+      break;
+    case "aac":
+      args.push("-c:a", "aac", "-b:a", `${quality || "128"}k`);
       break;
   }
 
@@ -660,7 +687,7 @@ export class FFmpegEngine implements ConversionEngine {
       const fromFmt = resolveAudioFormat(descriptor);
       if (fromFmt) {
         // Audio cross-conversion
-        const audioFormats: AudioFormat[] = ["mp3", "m4a", "wav", "flac", "ogg"];
+        const audioFormats: AudioFormat[] = ["mp3", "m4a", "wav", "flac", "ogg", "aac"];
         for (const toFmt of audioFormats) {
           caps.push(buildAudioConvertCapability(fromFmt, toFmt, descriptor, available));
         }
