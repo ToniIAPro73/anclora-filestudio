@@ -378,3 +378,7 @@ POPPLER BUNDLED PRIORITY LOGIC: PASS
 WINDOWS NATIVE QA: BLOCKED IN VPS
 FILESTUDIO UX V4: FAIL until final candidate passes native Windows QA
 ```
+
+Commits after final-gates work:
+
+- af58357 test(release): cover UX v4 final runtime gates

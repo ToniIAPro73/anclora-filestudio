@@ -200,7 +200,7 @@
     "DOCX -> PNG multistep relies on LibreOffice plus Poppler being effective in the Windows candidate; native QA must verify this route from UI.",
     "Lint still reports three existing no-img-element warnings in compare-inspector-modal.tsx."
   ],
-  "commits": "PENDING LOCAL COMMIT",
+  "commits": "af58357 test(release): cover UX v4 final runtime gates",
   "push": "NONE",
   "release": "NONE",
   "versionChanged": false,
@@ -303,7 +303,9 @@
       "qaInstructions": [
         "artifacts/ux-v4/final-gates/WINDOWS_NATIVE_QA_UXV4_FINAL.md",
         "artifacts/ux-v4/final-gates/WINDOWS_NATIVE_QA_UXV4_FINAL.ps1"
-      ]
+      ],
+      "certificationCommit": "af58357 test(release): cover UX v4 final runtime gates",
+      "buildHead": "066001cf1238b843ae0ef9d331e184e0b95d632d (candidate was built before committing the same source state)"
     }
   }
 }
