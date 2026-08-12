@@ -2,22 +2,38 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Download, HelpCircle } from "lucide-react";
+import { ArrowLeftRight, Download, HelpCircle, History, Home, Stethoscope, Wrench } from "lucide-react";
 import { ExternalActionLink } from "@/components/web/external-action-link";
 import { FILESTUDIO_BRAND } from "@/lib/filestudio-brand";
 import { ImageTool } from "./images/image-tool";
 import { PdfTool } from "./pdf/pdf-tool";
 import { StructuredDataTool } from "./structured/structured-data-tool";
 import { PrivacyNotice } from "./privacy-notice";
+import { ConversionHub } from "@/components/ux-v3/conversion-hub";
+import { FileStudioHome } from "@/components/ux-v3/file-studio-home";
+import { ToolHub } from "@/components/ux-v3/tool-hub";
+import { buildConversionUxModel, type UxConversionCategoryId } from "@/lib/ux-v3/conversion-ux-model";
 
 const windowsUrl = process.env.NEXT_PUBLIC_WINDOWS_DOWNLOAD_URL || "";
 const linuxUrl = process.env.NEXT_PUBLIC_LINUX_DOWNLOAD_URL || "";
 const supportUrl = process.env.NEXT_PUBLIC_SUPPORT_URL || "";
 
-type ToolTab = "images" | "pdf" | "structured";
+type WebTab = "home" | "convert" | "tools" | "history" | "diagnostics";
+type ToolTab = "images" | "pdf" | "structured" | null;
+const WEB_UX_MODEL = buildConversionUxModel("web", new Set(["browser", "data-ts"]));
 
 export function WebToolsShell() {
-  const [tab, setTab] = useState<ToolTab>("images");
+  const [tab, setTab] = useState<WebTab>("home");
+  const [toolTab, setToolTab] = useState<ToolTab>(null);
+  const [target, setTarget] = useState<string | null>(null);
+  const [initialCategory, setInitialCategory] = useState<UxConversionCategoryId | undefined>(undefined);
+
+  const openConvert = (categoryId?: UxConversionCategoryId) => {
+    setInitialCategory(categoryId);
+    setTarget(null);
+    setToolTab(null);
+    setTab("convert");
+  };
 
   return (
     <div className="min-h-screen bg-[#0d0f12] text-[#f4f1ea]">
@@ -54,28 +70,40 @@ export function WebToolsShell() {
         </header>
 
         <main className="space-y-5">
-          <div className="grid gap-3 md:grid-cols-2">
-            <button type="button" onClick={() => setTab("images")} className={`rounded-lg border p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60 ${tab === "images" ? "border-teal-300/40 bg-teal-400/8" : "border-white/10 bg-white/3"}`}>
-              <h2 className="text-lg font-black text-stone-100">Preparar imágenes</h2>
-              <p className="mt-1 text-sm leading-6 text-stone-400">Convierte, comprime, cambia el tamaño y elimina metadatos privados.</p>
-            </button>
-            <button type="button" onClick={() => setTab("pdf")} className={`rounded-lg border p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60 ${tab === "pdf" ? "border-teal-300/40 bg-teal-400/8" : "border-white/10 bg-white/3"}`}>
-              <h2 className="text-lg font-black text-stone-100">Organizar PDF</h2>
-              <p className="mt-1 text-sm leading-6 text-stone-400">Une, divide, ordena y gira páginas, o crea PDF desde imágenes.</p>
-            </button>
-          </div>
+          <nav className="grid grid-cols-2 gap-2 rounded-lg border border-white/8 bg-[#13161b]/90 p-2 sm:grid-cols-5" aria-label="Navegación principal FileStudio Web">
+            <TopButton active={tab === "home"} onClick={() => setTab("home")} icon={<Home className="h-4 w-4" />}>Inicio</TopButton>
+            <TopButton active={tab === "convert"} onClick={() => openConvert()} icon={<ArrowLeftRight className="h-4 w-4" />}>Convertir</TopButton>
+            <TopButton active={tab === "tools"} onClick={() => { setTab("tools"); setToolTab(null); }} icon={<Wrench className="h-4 w-4" />}>Herramientas</TopButton>
+            <TopButton active={tab === "history"} onClick={() => setTab("history")} icon={<History className="h-4 w-4" />}>Historial</TopButton>
+            <TopButton active={tab === "diagnostics"} onClick={() => setTab("diagnostics")} icon={<Stethoscope className="h-4 w-4" />}>Diagnóstico</TopButton>
+          </nav>
 
-          <div className="flex flex-wrap gap-2" role="tablist" aria-label="Herramientas Web">
-            <ToolButton active={tab === "images"} onClick={() => setTab("images")}>Imágenes</ToolButton>
-            <ToolButton active={tab === "pdf"} onClick={() => setTab("pdf")}>PDF</ToolButton>
-            <ToolButton active={tab === "structured"} onClick={() => setTab("structured")}>Más herramientas</ToolButton>
-          </div>
-
-          <section className="rounded-lg border border-white/10 bg-[#13161b]/80 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-md sm:p-5">
-            {tab === "images" && <ImageTool />}
-            {tab === "pdf" && <PdfTool />}
-            {tab === "structured" && <StructuredDataTool />}
-          </section>
+          {tab === "home" && <FileStudioHome model={WEB_UX_MODEL} onOpenConvert={openConvert} onOpenTools={() => setTab("tools")} />}
+          {tab === "convert" && !target && <ConversionHub model={WEB_UX_MODEL} selectedTarget={target} initialCategoryId={initialCategory} onSelectTarget={setTarget} />}
+          {tab === "convert" && target && (
+            <section className="rounded-lg border border-white/10 bg-[#13161b]/80 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-md sm:p-5">
+              <h2 className="text-xl font-black text-stone-100">Convertir a {target.toUpperCase()}</h2>
+              <p className="mt-1 text-sm text-stone-400">Ahora selecciona el archivo de origen.</p>
+              <div className="mt-4 rounded-md border border-white/10 bg-white/3 p-4 text-sm text-stone-300">
+                Las conversiones Web se muestran solo si existen en la matriz browser efectiva. Usa Herramientas para ejecutar operaciones browser actuales.
+              </div>
+            </section>
+          )}
+          {tab === "tools" && !toolTab && (
+            <ToolHub
+              model={WEB_UX_MODEL}
+              onOpenTool={(toolId) => setToolTab(toolId === "pdf" || toolId === "images" ? toolId : "structured")}
+            />
+          )}
+          {tab === "tools" && toolTab && (
+            <section className="rounded-lg border border-white/10 bg-[#13161b]/80 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-md sm:p-5">
+              {toolTab === "images" && <ImageTool />}
+              {toolTab === "pdf" && <PdfTool />}
+              {toolTab === "structured" && <StructuredDataTool />}
+            </section>
+          )}
+          {tab === "history" && <section className="rounded-lg border border-white/10 bg-[#13161b]/80 p-4 text-sm text-stone-400">El historial local está disponible en Desktop PRO.</section>}
+          {tab === "diagnostics" && <section className="rounded-lg border border-white/10 bg-[#13161b]/80 p-4 text-sm text-stone-400">La versión Web usa capacidades browser y no motores nativos.</section>}
 
           <PrivacyNotice />
         </main>
@@ -84,15 +112,16 @@ export function WebToolsShell() {
   );
 }
 
-function ToolButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function TopButton({ active, onClick, icon, children }: { active: boolean; onClick: () => void; icon: React.ReactNode; children: React.ReactNode }) {
   return (
     <button
       type="button"
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`min-h-11 rounded-md px-4 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60 ${active ? "bg-teal-300 text-[#071112]" : "border border-white/12 text-stone-300 hover:bg-white/6"}`}
+      className={`flex min-h-11 items-center justify-center gap-2 rounded-md px-3 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60 ${active ? "bg-teal-300 text-[#071112]" : "border border-white/12 text-stone-300 hover:bg-white/6"}`}
     >
+      {icon}
       {children}
     </button>
   );

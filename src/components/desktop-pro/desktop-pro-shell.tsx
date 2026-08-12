@@ -4,22 +4,16 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Toaster, toast } from "sonner";
 import {
-  Archive,
   ArrowLeftRight,
-  BookOpen,
   CheckCircle2,
-  FileText,
-  Film,
   History,
-  ImageIcon,
-  Layers,
-  Mic,
+  Home,
   ScanText,
   Stethoscope,
+  Wrench,
 } from "lucide-react";
 import { SourceSelector, type AnalysisResult, type UniversalAnalysisResult, type RemoteAnalysisResult } from "@/components/converter/source-selector";
 import { InputAnalysisCard } from "@/components/converter/input-analysis-card";
-import { DestinationPicker } from "@/components/converter/destination-picker";
 import { ConversionRouteSummary } from "@/components/converter/conversion-route-summary";
 import { TechnicalDetails } from "@/components/converter/technical-details";
 import { QualitySelector } from "@/components/converter/quality-selector";
@@ -33,15 +27,31 @@ import { BatchActionToolbar } from "@/components/converter/batch-action-toolbar"
 import { ImageTool } from "@/components/web-tools/images/image-tool";
 import { PdfTool } from "@/components/web-tools/pdf/pdf-tool";
 import { StructuredDataTool } from "@/components/web-tools/structured/structured-data-tool";
+import { ConversionHub } from "@/components/ux-v3/conversion-hub";
+import { FileStudioHome } from "@/components/ux-v3/file-studio-home";
+import { ToolHub } from "@/components/ux-v3/tool-hub";
 import type { CapabilityInfo } from "@/lib/domain/unified-analysis";
 import type { VideoFormat } from "@/lib/media/metadata";
 import { VideoQualitySelectionSchema, type QualityProfile } from "@/lib/quality/quality-contract";
 import { DESKTOP_PRO_GROUPS, type DesktopProGroupId } from "@/lib/capabilities/desktop-capabilities";
 import { FILESTUDIO_BRAND } from "@/lib/filestudio-brand";
+import { normalizeFormatId } from "@/lib/domain/format-catalog";
+import type { UxConversionCategoryId, UxConversionModel } from "@/lib/ux-v3/conversion-ux-model";
 import { t } from "@/i18n";
 
-type DesktopTab = "convert" | DesktopProGroupId | "history" | "diagnostics";
+type DesktopTab = "home" | "convert" | "tools" | "history" | "diagnostics";
+type ToolWorkspaceId = "pdf" | "images" | "structured" | "ocr" | null;
 type FlowStep = "source" | "analysis" | "format" | "progress" | "result";
+
+const UX_CATEGORY_TO_LEGACY_GROUP: Partial<Record<UxConversionCategoryId, DesktopProGroupId>> = {
+  documents: "documents",
+  images: "images",
+  audio: "media",
+  video: "media",
+  ebooks: "ebooks",
+  archives: "archives",
+  data: "structured",
+};
 
 interface JobStatusData {
   jobId: string;
@@ -68,21 +78,21 @@ interface CapabilitiesData {
 }
 
 const TAB_ICONS: Record<DesktopTab, React.ReactNode> = {
+  home: <Home className="h-4 w-4" />,
   convert: <ArrowLeftRight className="h-4 w-4" />,
-  images: <ImageIcon className="h-4 w-4" />,
-  pdf: <FileText className="h-4 w-4" />,
-  media: <Film className="h-4 w-4" />,
-  documents: <Layers className="h-4 w-4" />,
-  ocr: <ScanText className="h-4 w-4" />,
-  archives: <Archive className="h-4 w-4" />,
-  ebooks: <BookOpen className="h-4 w-4" />,
-  structured: <Mic className="h-4 w-4 rotate-90" />,
+  tools: <Wrench className="h-4 w-4" />,
   history: <History className="h-4 w-4" />,
   diagnostics: <Stethoscope className="h-4 w-4" />,
 };
 
 export function DesktopProShell() {
-  const [activeTab, setActiveTab] = useState<DesktopTab>("convert");
+  const [activeTab, setActiveTab] = useState<DesktopTab>("home");
+  const [activeTool, setActiveTool] = useState<ToolWorkspaceId>(null);
+  const [uxModel, setUxModel] = useState<UxConversionModel | null>(null);
+  const [uxModelError, setUxModelError] = useState<string | null>(null);
+  const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
+  const [initialConversionCategory, setInitialConversionCategory] = useState<UxConversionCategoryId | undefined>(undefined);
+  const [routeValidationMessage, setRouteValidationMessage] = useState<string | null>(null);
   const [flowStep, setFlowStep] = useState<FlowStep>("source");
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -103,15 +113,16 @@ export function DesktopProShell() {
     format?: string;
   }>>([]);
 
-  const activeGroup = DESKTOP_PRO_GROUPS.find((group) => group.id === activeTab);
-  const selectedKey = selectedCap ? selectedCap.id : null;
-  const nativeTab = activeTab !== "history" && activeTab !== "diagnostics";
-
+  const selectedTargetGroup = useMemo(() => {
+    const targetCategory = uxModel?.formats.find((format) => format.id === selectedTarget)?.category;
+    const legacyGroupId = targetCategory ? UX_CATEGORY_TO_LEGACY_GROUP[targetCategory] : undefined;
+    return DESKTOP_PRO_GROUPS.find((group) => group.id === legacyGroupId);
+  }, [selectedTarget, uxModel]);
   const steps = useMemo(
     () => [
-      { key: "source" as FlowStep, label: "Fuente", num: 1 },
+      { key: "source" as FlowStep, label: "Archivo", num: 1 },
       { key: "analysis" as FlowStep, label: "Análisis", num: 2 },
-      { key: "format" as FlowStep, label: "Formato", num: 3 },
+      { key: "format" as FlowStep, label: "Ruta", num: 3 },
       { key: "progress" as FlowStep, label: "Progreso", num: 4 },
       { key: "result" as FlowStep, label: "Resultado", num: 5 },
     ],
@@ -119,6 +130,24 @@ export function DesktopProShell() {
   );
 
   const currentStepIndex = steps.findIndex((step) => step.key === flowStep);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/capabilities?ux=v3")
+      .then((response) => {
+        if (!response.ok) throw new Error("No se pudo cargar la matriz de UX.");
+        return response.json();
+      })
+      .then((data: UxConversionModel) => {
+        if (!cancelled) setUxModel(data);
+      })
+      .catch((error) => {
+        if (!cancelled) setUxModelError(error instanceof Error ? error.message : "No se pudo cargar la matriz de UX.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!analysisResult) return;
@@ -136,19 +165,24 @@ export function DesktopProShell() {
         const data = await response.json();
         const capData = data as CapabilitiesData;
         setCapabilities(capData);
-        const recommended = capData.recommended;
-        setSelectedCap(
-          recommended?.state === "available"
-            ? recommended
-            : capData.capabilities.find((cap) => cap.state === "available") ?? null
-        );
+        const canonicalTarget = normalizeFormatId(selectedTarget);
+        if (canonicalTarget) {
+          const targetCapability = capData.capabilities.find(
+            (cap) => normalizeFormatId(cap.outputFormat) === canonicalTarget && cap.state === "available"
+          ) ?? null;
+          setSelectedCap(targetCapability);
+          setRouteValidationMessage(targetCapability ? null : `Este archivo no puede convertirse a ${canonicalTarget.toUpperCase()} con las capacidades disponibles.`);
+        } else {
+          setSelectedCap(null);
+          setRouteValidationMessage("Elige el formato que quieres obtener.");
+        }
         setFlowStep("analysis");
       } catch {
         toast.error("No se pudieron calcular las capacidades.");
       }
     };
     void loadCaps();
-  }, [analysisResult]);
+  }, [analysisResult, selectedTarget]);
 
   useEffect(() => {
     if (flowStep === "analysis" && capabilities) {
@@ -213,10 +247,33 @@ export function DesktopProShell() {
     setQualityProfile("source-max");
     setQuality("max");
     setVideoFormats([]);
+    setRouteValidationMessage(null);
   }, []);
 
   const handleTabChange = useCallback((tab: DesktopTab) => {
     setActiveTab(tab);
+    setActiveTool(null);
+    resetFlow();
+  }, [resetFlow]);
+
+  const handleOpenConvert = useCallback((_categoryId?: UxConversionCategoryId) => {
+    setActiveTab("convert");
+    setActiveTool(null);
+    setInitialConversionCategory(_categoryId);
+    setSelectedTarget(null);
+    resetFlow();
+  }, [resetFlow]);
+
+  const handleSelectTarget = useCallback((target: string) => {
+    setSelectedTarget(target);
+    setActiveTab("convert");
+    setActiveTool(null);
+    resetFlow();
+  }, [resetFlow]);
+
+  const handleOpenTool = useCallback((toolId: string) => {
+    setActiveTab("tools");
+    setActiveTool(toolId === "pdf" || toolId === "images" || toolId === "ocr" ? toolId : "structured");
     resetFlow();
   }, [resetFlow]);
 
@@ -330,46 +387,44 @@ export function DesktopProShell() {
           </p>
         </header>
 
-        <nav className="mb-5 grid grid-cols-2 gap-2 rounded-lg border border-white/8 bg-[#13161b]/90 p-2 shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:grid-cols-6 lg:grid-cols-11" aria-label="Herramientas Desktop PRO">
+        <nav className="mb-5 grid grid-cols-2 gap-2 rounded-lg border border-white/8 bg-[#13161b]/90 p-2 shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:grid-cols-5" aria-label="Navegación principal FileStudio">
+          <DesktopTabButton id="home" active={activeTab === "home"} onClick={() => handleTabChange("home")} label="Inicio" />
           <DesktopTabButton id="convert" active={activeTab === "convert"} onClick={() => handleTabChange("convert")} label={t("nav.convert")} />
-          {DESKTOP_PRO_GROUPS.map((group) => (
-            <DesktopTabButton
-              key={group.id}
-              id={group.id}
-              active={activeTab === group.id}
-              onClick={() => handleTabChange(group.id)}
-              label={group.label}
-            />
-          ))}
+          <DesktopTabButton id="tools" active={activeTab === "tools"} onClick={() => handleTabChange("tools")} label="Herramientas" />
           <DesktopTabButton id="history" active={activeTab === "history"} onClick={() => handleTabChange("history")} label="Historial" />
           <DesktopTabButton id="diagnostics" active={activeTab === "diagnostics"} onClick={() => handleTabChange("diagnostics")} label="Diagnóstico" />
         </nav>
 
-        {nativeTab && activeGroup && (
-          <section className="mb-5 rounded-lg border border-white/10 bg-[#13161b]/82 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.28)]">
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-              <div>
-                <h2 className="text-xl font-black text-stone-100">{activeGroup.label}</h2>
-                <p className="mt-1 max-w-3xl text-sm leading-6 text-stone-400">{activeGroup.description}</p>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <SystemResourceGauge compact />
-                {activeGroup.requiredTools.map((tool) => (
-                  <span key={tool} className="rounded-md border border-white/10 bg-white/4 px-2.5 py-1 text-xs font-semibold text-stone-300">
-                    {tool}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </section>
+        {uxModelError && (
+          <div role="alert" className="mb-4 rounded-md border border-red-400/20 bg-red-500/10 p-3 text-sm text-red-200">
+            {uxModelError}
+          </div>
         )}
 
-        {activeTab === "images" && <ImageTool />}
-        {activeTab === "pdf" && <PdfTool />}
-        {activeTab === "structured" && <StructuredDataTool />}
-        {nativeTab && activeTab !== "images" && activeTab !== "pdf" && activeTab !== "structured" && (
+        {activeTab === "home" && (
+          <FileStudioHome
+            model={uxModel}
+            onOpenConvert={handleOpenConvert}
+            onOpenTools={() => {
+              setActiveTab("tools");
+              setActiveTool(null);
+            }}
+          />
+        )}
+
+        {activeTab === "convert" && uxModel && !selectedTarget && !analysisResult && (
+          <ConversionHub
+            model={uxModel}
+            selectedTarget={selectedTarget}
+            initialCategoryId={initialConversionCategory}
+            onSelectTarget={handleSelectTarget}
+          />
+        )}
+
+        {activeTab === "convert" && uxModel && selectedTarget && (
           <NativeConversionWorkspace
-            activeGroup={activeGroup}
+            activeGroup={selectedTargetGroup}
+            selectedTarget={selectedTarget}
             flowStep={flowStep}
             steps={steps}
             currentStepIndex={currentStepIndex}
@@ -382,8 +437,8 @@ export function DesktopProShell() {
             onClearBatchJobs={() => setBatchJobs([])}
             onProfileChange={setQualityProfile}
             onQualityChange={setQuality}
-            selectedKey={selectedKey}
             selectedCap={selectedCap}
+            routeValidationMessage={routeValidationMessage}
             isLoading={isLoading}
             isConverting={isConverting}
             jobStatus={jobStatus}
@@ -396,7 +451,31 @@ export function DesktopProShell() {
             onCancel={handleCancel}
             onConvertAnother={handleConvertAnotherFormat}
             onViewHistory={() => handleTabChange("history")}
+            onBackToHub={() => {
+              setSelectedTarget(null);
+              resetFlow();
+            }}
           />
+        )}
+        {activeTab === "tools" && uxModel && !activeTool && <ToolHub model={uxModel} onOpenTool={handleOpenTool} />}
+        {activeTab === "tools" && activeTool === "images" && <Panel><ImageTool /></Panel>}
+        {activeTab === "tools" && activeTool === "pdf" && <Panel><PdfTool /></Panel>}
+        {activeTab === "tools" && activeTool === "structured" && <Panel><StructuredDataTool /></Panel>}
+        {activeTab === "tools" && activeTool === "ocr" && (
+          <Panel>
+            <div className="space-y-3">
+              <h2 className="text-xl font-black text-stone-100">Conversión con OCR</h2>
+              <p className="text-sm text-stone-400">Solo se muestran capacidades OCR efectivas de la matriz.</p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {uxModel?.tools.find((tool) => tool.id === "ocr")?.operations.map((operation) => (
+                  <div key={operation.id} className="rounded-lg border border-white/10 bg-white/3 p-4">
+                    <ScanText className="mb-2 h-5 w-5 text-teal-200" aria-hidden="true" />
+                    <p className="text-sm font-bold text-stone-100">{operation.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Panel>
         )}
         {activeTab === "history" && <Panel><JobHistory /></Panel>}
         {activeTab === "diagnostics" && <Panel><ToolStatusPanel /></Panel>}
@@ -424,13 +503,14 @@ function DesktopTabButton({ id, label, active, onClick }: { id: DesktopTab; labe
 
 function NativeConversionWorkspace(props: {
   activeGroup: typeof DESKTOP_PRO_GROUPS[number] | undefined;
+  selectedTarget: string;
   flowStep: FlowStep;
   steps: Array<{ key: FlowStep; label: string; num: number }>;
   currentStepIndex: number;
   analysisResult: AnalysisResult | null;
   capabilities: CapabilitiesData | null;
-  selectedKey: string | null;
   selectedCap: CapabilityInfo | null;
+  routeValidationMessage: string | null;
   isLoading: boolean;
   isConverting: boolean;
   jobStatus: JobStatusData | null;
@@ -457,16 +537,18 @@ function NativeConversionWorkspace(props: {
   onCancel: () => void;
   onConvertAnother: () => void;
   onViewHistory: () => void;
+  onBackToHub: () => void;
 }) {
   const {
     activeGroup,
+    selectedTarget,
     flowStep,
     steps,
     currentStepIndex,
     analysisResult,
     capabilities,
-    selectedKey,
     selectedCap,
+    routeValidationMessage,
     isLoading,
     isConverting,
     jobStatus,
@@ -486,12 +568,26 @@ function NativeConversionWorkspace(props: {
     onCancel,
     onConvertAnother,
     onViewHistory,
+    onBackToHub,
   } = props;
 
   return (
     <Panel>
       <div className="space-y-4">
-        <NativeFeatureSummary group={activeGroup} />
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <button
+              type="button"
+              onClick={onBackToHub}
+              className="mb-2 text-xs font-semibold text-stone-400 hover:text-stone-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60"
+            >
+              Volver a Convertir
+            </button>
+            <h2 className="text-xl font-black text-stone-100">Convertir a {selectedTarget.toUpperCase()}</h2>
+            <p className="mt-1 text-sm text-stone-400">Selecciona el archivo que quieres convertir.</p>
+          </div>
+          <SystemResourceGauge compact />
+        </div>
         {flowStep !== "source" && (
           <div className="flex items-center gap-1 overflow-x-auto pb-1" aria-label="Pasos de conversión">
             {steps.map((step, index) => {
@@ -522,14 +618,6 @@ function NativeConversionWorkspace(props: {
         {(flowStep === "analysis" || flowStep === "format") && analysisResult && (
           <div className="space-y-5">
             <InputAnalysisCard result={analysisResult} onReset={onReset} />
-            {flowStep === "format" && capabilities && (
-              <DestinationPicker
-                capabilities={capabilities.capabilities}
-                recommended={capabilities.recommended}
-                onSelect={onCapSelect}
-                selectedKey={selectedKey}
-              />
-            )}
             {flowStep === "format" && selectedCap && (
               <ConversionRouteSummary
                 cap={selectedCap}
@@ -540,6 +628,11 @@ function NativeConversionWorkspace(props: {
                 }
                 inputFormat={capabilities?.inputFormat}
               />
+            )}
+            {flowStep === "format" && routeValidationMessage && !selectedCap && (
+              <div role="status" aria-live="polite" className="rounded-lg border border-amber-300/20 bg-amber-300/8 p-4 text-sm font-semibold text-amber-100">
+                {routeValidationMessage}
+              </div>
             )}
             {flowStep === "format" && selectedCap && (
               <TechnicalDetails cap={selectedCap} />
@@ -590,7 +683,7 @@ function NativeConversionWorkspace(props: {
                 disabled={isConverting}
                 className="min-h-11 w-full rounded-md bg-teal-300 px-4 text-sm font-black text-[#071112] disabled:opacity-40"
               >
-                {isConverting ? "Procesando..." : t("convert.startTo", { format: selectedCap.outputFormat.toUpperCase() })}
+                {isConverting ? "Procesando..." : t("convert.startTo", { format: selectedTarget.toUpperCase() })}
               </button>
             )}
           </div>
@@ -632,22 +725,6 @@ function NativeConversionWorkspace(props: {
         )}
       </div>
     </Panel>
-  );
-}
-
-function NativeFeatureSummary({ group }: { group: typeof DESKTOP_PRO_GROUPS[number] | undefined }) {
-  if (!group) return null;
-  return (
-    <div className="grid gap-3 md:grid-cols-2">
-      <div className="rounded-lg border border-white/8 bg-white/3 p-4">
-        <h3 className="text-sm font-bold text-stone-100">Modo rápido local</h3>
-        <p className="mt-1 text-sm leading-6 text-stone-400">{group.quickMode}</p>
-      </div>
-      <div className="rounded-lg border border-amber-300/18 bg-amber-300/8 p-4">
-        <h3 className="text-sm font-bold text-amber-100">Modo PRO con motor nativo</h3>
-        <p className="mt-1 text-sm leading-6 text-amber-100/80">{group.proMode}</p>
-      </div>
-    </div>
   );
 }
 

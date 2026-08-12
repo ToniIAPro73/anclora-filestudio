@@ -18,6 +18,8 @@ import type { ConversionRoute } from "@/lib/conversion-routing";
 import { getWebCapabilitiesForExtension } from "@/lib/browser-conversion";
 import { WEB_TOOL_CAPABILITIES } from "@/lib/browser-tools/capabilities";
 import { isVercelWeb } from "@/lib/deployment-target";
+import { buildConversionUxModel } from "@/lib/ux-v3/conversion-ux-model";
+import type { ConversionEnvironment } from "@/lib/conversion-matrix";
 import { z } from "zod";
 
 const BodySchema = z.union([
@@ -57,7 +59,38 @@ async function checkToolAvailability() {
   };
 }
 
-export async function GET() {
+export async function GET(req?: NextRequest) {
+  const url = new URL(req?.url ?? "http://localhost/api/capabilities");
+  if (url.searchParams.get("ux") === "v3") {
+    if (isVercelWeb()) {
+      const environment: ConversionEnvironment = "web";
+      const availableEngineIds = new Set(["browser", "data-ts"]);
+      return NextResponse.json({
+        deploymentTarget: "vercel",
+        effectivePlatform: "web",
+        execution: "browser",
+        uploads: false,
+        serverConversions: false,
+        ...buildConversionUxModel(environment, availableEngineIds),
+      });
+    }
+
+    const serverModule = "@/lib/conversion-routing/server";
+    const { getAvailableEngineIds } = await loadDesktopModule<
+      typeof import("@/lib/conversion-routing/server")
+    >(serverModule);
+    const availableEngineIds = await getAvailableEngineIds();
+    const environment: ConversionEnvironment = process.platform === "win32" ? "windows" : "linux";
+    return NextResponse.json({
+      deploymentTarget: "desktop",
+      effectivePlatform: environment,
+      execution: "local",
+      uploads: false,
+      serverConversions: true,
+      ...buildConversionUxModel(environment, availableEngineIds),
+    });
+  }
+
   if (isVercelWeb()) {
     return NextResponse.json({
       deploymentTarget: "vercel",
