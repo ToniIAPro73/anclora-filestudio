@@ -146,8 +146,9 @@ test.describe("home quick source-target selector", () => {
     await page.locator('[data-testid="home-target-select-option"][data-format="pdf"]').click();
     await expect(page.getByTestId("home-target-select")).toContainText("PDF");
     await page.getByRole("button", { name: "Continuar" }).click();
-    await expect(page).toHaveURL(/\/convert$/);
-    await expect(page.getByRole("heading", { name: /^Convertir$/i })).toBeVisible();
+    await expect(page).toHaveURL(/\/convert\?source=docx&target=pdf$/);
+    await expect(page.getByRole("heading", { name: /^Convertir a PDF$/i })).toBeVisible();
+    await expect(page.getByText(/Elegir archivo DOCX/i)).toBeVisible();
   });
 
   test("real UI chips, picker and served canonical model match for first 50 source formats", async ({ page }) => {
@@ -187,6 +188,53 @@ test.describe("home quick source-target selector", () => {
     await page.getByPlaceholder("Buscar formato, extensión o alias...").fill("");
     await expect(activeCategory(page, "home-target-select")).toHaveAttribute("data-category", "documents");
     await expect(visiblePickerFormats(page, "home-target-select")).resolves.toEqual(["html", "md", "odt", "pdf", "rtf", "txt"].sort());
+  });
+
+  test("DOCX to Markdown continues into a canonical source-target deep link", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await selectHomeSource(page, "docx");
+    await selectHomeTarget(page, "md");
+    await expect(page.getByRole("button", { name: "Continuar" })).toBeEnabled();
+    await page.getByRole("button", { name: "Continuar" }).click();
+
+    await expect(page).toHaveURL(/\/convert\?source=docx&target=md$/);
+    await expect(page.getByRole("heading", { name: /^Convertir a MD$/i })).toBeVisible();
+    await expect(page.getByText(/Origen: DOCX/i)).toBeVisible();
+    await expect(page.getByText(/Elegir archivo DOCX/i)).toBeVisible();
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/convert\?source=docx&target=md$/);
+    await expect(page.getByRole("heading", { name: /^Convertir a MD$/i })).toBeVisible();
+    await expect(page.getByText(/Elegir archivo DOCX/i)).toBeVisible();
+  });
+
+  test("source-target conversion URLs hydrate and validate canonical pairs", async ({ page }) => {
+    await page.goto("/convert?source=docx&target=md", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: /^Convertir a MD$/i })).toBeVisible();
+    await expect(page.getByText(/Elegir archivo DOCX/i)).toBeVisible();
+
+    await page.goto("/convert?source=docx&target=mp3", { waitUntil: "domcontentloaded" });
+    await expect(page.getByText(/Origen: DOCX/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /^Convertir a MD$/i })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^Convertir a PDF/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Convertir a MP3/i })).toHaveCount(0);
+
+    await page.goto("/convert?source=notreal&target=md", { waitUntil: "domcontentloaded" });
+    await expect(page.getByText(/Origen:/i)).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /^Convertir a MD$/i })).toBeVisible();
+  });
+
+  test("source-target deep links survive back and forward", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await selectHomeSource(page, "docx");
+    await selectHomeTarget(page, "md");
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await expect(page).toHaveURL(/\/convert\?source=docx&target=md$/);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/$/);
+    await page.goForward();
+    await expect(page).toHaveURL(/\/convert\?source=docx&target=md$/);
+    await expect(page.getByRole("heading", { name: /^Convertir a MD$/i })).toBeVisible();
+    await expect(page.getByText(/Elegir archivo DOCX/i)).toBeVisible();
   });
 });
 
@@ -261,6 +309,12 @@ async function selectHomeSource(page: import("@playwright/test").Page, value: st
   await page.getByTestId("home-source-select").click();
   await page.getByPlaceholder("Buscar formato, extensión o alias...").fill(value);
   await page.locator(`[data-testid="home-source-select-option"][data-format="${value}"]`).click();
+}
+
+async function selectHomeTarget(page: import("@playwright/test").Page, value: string): Promise<void> {
+  await page.getByTestId("home-target-select").click();
+  await page.getByPlaceholder("Buscar formato, extensión o alias...").fill(value);
+  await page.locator(`[data-testid="home-target-select-option"][data-format="${value}"]`).click();
 }
 
 async function categoryIds(page: import("@playwright/test").Page, testId: string): Promise<string[]> {

@@ -7,20 +7,40 @@ import type {
   UxConversionModel,
   UxFormatSummary,
 } from "@/lib/ux-v3/conversion-ux-model";
-import { normalizeFormatId } from "@/lib/domain/format-catalog";
+import { getFormatByCanonicalId, normalizeFormatId } from "@/lib/domain/format-catalog";
 
 interface ConversionHubProps {
   model: UxConversionModel;
   selectedTarget: string | null;
+  sourceFormatId?: string | null;
   initialCategoryId?: UxConversionCategoryId;
   onSelectTarget: (formatId: string) => void;
 }
 
-export function ConversionHub({ model, selectedTarget, initialCategoryId, onSelectTarget }: ConversionHubProps) {
+export function ConversionHub({ model, selectedTarget, sourceFormatId, initialCategoryId, onSelectTarget }: ConversionHubProps) {
   const [categoryId, setCategoryId] = useState<UxConversionCategoryId>(initialCategoryId ?? model.categories[0]?.id ?? "documents");
   const [query, setQuery] = useState("");
+  const sourceFormat = sourceFormatId ? getFormatByCanonicalId(sourceFormatId) : null;
+  const sourceLabel = sourceFormatId
+    ? sourceFormat?.outputExtension === "md"
+      ? "Markdown"
+      : sourceFormat?.outputExtension.toUpperCase() ?? sourceFormatId.toUpperCase()
+    : null;
+  const targetSet = useMemo(() => {
+    if (!sourceFormatId) return null;
+    return new Set(model.routes.filter((route) => route.source === sourceFormatId).map((route) => route.target));
+  }, [model.routes, sourceFormatId]);
+  const categories = useMemo(() => {
+    if (!targetSet) return model.categories;
+    return model.categories
+      .map((category) => ({
+        ...category,
+        formats: category.formats.filter((format) => targetSet.has(format.id)),
+      }))
+      .filter((category) => category.formats.length > 0);
+  }, [model.categories, targetSet]);
 
-  const selectedCategory = model.categories.find((category) => category.id === categoryId) ?? model.categories[0] ?? null;
+  const selectedCategory = categories.find((category) => category.id === categoryId) ?? categories[0] ?? null;
   const searchedDestinations = useMemo(() => {
     const formats = selectedCategory?.formats ?? [];
     const needle = query.trim().toLowerCase();
@@ -41,6 +61,11 @@ export function ConversionHub({ model, selectedTarget, initialCategoryId, onSele
           <div>
             <h2 className="text-xl font-black text-stone-100">Convertir</h2>
             <p className="mt-1 text-sm text-stone-400">Explora conversiones por tipo de resultado.</p>
+            {sourceLabel && (
+              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-teal-200">
+                Origen: {sourceLabel}
+              </p>
+            )}
           </div>
           <label className="relative block sm:w-72">
             <span className="sr-only">Buscar formato</span>
@@ -56,7 +81,7 @@ export function ConversionHub({ model, selectedTarget, initialCategoryId, onSele
 
         <div className="mt-4 grid gap-3 md:grid-cols-[220px_1fr]">
           <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-1" role="tablist" aria-label="Categorías de destino">
-            {model.categories.map((category) => (
+            {categories.map((category) => (
               <button
                 key={category.id}
                 type="button"

@@ -101,6 +101,14 @@ function getFormatLabel(formatId: string): string {
   return format.outputExtension.toUpperCase();
 }
 
+function hasFormat(model: UxConversionModel | null, formatId: string | null): formatId is string {
+  return Boolean(formatId && model?.formats.some((format) => format.id === formatId));
+}
+
+function isSupportedPair(model: UxConversionModel | null, source: string | null, target: string | null): source is string {
+  return Boolean(source && target && model?.routes.some((route) => route.source === source && route.target === target));
+}
+
 function getDetectedSourceFormat(result: AnalysisResult): string | null {
   if (result.kind === "universal-file") {
     const descriptor = (result as UniversalAnalysisResult).universalDescriptor as {
@@ -370,6 +378,54 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
     return () => window.clearTimeout(timer);
   }, [activeTab, handleTabChange, pathname]);
 
+  useEffect(() => {
+    if (pathname !== "/convert") return;
+
+    const source = normalizeFormatId(searchParams.get("source"));
+    const target = normalizeFormatId(searchParams.get("target"));
+    const validSource = hasFormat(uxModel, source) ? source : null;
+    const validTarget = hasFormat(uxModel, target) ? target : null;
+    const validPair = isSupportedPair(uxModel, validSource, validTarget);
+    const timer = window.setTimeout(() => {
+      setActiveTab("convert");
+      setActiveTool(null);
+
+      if (validPair) {
+        if (selectedSource !== validSource || selectedTarget !== validTarget) {
+          setSelectedSource(validSource);
+          setSelectedTarget(validTarget);
+          resetFlow();
+        }
+        return;
+      }
+
+      if (validSource) {
+        if (selectedSource !== validSource || selectedTarget !== null) {
+          setSelectedSource(validSource);
+          setSelectedTarget(null);
+          resetFlow();
+        }
+        return;
+      }
+
+      if (validTarget) {
+        if (selectedSource !== null || selectedTarget !== validTarget) {
+          setSelectedSource(null);
+          setSelectedTarget(validTarget);
+          resetFlow();
+        }
+        return;
+      }
+
+      if (selectedSource !== null || selectedTarget !== null) {
+        setSelectedSource(null);
+        setSelectedTarget(null);
+        resetFlow();
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [pathname, resetFlow, searchParams, selectedSource, selectedTarget, uxModel]);
+
   const handleOpenConvert = useCallback((categoryId?: UxConversionCategoryId) => {
     const href = categoryId ? `/convert?category=${categoryId}` : "/convert";
     if (pathname !== "/convert" || searchParams.get("category") !== (categoryId ?? null)) router.push(href);
@@ -382,13 +438,19 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
   }, [pathname, resetFlow, router, searchParams]);
 
   const handleSelectTarget = useCallback((target: string, source?: string) => {
-    if (pathname !== "/convert") router.push("/convert");
-    setSelectedTarget(target);
-    setSelectedSource(source ? normalizeFormatId(source) : null);
+    const canonicalTarget = normalizeFormatId(target) ?? target;
+    const canonicalSource = source ? normalizeFormatId(source) : null;
+    const params = new URLSearchParams();
+    if (canonicalSource) params.set("source", canonicalSource);
+    params.set("target", canonicalTarget);
+    const href = `/convert?${params.toString()}`;
+    if (pathname !== "/convert" || searchParams.toString() !== params.toString()) router.push(href);
+    setSelectedTarget(canonicalTarget);
+    setSelectedSource(canonicalSource);
     setActiveTab("convert");
     setActiveTool(null);
     resetFlow();
-  }, [pathname, resetFlow, router]);
+  }, [pathname, resetFlow, router, searchParams]);
 
   const handleOpenTool = useCallback((toolId: string) => {
     const href = `/tools?category=${encodeURIComponent(toolId)}`;
@@ -552,6 +614,7 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
             key={effectiveInitialConversionCategory ?? "all"}
             model={uxModel}
             selectedTarget={selectedTarget}
+            sourceFormatId={selectedSource}
             initialCategoryId={effectiveInitialConversionCategory}
             onSelectTarget={handleSelectTarget}
           />
@@ -739,6 +802,11 @@ function NativeConversionWorkspace(props: {
             </button>
             <h2 className="text-xl font-black text-stone-100">Convertir a {selectedTarget.toUpperCase()}</h2>
             <p className="mt-1 text-sm text-stone-400">Selecciona el archivo que quieres convertir.</p>
+            {selectedSource && (
+              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-teal-200">
+                Origen: {getFormatLabel(selectedSource)}
+              </p>
+            )}
           </div>
           <SystemResourceGauge compact />
         </div>

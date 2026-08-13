@@ -64,7 +64,7 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
     ? routes.filter((route) => route.target === target).slice(0, 8)
     : [];
 
-  const continueDisabled = Boolean(source && target && !quickRoute) || (!source && !target);
+  const continueDisabled = !source || !target || !quickRoute;
 
   const handleContinue = () => {
     if (target) {
