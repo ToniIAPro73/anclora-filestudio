@@ -1,6 +1,6 @@
 # FileStudio Conversion Coverage Audit
 
-Generated: 2026-08-13T03:11:22.080Z
+Generated: 2026-08-13T09:27:51.878Z
 
 ## Metrics
 
@@ -8,16 +8,16 @@ Generated: 2026-08-13T03:11:22.080Z
 | --- | --- |
 | Canonical formats | 50 |
 | Total possible ordered pairs | 2450 |
-| Direct supported pairs | 236 |
-| Multistep supported pairs | 224 |
-| Total effective pairs | 460 |
+| Direct supported pairs | 237 |
+| Multistep supported pairs | 239 |
+| Total effective pairs | 476 |
 | Tier 1 required | 152 |
 | Tier 1 supported | 152 |
 | Tier 1 coverage | 100% |
 | Tier 2 required | 40 |
 | Tier 2 supported | 40 |
 | Tier 3 required | 6 |
-| Tier 3 supported | 4 |
+| Tier 3 supported | 5 |
 
 Recommended competitive target: Tier 1 coverage >= 90%.
 
@@ -25,16 +25,16 @@ Recommended competitive target: Tier 1 coverage >= 90%.
 
 | PDF as source | Targets |
 | --- | --- |
-| Direct | png, txt, docx, tiff, jpg, html, md |
+| Direct | png, txt, docx, tiff, jpg, html, odt, md |
 | One intermediate | - |
 | Two intermediates | - |
-| All effective | png, txt, docx, tiff, jpg, html, md |
+| All effective | png, txt, docx, tiff, jpg, html, odt, md |
 
 ## Family Coverage
 
 | Family | Required | Supported | Coverage | Biggest gaps |
 | --- | --- | --- | --- | --- |
-| DOCUMENTS | 25 | 24 | 96% | pdf->odt |
+| DOCUMENTS | 25 | 25 | 100% | - |
 | IMAGES | 21 | 21 | 100% | - |
 | AUDIO | 30 | 30 | 100% | - |
 | VIDEO | 18 | 18 | 100% | - |
@@ -47,7 +47,6 @@ Recommended competitive target: Tier 1 coverage >= 90%.
 | Conversion | Tier | Blocker | Recommendation |
 | --- | --- | --- | --- |
 | pdf->epub | TIER 3 | No structured PDF extraction/reflow adapter is implemented. | INVESTIGATE after Tier 1 blockers with clearer user value. |
-| pdf->odt | TIER 3 | No structured PDF extraction/reflow adapter is implemented. | INVESTIGATE after Tier 1 blockers with clearer user value. |
 
 ## Format Audit
 
@@ -111,8 +110,8 @@ Category: image
 
 - Direct targets: png, webp, tiff, gif
 - One-intermediate targets: pdf, jpg
-- Two-intermediate targets: txt, html, docx, md
-- All effective targets: png, webp, tiff, gif, pdf, jpg, txt, html, docx, md
+- Two-intermediate targets: txt, html, docx, odt, md
+- All effective targets: png, webp, tiff, gif, pdf, jpg, txt, html, docx, odt, md
 - Direct sources: gif, jpg, png, tiff, webp
 - One-intermediate sources: avi, mkv, mov, mp4, ts, webm, wmv
 - Two-intermediate sources: -
@@ -129,8 +128,8 @@ Category: ebook
 
 - Direct targets: epub
 - One-intermediate targets: mobi, pdf
-- Two-intermediate targets: txt, docx, html, png, tiff, md, jpg
-- All effective targets: epub, mobi, pdf, txt, docx, html, png, tiff, md, jpg
+- Two-intermediate targets: txt, docx, odt, html, png, tiff, md, jpg
+- All effective targets: epub, mobi, pdf, txt, docx, odt, html, png, tiff, md, jpg
 - Direct sources: epub
 - One-intermediate sources: mobi, docx, html
 - Two-intermediate sources: doc, odt, rtf, md, rst, tex, txt
@@ -218,9 +217,9 @@ Category: document
 Category: ebook
 
 - Direct targets: mobi, pdf, azw3
-- One-intermediate targets: txt, docx, html, png, tiff, md, jpg
+- One-intermediate targets: txt, docx, odt, html, png, tiff, md, jpg
 - Two-intermediate targets: -
-- All effective targets: mobi, pdf, azw3, txt, docx, html, png, tiff, md, jpg
+- All effective targets: mobi, pdf, azw3, txt, docx, odt, html, png, tiff, md, jpg
 - Direct sources: docx, azw3, mobi, html
 - One-intermediate sources: doc, odt, rtf, md, rst
 - Two-intermediate sources: tex, txt
@@ -255,8 +254,8 @@ Category: image
 
 - Direct targets: png, avif, webp, tiff, jpg
 - One-intermediate targets: pdf
-- Two-intermediate targets: txt, html, docx, md
-- All effective targets: png, avif, webp, tiff, jpg, pdf, txt, html, docx, md
+- Two-intermediate targets: txt, html, docx, odt, md
+- All effective targets: png, avif, webp, tiff, jpg, pdf, txt, html, docx, odt, md
 - Direct sources: avif, jpg, png, tiff, webp, avi, mkv, mov, mp4, ts, webm, wmv
 - One-intermediate sources: -
 - Two-intermediate sources: -
@@ -289,10 +288,10 @@ Category: archive
 
 Category: plain-text
 
-- Direct targets: md, txt, png, tiff, docx, odt, rst, epub
+- Direct targets: png, tiff, md, txt, docx, odt, rst, epub
 - One-intermediate targets: pdf, rtf, azw3, mobi, tex
 - Two-intermediate targets: jpg
-- All effective targets: md, txt, pdf, png, tiff, docx, odt, rst, rtf, azw3, epub, mobi, tex, jpg
+- All effective targets: png, tiff, md, txt, pdf, docx, odt, rst, rtf, azw3, epub, mobi, tex, jpg
 - Direct sources: md, rst, pdf, docx, tex, txt
 - One-intermediate sources: doc, odt, rtf, odp, ods, ppt, pptx, xls, xlsx, jpg, png, tiff, webp, epub
 - Two-intermediate sources: avif, gif, azw3, mobi
@@ -308,9 +307,9 @@ Category: plain-text
 Category: image
 
 - Direct targets: png, avif, webp, tiff, pdf, gif
-- One-intermediate targets: txt, html, docx, md
+- One-intermediate targets: txt, html, docx, odt, md
 - Two-intermediate targets: -
-- All effective targets: png, avif, webp, tiff, pdf, gif, txt, html, docx, md
+- All effective targets: png, avif, webp, tiff, pdf, gif, txt, html, docx, odt, md
 - Direct sources: gif, pdf
 - One-intermediate sources: avif, png, tiff, webp, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, ts, webm, wmv, epub
 - Two-intermediate sources: azw3, html, md, mobi, rst
@@ -362,9 +361,9 @@ Category: audio
 Category: plain-text
 
 - Direct targets: html, txt, docx, odt, rst, tex
-- One-intermediate targets: pdf, png, tiff, epub, rtf
+- One-intermediate targets: png, tiff, pdf, epub, rtf
 - Two-intermediate targets: azw3, mobi, jpg
-- All effective targets: html, txt, pdf, png, tiff, epub, docx, odt, rst, rtf, tex, azw3, mobi, jpg
+- All effective targets: html, png, tiff, txt, pdf, epub, docx, odt, rst, rtf, tex, azw3, mobi, jpg
 - Direct sources: rst, html, docx, tex, txt, pdf
 - One-intermediate sources: doc, odt, rtf, epub, odp, ods, ppt, pptx, xls, xlsx, jpg, png, tiff, webp
 - Two-intermediate sources: azw3, mobi, avif, gif
@@ -399,8 +398,8 @@ Category: ebook
 
 - Direct targets: epub
 - One-intermediate targets: pdf, azw3
-- Two-intermediate targets: txt, docx, html, png, tiff, md, jpg
-- All effective targets: epub, pdf, azw3, txt, docx, html, png, tiff, md, jpg
+- Two-intermediate targets: txt, docx, odt, html, png, tiff, md, jpg
+- All effective targets: epub, pdf, azw3, txt, docx, odt, html, png, tiff, md, jpg
 - Direct sources: epub
 - One-intermediate sources: azw3, docx, html
 - Two-intermediate sources: doc, odt, rtf, md, rst, tex, txt
@@ -470,9 +469,9 @@ Category: video
 Category: presentation
 
 - Direct targets: pdf, pptx
-- One-intermediate targets: png, tiff, txt, jpg, html, docx, md
+- One-intermediate targets: png, tiff, txt, jpg, html, docx, odt, md
 - Two-intermediate targets: -
-- All effective targets: pdf, pptx, png, tiff, txt, jpg, html, docx, md
+- All effective targets: pdf, pptx, png, tiff, txt, jpg, html, docx, odt, md
 - Direct sources: -
 - One-intermediate sources: -
 - Two-intermediate sources: -
@@ -488,9 +487,9 @@ Category: presentation
 Category: spreadsheet
 
 - Direct targets: xlsx, pdf
-- One-intermediate targets: png, tiff, txt, jpg, html, docx, md
+- One-intermediate targets: png, tiff, txt, jpg, html, docx, odt, md
 - Two-intermediate targets: -
-- All effective targets: xlsx, pdf, png, tiff, txt, jpg, html, docx, md
+- All effective targets: xlsx, pdf, png, tiff, txt, jpg, html, docx, odt, md
 - Direct sources: xls, xlsx
 - One-intermediate sources: -
 - Two-intermediate sources: -
@@ -509,10 +508,10 @@ Category: document
 - One-intermediate targets: md, txt, html, png, tiff, jpg, epub, rst
 - Two-intermediate targets: azw3, mobi, tex
 - All effective targets: pdf, md, txt, html, docx, rtf, png, tiff, jpg, epub, azw3, mobi, rst, tex
-- Direct sources: doc, docx, rtf, md, html
-- One-intermediate sources: rst, tex, txt
-- Two-intermediate sources: -
-- All effective sources: doc, docx, rtf, md, html, rst, tex, txt
+- Direct sources: doc, docx, rtf, md, html, pdf
+- One-intermediate sources: rst, tex, odp, ods, ppt, pptx, xls, xlsx, jpg, png, tiff, webp, epub, txt
+- Two-intermediate sources: avif, gif, azw3, mobi
+- All effective sources: doc, docx, rtf, md, html, rst, tex, pdf, odp, ods, ppt, pptx, xls, xlsx, jpg, png, tiff, webp, avif, gif, epub, azw3, mobi, txt
 - High-value missing: -
 - Engine gap: No Tier gap identified by this audit.
 - Adapter gap: No primary adapter gap identified
@@ -541,15 +540,15 @@ Category: audio
 
 Category: pdf
 
-- Direct targets: png, txt, docx, tiff, jpg, html, md
+- Direct targets: png, txt, docx, tiff, jpg, html, odt, md
 - One-intermediate targets: -
 - Two-intermediate targets: -
-- All effective targets: png, txt, docx, tiff, jpg, html, md
+- All effective targets: png, txt, docx, tiff, jpg, html, odt, md
 - Direct sources: ods, xls, xlsx, doc, docx, odp, odt, ppt, pptx, rtf, jpg, png, tiff, webp, epub
 - One-intermediate sources: avif, gif, md, html, azw3, mobi
 - Two-intermediate sources: rst, tex, avi, mkv, mov, mp4, ts, webm, wmv, txt
 - All effective sources: ods, xls, xlsx, doc, docx, odp, odt, ppt, pptx, rtf, jpg, png, tiff, webp, avif, gif, md, html, rst, tex, epub, azw3, mobi, avi, mkv, mov, mp4, ts, webm, wmv, txt
-- High-value missing: pdf->epub (TIER 3), pdf->odt (TIER 3)
+- High-value missing: pdf->epub (TIER 3)
 - Engine gap: See highValueMissingConversions and engine gap analysis.
 - Adapter gap: Adapter missing
 - Runtime gap: None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.
@@ -560,9 +559,9 @@ Category: pdf
 Category: image
 
 - Direct targets: avif, webp, tiff, pdf, gif
-- One-intermediate targets: jpg, txt, html, docx, md
+- One-intermediate targets: jpg, txt, html, docx, odt, md
 - Two-intermediate targets: -
-- All effective targets: avif, webp, tiff, pdf, gif, jpg, txt, html, docx, md
+- All effective targets: avif, webp, tiff, pdf, gif, jpg, txt, html, docx, odt, md
 - Direct sources: avif, gif, jpg, tiff, webp, html, pdf
 - One-intermediate sources: md, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, rst, epub, tex, avi, mkv, mov, mp4, ts, webm, wmv, txt
 - Two-intermediate sources: azw3, mobi
@@ -578,9 +577,9 @@ Category: image
 Category: presentation
 
 - Direct targets: pdf, pptx
-- One-intermediate targets: png, tiff, txt, jpg, html, docx, md
+- One-intermediate targets: png, tiff, txt, jpg, html, docx, odt, md
 - Two-intermediate targets: -
-- All effective targets: pdf, pptx, png, tiff, txt, jpg, html, docx, md
+- All effective targets: pdf, pptx, png, tiff, txt, jpg, html, docx, odt, md
 - Direct sources: -
 - One-intermediate sources: -
 - Two-intermediate sources: -
@@ -596,9 +595,9 @@ Category: presentation
 Category: presentation
 
 - Direct targets: pdf
-- One-intermediate targets: png, tiff, txt, jpg, html, docx, md
+- One-intermediate targets: png, tiff, txt, jpg, html, docx, odt, md
 - Two-intermediate targets: -
-- All effective targets: pdf, png, tiff, txt, jpg, html, docx, md
+- All effective targets: pdf, png, tiff, txt, jpg, html, docx, odt, md
 - Direct sources: odp, ppt
 - One-intermediate sources: -
 - Two-intermediate sources: -
@@ -616,7 +615,7 @@ Category: plain-text
 - Direct targets: html, md, txt, tex
 - One-intermediate targets: png, tiff, docx, odt, epub
 - Two-intermediate targets: pdf, rtf, azw3, mobi, jpg
-- All effective targets: html, md, txt, pdf, png, tiff, docx, odt, rtf, tex, epub, azw3, mobi, jpg
+- All effective targets: html, md, png, tiff, txt, pdf, docx, odt, rtf, tex, epub, azw3, mobi, jpg
 - Direct sources: md, html, docx
 - One-intermediate sources: doc, odt, rtf, tex, txt
 - Two-intermediate sources: -
@@ -668,9 +667,9 @@ Category: archive
 Category: plain-text
 
 - Direct targets: md, html
-- One-intermediate targets: txt, docx, odt, rst, png, tiff
+- One-intermediate targets: txt, png, tiff, docx, odt, rst
 - Two-intermediate targets: pdf, epub, rtf, azw3, mobi
-- All effective targets: md, txt, html, pdf, epub, docx, odt, rst, rtf, azw3, mobi, png, tiff
+- All effective targets: md, txt, html, pdf, png, tiff, epub, docx, odt, rst, rtf, azw3, mobi
 - Direct sources: md, rst
 - One-intermediate sources: html, docx, txt
 - Two-intermediate sources: doc, odt, rtf
@@ -686,9 +685,9 @@ Category: plain-text
 Category: image
 
 - Direct targets: png, avif, webp, pdf, gif
-- One-intermediate targets: jpg, txt, html, docx, md
+- One-intermediate targets: jpg, txt, html, docx, odt, md
 - Two-intermediate targets: -
-- All effective targets: png, avif, webp, pdf, gif, jpg, txt, html, docx, md
+- All effective targets: png, avif, webp, pdf, gif, jpg, txt, html, docx, odt, md
 - Direct sources: avif, gif, jpg, png, webp, html, pdf
 - One-intermediate sources: doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, md, rst, epub, tex, avi, mkv, mov, mp4, ts, webm, wmv, txt
 - Two-intermediate sources: azw3, mobi
@@ -758,9 +757,9 @@ Category: structured-data
 Category: plain-text
 
 - Direct targets: md, html
-- One-intermediate targets: docx, odt, rst, tex, png, tiff
+- One-intermediate targets: png, tiff, docx, odt, rst, tex
 - Two-intermediate targets: pdf, epub, azw3, mobi, rtf
-- All effective targets: md, pdf, html, epub, azw3, mobi, docx, odt, rst, rtf, tex, png, tiff
+- All effective targets: md, pdf, html, png, tiff, epub, azw3, mobi, docx, odt, rst, rtf, tex
 - Direct sources: md, rst, docx, html, pdf
 - One-intermediate sources: doc, odt, rtf, tex, odp, ods, ppt, pptx, xls, xlsx, epub, jpg, png, tiff, webp
 - Two-intermediate sources: azw3, mobi, avif, gif
@@ -812,9 +811,9 @@ Category: video
 Category: image
 
 - Direct targets: png, avif, tiff, pdf, gif
-- One-intermediate targets: jpg, txt, html, docx, md
+- One-intermediate targets: jpg, txt, html, docx, odt, md
 - Two-intermediate targets: -
-- All effective targets: png, avif, tiff, pdf, gif, jpg, txt, html, docx, md
+- All effective targets: png, avif, tiff, pdf, gif, jpg, txt, html, docx, odt, md
 - Direct sources: avif, gif, jpg, png, tiff
 - One-intermediate sources: avi, mkv, mov, mp4, ts, webm, wmv
 - Two-intermediate sources: -
@@ -848,9 +847,9 @@ Category: video
 Category: spreadsheet
 
 - Direct targets: ods, xlsx, pdf
-- One-intermediate targets: png, tiff, txt, jpg, html, docx, md
+- One-intermediate targets: png, tiff, txt, jpg, html, docx, odt, md
 - Two-intermediate targets: -
-- All effective targets: ods, xlsx, pdf, png, tiff, txt, jpg, html, docx, md
+- All effective targets: ods, xlsx, pdf, png, tiff, txt, jpg, html, docx, odt, md
 - Direct sources: -
 - One-intermediate sources: -
 - Two-intermediate sources: -
@@ -866,9 +865,9 @@ Category: spreadsheet
 Category: spreadsheet
 
 - Direct targets: ods, pdf
-- One-intermediate targets: png, tiff, txt, jpg, html, docx, md
+- One-intermediate targets: png, tiff, txt, jpg, html, docx, odt, md
 - Two-intermediate targets: -
-- All effective targets: ods, pdf, png, tiff, txt, jpg, html, docx, md
+- All effective targets: ods, pdf, png, tiff, txt, jpg, html, docx, odt, md
 - Direct sources: ods, xls
 - One-intermediate sources: -
 - Two-intermediate sources: -

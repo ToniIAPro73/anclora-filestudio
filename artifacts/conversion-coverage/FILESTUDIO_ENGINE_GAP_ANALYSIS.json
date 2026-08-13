@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-13T03:11:22.080Z",
+  "generatedAt": "2026-08-13T09:27:51.878Z",
   "dependencyCandidates": [
     {
       "name": "Poppler text/html utilities (pdftotext, pdftohtml)",
@@ -95,41 +95,6 @@
     {
       "source": "pdf",
       "target": "epub",
-      "tier": "TIER 3",
-      "userValue": "specialist",
-      "qualityExpectation": "low",
-      "notes": "PDF reflow to editable/ebook formats is high-risk without layout extraction.",
-      "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
-      },
-      "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
-      },
-      "web": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
-      },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No structured PDF extraction/reflow adapter is implemented.",
-        "existingEngineCanHandle": "NO",
-        "existingEngineCandidates": [],
-        "newRequired": true,
-        "candidates": [],
-        "expectedQuality": "UNKNOWN",
-        "complexity": "MEDIUM",
-        "portableImpact": "UNKNOWN",
-        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-      }
-    },
-    {
-      "source": "pdf",
-      "target": "odt",
       "tier": "TIER 3",
       "userValue": "specialist",
       "qualityExpectation": "low",

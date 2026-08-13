@@ -1,0 +1,95 @@
+{
+  "phase": "FILESTUDIO_PDF_ODT_IMPLEMENTATION_AND_CERTIFICATION",
+  "generatedAt": "2026-08-13",
+  "scope": {
+    "implemented": ["pdf->odt"],
+    "untouched": ["pdf->epub"],
+    "newDependencies": false,
+    "newRuntimes": false,
+    "windowsPortableGenerated": false,
+    "maxIntermediatesChanged": false,
+    "tiersChanged": false
+  },
+  "engine": {
+    "id": "libreoffice",
+    "reusedExistingEngine": true,
+    "route": "pdf->odt",
+    "routeKind": "direct",
+    "operationId": "office:pdf-to-odt",
+    "implementationId": "libreoffice-pdf-import-odt",
+    "dependencies": ["libreoffice", "pdftotext"],
+    "supportsAsIntermediate": false,
+    "inputFilter": "writer_pdf_import",
+    "outputFormat": "odt",
+    "outputMime": "application/vnd.oasis.opendocument.text"
+  },
+  "qualityProfile": {
+    "text": "high",
+    "headings": "good",
+    "paragraphs": "good",
+    "tables": "acceptable/degraded",
+    "images": "good",
+    "layout": "acceptable",
+    "multipage": "good",
+    "unicode": "good",
+    "metadata": "partial/low",
+    "irreversibleLosses": ["tables", "structure"]
+  },
+  "validation": {
+    "odtZipSignature": "PASS",
+    "mimetype": "application/vnd.oasis.opendocument.text",
+    "contentXml": "PASS",
+    "stylesXml": "PASS",
+    "manifestXml": "PASS",
+    "expectedText": "PASS",
+    "embeddedImages": "PASS",
+    "paragraphOrder": "PASS",
+    "roundtripOdtToPdf": "PASS",
+    "sourceContract": "PASS"
+  },
+  "fixtures": {
+    "PDFODT-001": "PASS",
+    "PDFODT-002": "PASS",
+    "PDFODT-003": "PASS",
+    "PDFODT-004": "PASS",
+    "PDFODT-005": "PASS_ACCEPTABLE_TABLE_DEGRADATION",
+    "PDFODT-006": "PASS",
+    "PDFODT-007": "PASS",
+    "PDFODT-008": "PASS",
+    "PDFODT-009": "PASS_CONTROLLED_REJECTION",
+    "PDFODT-010": "PASS"
+  },
+  "discovery": {
+    "pdfTargetsIncludeOdt": true,
+    "odtSourcesIncludePdf": true,
+    "pdfToEpubRoute": null
+  },
+  "routing": {
+    "winner": "pdf->odt",
+    "engine": "libreoffice",
+    "intermediates": [],
+    "score": 0.663,
+    "risk": "high",
+    "reason": "ONLY_VIABLE_ROUTE"
+  },
+  "coverage": {
+    "canonicalFormats": 50,
+    "tier1": "152/152",
+    "tier2": "40/40",
+    "tier3Before": "4/6",
+    "tier3After": "5/6",
+    "directPairsAfter": 237,
+    "multistepPairsAfter": 239,
+    "totalEffectivePairsAfter": 476
+  },
+  "qa": {
+    "targetedTests": "PASS",
+    "linuxE2e": "PASS",
+    "typecheck": "PASS",
+    "lint": "PASS_WITH_WARNINGS",
+    "tests": "PASS",
+    "build": "PASS_WITH_WARNINGS",
+    "agentBrowser": "PASS"
+  },
+  "certification": "PASS"
+}

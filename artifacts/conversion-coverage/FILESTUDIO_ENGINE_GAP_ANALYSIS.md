@@ -1,6 +1,6 @@
 # FileStudio Engine Gap Analysis
 
-Generated: 2026-08-13T03:11:22.080Z
+Generated: 2026-08-13T09:27:51.878Z
 
 ## New Engine / Library Candidates
 
@@ -35,7 +35,6 @@ Generated: 2026-08-13T03:11:22.080Z
 | Conversion | Tier | Current pipeline | Current blocker | Existing engine | Existing candidates | New dependency | New candidates | Expected quality | Complexity | Portable impact | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | pdf->epub | TIER 3 | None | No structured PDF extraction/reflow adapter is implemented. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
-| pdf->odt | TIER 3 | None | No structured PDF extraction/reflow adapter is implemented. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
 
 ## Requirements For Future Native Dependencies
 
