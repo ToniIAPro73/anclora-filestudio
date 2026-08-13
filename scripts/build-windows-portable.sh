@@ -541,6 +541,11 @@ for _semver_req_file in \
 done
 ok "semver package validated (all required files present)"
 
+info "Removing dev-only Playwright wrapper package..."
+rm -rf "$APP_DIR/node_modules/playwright"
+find "$APP_DIR/node_modules" -path "*/node_modules/playwright" -type d -prune -exec rm -rf {} + 2>/dev/null || true
+ok "Dev-only Playwright wrapper removed; playwright-core retained for renderer runtime"
+
 info "Removing .pnpm store (prevents deep paths on Windows)..."
 rm -rf "$APP_DIR/node_modules/.pnpm"
 ok ".pnpm store removed"
@@ -720,14 +725,27 @@ ok "VERSION.txt generated"
 
 # ── Section 14: Generate manifest.json ───────────────────────────────────────
 info "Generating manifest.json..."
+BUILD_COMMIT_FULL="$(git rev-parse HEAD 2>/dev/null || echo "unknown")"
 BUILD_COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")"
+SOURCE_TREE_CLEAN="true"
+if ! git diff --quiet -- . ':(exclude)artifacts/route-ranking/benchmark-results.json' 2>/dev/null || \
+   ! git diff --cached --quiet -- . ':(exclude)artifacts/route-ranking/benchmark-results.json' 2>/dev/null; then
+  SOURCE_TREE_CLEAN="false"
+fi
 cat > "$STAGING_DIR/manifest.json" << EOF
 {
   "name": "Anclora FileStudio",
   "version": "${APP_VERSION}",
-  "buildId": "win-x64-${BUILD_DATE_UTC:0:10}",
+  "buildId": "win-x64-${BUILD_COMMIT}",
   "buildDate": "${BUILD_DATE_UTC}",
   "commit": "${BUILD_COMMIT}",
+  "commitFull": "${BUILD_COMMIT_FULL}",
+  "source": {
+    "commit": "${BUILD_COMMIT_FULL}",
+    "shortCommit": "${BUILD_COMMIT}",
+    "treeCleanExcludingKnownArtifacts": ${SOURCE_TREE_CLEAN},
+    "knownExcludedDirtyPaths": ["artifacts/route-ranking/benchmark-results.json"]
+  },
   "platform": "windows",
   "arch": "x64",
   "capabilities": ["data","image","audio","video","thumbnail","youtube","pdf","archive","document","pdf-to-image"],

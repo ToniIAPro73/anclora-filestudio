@@ -23,6 +23,11 @@ VERSION="$(node -p "require('$REPO_ROOT/package.json').version" 2>/dev/null || e
 BUILD_ID="$(git -C "$REPO_ROOT" rev-parse --short HEAD 2>/dev/null || echo "dev")"
 BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 GIT_COMMIT="$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || echo "unknown")"
+SOURCE_TREE_CLEAN="true"
+if ! git -C "$REPO_ROOT" diff --quiet -- . ':(exclude)artifacts/route-ranking/benchmark-results.json' 2>/dev/null || \
+   ! git -C "$REPO_ROOT" diff --cached --quiet -- . ':(exclude)artifacts/route-ranking/benchmark-results.json' 2>/dev/null; then
+  SOURCE_TREE_CLEAN="false"
+fi
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
@@ -235,6 +240,11 @@ const pkg = require('$REPO_ROOT/package.json');
 const min = { name: pkg.name, version: pkg.version, private: true };
 require('fs').writeFileSync('$PACKAGE_DIR/app/package.json', JSON.stringify(min, null, 2));
 "
+
+info "Removing dev-only Playwright wrapper package..."
+rm -rf "$PACKAGE_DIR/app/node_modules/playwright"
+find "$PACKAGE_DIR/app/node_modules" -path "*/node_modules/playwright" -type d -prune -exec rm -rf {} + 2>/dev/null || true
+ok "Dev-only Playwright wrapper removed; playwright-core retained for renderer runtime"
 
 # ── Copy native modules for linux-x64 ────────────────────────────────────────
 info "Validating native modules (linux-x64)..."
@@ -712,6 +722,13 @@ manifest = {
   "buildId": "$BUILD_ID",
   "buildDate": "$BUILD_DATE",
   "commit": "$GIT_COMMIT",
+  "commitFull": "$GIT_COMMIT",
+  "source": {
+    "commit": "$GIT_COMMIT",
+    "shortCommit": "$BUILD_ID",
+    "treeCleanExcludingKnownArtifacts": $SOURCE_TREE_CLEAN,
+    "knownExcludedDirtyPaths": ["artifacts/route-ranking/benchmark-results.json"]
+  },
   "platform": "linux",
   "arch": "x64",
   "packageName": "$PACKAGE_NAME",

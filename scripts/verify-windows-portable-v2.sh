@@ -105,6 +105,23 @@ for d in "${REQUIRED_DIRS[@]}"; do
   fi
 done
 
+# ── 4b. Runtime state must not ship in a clean portable ──────────────────────
+info "Verificando ausencia de estado runtime empaquetado..."
+STATE_FILES="$(find "$EXTRACTED" \( -name '*.sqlite' -o -name '*.sqlite-wal' -o -name '*.sqlite-shm' \) -type f 2>/dev/null | head -20 || true)"
+if [[ -n "$STATE_FILES" ]]; then
+  while IFS= read -r f; do fail "  Estado runtime no permitido: ${f#$EXTRACTED/}"; done <<< "$STATE_FILES"
+else
+  ok "  No hay SQLite/WAL/SHM en el portable"
+  PASS=$((PASS+1))
+fi
+
+if [[ -d "$EXTRACTED/app/node_modules/playwright" ]]; then
+  fail "  playwright package no debe estar empaquetado en Core runtime"
+else
+  ok "  playwright package no está empaquetado"
+  PASS=$((PASS+1))
+fi
+
 # ── 5. Required files ────────────────────────────────────────────────────────
 info "Verificando archivos obligatorios..."
 
@@ -245,7 +262,7 @@ if [[ -f "$EXTRACTED/manifest.json" ]]; then
     fail "  manifest.arch != x64 (got: '$ARCH')"
   fi
 
-  for field in name version capabilities runtime; do
+  for field in name version buildId buildDate commit commitFull source capabilities runtime; do
     HAS="$(python3 -c "import json; d=json.load(open('$EXTRACTED/manifest.json')); print('yes' if '$field' in d else 'no')" 2>/dev/null || echo 'no')"
     if [[ "$HAS" == "yes" ]]; then
       ok "  manifest.$field presente"
@@ -254,6 +271,14 @@ if [[ -f "$EXTRACTED/manifest.json" ]]; then
       fail "  manifest.$field AUSENTE"
     fi
   done
+  SOURCE_COMMIT="$(python3 -c "import json; d=json.load(open('$EXTRACTED/manifest.json')); print(d.get('source',{}).get('commit',''))" 2>/dev/null || echo '')"
+  COMMIT_FULL="$(python3 -c "import json; d=json.load(open('$EXTRACTED/manifest.json')); print(d.get('commitFull',''))" 2>/dev/null || echo '')"
+  if [[ -n "$SOURCE_COMMIT" && "$SOURCE_COMMIT" == "$COMMIT_FULL" ]]; then
+    ok "  manifest.source.commit coincide con commitFull"
+    PASS=$((PASS+1))
+  else
+    fail "  manifest.source.commit no coincide con commitFull"
+  fi
 else
   fail "  manifest.json no encontrado"
 fi

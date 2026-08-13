@@ -113,6 +113,23 @@ for d in app data temp logs; do
   check "dir: $d" test -d "$PKG/$d"
 done
 
+STATE_FILES="$(find "$PKG" \( -name '*.sqlite' -o -name '*.sqlite-wal' -o -name '*.sqlite-shm' \) -type f 2>/dev/null | head -20 || true)"
+if [[ -n "$STATE_FILES" ]]; then
+  echo "$STATE_FILES" | sed "s#^#$RED[FAIL]$NC Runtime state file: #"
+  (( FAIL++ )) || true
+else
+  echo -e "${GREEN}[PASS]${NC} no SQLite/WAL/SHM runtime state in package"
+  (( PASS++ )) || true
+fi
+
+if [[ -d "$PKG/app/node_modules/playwright" ]]; then
+  echo -e "${RED}[FAIL]${NC} playwright package should not be in Core runtime"
+  (( FAIL++ )) || true
+else
+  echo -e "${GREEN}[PASS]${NC} playwright package absent from Core runtime"
+  (( PASS++ )) || true
+fi
+
 # ── 4. Executable permissions ─────────────────────────────────────────────────
 echo ""
 echo "--- 4. Executable permissions ---"
@@ -137,10 +154,14 @@ done
 echo ""
 echo "--- 6. Manifest fields ---"
 MANIFEST="$PKG/manifest.json"
-for field in name version buildId buildDate commit platform arch capabilities; do
+for field in name version buildId buildDate commit commitFull source platform arch capabilities; do
   VAL="$(python3 -c "import json; d=json.load(open('$MANIFEST')); print(d.get('$field',''))" 2>/dev/null || echo '')"
   require "manifest.$field" "$VAL"
 done
+
+SOURCE_COMMIT="$(python3 -c "import json; d=json.load(open('$MANIFEST')); print(d.get('source',{}).get('commit',''))" 2>/dev/null || echo '')"
+COMMIT_FULL="$(python3 -c "import json; d=json.load(open('$MANIFEST')); print(d.get('commitFull',''))" 2>/dev/null || echo '')"
+[[ -n "$SOURCE_COMMIT" && "$SOURCE_COMMIT" == "$COMMIT_FULL" ]] && { echo -e "${GREEN}[PASS]${NC} manifest.source.commit matches commitFull"; (( PASS++ )) || true; } || { echo -e "${RED}[FAIL]${NC} manifest.source.commit does not match commitFull"; (( FAIL++ )) || true; }
 
 PLATFORM="$(python3 -c "import json; print(json.load(open('$MANIFEST'))['platform'])" 2>/dev/null || echo '')"
 [[ "$PLATFORM" == "linux" ]] && { echo -e "${GREEN}[PASS]${NC} platform=linux"; (( PASS++ )) || true; } || { echo -e "${RED}[FAIL]${NC} platform != linux (got: $PLATFORM)"; (( FAIL++ )) || true; }

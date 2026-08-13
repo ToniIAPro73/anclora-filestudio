@@ -258,6 +258,16 @@ try {
     }
     Write-Host "[PASS] GET / returned 200"
 
+    Write-Host "[INFO] Requesting /tools..."
+    $toolsResp = Invoke-WebRequest -Uri ("http://127.0.0.1:" + $serverPort + "/tools") -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
+    if ($toolsResp.StatusCode -ne 200) {
+        throw ("GET /tools status is not 200: " + $toolsResp.StatusCode)
+    }
+    if ($toolsResp.Content -match "404|This page could not be found") {
+        throw "GET /tools returned a 404 page body"
+    }
+    Write-Host "[PASS] GET /tools returned 200 and no 404 body"
+
     Write-Host "[INFO] Requesting /api/batch (App Route module evaluation)..."
     $batchStatus = $null
     try {

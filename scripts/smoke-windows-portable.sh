@@ -106,6 +106,24 @@ if [[ -n "$SEVENZIP" ]]; then
     fi
   fi
 
+  STATE_FILES="$(find "$PKG" \( -name '*.sqlite' -o -name '*.sqlite-wal' -o -name '*.sqlite-shm' \) -type f 2>/dev/null | head -20 || true)"
+  if [[ -n "$STATE_FILES" ]]; then
+    echo "[FAIL] Runtime SQLite/WAL/SHM files found in clean package"
+    echo "$STATE_FILES"
+    FAIL=$((FAIL+1))
+  else
+    echo "[PASS] No SQLite/WAL/SHM runtime state"
+    PASS=$((PASS+1))
+  fi
+
+  if [[ -d "$PKG/app/node_modules/playwright" ]]; then
+    echo "[FAIL] app/node_modules/playwright should not be packaged"
+    FAIL=$((FAIL+1))
+  else
+    echo "[PASS] playwright wrapper package absent"
+    PASS=$((PASS+1))
+  fi
+
   # Developer paths check
   DEV_PATTERN='(/home/[^[:space:]"'"'"'<>]*/[^[:space:]"'"'"'<>]*/anclora/|/workspace/anclora/|/home/toni/)'
   DEV_FOUND="$(LC_ALL=C grep -IRnE "$DEV_PATTERN" "$PKG" \
