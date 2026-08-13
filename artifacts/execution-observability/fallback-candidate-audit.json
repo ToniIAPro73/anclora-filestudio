@@ -1,0 +1,5529 @@
+{
+  "generatedAt": "2026-08-13T09:56:16.458Z",
+  "environment": "linux",
+  "pairsWithMultipleRankedRoutes": 412,
+  "fallbackPossible": 6,
+  "noSafeFallback": 406,
+  "rows": [
+    {
+      "conversion": "7z->tar",
+      "rankedRoutes": 2,
+      "primaryRouteId": "7z>tar:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "7z->zip",
+      "rankedRoutes": 2,
+      "primaryRouteId": "7z>zip:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "aac->flac",
+      "rankedRoutes": 17,
+      "primaryRouteId": "aac>flac:media:convert-audio",
+      "primaryScore": 0.919,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "aac->m4a",
+      "rankedRoutes": 17,
+      "primaryRouteId": "aac>m4a:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "aac->mp3",
+      "rankedRoutes": 17,
+      "primaryRouteId": "aac>mp3:media:convert-audio",
+      "primaryScore": 0.789,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "aac->ogg",
+      "rankedRoutes": 17,
+      "primaryRouteId": "aac>ogg:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "aac->wav",
+      "rankedRoutes": 17,
+      "primaryRouteId": "aac>wav:media:convert-audio",
+      "primaryScore": 0.919,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->aac",
+      "rankedRoutes": 50,
+      "primaryRouteId": "avi>aac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->avif",
+      "rankedRoutes": 8,
+      "primaryRouteId": "avi>gif:media:create-gif|gif>avif:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->flac",
+      "rankedRoutes": 50,
+      "primaryRouteId": "avi>flac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->gif",
+      "rankedRoutes": 10,
+      "primaryRouteId": "avi>gif:media:create-gif",
+      "primaryScore": 0.465,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->jpg",
+      "rankedRoutes": 8,
+      "primaryRouteId": "avi>gif:media:create-gif|gif>jpg:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->m4a",
+      "rankedRoutes": 50,
+      "primaryRouteId": "avi>m4a:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->mkv",
+      "rankedRoutes": 5,
+      "primaryRouteId": "avi>mkv:media:convert-video",
+      "primaryScore": 0.931,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->mp3",
+      "rankedRoutes": 50,
+      "primaryRouteId": "avi>mp3:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->mp4",
+      "rankedRoutes": 5,
+      "primaryRouteId": "avi>mp4:media:convert-video",
+      "primaryScore": 0.823,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->ogg",
+      "rankedRoutes": 50,
+      "primaryRouteId": "avi>ogg:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->pdf",
+      "rankedRoutes": 4,
+      "primaryRouteId": "avi>gif:media:create-gif|gif>png:image:convert|png>pdf:image:to-pdf",
+      "primaryScore": 0.547,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->png",
+      "rankedRoutes": 8,
+      "primaryRouteId": "avi>gif:media:create-gif|gif>png:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->tiff",
+      "rankedRoutes": 8,
+      "primaryRouteId": "avi>gif:media:create-gif|gif>tiff:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->wav",
+      "rankedRoutes": 50,
+      "primaryRouteId": "avi>wav:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->webm",
+      "rankedRoutes": 5,
+      "primaryRouteId": "avi>webm:media:convert-video",
+      "primaryScore": 0.786,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avi->webp",
+      "rankedRoutes": 8,
+      "primaryRouteId": "avi>gif:media:create-gif|gif>webp:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->docx",
+      "rankedRoutes": 4,
+      "primaryRouteId": "avif>png:image:convert|png>pdf:image:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.62,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->gif",
+      "rankedRoutes": 17,
+      "primaryRouteId": "avif>gif:image:convert",
+      "primaryScore": 0.623,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->html",
+      "rankedRoutes": 4,
+      "primaryRouteId": "avif>png:image:convert|png>pdf:image:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.632,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->jpg",
+      "rankedRoutes": 20,
+      "primaryRouteId": "avif>gif:image:convert|gif>jpg:image:convert",
+      "primaryScore": 0.669,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->md",
+      "rankedRoutes": 4,
+      "primaryRouteId": "avif>png:image:convert|png>pdf:image:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.519,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->odt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "avif>png:image:convert|png>pdf:image:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.615,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->pdf",
+      "rankedRoutes": 20,
+      "primaryRouteId": "avif>png:image:convert|png>pdf:image:to-pdf",
+      "primaryScore": 0.791,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->png",
+      "rankedRoutes": 20,
+      "primaryRouteId": "avif>png:image:convert",
+      "primaryScore": 0.915,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->tiff",
+      "rankedRoutes": 20,
+      "primaryRouteId": "avif>tiff:image:convert",
+      "primaryScore": 0.925,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->txt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "avif>png:image:convert|png>pdf:image:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.598,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "avif->webp",
+      "rankedRoutes": 17,
+      "primaryRouteId": "avif>webp:image:convert",
+      "primaryScore": 0.819,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "bz2->7z",
+      "rankedRoutes": 5,
+      "primaryRouteId": "bz2>7z:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "bz2->tar",
+      "rankedRoutes": 5,
+      "primaryRouteId": "bz2>tar:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "bz2->zip",
+      "rankedRoutes": 5,
+      "primaryRouteId": "bz2>zip:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "csv->json",
+      "rankedRoutes": 17,
+      "primaryRouteId": "csv>json:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "csv->toml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "csv>toml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "csv->tsv",
+      "rankedRoutes": 17,
+      "primaryRouteId": "csv>tsv:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "csv->xml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "csv>xml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "csv->yaml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "csv>yaml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->docx",
+      "rankedRoutes": 8,
+      "primaryRouteId": "doc>docx:office:to-pdf",
+      "primaryScore": 0.897,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->epub",
+      "rankedRoutes": 4,
+      "primaryRouteId": "doc>docx:office:to-pdf|docx>epub:ebook:convert",
+      "primaryScore": 0.731,
+      "primaryEngines": [
+        "libreoffice",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->html",
+      "rankedRoutes": 10,
+      "primaryRouteId": "doc>docx:office:to-pdf|docx>html:doc:convert",
+      "primaryScore": 0.659,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->jpg",
+      "rankedRoutes": 4,
+      "primaryRouteId": "doc>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.542,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->md",
+      "rankedRoutes": 10,
+      "primaryRouteId": "doc>docx:office:to-pdf|docx>md:doc:convert",
+      "primaryScore": 0.75,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->odt",
+      "rankedRoutes": 13,
+      "primaryRouteId": "doc>odt:office:to-pdf",
+      "primaryScore": 0.897,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->pdf",
+      "rankedRoutes": 12,
+      "primaryRouteId": "doc>pdf:office:to-pdf",
+      "primaryScore": 0.889,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->png",
+      "rankedRoutes": 5,
+      "primaryRouteId": "doc>pdf:office:to-pdf|pdf>png:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->rst",
+      "rankedRoutes": 5,
+      "primaryRouteId": "doc>docx:office:to-pdf|docx>rst:doc:convert",
+      "primaryScore": 0.684,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->rtf",
+      "rankedRoutes": 6,
+      "primaryRouteId": "doc>rtf:office:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->tex",
+      "rankedRoutes": 2,
+      "primaryRouteId": "doc>docx:office:to-pdf|docx>md:doc:convert|md>tex:doc:convert",
+      "primaryScore": 0.679,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->tiff",
+      "rankedRoutes": 5,
+      "primaryRouteId": "doc>pdf:office:to-pdf|pdf>tiff:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "doc->txt",
+      "rankedRoutes": 10,
+      "primaryRouteId": "doc>docx:office:to-pdf|docx>txt:doc:convert",
+      "primaryScore": 0.686,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->azw3",
+      "rankedRoutes": 2,
+      "primaryRouteId": "docx>epub:ebook:convert|epub>azw3:ebook:convert",
+      "primaryScore": 0.71,
+      "primaryEngines": [
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->epub",
+      "rankedRoutes": 5,
+      "primaryRouteId": "docx>epub:ebook:convert",
+      "primaryScore": 0.738,
+      "primaryEngines": [
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->html",
+      "rankedRoutes": 16,
+      "primaryRouteId": "docx>html:doc:convert",
+      "primaryScore": 0.659,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": true,
+      "fallbackRouteId": "docx>pdf:office:to-pdf|pdf>html:pdf:extract-html",
+      "classification": "FALLBACK POSSIBLE",
+      "rejectedReason": null
+    },
+    {
+      "conversion": "docx->jpg",
+      "rankedRoutes": 5,
+      "primaryRouteId": "docx>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.542,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->md",
+      "rankedRoutes": 15,
+      "primaryRouteId": "docx>md:doc:convert",
+      "primaryScore": 0.75,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->mobi",
+      "rankedRoutes": 2,
+      "primaryRouteId": "docx>epub:ebook:convert|epub>mobi:ebook:convert",
+      "primaryScore": 0.71,
+      "primaryEngines": [
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->odt",
+      "rankedRoutes": 17,
+      "primaryRouteId": "docx>odt:office:to-pdf",
+      "primaryScore": 0.897,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->pdf",
+      "rankedRoutes": 12,
+      "primaryRouteId": "docx>pdf:office:to-pdf",
+      "primaryScore": 0.889,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->png",
+      "rankedRoutes": 9,
+      "primaryRouteId": "docx>pdf:office:to-pdf|pdf>png:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->rst",
+      "rankedRoutes": 7,
+      "primaryRouteId": "docx>rst:doc:convert",
+      "primaryScore": 0.684,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->rtf",
+      "rankedRoutes": 6,
+      "primaryRouteId": "docx>rtf:office:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->tex",
+      "rankedRoutes": 7,
+      "primaryRouteId": "docx>md:doc:convert|md>tex:doc:convert",
+      "primaryScore": 0.679,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->tiff",
+      "rankedRoutes": 9,
+      "primaryRouteId": "docx>pdf:office:to-pdf|pdf>tiff:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "docx->txt",
+      "rankedRoutes": 15,
+      "primaryRouteId": "docx>txt:doc:convert",
+      "primaryScore": 0.686,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": true,
+      "fallbackRouteId": "docx>pdf:office:to-pdf|pdf>txt:pdf:extract-text",
+      "classification": "FALLBACK POSSIBLE",
+      "rejectedReason": null
+    },
+    {
+      "conversion": "flac->aac",
+      "rankedRoutes": 17,
+      "primaryRouteId": "flac>aac:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "flac->m4a",
+      "rankedRoutes": 17,
+      "primaryRouteId": "flac>m4a:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "flac->mp3",
+      "rankedRoutes": 17,
+      "primaryRouteId": "flac>mp3:media:convert-audio",
+      "primaryScore": 0.789,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "flac->ogg",
+      "rankedRoutes": 17,
+      "primaryRouteId": "flac>ogg:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "flac->wav",
+      "rankedRoutes": 17,
+      "primaryRouteId": "flac>wav:media:convert-audio",
+      "primaryScore": 0.919,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->avif",
+      "rankedRoutes": 17,
+      "primaryRouteId": "gif>avif:image:convert",
+      "primaryScore": 0.819,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->docx",
+      "rankedRoutes": 4,
+      "primaryRouteId": "gif>png:image:convert|png>pdf:image:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.62,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->html",
+      "rankedRoutes": 4,
+      "primaryRouteId": "gif>png:image:convert|png>pdf:image:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.632,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->jpg",
+      "rankedRoutes": 20,
+      "primaryRouteId": "gif>jpg:image:convert",
+      "primaryScore": 0.787,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->md",
+      "rankedRoutes": 4,
+      "primaryRouteId": "gif>png:image:convert|png>pdf:image:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.519,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->odt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "gif>png:image:convert|png>pdf:image:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.615,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->pdf",
+      "rankedRoutes": 20,
+      "primaryRouteId": "gif>png:image:convert|png>pdf:image:to-pdf",
+      "primaryScore": 0.791,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->png",
+      "rankedRoutes": 20,
+      "primaryRouteId": "gif>png:image:convert",
+      "primaryScore": 0.915,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->tiff",
+      "rankedRoutes": 20,
+      "primaryRouteId": "gif>tiff:image:convert",
+      "primaryScore": 0.925,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->txt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "gif>png:image:convert|png>pdf:image:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.598,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gif->webp",
+      "rankedRoutes": 17,
+      "primaryRouteId": "gif>webp:image:convert",
+      "primaryScore": 0.819,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gz->7z",
+      "rankedRoutes": 5,
+      "primaryRouteId": "gz>7z:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gz->tar",
+      "rankedRoutes": 5,
+      "primaryRouteId": "gz>tar:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "gz->zip",
+      "rankedRoutes": 5,
+      "primaryRouteId": "gz>zip:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->azw3",
+      "rankedRoutes": 2,
+      "primaryRouteId": "html>epub:ebook:convert|epub>azw3:ebook:convert",
+      "primaryScore": 0.703,
+      "primaryEngines": [
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->docx",
+      "rankedRoutes": 12,
+      "primaryRouteId": "html>docx:doc:convert",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": true,
+      "fallbackRouteId": "html>epub:ebook:convert|epub>pdf:ebook:convert|pdf>docx:office:pdf-to-docx",
+      "classification": "FALLBACK POSSIBLE",
+      "rejectedReason": null
+    },
+    {
+      "conversion": "html->epub",
+      "rankedRoutes": 5,
+      "primaryRouteId": "html>epub:ebook:convert",
+      "primaryScore": 0.703,
+      "primaryEngines": [
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->jpg",
+      "rankedRoutes": 3,
+      "primaryRouteId": "html>docx:doc:convert|docx>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.335,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->md",
+      "rankedRoutes": 13,
+      "primaryRouteId": "html>md:doc:convert",
+      "primaryScore": 0.767,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->mobi",
+      "rankedRoutes": 2,
+      "primaryRouteId": "html>epub:ebook:convert|epub>mobi:ebook:convert",
+      "primaryScore": 0.703,
+      "primaryEngines": [
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->odt",
+      "rankedRoutes": 17,
+      "primaryRouteId": "html>odt:doc:convert",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": true,
+      "fallbackRouteId": "html>epub:ebook:convert|epub>pdf:ebook:convert|pdf>odt:office:pdf-to-odt",
+      "classification": "FALLBACK POSSIBLE",
+      "rejectedReason": null
+    },
+    {
+      "conversion": "html->pdf",
+      "rankedRoutes": 13,
+      "primaryRouteId": "html>docx:doc:convert|docx>pdf:office:to-pdf",
+      "primaryScore": 0.679,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice"
+      ],
+      "fallbackPossible": true,
+      "fallbackRouteId": "html>epub:ebook:convert|epub>pdf:ebook:convert",
+      "classification": "FALLBACK POSSIBLE",
+      "rejectedReason": null
+    },
+    {
+      "conversion": "html->png",
+      "rankedRoutes": 4,
+      "primaryRouteId": "html>png:render:html-to-image",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "html-renderer"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->rst",
+      "rankedRoutes": 7,
+      "primaryRouteId": "html>rst:doc:convert",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->rtf",
+      "rankedRoutes": 9,
+      "primaryRouteId": "html>docx:doc:convert|docx>rtf:office:convert",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->tex",
+      "rankedRoutes": 7,
+      "primaryRouteId": "html>md:doc:convert|md>tex:doc:convert",
+      "primaryScore": 0.701,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->tiff",
+      "rankedRoutes": 4,
+      "primaryRouteId": "html>tiff:render:html-to-image",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "html-renderer"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "html->txt",
+      "rankedRoutes": 14,
+      "primaryRouteId": "html>txt:doc:convert",
+      "primaryScore": 0.686,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": true,
+      "fallbackRouteId": "html>epub:ebook:convert|epub>pdf:ebook:convert|pdf>txt:pdf:extract-text",
+      "classification": "FALLBACK POSSIBLE",
+      "rejectedReason": null
+    },
+    {
+      "conversion": "jpg->avif",
+      "rankedRoutes": 17,
+      "primaryRouteId": "jpg>avif:image:convert",
+      "primaryScore": 0.819,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "jpg->docx",
+      "rankedRoutes": 4,
+      "primaryRouteId": "jpg>pdf:image:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.638,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "jpg->gif",
+      "rankedRoutes": 17,
+      "primaryRouteId": "jpg>gif:image:convert",
+      "primaryScore": 0.623,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "jpg->html",
+      "rankedRoutes": 4,
+      "primaryRouteId": "jpg>pdf:image:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.645,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "jpg->md",
+      "rankedRoutes": 4,
+      "primaryRouteId": "jpg>pdf:image:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.53,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "jpg->odt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "jpg>pdf:image:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.633,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "jpg->pdf",
+      "rankedRoutes": 16,
+      "primaryRouteId": "jpg>pdf:image:to-pdf",
+      "primaryScore": 0.87,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "jpg->png",
+      "rankedRoutes": 20,
+      "primaryRouteId": "jpg>png:image:convert",
+      "primaryScore": 0.915,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "jpg->tiff",
+      "rankedRoutes": 20,
+      "primaryRouteId": "jpg>tiff:image:convert",
+      "primaryScore": 0.925,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "jpg->txt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "jpg>pdf:image:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.61,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "jpg->webp",
+      "rankedRoutes": 17,
+      "primaryRouteId": "jpg>webp:image:convert",
+      "primaryScore": 0.819,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "json->csv",
+      "rankedRoutes": 17,
+      "primaryRouteId": "json>csv:data:convert",
+      "primaryScore": 0.764,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "json->toml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "json>toml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "json->tsv",
+      "rankedRoutes": 17,
+      "primaryRouteId": "json>tsv:data:convert",
+      "primaryScore": 0.764,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "json->xml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "json>xml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "json->yaml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "json>yaml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "m4a->aac",
+      "rankedRoutes": 17,
+      "primaryRouteId": "m4a>aac:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "m4a->flac",
+      "rankedRoutes": 17,
+      "primaryRouteId": "m4a>flac:media:convert-audio",
+      "primaryScore": 0.919,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "m4a->mp3",
+      "rankedRoutes": 17,
+      "primaryRouteId": "m4a>mp3:media:convert-audio",
+      "primaryScore": 0.789,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "m4a->ogg",
+      "rankedRoutes": 17,
+      "primaryRouteId": "m4a>ogg:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "m4a->wav",
+      "rankedRoutes": 17,
+      "primaryRouteId": "m4a>wav:media:convert-audio",
+      "primaryScore": 0.919,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->azw3",
+      "rankedRoutes": 2,
+      "primaryRouteId": "md>docx:doc:convert|docx>epub:ebook:convert|epub>azw3:ebook:convert",
+      "primaryScore": 0.688,
+      "primaryEngines": [
+        "pandoc",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->docx",
+      "rankedRoutes": 12,
+      "primaryRouteId": "md>docx:doc:convert",
+      "primaryScore": 0.714,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->epub",
+      "rankedRoutes": 9,
+      "primaryRouteId": "md>docx:doc:convert|docx>epub:ebook:convert",
+      "primaryScore": 0.716,
+      "primaryEngines": [
+        "pandoc",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->html",
+      "rankedRoutes": 13,
+      "primaryRouteId": "md>html:doc:convert",
+      "primaryScore": 0.893,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->jpg",
+      "rankedRoutes": 2,
+      "primaryRouteId": "md>docx:doc:convert|docx>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.335,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->mobi",
+      "rankedRoutes": 2,
+      "primaryRouteId": "md>docx:doc:convert|docx>epub:ebook:convert|epub>mobi:ebook:convert",
+      "primaryScore": 0.688,
+      "primaryEngines": [
+        "pandoc",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->odt",
+      "rankedRoutes": 17,
+      "primaryRouteId": "md>odt:doc:convert",
+      "primaryScore": 0.714,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->pdf",
+      "rankedRoutes": 13,
+      "primaryRouteId": "md>docx:doc:convert|docx>pdf:office:to-pdf",
+      "primaryScore": 0.681,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->png",
+      "rankedRoutes": 7,
+      "primaryRouteId": "md>html:doc:convert|html>png:render:html-to-image",
+      "primaryScore": 0.781,
+      "primaryEngines": [
+        "pandoc",
+        "html-renderer"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->rst",
+      "rankedRoutes": 8,
+      "primaryRouteId": "md>rst:doc:convert",
+      "primaryScore": 0.714,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->rtf",
+      "rankedRoutes": 9,
+      "primaryRouteId": "md>docx:doc:convert|docx>rtf:office:convert",
+      "primaryScore": 0.714,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->tex",
+      "rankedRoutes": 4,
+      "primaryRouteId": "md>tex:doc:convert",
+      "primaryScore": 0.714,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->tiff",
+      "rankedRoutes": 7,
+      "primaryRouteId": "md>html:doc:convert|html>tiff:render:html-to-image",
+      "primaryScore": 0.726,
+      "primaryEngines": [
+        "pandoc",
+        "html-renderer"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "md->txt",
+      "rankedRoutes": 14,
+      "primaryRouteId": "md>txt:doc:convert",
+      "primaryScore": 0.7,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->aac",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mkv>aac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->avif",
+      "rankedRoutes": 7,
+      "primaryRouteId": "mkv>gif:media:create-gif|gif>avif:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->flac",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mkv>flac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->gif",
+      "rankedRoutes": 5,
+      "primaryRouteId": "mkv>gif:media:create-gif",
+      "primaryScore": 0.465,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->jpg",
+      "rankedRoutes": 7,
+      "primaryRouteId": "mkv>gif:media:create-gif|gif>jpg:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->m4a",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mkv>m4a:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->mp3",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mkv>mp3:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->mp4",
+      "rankedRoutes": 2,
+      "primaryRouteId": "mkv>mp4:media:convert-video",
+      "primaryScore": 0.823,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->ogg",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mkv>ogg:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->pdf",
+      "rankedRoutes": 4,
+      "primaryRouteId": "mkv>gif:media:create-gif|gif>png:image:convert|png>pdf:image:to-pdf",
+      "primaryScore": 0.547,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->png",
+      "rankedRoutes": 7,
+      "primaryRouteId": "mkv>gif:media:create-gif|gif>png:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->tiff",
+      "rankedRoutes": 7,
+      "primaryRouteId": "mkv>gif:media:create-gif|gif>tiff:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->wav",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mkv>wav:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->webm",
+      "rankedRoutes": 2,
+      "primaryRouteId": "mkv>webm:media:convert-video",
+      "primaryScore": 0.786,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mkv->webp",
+      "rankedRoutes": 7,
+      "primaryRouteId": "mkv>gif:media:create-gif|gif>webp:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->aac",
+      "rankedRoutes": 50,
+      "primaryRouteId": "mov>aac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->avif",
+      "rankedRoutes": 8,
+      "primaryRouteId": "mov>gif:media:create-gif|gif>avif:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->flac",
+      "rankedRoutes": 50,
+      "primaryRouteId": "mov>flac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->gif",
+      "rankedRoutes": 10,
+      "primaryRouteId": "mov>gif:media:create-gif",
+      "primaryScore": 0.465,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->jpg",
+      "rankedRoutes": 8,
+      "primaryRouteId": "mov>gif:media:create-gif|gif>jpg:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->m4a",
+      "rankedRoutes": 50,
+      "primaryRouteId": "mov>m4a:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->mkv",
+      "rankedRoutes": 5,
+      "primaryRouteId": "mov>mkv:media:convert-video",
+      "primaryScore": 0.931,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->mp3",
+      "rankedRoutes": 50,
+      "primaryRouteId": "mov>mp3:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->mp4",
+      "rankedRoutes": 5,
+      "primaryRouteId": "mov>mp4:media:convert-video",
+      "primaryScore": 0.823,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->ogg",
+      "rankedRoutes": 50,
+      "primaryRouteId": "mov>ogg:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->pdf",
+      "rankedRoutes": 4,
+      "primaryRouteId": "mov>gif:media:create-gif|gif>png:image:convert|png>pdf:image:to-pdf",
+      "primaryScore": 0.547,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->png",
+      "rankedRoutes": 8,
+      "primaryRouteId": "mov>gif:media:create-gif|gif>png:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->tiff",
+      "rankedRoutes": 8,
+      "primaryRouteId": "mov>gif:media:create-gif|gif>tiff:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->wav",
+      "rankedRoutes": 50,
+      "primaryRouteId": "mov>wav:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->webm",
+      "rankedRoutes": 5,
+      "primaryRouteId": "mov>webm:media:convert-video",
+      "primaryScore": 0.786,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mov->webp",
+      "rankedRoutes": 8,
+      "primaryRouteId": "mov>gif:media:create-gif|gif>webp:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp3->aac",
+      "rankedRoutes": 17,
+      "primaryRouteId": "mp3>aac:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp3->flac",
+      "rankedRoutes": 17,
+      "primaryRouteId": "mp3>flac:media:convert-audio",
+      "primaryScore": 0.919,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp3->m4a",
+      "rankedRoutes": 17,
+      "primaryRouteId": "mp3>m4a:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp3->ogg",
+      "rankedRoutes": 17,
+      "primaryRouteId": "mp3>ogg:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp3->wav",
+      "rankedRoutes": 17,
+      "primaryRouteId": "mp3>wav:media:convert-audio",
+      "primaryScore": 0.919,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->aac",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mp4>aac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->avif",
+      "rankedRoutes": 7,
+      "primaryRouteId": "mp4>gif:media:create-gif|gif>avif:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->flac",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mp4>flac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->gif",
+      "rankedRoutes": 5,
+      "primaryRouteId": "mp4>gif:media:create-gif",
+      "primaryScore": 0.465,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->jpg",
+      "rankedRoutes": 7,
+      "primaryRouteId": "mp4>gif:media:create-gif|gif>jpg:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->m4a",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mp4>m4a:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->mkv",
+      "rankedRoutes": 2,
+      "primaryRouteId": "mp4>mkv:media:convert-video",
+      "primaryScore": 0.931,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->mp3",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mp4>mp3:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->ogg",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mp4>ogg:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->pdf",
+      "rankedRoutes": 4,
+      "primaryRouteId": "mp4>gif:media:create-gif|gif>png:image:convert|png>pdf:image:to-pdf",
+      "primaryScore": 0.547,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->png",
+      "rankedRoutes": 7,
+      "primaryRouteId": "mp4>gif:media:create-gif|gif>png:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->tiff",
+      "rankedRoutes": 7,
+      "primaryRouteId": "mp4>gif:media:create-gif|gif>tiff:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->wav",
+      "rankedRoutes": 40,
+      "primaryRouteId": "mp4>wav:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->webm",
+      "rankedRoutes": 2,
+      "primaryRouteId": "mp4>webm:media:convert-video",
+      "primaryScore": 0.786,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "mp4->webp",
+      "rankedRoutes": 7,
+      "primaryRouteId": "mp4>gif:media:create-gif|gif>webp:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odp->docx",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odp>pdf:office:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.654,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odp->html",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odp>pdf:office:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.657,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odp->jpg",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odp>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.542,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odp->md",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odp>pdf:office:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.537,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odp->odt",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odp>pdf:office:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.649,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odp->pdf",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odp>pdf:office:to-pdf",
+      "primaryScore": 0.889,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odp->png",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odp>pdf:office:to-pdf|pdf>png:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odp->tiff",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odp>pdf:office:to-pdf|pdf>tiff:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odp->txt",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odp>pdf:office:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.666,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ods->docx",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ods>pdf:office:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.654,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ods->html",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ods>pdf:office:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.657,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ods->jpg",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ods>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.542,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ods->md",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ods>pdf:office:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.537,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ods->odt",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ods>pdf:office:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.649,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ods->pdf",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ods>pdf:office:to-pdf",
+      "primaryScore": 0.892,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ods->png",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ods>pdf:office:to-pdf|pdf>png:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ods->tiff",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ods>pdf:office:to-pdf|pdf>tiff:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ods->txt",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ods>pdf:office:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.666,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->docx",
+      "rankedRoutes": 4,
+      "primaryRouteId": "odt>docx:office:to-pdf",
+      "primaryScore": 0.897,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->epub",
+      "rankedRoutes": 3,
+      "primaryRouteId": "odt>docx:office:to-pdf|docx>epub:ebook:convert",
+      "primaryScore": 0.731,
+      "primaryEngines": [
+        "libreoffice",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->html",
+      "rankedRoutes": 8,
+      "primaryRouteId": "odt>docx:office:to-pdf|docx>html:doc:convert",
+      "primaryScore": 0.659,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->jpg",
+      "rankedRoutes": 3,
+      "primaryRouteId": "odt>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.542,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->md",
+      "rankedRoutes": 8,
+      "primaryRouteId": "odt>docx:office:to-pdf|docx>md:doc:convert",
+      "primaryScore": 0.75,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->pdf",
+      "rankedRoutes": 6,
+      "primaryRouteId": "odt>pdf:office:to-pdf",
+      "primaryScore": 0.889,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->png",
+      "rankedRoutes": 4,
+      "primaryRouteId": "odt>pdf:office:to-pdf|pdf>png:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->rst",
+      "rankedRoutes": 4,
+      "primaryRouteId": "odt>docx:office:to-pdf|docx>rst:doc:convert",
+      "primaryScore": 0.684,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->rtf",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odt>rtf:office:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->tex",
+      "rankedRoutes": 2,
+      "primaryRouteId": "odt>docx:office:to-pdf|docx>md:doc:convert|md>tex:doc:convert",
+      "primaryScore": 0.679,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->tiff",
+      "rankedRoutes": 4,
+      "primaryRouteId": "odt>pdf:office:to-pdf|pdf>tiff:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "odt->txt",
+      "rankedRoutes": 8,
+      "primaryRouteId": "odt>docx:office:to-pdf|docx>txt:doc:convert",
+      "primaryScore": 0.686,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ogg->aac",
+      "rankedRoutes": 17,
+      "primaryRouteId": "ogg>aac:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ogg->flac",
+      "rankedRoutes": 17,
+      "primaryRouteId": "ogg>flac:media:convert-audio",
+      "primaryScore": 0.919,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ogg->m4a",
+      "rankedRoutes": 17,
+      "primaryRouteId": "ogg>m4a:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ogg->mp3",
+      "rankedRoutes": 17,
+      "primaryRouteId": "ogg>mp3:media:convert-audio",
+      "primaryScore": 0.789,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ogg->wav",
+      "rankedRoutes": 17,
+      "primaryRouteId": "ogg>wav:media:convert-audio",
+      "primaryScore": 0.919,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->avif",
+      "rankedRoutes": 17,
+      "primaryRouteId": "png>avif:image:convert",
+      "primaryScore": 0.819,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->docx",
+      "rankedRoutes": 4,
+      "primaryRouteId": "png>pdf:image:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.638,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->gif",
+      "rankedRoutes": 17,
+      "primaryRouteId": "png>gif:image:convert",
+      "primaryScore": 0.623,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->html",
+      "rankedRoutes": 4,
+      "primaryRouteId": "png>pdf:image:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.645,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->jpg",
+      "rankedRoutes": 20,
+      "primaryRouteId": "png>gif:image:convert|gif>jpg:image:convert",
+      "primaryScore": 0.669,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->md",
+      "rankedRoutes": 4,
+      "primaryRouteId": "png>pdf:image:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.53,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->odt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "png>pdf:image:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.633,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->pdf",
+      "rankedRoutes": 16,
+      "primaryRouteId": "png>pdf:image:to-pdf",
+      "primaryScore": 0.87,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->tiff",
+      "rankedRoutes": 20,
+      "primaryRouteId": "png>tiff:image:convert",
+      "primaryScore": 0.925,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->txt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "png>pdf:image:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.61,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "png->webp",
+      "rankedRoutes": 17,
+      "primaryRouteId": "png>webp:image:convert",
+      "primaryScore": 0.819,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ppt->docx",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ppt>pdf:office:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.654,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ppt->html",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ppt>pdf:office:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.657,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ppt->jpg",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ppt>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.542,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ppt->md",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ppt>pdf:office:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.537,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ppt->odt",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ppt>pdf:office:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.649,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ppt->pdf",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ppt>pdf:office:to-pdf",
+      "primaryScore": 0.889,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ppt->png",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ppt>pdf:office:to-pdf|pdf>png:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ppt->tiff",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ppt>pdf:office:to-pdf|pdf>tiff:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ppt->txt",
+      "rankedRoutes": 2,
+      "primaryRouteId": "ppt>pdf:office:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.666,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->azw3",
+      "rankedRoutes": 2,
+      "primaryRouteId": "rst>html:doc:convert|html>epub:ebook:convert|epub>azw3:ebook:convert",
+      "primaryScore": 0.681,
+      "primaryEngines": [
+        "pandoc",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->docx",
+      "rankedRoutes": 14,
+      "primaryRouteId": "rst>html:doc:convert|html>docx:doc:convert",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->epub",
+      "rankedRoutes": 9,
+      "primaryRouteId": "rst>docx:doc:convert|docx>epub:ebook:convert",
+      "primaryScore": 0.701,
+      "primaryEngines": [
+        "pandoc",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->html",
+      "rankedRoutes": 15,
+      "primaryRouteId": "rst>html:doc:convert",
+      "primaryScore": 0.884,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->jpg",
+      "rankedRoutes": 2,
+      "primaryRouteId": "rst>docx:doc:convert|docx>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.335,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->md",
+      "rankedRoutes": 14,
+      "primaryRouteId": "rst>md:doc:convert",
+      "primaryScore": 0.771,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->mobi",
+      "rankedRoutes": 2,
+      "primaryRouteId": "rst>html:doc:convert|html>epub:ebook:convert|epub>mobi:ebook:convert",
+      "primaryScore": 0.681,
+      "primaryEngines": [
+        "pandoc",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->odt",
+      "rankedRoutes": 19,
+      "primaryRouteId": "rst>html:doc:convert|html>odt:doc:convert",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->pdf",
+      "rankedRoutes": 13,
+      "primaryRouteId": "rst>html:doc:convert|html>docx:doc:convert|docx>pdf:office:to-pdf",
+      "primaryScore": 0.679,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->png",
+      "rankedRoutes": 7,
+      "primaryRouteId": "rst>html:doc:convert|html>png:render:html-to-image",
+      "primaryScore": 0.769,
+      "primaryEngines": [
+        "pandoc",
+        "html-renderer"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->rtf",
+      "rankedRoutes": 9,
+      "primaryRouteId": "rst>html:doc:convert|html>docx:doc:convert|docx>rtf:office:convert",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->tex",
+      "rankedRoutes": 5,
+      "primaryRouteId": "rst>tex:doc:convert",
+      "primaryScore": 0.707,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->tiff",
+      "rankedRoutes": 7,
+      "primaryRouteId": "rst>html:doc:convert|html>tiff:render:html-to-image",
+      "primaryScore": 0.715,
+      "primaryEngines": [
+        "pandoc",
+        "html-renderer"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rst->txt",
+      "rankedRoutes": 15,
+      "primaryRouteId": "rst>txt:doc:convert",
+      "primaryScore": 0.7,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->docx",
+      "rankedRoutes": 4,
+      "primaryRouteId": "rtf>docx:office:to-pdf",
+      "primaryScore": 0.897,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->epub",
+      "rankedRoutes": 3,
+      "primaryRouteId": "rtf>docx:office:to-pdf|docx>epub:ebook:convert",
+      "primaryScore": 0.731,
+      "primaryEngines": [
+        "libreoffice",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->html",
+      "rankedRoutes": 8,
+      "primaryRouteId": "rtf>docx:office:to-pdf|docx>html:doc:convert",
+      "primaryScore": 0.659,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->jpg",
+      "rankedRoutes": 3,
+      "primaryRouteId": "rtf>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.542,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->md",
+      "rankedRoutes": 8,
+      "primaryRouteId": "rtf>docx:office:to-pdf|docx>md:doc:convert",
+      "primaryScore": 0.75,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->odt",
+      "rankedRoutes": 8,
+      "primaryRouteId": "rtf>odt:office:to-pdf",
+      "primaryScore": 0.897,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->pdf",
+      "rankedRoutes": 7,
+      "primaryRouteId": "rtf>pdf:office:to-pdf",
+      "primaryScore": 0.889,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->png",
+      "rankedRoutes": 4,
+      "primaryRouteId": "rtf>pdf:office:to-pdf|pdf>png:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->rst",
+      "rankedRoutes": 4,
+      "primaryRouteId": "rtf>docx:office:to-pdf|docx>rst:doc:convert",
+      "primaryScore": 0.684,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->tex",
+      "rankedRoutes": 2,
+      "primaryRouteId": "rtf>docx:office:to-pdf|docx>md:doc:convert|md>tex:doc:convert",
+      "primaryScore": 0.679,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->tiff",
+      "rankedRoutes": 4,
+      "primaryRouteId": "rtf>pdf:office:to-pdf|pdf>tiff:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "rtf->txt",
+      "rankedRoutes": 8,
+      "primaryRouteId": "rtf>docx:office:to-pdf|docx>txt:doc:convert",
+      "primaryScore": 0.686,
+      "primaryEngines": [
+        "libreoffice",
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tar->7z",
+      "rankedRoutes": 2,
+      "primaryRouteId": "tar>7z:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tar->zip",
+      "rankedRoutes": 2,
+      "primaryRouteId": "tar>zip:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->docx",
+      "rankedRoutes": 8,
+      "primaryRouteId": "tex>html:doc:convert|html>docx:doc:convert",
+      "primaryScore": 0.679,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->epub",
+      "rankedRoutes": 4,
+      "primaryRouteId": "tex>html:doc:convert|html>docx:doc:convert|docx>epub:ebook:convert",
+      "primaryScore": 0.701,
+      "primaryEngines": [
+        "pandoc",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->html",
+      "rankedRoutes": 5,
+      "primaryRouteId": "tex>html:doc:convert",
+      "primaryScore": 0.654,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->md",
+      "rankedRoutes": 5,
+      "primaryRouteId": "tex>md:doc:convert",
+      "primaryScore": 0.745,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->odt",
+      "rankedRoutes": 10,
+      "primaryRouteId": "tex>html:doc:convert|html>odt:doc:convert",
+      "primaryScore": 0.679,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->pdf",
+      "rankedRoutes": 5,
+      "primaryRouteId": "tex>html:doc:convert|html>docx:doc:convert|docx>pdf:office:to-pdf",
+      "primaryScore": 0.649,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->png",
+      "rankedRoutes": 2,
+      "primaryRouteId": "tex>html:doc:convert|html>png:render:html-to-image",
+      "primaryScore": 0.564,
+      "primaryEngines": [
+        "pandoc",
+        "html-renderer"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->rst",
+      "rankedRoutes": 6,
+      "primaryRouteId": "tex>html:doc:convert|html>rst:doc:convert",
+      "primaryScore": 0.679,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->rtf",
+      "rankedRoutes": 4,
+      "primaryRouteId": "tex>html:doc:convert|html>docx:doc:convert|docx>rtf:office:convert",
+      "primaryScore": 0.679,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->tiff",
+      "rankedRoutes": 2,
+      "primaryRouteId": "tex>html:doc:convert|html>tiff:render:html-to-image",
+      "primaryScore": 0.525,
+      "primaryEngines": [
+        "pandoc",
+        "html-renderer"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tex->txt",
+      "rankedRoutes": 8,
+      "primaryRouteId": "tex>html:doc:convert|html>txt:doc:convert",
+      "primaryScore": 0.686,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->avif",
+      "rankedRoutes": 17,
+      "primaryRouteId": "tiff>avif:image:convert",
+      "primaryScore": 0.819,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->docx",
+      "rankedRoutes": 4,
+      "primaryRouteId": "tiff>pdf:image:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.638,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->gif",
+      "rankedRoutes": 17,
+      "primaryRouteId": "tiff>gif:image:convert",
+      "primaryScore": 0.623,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->html",
+      "rankedRoutes": 4,
+      "primaryRouteId": "tiff>pdf:image:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.645,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->jpg",
+      "rankedRoutes": 20,
+      "primaryRouteId": "tiff>gif:image:convert|gif>jpg:image:convert",
+      "primaryScore": 0.669,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->md",
+      "rankedRoutes": 4,
+      "primaryRouteId": "tiff>pdf:image:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.53,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->odt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "tiff>pdf:image:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.633,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->pdf",
+      "rankedRoutes": 16,
+      "primaryRouteId": "tiff>pdf:image:to-pdf",
+      "primaryScore": 0.87,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->png",
+      "rankedRoutes": 20,
+      "primaryRouteId": "tiff>png:image:convert",
+      "primaryScore": 0.915,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->txt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "tiff>pdf:image:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.61,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tiff->webp",
+      "rankedRoutes": 17,
+      "primaryRouteId": "tiff>webp:image:convert",
+      "primaryScore": 0.819,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "toml->csv",
+      "rankedRoutes": 17,
+      "primaryRouteId": "toml>csv:data:convert",
+      "primaryScore": 0.764,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "toml->json",
+      "rankedRoutes": 17,
+      "primaryRouteId": "toml>json:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "toml->tsv",
+      "rankedRoutes": 17,
+      "primaryRouteId": "toml>tsv:data:convert",
+      "primaryScore": 0.764,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "toml->xml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "toml>xml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "toml->yaml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "toml>yaml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->aac",
+      "rankedRoutes": 50,
+      "primaryRouteId": "ts>aac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->avif",
+      "rankedRoutes": 8,
+      "primaryRouteId": "ts>gif:media:create-gif|gif>avif:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->flac",
+      "rankedRoutes": 50,
+      "primaryRouteId": "ts>flac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->gif",
+      "rankedRoutes": 10,
+      "primaryRouteId": "ts>gif:media:create-gif",
+      "primaryScore": 0.465,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->jpg",
+      "rankedRoutes": 8,
+      "primaryRouteId": "ts>gif:media:create-gif|gif>jpg:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->m4a",
+      "rankedRoutes": 50,
+      "primaryRouteId": "ts>m4a:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->mkv",
+      "rankedRoutes": 5,
+      "primaryRouteId": "ts>mkv:media:convert-video",
+      "primaryScore": 0.931,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->mp3",
+      "rankedRoutes": 50,
+      "primaryRouteId": "ts>mp3:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->mp4",
+      "rankedRoutes": 5,
+      "primaryRouteId": "ts>mp4:media:convert-video",
+      "primaryScore": 0.823,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->ogg",
+      "rankedRoutes": 50,
+      "primaryRouteId": "ts>ogg:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->pdf",
+      "rankedRoutes": 4,
+      "primaryRouteId": "ts>gif:media:create-gif|gif>png:image:convert|png>pdf:image:to-pdf",
+      "primaryScore": 0.547,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->png",
+      "rankedRoutes": 8,
+      "primaryRouteId": "ts>gif:media:create-gif|gif>png:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->tiff",
+      "rankedRoutes": 8,
+      "primaryRouteId": "ts>gif:media:create-gif|gif>tiff:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->wav",
+      "rankedRoutes": 50,
+      "primaryRouteId": "ts>wav:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->webm",
+      "rankedRoutes": 5,
+      "primaryRouteId": "ts>webm:media:convert-video",
+      "primaryScore": 0.786,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "ts->webp",
+      "rankedRoutes": 8,
+      "primaryRouteId": "ts>gif:media:create-gif|gif>webp:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tsv->csv",
+      "rankedRoutes": 17,
+      "primaryRouteId": "tsv>csv:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tsv->json",
+      "rankedRoutes": 17,
+      "primaryRouteId": "tsv>json:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tsv->toml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "tsv>toml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tsv->xml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "tsv>xml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "tsv->yaml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "tsv>yaml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->docx",
+      "rankedRoutes": 8,
+      "primaryRouteId": "txt>md:doc:convert|md>docx:doc:convert",
+      "primaryScore": 0.523,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->epub",
+      "rankedRoutes": 4,
+      "primaryRouteId": "txt>html:doc:convert|html>docx:doc:convert|docx>epub:ebook:convert",
+      "primaryScore": 0.613,
+      "primaryEngines": [
+        "pandoc",
+        "calibre"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->html",
+      "rankedRoutes": 5,
+      "primaryRouteId": "txt>html:doc:convert",
+      "primaryScore": 0.492,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->md",
+      "rankedRoutes": 4,
+      "primaryRouteId": "txt>md:doc:convert",
+      "primaryScore": 0.613,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->odt",
+      "rankedRoutes": 10,
+      "primaryRouteId": "txt>md:doc:convert|md>odt:doc:convert",
+      "primaryScore": 0.523,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->pdf",
+      "rankedRoutes": 5,
+      "primaryRouteId": "txt>md:doc:convert|md>docx:doc:convert|docx>pdf:office:to-pdf",
+      "primaryScore": 0.497,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->png",
+      "rankedRoutes": 2,
+      "primaryRouteId": "txt>html:doc:convert|html>png:render:html-to-image",
+      "primaryScore": 0.446,
+      "primaryEngines": [
+        "pandoc",
+        "html-renderer"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->rst",
+      "rankedRoutes": 6,
+      "primaryRouteId": "txt>md:doc:convert|md>rst:doc:convert",
+      "primaryScore": 0.523,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->rtf",
+      "rankedRoutes": 4,
+      "primaryRouteId": "txt>md:doc:convert|md>docx:doc:convert|docx>rtf:office:convert",
+      "primaryScore": 0.523,
+      "primaryEngines": [
+        "pandoc",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->tex",
+      "rankedRoutes": 4,
+      "primaryRouteId": "txt>md:doc:convert|md>tex:doc:convert",
+      "primaryScore": 0.523,
+      "primaryEngines": [
+        "pandoc"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "txt->tiff",
+      "rankedRoutes": 2,
+      "primaryRouteId": "txt>html:doc:convert|html>tiff:render:html-to-image",
+      "primaryScore": 0.415,
+      "primaryEngines": [
+        "pandoc",
+        "html-renderer"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wav->aac",
+      "rankedRoutes": 17,
+      "primaryRouteId": "wav>aac:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wav->flac",
+      "rankedRoutes": 17,
+      "primaryRouteId": "wav>flac:media:convert-audio",
+      "primaryScore": 0.919,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wav->m4a",
+      "rankedRoutes": 17,
+      "primaryRouteId": "wav>m4a:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wav->mp3",
+      "rankedRoutes": 17,
+      "primaryRouteId": "wav>mp3:media:convert-audio",
+      "primaryScore": 0.789,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wav->ogg",
+      "rankedRoutes": 17,
+      "primaryRouteId": "wav>ogg:media:convert-audio",
+      "primaryScore": 0.772,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->aac",
+      "rankedRoutes": 40,
+      "primaryRouteId": "webm>aac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->avif",
+      "rankedRoutes": 7,
+      "primaryRouteId": "webm>gif:media:create-gif|gif>avif:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->flac",
+      "rankedRoutes": 40,
+      "primaryRouteId": "webm>flac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->gif",
+      "rankedRoutes": 5,
+      "primaryRouteId": "webm>gif:media:create-gif",
+      "primaryScore": 0.465,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->jpg",
+      "rankedRoutes": 7,
+      "primaryRouteId": "webm>gif:media:create-gif|gif>jpg:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->m4a",
+      "rankedRoutes": 40,
+      "primaryRouteId": "webm>m4a:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->mkv",
+      "rankedRoutes": 2,
+      "primaryRouteId": "webm>mkv:media:convert-video",
+      "primaryScore": 0.931,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->mp3",
+      "rankedRoutes": 40,
+      "primaryRouteId": "webm>mp3:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->mp4",
+      "rankedRoutes": 2,
+      "primaryRouteId": "webm>mp4:media:convert-video",
+      "primaryScore": 0.823,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->ogg",
+      "rankedRoutes": 40,
+      "primaryRouteId": "webm>ogg:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->pdf",
+      "rankedRoutes": 4,
+      "primaryRouteId": "webm>gif:media:create-gif|gif>png:image:convert|png>pdf:image:to-pdf",
+      "primaryScore": 0.547,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->png",
+      "rankedRoutes": 7,
+      "primaryRouteId": "webm>gif:media:create-gif|gif>png:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->tiff",
+      "rankedRoutes": 7,
+      "primaryRouteId": "webm>gif:media:create-gif|gif>tiff:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->wav",
+      "rankedRoutes": 40,
+      "primaryRouteId": "webm>wav:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webm->webp",
+      "rankedRoutes": 7,
+      "primaryRouteId": "webm>gif:media:create-gif|gif>webp:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->avif",
+      "rankedRoutes": 17,
+      "primaryRouteId": "webp>avif:image:convert",
+      "primaryScore": 0.819,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->docx",
+      "rankedRoutes": 4,
+      "primaryRouteId": "webp>pdf:image:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.638,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->gif",
+      "rankedRoutes": 17,
+      "primaryRouteId": "webp>gif:image:convert",
+      "primaryScore": 0.623,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->html",
+      "rankedRoutes": 4,
+      "primaryRouteId": "webp>pdf:image:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.645,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->jpg",
+      "rankedRoutes": 20,
+      "primaryRouteId": "webp>gif:image:convert|gif>jpg:image:convert",
+      "primaryScore": 0.669,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->md",
+      "rankedRoutes": 4,
+      "primaryRouteId": "webp>pdf:image:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.53,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->odt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "webp>pdf:image:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.633,
+      "primaryEngines": [
+        "sharp-image",
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->pdf",
+      "rankedRoutes": 16,
+      "primaryRouteId": "webp>pdf:image:to-pdf",
+      "primaryScore": 0.87,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->png",
+      "rankedRoutes": 20,
+      "primaryRouteId": "webp>png:image:convert",
+      "primaryScore": 0.915,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->tiff",
+      "rankedRoutes": 20,
+      "primaryRouteId": "webp>tiff:image:convert",
+      "primaryScore": 0.925,
+      "primaryEngines": [
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "webp->txt",
+      "rankedRoutes": 4,
+      "primaryRouteId": "webp>pdf:image:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.61,
+      "primaryEngines": [
+        "sharp-image",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->aac",
+      "rankedRoutes": 50,
+      "primaryRouteId": "wmv>aac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->avif",
+      "rankedRoutes": 8,
+      "primaryRouteId": "wmv>gif:media:create-gif|gif>avif:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->flac",
+      "rankedRoutes": 50,
+      "primaryRouteId": "wmv>flac:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->gif",
+      "rankedRoutes": 10,
+      "primaryRouteId": "wmv>gif:media:create-gif",
+      "primaryScore": 0.465,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->jpg",
+      "rankedRoutes": 8,
+      "primaryRouteId": "wmv>gif:media:create-gif|gif>jpg:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->m4a",
+      "rankedRoutes": 50,
+      "primaryRouteId": "wmv>m4a:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->mkv",
+      "rankedRoutes": 5,
+      "primaryRouteId": "wmv>mkv:media:convert-video",
+      "primaryScore": 0.931,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->mp3",
+      "rankedRoutes": 50,
+      "primaryRouteId": "wmv>mp3:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->mp4",
+      "rankedRoutes": 5,
+      "primaryRouteId": "wmv>mp4:media:convert-video",
+      "primaryScore": 0.823,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->ogg",
+      "rankedRoutes": 50,
+      "primaryRouteId": "wmv>ogg:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->pdf",
+      "rankedRoutes": 4,
+      "primaryRouteId": "wmv>gif:media:create-gif|gif>png:image:convert|png>pdf:image:to-pdf",
+      "primaryScore": 0.547,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->png",
+      "rankedRoutes": 8,
+      "primaryRouteId": "wmv>gif:media:create-gif|gif>png:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->tiff",
+      "rankedRoutes": 8,
+      "primaryRouteId": "wmv>gif:media:create-gif|gif>tiff:image:convert",
+      "primaryScore": 0.51,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->wav",
+      "rankedRoutes": 50,
+      "primaryRouteId": "wmv>wav:media:extract-audio",
+      "primaryScore": 0.711,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->webm",
+      "rankedRoutes": 5,
+      "primaryRouteId": "wmv>webm:media:convert-video",
+      "primaryScore": 0.786,
+      "primaryEngines": [
+        "ffmpeg-media"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "wmv->webp",
+      "rankedRoutes": 8,
+      "primaryRouteId": "wmv>gif:media:create-gif|gif>webp:image:convert",
+      "primaryScore": 0.472,
+      "primaryEngines": [
+        "ffmpeg-media",
+        "sharp-image"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->docx",
+      "rankedRoutes": 3,
+      "primaryRouteId": "xls>pdf:office:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.654,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->html",
+      "rankedRoutes": 3,
+      "primaryRouteId": "xls>pdf:office:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.657,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->jpg",
+      "rankedRoutes": 3,
+      "primaryRouteId": "xls>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.542,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->md",
+      "rankedRoutes": 3,
+      "primaryRouteId": "xls>pdf:office:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.537,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->ods",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xls>ods:office:to-pdf",
+      "primaryScore": 0.9,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->odt",
+      "rankedRoutes": 3,
+      "primaryRouteId": "xls>pdf:office:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.649,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->pdf",
+      "rankedRoutes": 5,
+      "primaryRouteId": "xls>pdf:office:to-pdf",
+      "primaryScore": 0.892,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->png",
+      "rankedRoutes": 3,
+      "primaryRouteId": "xls>pdf:office:to-pdf|pdf>png:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->tiff",
+      "rankedRoutes": 3,
+      "primaryRouteId": "xls>pdf:office:to-pdf|pdf>tiff:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->txt",
+      "rankedRoutes": 3,
+      "primaryRouteId": "xls>pdf:office:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.666,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xls->xlsx",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xls>xlsx:office:to-pdf",
+      "primaryScore": 0.9,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xlsx->docx",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xlsx>pdf:office:to-pdf|pdf>docx:office:pdf-to-docx",
+      "primaryScore": 0.654,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xlsx->html",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xlsx>pdf:office:to-pdf|pdf>html:pdf:extract-html",
+      "primaryScore": 0.657,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xlsx->jpg",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xlsx>pdf:office:to-pdf|pdf>jpg:pdf:rasterize",
+      "primaryScore": 0.542,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xlsx->md",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xlsx>pdf:office:to-pdf|pdf>md:pdf:extract-markdown",
+      "primaryScore": 0.537,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xlsx->odt",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xlsx>pdf:office:to-pdf|pdf>odt:office:pdf-to-odt",
+      "primaryScore": 0.649,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xlsx->pdf",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xlsx>pdf:office:to-pdf",
+      "primaryScore": 0.892,
+      "primaryEngines": [
+        "libreoffice"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xlsx->png",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xlsx>pdf:office:to-pdf|pdf>png:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xlsx->tiff",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xlsx>pdf:office:to-pdf|pdf>tiff:pdf:rasterize",
+      "primaryScore": 0.778,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xlsx->txt",
+      "rankedRoutes": 2,
+      "primaryRouteId": "xlsx>pdf:office:to-pdf|pdf>txt:pdf:extract-text",
+      "primaryScore": 0.666,
+      "primaryEngines": [
+        "libreoffice",
+        "poppler"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xml->csv",
+      "rankedRoutes": 17,
+      "primaryRouteId": "xml>csv:data:convert",
+      "primaryScore": 0.764,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xml->json",
+      "rankedRoutes": 17,
+      "primaryRouteId": "xml>json:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xml->toml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "xml>toml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xml->tsv",
+      "rankedRoutes": 17,
+      "primaryRouteId": "xml>tsv:data:convert",
+      "primaryScore": 0.764,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xml->yaml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "xml>yaml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xz->7z",
+      "rankedRoutes": 5,
+      "primaryRouteId": "xz>7z:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xz->tar",
+      "rankedRoutes": 5,
+      "primaryRouteId": "xz>tar:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "xz->zip",
+      "rankedRoutes": 5,
+      "primaryRouteId": "xz>zip:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "yaml->csv",
+      "rankedRoutes": 17,
+      "primaryRouteId": "yaml>csv:data:convert",
+      "primaryScore": 0.764,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "yaml->json",
+      "rankedRoutes": 17,
+      "primaryRouteId": "yaml>json:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "yaml->toml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "yaml>toml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "yaml->tsv",
+      "rankedRoutes": 17,
+      "primaryRouteId": "yaml>tsv:data:convert",
+      "primaryScore": 0.764,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "yaml->xml",
+      "rankedRoutes": 17,
+      "primaryRouteId": "yaml>xml:data:convert",
+      "primaryScore": 0.84,
+      "primaryEngines": [
+        "data-ts"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "zip->7z",
+      "rankedRoutes": 2,
+      "primaryRouteId": "zip>7z:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    },
+    {
+      "conversion": "zip->tar",
+      "rankedRoutes": 2,
+      "primaryRouteId": "zip>tar:archive:repack",
+      "primaryScore": 0.929,
+      "primaryEngines": [
+        "sevenzip"
+      ],
+      "fallbackPossible": false,
+      "fallbackRouteId": null,
+      "classification": "NO SAFE FALLBACK",
+      "rejectedReason": "NO_SAFE_FALLBACK_ROUTE"
+    }
+  ]
+}

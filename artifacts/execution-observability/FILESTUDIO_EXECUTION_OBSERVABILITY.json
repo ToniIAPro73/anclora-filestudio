@@ -1,0 +1,50 @@
+{
+  "phase": "FILESTUDIO_CONTROLLED_FALLBACK_EXECUTION_OBSERVABILITY",
+  "generatedAt": "2026-08-13",
+  "fallback": {
+    "default": "ENABLED",
+    "maxFallbackAttempts": 1,
+    "minimumAbsoluteScore": 0.55,
+    "maxQualityDelta": 0.18,
+    "selection": "next ranked eligible route",
+    "unknownErrorPolicy": "fail closed",
+    "sameEngineFailurePolicy": "reject",
+    "sameRuntimeFailurePolicy": "reject when runtime domain is known"
+  },
+  "audit": {
+    "pairsWithMultipleRankedRoutes": 412,
+    "fallbackPossible": 6,
+    "noSafeFallback": 406
+  },
+  "events": [
+    "conversion.started",
+    "conversion.route.selected",
+    "conversion.attempt.started",
+    "conversion.step.started",
+    "conversion.step.completed",
+    "conversion.step.failed",
+    "conversion.attempt.failed",
+    "conversion.fallback.selected",
+    "conversion.completed",
+    "conversion.failed",
+    "conversion.cancelled"
+  ],
+  "qa": {
+    "fallbackUnitTests": "PASS",
+    "observabilityUnitTests": "PASS",
+    "processorUnitTests": "PASS",
+    "realFallbackE2E": "PASS",
+    "typecheck": "PASS",
+    "lint": "PASS_WITH_WARNINGS",
+    "tests": "PASS",
+    "build": "PASS_WITH_WARNINGS",
+    "agentBrowser": "PASS"
+  },
+  "coverage": {
+    "tier1": "152/152",
+    "tier2": "40/40",
+    "tier3": "5/6",
+    "totalEffectivePairs": 476
+  },
+  "certification": "PASS"
+}
