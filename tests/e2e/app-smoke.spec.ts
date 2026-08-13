@@ -52,23 +52,37 @@ test("home cards and nav buttons perform real navigation", async ({ page }) => {
 });
 
 test.describe("home quick source-target selector", () => {
-  test("DOCX chips and real target dropdown expose exactly the same canonical targets", async ({ page }) => {
+  test("DOCX target picker shows categorized canonical targets and continues with PDF", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await selectHomeSource(page, "docx");
     await expect(page.getByTestId("suggestion-row-target")).toBeVisible();
 
     const chips = await targetChipValues(page);
-    const dropdown = await targetDropdownValues(page);
     const expected = ["html", "md", "odt", "pdf", "png", "rtf", "tiff", "txt"].sort();
-
     expect(chips.sort()).toEqual(expected);
-    expect(dropdown.sort()).toEqual(expected);
-    for (const invalid of ["tex", "rst", "jpg", "azw3", "epub", "mobi"]) {
-      expect(dropdown).not.toContain(invalid);
+
+    await page.getByTestId("home-target-select").click();
+    await expect(activeCategory(page, "home-target-select")).toHaveAttribute("data-category", "documents");
+    await expect(categoryIds(page, "home-target-select")).resolves.toEqual(["documents", "images"]);
+    await expect(visiblePickerFormats(page, "home-target-select")).resolves.toEqual(["html", "md", "odt", "pdf", "rtf", "txt"].sort());
+    for (const invalid of ["png", "tiff", "tex", "rst", "jpg", "azw3", "epub", "mobi"]) {
+      await expect(page.getByTestId("home-target-select-panel").locator(`[data-testid="home-target-select-option"][data-format="${invalid}"]`)).toHaveCount(0);
     }
+
+    await page.locator('[data-testid="home-target-select-category"][data-category="images"]').click();
+    await expect(activeCategory(page, "home-target-select")).toHaveAttribute("data-category", "images");
+    await expect(visiblePickerFormats(page, "home-target-select")).resolves.toEqual(["png", "tiff"]);
+
+    await page.locator('[data-testid="home-target-select-category"][data-category="documents"]').click();
+    await page.locator('[data-testid="home-target-select-option"][data-format="pdf"]').click();
+    await expect(page.getByTestId("home-target-select")).toContainText("PDF");
+    await page.getByRole("button", { name: "Continuar" }).click();
+    await expect(page).toHaveURL(/\/convert$/);
+    await expect(page.getByRole("heading", { name: /^Convertir$/i })).toBeVisible();
   });
 
-  test("real UI chips, dropdown and served canonical model match for first 50 source formats", async ({ page }) => {
+  test("real UI chips, picker and served canonical model match for first 50 source formats", async ({ page }) => {
+    test.setTimeout(180_000);
     await page.goto("/", { waitUntil: "domcontentloaded" });
     const model = await page.evaluate(async () => {
       const response = await fetch("/api/capabilities?ux=v3");
@@ -88,8 +102,22 @@ test.describe("home quick source-target selector", () => {
         .sort();
 
       expect(await targetChipValues(page), `${source.id} chips`).toEqual(expected);
-      expect(await targetDropdownValues(page), `${source.id} dropdown`).toEqual(expected);
+      const pickerValues = await targetPickerUnion(page);
+      expect(pickerValues, `${source.id} picker`).toEqual(expected);
+      expect(new Set(pickerValues).size, `${source.id} duplicates`).toBe(pickerValues.length);
     }
+  });
+
+  test("target picker search is global and restores category mode", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await selectHomeSource(page, "docx");
+    await page.getByTestId("home-target-select").click();
+    await expect(activeCategory(page, "home-target-select")).toHaveAttribute("data-category", "documents");
+    await page.getByPlaceholder("Buscar formato, extensión o alias...").fill("png");
+    await expect(visiblePickerFormats(page, "home-target-select")).resolves.toEqual(["png"]);
+    await page.getByPlaceholder("Buscar formato, extensión o alias...").fill("");
+    await expect(activeCategory(page, "home-target-select")).toHaveAttribute("data-category", "documents");
+    await expect(visiblePickerFormats(page, "home-target-select")).resolves.toEqual(["html", "md", "odt", "pdf", "rtf", "txt"].sort());
   });
 });
 
@@ -161,19 +189,34 @@ async function targetChipValues(page: import("@playwright/test").Page): Promise<
 }
 
 async function selectHomeSource(page: import("@playwright/test").Page, value: string): Promise<void> {
-  await expect
-    .poll(async () => page.getByTestId("home-source-select").evaluate((select, optionValue) =>
-      Array.from((select as HTMLSelectElement).options).some((option) => option.value === optionValue),
-    value))
-    .toBe(true);
-  await page.getByTestId("home-source-select").selectOption(value);
+  await page.getByTestId("home-source-select").click();
+  await page.getByPlaceholder("Buscar formato, extensión o alias...").fill(value);
+  await page.locator(`[data-testid="home-source-select-option"][data-format="${value}"]`).click();
 }
 
-async function targetDropdownValues(page: import("@playwright/test").Page): Promise<string[]> {
-  return page.getByTestId("home-target-select").evaluate((select) =>
-    Array.from((select as HTMLSelectElement).options)
-      .map((option) => option.value)
-      .filter(Boolean)
-      .sort()
+async function categoryIds(page: import("@playwright/test").Page, testId: string): Promise<string[]> {
+  return page.getByTestId(`${testId}-category`).evaluateAll((buttons) =>
+    buttons.map((button) => button.getAttribute("data-category")).filter((value): value is string => Boolean(value))
   );
+}
+
+function activeCategory(page: import("@playwright/test").Page, testId: string) {
+  return page.locator(`[data-testid="${testId}-category"][aria-selected="true"]`);
+}
+
+async function visiblePickerFormats(page: import("@playwright/test").Page, testId: string): Promise<string[]> {
+  return page.getByTestId(`${testId}-panel`).locator(`[data-testid="${testId}-option"]`).evaluateAll((buttons) =>
+    buttons.map((button) => button.getAttribute("data-format")).filter((value): value is string => Boolean(value)).sort()
+  );
+}
+
+async function targetPickerUnion(page: import("@playwright/test").Page): Promise<string[]> {
+  await page.getByTestId("home-target-select").click();
+  const values = new Set<string>();
+  for (const categoryId of await categoryIds(page, "home-target-select")) {
+    await page.locator(`[data-testid="home-target-select-category"][data-category="${categoryId}"]`).click();
+    for (const formatId of await visiblePickerFormats(page, "home-target-select")) values.add(formatId);
+  }
+  await page.keyboard.press("Escape");
+  return Array.from(values).sort();
 }

@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ConversionHub } from "../../../src/components/ux-v3/conversion-hub";
 import { SourceSelector } from "../../../src/components/converter/source-selector";
 import { FileStudioHome, getVisibleTargetRoutes } from "../../../src/components/ux-v3/file-studio-home";
+import { groupAllowedFormats } from "../../../src/components/ux-v3/premium-format-picker";
 import { ToolHub } from "../../../src/components/ux-v3/tool-hub";
 import { buildConversionUxModel } from "../../../src/lib/ux-v3/conversion-ux-model";
 import { FORMAT_CATALOG, normalizeFormatId } from "../../../src/lib/domain/format-catalog";
@@ -65,9 +66,8 @@ describe("UX V3 components", () => {
   it("QUICK-001 filters destination when a source is selected", () => {
     render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
 
-    fireEvent.change(screen.getByLabelText("De"), { target: { value: "docx" } });
-    const destination = screen.getByLabelText("A") as HTMLSelectElement;
-    const values = Array.from(destination.options).map((option) => option.value).filter(Boolean);
+    selectFormat("home-source-select", "docx");
+    const values = getSuggestionFormats("target");
 
     expect(values).toContain("pdf");
     expect(values).toContain("png");
@@ -80,25 +80,19 @@ describe("UX V3 components", () => {
     expect(values.sort()).toEqual(["html", "md", "odt", "pdf", "png", "rtf", "tiff", "txt"].sort());
   });
 
-  it("QUICK-001c keeps the real DOCX chips and destination dropdown identical", () => {
+  it("QUICK-001c keeps the real DOCX chips and destination picker identical", () => {
     render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
 
-    fireEvent.change(screen.getByLabelText("De"), { target: { value: "docx" } });
+    selectFormat("home-source-select", "docx");
 
-    const chipValues = Array.from(screen.getByTestId("suggestion-row-target").querySelectorAll("button"))
-      .map((button) => button.getAttribute("data-format"))
-      .filter(Boolean)
-      .sort();
-    const dropdownValues = Array.from((screen.getByLabelText("A") as HTMLSelectElement).options)
-      .map((option) => option.value)
-      .filter(Boolean)
-      .sort();
+    const chipValues = getSuggestionFormats("target").sort();
+    const pickerValues = getPickerUnion("home-target-select").sort();
 
-    expect(dropdownValues).toEqual(chipValues);
-    expect(dropdownValues).toEqual(["html", "md", "odt", "pdf", "png", "rtf", "tiff", "txt"].sort());
+    expect(pickerValues).toEqual(chipValues);
+    expect(pickerValues).toEqual(["html", "md", "odt", "pdf", "png", "rtf", "tiff", "txt"].sort());
   });
 
-  it("QUICK-001d keeps real chips and dropdown identical for the first 50 canonical formats", () => {
+  it("QUICK-001d keeps real chips and picker identical for the first 50 canonical formats", () => {
     const canonicalFormats = Array.from(new Set(FORMAT_CATALOG.map((format) => normalizeFormatId(format.outputExtension)).filter(Boolean))).slice(0, 50);
 
     for (const source of canonicalFormats) {
@@ -107,18 +101,13 @@ describe("UX V3 components", () => {
       const expectedTargets = getVisibleTargetRoutes(source!, model.routes).map((route) => route.target).sort();
       if (expectedTargets.length === 0) continue;
 
-      fireEvent.change(screen.getByLabelText("De"), { target: { value: source } });
-      const chipValues = Array.from(screen.getByTestId("suggestion-row-target").querySelectorAll("button"))
-        .map((button) => button.getAttribute("data-format"))
-        .filter(Boolean)
-        .sort();
-      const dropdownValues = Array.from((screen.getByLabelText("A") as HTMLSelectElement).options)
-        .map((option) => option.value)
-        .filter(Boolean)
-        .sort();
+      selectFormat("home-source-select", source!);
+      const chipValues = getSuggestionFormats("target").sort();
+      const pickerValues = getPickerUnion("home-target-select").sort();
 
-      expect(dropdownValues, `${source} dropdown`).toEqual(expectedTargets);
+      expect(pickerValues, `${source} picker`).toEqual(expectedTargets);
       expect(chipValues, `${source} chips`).toEqual(expectedTargets);
+      expect(new Set(pickerValues).size, `${source} duplicate targets`).toBe(pickerValues.length);
     }
   });
 
@@ -126,21 +115,102 @@ describe("UX V3 components", () => {
     const onSelectTarget = vi.fn();
     render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={onSelectTarget} onOpenTools={() => {}} />);
 
-    fireEvent.change(screen.getByLabelText("De"), { target: { value: "docx" } });
-    fireEvent.change(screen.getByLabelText("A"), { target: { value: "png" } });
+    selectFormat("home-source-select", "docx");
+    selectFormat("home-target-select", "png");
     fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
 
     expect(onSelectTarget).toHaveBeenCalledWith("png", "docx");
   });
 
-  it("QUICK-002 filters source when target is selected first", () => {
+  it("QUICK-002 keeps target picker disabled until a source exists", () => {
     render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
 
-    fireEvent.change(screen.getByLabelText("A"), { target: { value: "pdf" } });
-    const source = screen.getByLabelText("De") as HTMLSelectElement;
-    const values = Array.from(source.options).map((option) => option.value);
+    expect(screen.getByTestId("home-target-select").hasAttribute("disabled")).toBe(true);
+    expect(screen.getByText("Selecciona primero un formato de origen")).toBeTruthy();
+  });
 
-    expect(values).toContain("docx");
+  it("PICKER-001 opens source picker on the first valid category and only shows that category", () => {
+    render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
+
+    fireEvent.click(screen.getByTestId("home-source-select"));
+    expect(activeCategory("home-source-select")).toBe("documents");
+    expect(visiblePickerFormats("home-source-select")).toEqual(groupAllowedFormats(model.formats.filter((format) => format.targetsCount > 0))[0].formats.map((format) => format.id).sort());
+  });
+
+  it("PICKER-002 supports source category switching, search, selection and Escape close", () => {
+    render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
+
+    fireEvent.click(screen.getByTestId("home-source-select"));
+    fireEvent.click(categoryButton("home-source-select", "images"));
+    expect(activeCategory("home-source-select")).toBe("images");
+    expect(visiblePickerFormats("home-source-select").every((id) => model.formats.find((format) => format.id === id)?.category === "images")).toBe(true);
+
+    fireEvent.change(searchInput(), { target: { value: "docx" } });
+    expect(visiblePickerFormats("home-source-select")).toContain("docx");
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByTestId("home-source-select-panel")).toBeNull();
+  });
+
+  it("PICKER-003 handles the required DOCX target category behavior", () => {
+    render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
+
+    selectFormat("home-source-select", "docx");
+    fireEvent.click(screen.getByTestId("home-target-select"));
+
+    expect(activeCategory("home-target-select")).toBe("documents");
+    expect(categoryIds("home-target-select")).toEqual(["documents", "images"]);
+    expect(visiblePickerFormats("home-target-select")).toEqual(["html", "md", "odt", "pdf", "rtf", "txt"].sort());
+    for (const hidden of ["png", "tiff", "epub", "mobi", "jpg", "tex", "rst"]) {
+      expect(visiblePickerFormats("home-target-select")).not.toContain(hidden);
+    }
+
+    fireEvent.click(categoryButton("home-target-select", "images"));
+    expect(activeCategory("home-target-select")).toBe("images");
+    expect(visiblePickerFormats("home-target-select")).toEqual(["png", "tiff"].sort());
+    for (const hidden of ["html", "md", "odt", "pdf", "rtf", "txt"]) {
+      expect(visiblePickerFormats("home-target-select")).not.toContain(hidden);
+    }
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    fireEvent.click(screen.getByTestId("home-target-select"));
+    expect(activeCategory("home-target-select")).toBe("documents");
+  });
+
+  it("PICKER-004 resets target categories when source changes", () => {
+    render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
+
+    selectFormat("home-source-select", "docx");
+    fireEvent.click(screen.getByTestId("home-target-select"));
+    fireEvent.click(categoryButton("home-target-select", "images"));
+    fireEvent.click(optionButton("home-target-select", "png"));
+    expect(screen.getByTestId("home-target-select").textContent).toContain("PNG");
+
+    selectFormat("home-source-select", "png");
+    expect(screen.getByTestId("home-target-select").textContent).toContain("Seleccionar formato");
+    fireEvent.click(screen.getByTestId("home-target-select"));
+    expect(activeCategory("home-target-select")).toBe(categoryIds("home-target-select")[0]);
+  });
+
+  it("PICKER-005 searches globally and restores the active category when search clears", () => {
+    render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
+
+    selectFormat("home-source-select", "docx");
+    fireEvent.click(screen.getByTestId("home-target-select"));
+    expect(activeCategory("home-target-select")).toBe("documents");
+    fireEvent.change(searchInput(), { target: { value: "png" } });
+    expect(visiblePickerFormats("home-target-select")).toEqual(["png"]);
+    fireEvent.change(searchInput(), { target: { value: "" } });
+    expect(activeCategory("home-target-select")).toBe("documents");
+    expect(visiblePickerFormats("home-target-select")).toEqual(["html", "md", "odt", "pdf", "rtf", "txt"].sort());
+  });
+
+  it("PICKER-006 shows a no-results state", () => {
+    render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
+
+    selectFormat("home-source-select", "docx");
+    fireEvent.click(screen.getByTestId("home-target-select"));
+    fireEvent.change(searchInput(), { target: { value: "definitely-not-a-format" } });
+    expect(screen.getByText("No encontramos ningún formato")).toBeTruthy();
   });
 
   it("TOOLS-001, TOOLS-002 and TOOLS-005 classify tools separately", () => {
@@ -167,3 +237,60 @@ describe("UX V3 components", () => {
     expect(screen.getByLabelText("Seleccionar archivo local").getAttribute("accept")).toBe(".docx");
   });
 });
+
+function selectFormat(testId: string, formatId: string) {
+  fireEvent.click(screen.getByTestId(testId));
+  fireEvent.change(searchInput(), { target: { value: formatId } });
+  fireEvent.click(optionButton(testId, formatId));
+}
+
+function searchInput(): HTMLInputElement {
+  return screen.getByPlaceholderText("Buscar formato, extensión o alias...") as HTMLInputElement;
+}
+
+function optionButton(testId: string, formatId: string): HTMLElement {
+  const button = screen.getByTestId(`${testId}-panel`).querySelector(`[data-testid="${testId}-option"][data-format="${formatId}"]`);
+  if (!(button instanceof HTMLElement)) throw new Error(`Missing option ${formatId} in ${testId}`);
+  return button;
+}
+
+function categoryButton(testId: string, categoryId: string): HTMLElement {
+  const button = screen.getByTestId(`${testId}-panel`).querySelector(`[data-testid="${testId}-category"][data-category="${categoryId}"]`);
+  if (!(button instanceof HTMLElement)) throw new Error(`Missing category ${categoryId} in ${testId}`);
+  return button;
+}
+
+function activeCategory(testId: string): string | null {
+  return screen.getAllByTestId(`${testId}-category`)
+    .find((button) => button.getAttribute("aria-selected") === "true")
+    ?.getAttribute("data-category") ?? null;
+}
+
+function categoryIds(testId: string): string[] {
+  return screen.getAllByTestId(`${testId}-category`).map((button) => button.getAttribute("data-category")).filter(Boolean) as string[];
+}
+
+function visiblePickerFormats(testId: string): string[] {
+  return Array.from(screen.getByTestId(`${testId}-panel`).querySelectorAll(`[data-testid="${testId}-option"]`))
+    .map((button) => button.getAttribute("data-format"))
+    .filter(Boolean)
+    .sort() as string[];
+}
+
+function getPickerUnion(testId: string): string[] {
+  fireEvent.click(screen.getByTestId(testId));
+  const values = new Set<string>();
+  for (const categoryId of categoryIds(testId)) {
+    fireEvent.click(categoryButton(testId, categoryId));
+    for (const formatId of visiblePickerFormats(testId)) values.add(formatId);
+  }
+  fireEvent.keyDown(document, { key: "Escape" });
+  return Array.from(values).sort();
+}
+
+function getSuggestionFormats(direction: "source" | "target"): string[] {
+  return Array.from(screen.getByTestId(`suggestion-row-${direction}`).querySelectorAll("button"))
+    .map((button) => button.getAttribute("data-format"))
+    .filter(Boolean)
+    .sort() as string[];
+}

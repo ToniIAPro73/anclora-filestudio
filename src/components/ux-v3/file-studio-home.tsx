@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowDown, ArrowRight, Search, Wrench } from "lucide-react";
+import { ArrowDown, ArrowRight, Wrench } from "lucide-react";
 import type {
   UxConversionCategoryId,
   UxConversionModel,
@@ -9,6 +9,7 @@ import type {
   UxRouteSummary,
 } from "@/lib/ux-v3/conversion-ux-model";
 import { normalizeFormatId } from "@/lib/domain/format-catalog";
+import { PremiumFormatPicker } from "./premium-format-picker";
 
 interface FileStudioHomeProps {
   model: UxConversionModel | null;
@@ -35,22 +36,18 @@ const EMPTY_ROUTES: UxRouteSummary[] = [];
 export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenTool, onOpenTools }: FileStudioHomeProps) {
   const [source, setSource] = useState("");
   const [target, setTarget] = useState("");
-  const [sourceQuery, setSourceQuery] = useState("");
-  const [targetQuery, setTargetQuery] = useState("");
 
   const formats = model?.formats ?? EMPTY_FORMATS;
   const routes = model?.routes ?? EMPTY_ROUTES;
 
   const sourceOptions = useMemo(() => {
-    if (!target) return formats.filter((format) => format.targetsCount > 0);
-    const validSources = new Set(routes.filter((route) => route.target === target).map((route) => route.source));
-    return formats.filter((format) => validSources.has(format.id));
-  }, [formats, routes, target]);
+    return formats.filter((format) => format.targetsCount > 0);
+  }, [formats]);
 
   const targetRoutes = useMemo(() => source ? getVisibleTargetRoutes(source, routes) : EMPTY_ROUTES, [routes, source]);
 
   const targetOptions = useMemo(() => {
-    if (!source) return formats.filter((format) => format.sourcesCount > 0);
+    if (!source) return EMPTY_FORMATS;
     const validTargets = new Set(targetRoutes.map((route) => route.target));
     return formats.filter((format) => validTargets.has(format.id));
   }, [formats, source, targetRoutes]);
@@ -60,7 +57,7 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
     return targetRoutes.find((route) => route.source === source && route.target === target) ?? null;
   }, [source, target, targetRoutes]);
 
-  const suggestedTargets = source && !target
+  const suggestedTargets = source
     ? targetRoutes
     : [];
   const suggestedSources = target && !source
@@ -88,16 +85,16 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
           <FormatCombobox
             label="De"
             value={source}
-            query={sourceQuery}
-            onQueryChange={setSourceQuery}
             onChange={(value) => {
               setSource(value);
-              if (target && value && !getVisibleTargetRoutes(value, routes).some((route) => route.target === target)) {
+              if (!value || (target && !getVisibleTargetRoutes(value, routes).some((route) => route.target === target))) {
                 setTarget("");
               }
             }}
             options={sourceOptions}
             placeholder="Seleccionar formato"
+            mode="source"
+            testId="home-source-select"
           />
           <div className="flex justify-center pb-3 text-stone-500">
             <ArrowRight className="hidden h-5 w-5 md:block" aria-hidden="true" />
@@ -106,8 +103,6 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
           <FormatCombobox
             label="A"
             value={target}
-            query={targetQuery}
-            onQueryChange={setTargetQuery}
             onChange={(value) => {
               setTarget(value);
               if (source && value && !routes.some((route) => route.source === source && route.target === value)) {
@@ -116,6 +111,9 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
             }}
             options={targetOptions}
             placeholder="Seleccionar formato"
+            mode="target"
+            emptyMessage="Selecciona primero un formato de origen"
+            testId="home-target-select"
           />
           <button
             type="button"
@@ -136,8 +134,8 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
               direction="target"
               onPick={(format) => {
                 setTarget(format);
-                onSelectTarget?.(format, source);
               }}
+              selectedFormat={target}
             />
           )}
           {target && !source && (
@@ -205,75 +203,26 @@ export function getVisibleTargetRoutes(source: string, routes: readonly UxRouteS
 function FormatCombobox(props: {
   label: string;
   value: string;
-  query: string;
-  onQueryChange: (value: string) => void;
   onChange: (value: string) => void;
   options: UxFormatSummary[];
   placeholder: string;
+  mode: "source" | "target";
+  emptyMessage?: string;
+  testId: string;
 }) {
-  const filtered = useMemo(() => {
-    const needle = props.query.trim().toLowerCase();
-    const normalized = normalizeFormatId(needle);
-    if (!needle) return props.options;
-    return props.options.filter((format) => (
-      format.id === normalized ||
-      format.displayName.toLowerCase().includes(needle) ||
-      format.extension.includes(needle) ||
-      format.aliases.some((alias) => alias.includes(needle) || normalizeFormatId(alias) === normalized)
-    ));
-  }, [props.options, props.query]);
-
   return (
-    <label className="block">
-      <span className="mb-1 block text-xs font-semibold text-stone-400">{props.label}</span>
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-500" aria-hidden="true" />
-        <select
-          value={props.value}
-          onChange={(event) => props.onChange(event.target.value)}
-          className="min-h-11 w-full rounded-md border border-white/10 bg-[#0b0d10] px-3 pl-9 text-sm font-semibold text-stone-100 outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60"
-          aria-label={props.label}
-          data-testid={props.label === "De" ? "home-source-select" : "home-target-select"}
-        >
-          <option value="">{props.placeholder}</option>
-          {groupFormats(filtered).map((group) => (
-            <optgroup key={group.label} label={group.label}>
-              {group.formats.map((format) => (
-                <option key={format.id} value={format.id}>
-                  {format.displayName}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-      </div>
-      <input
-        value={props.query}
-        onChange={(event) => props.onQueryChange(event.target.value)}
-        placeholder="Buscar por alias"
-        className="mt-2 min-h-10 w-full rounded-md border border-white/10 bg-white/3 px-3 text-sm text-stone-100 outline-none placeholder:text-stone-600 focus-visible:ring-2 focus-visible:ring-teal-300/60"
-      />
-    </label>
+    <PremiumFormatPicker
+      formats={props.options}
+      allowedFormats={props.options}
+      selectedFormat={props.value}
+      onSelect={props.onChange}
+      mode={props.mode}
+      label={props.label}
+      placeholder={props.placeholder}
+      emptyMessage={props.emptyMessage}
+      testId={props.testId}
+    />
   );
-}
-
-function groupFormats(formats: UxFormatSummary[]): Array<{ label: string; formats: UxFormatSummary[] }> {
-  const labels: Record<UxConversionCategoryId, string> = {
-    documents: "Documentos",
-    images: "Imágenes",
-    audio: "Audio",
-    video: "Vídeo",
-    ebooks: "Ebooks",
-    archives: "Archivos",
-    data: "Datos",
-    other: "Otros",
-  };
-  return CATEGORY_ORDER
-    .map((category) => ({
-      label: labels[category],
-      formats: formats.filter((format) => format.category === category),
-    }))
-    .filter((group) => group.formats.length > 0);
 }
 
 function RouteNotice({ route }: { route: UxRouteSummary }) {
@@ -306,20 +255,27 @@ function SuggestionRow(props: {
   routes: UxRouteSummary[];
   direction: "source" | "target";
   onPick: (format: string) => void;
+  selectedFormat?: string;
 }) {
   return (
-    <div className="rounded-md border border-white/10 bg-white/3 p-3" data-testid={`suggestion-row-${props.direction}`}>
+    <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]" data-testid={`suggestion-row-${props.direction}`}>
       <p className="text-xs font-semibold text-stone-400">{props.title}</p>
       <div className="mt-2 flex flex-wrap gap-2">
         {props.routes.map((route) => {
           const format = props.direction === "source" ? route.source : route.target;
+          const selected = props.selectedFormat === format;
           return (
             <button
               key={`${route.source}-${route.target}`}
               type="button"
               onClick={() => props.onPick(format)}
               data-format={format}
-              className="min-h-9 rounded-md border border-white/10 bg-[#0b0d10] px-3 text-xs font-bold uppercase text-stone-100 hover:bg-white/6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60"
+              aria-pressed={selected}
+              className={`min-h-9 rounded-lg border px-3 text-xs font-bold uppercase transition-[border-color,background,color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60 ${
+                selected
+                  ? "border-teal-200/45 bg-teal-300/12 text-teal-100"
+                  : "border-white/10 bg-[#0b0d10] text-stone-100 hover:border-teal-200/30 hover:bg-white/6"
+              }`}
             >
               {format}
             </button>
