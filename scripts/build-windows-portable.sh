@@ -513,7 +513,30 @@ ok "Next.js runtime externals complete"
 # removing .pnpm.
 info "Fixing truncated semver stub..."
 SEMVER_IN_PKG="$APP_DIR/node_modules/semver"
-SEMVER_FULL_SRC="$(node -e "const path=require('path'); process.stdout.write(path.dirname(require.resolve('semver/package.json')));")"
+SEMVER_FULL_SRC="$(python3 - "$REPO_ROOT" <<'PY'
+import glob
+import json
+import os
+import sys
+
+repo_root = sys.argv[1]
+candidates = []
+for package_json in glob.glob(os.path.join(repo_root, "node_modules", ".pnpm", "semver@*", "node_modules", "semver", "package.json")):
+    with open(package_json, encoding="utf-8") as handle:
+        version = json.load(handle).get("version", "0.0.0")
+    try:
+        parts = tuple(int(part) for part in version.split(".")[:3])
+    except ValueError:
+        continue
+    if (7, 8, 4) <= parts < (8, 0, 0):
+        candidates.append((parts, os.path.dirname(package_json)))
+
+if not candidates:
+    raise SystemExit("No full semver package compatible with sharp was found in pnpm store")
+
+print(max(candidates)[1])
+PY
+)"
 
 if [[ ! -f "$SEMVER_IN_PKG/index.js" ]]; then
   if [[ ! -d "$SEMVER_FULL_SRC" ]] || [[ ! -f "$SEMVER_FULL_SRC/index.js" ]]; then
