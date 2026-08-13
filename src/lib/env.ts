@@ -10,6 +10,10 @@ const envSchema = z.object({
   ANCLORA_FILESTUDIO_FFMPEG_PATH: z.string().default(""),
   ANCLORA_FILESTUDIO_FFPROBE_PATH: z.string().default(""),
   ANCLORA_FILESTUDIO_YTDLP_PATH: z.string().default(""),
+  // Optional, local-only path to a Netscape-format cookies.txt file (e.g.
+  // exported from a secondary/throwaway account). Never set by default,
+  // never committed. When empty, yt-dlp runs unauthenticated as before.
+  ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH: z.string().default(""),
   ANCLORA_FILESTUDIO_QPDF_PATH: z.string().default(""),
   ANCLORA_FILESTUDIO_7ZIP_PATH: z.string().default(""),
   ANCLORA_FILESTUDIO_PANDOC_PATH: z.string().default(""),

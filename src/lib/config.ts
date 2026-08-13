@@ -42,6 +42,7 @@ export const CONFIG = {
       tesseract: resolveToolPath(env.ANCLORA_FILESTUDIO_TESSERACT_PATH, "tesseract"),
       tessdataPrefix: env.ANCLORA_FILESTUDIO_TESSDATA_PREFIX || "",
       poppler: env.ANCLORA_FILESTUDIO_POPPLER_PATH || "",
+      ytdlpCookiesPath: env.ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH || "",
     },
     limits: {
       maxDurationSeconds: env.MAX_VIDEO_DURATION_SECONDS,

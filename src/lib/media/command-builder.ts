@@ -1,4 +1,5 @@
 import { AudioOutputFormat, VideoOutputFormat } from "../jobs/job-types";
+import { CONFIG } from "../config";
 import {
   VideoQualitySelection,
   buildYtdlpFormatSelector,
@@ -12,9 +13,30 @@ import { isAncloraWindowsRuntime } from "../runtime-platform";
  * certificate verification. --no-check-certificates is the only reliable workaround
  * for portable distributions running in arbitrary Windows corporate environments.
  * It is NOT added in dev/Linux mode where TLS verification works as expected.
+ *
+ * --cookies is added only when ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH is set
+ * locally (never by default, never in portables). Applied to both metadata
+ * and download so a video that analyzes successfully also downloads.
+ *
+ * An authenticated request still needs signature/n-challenge solving (EJS)
+ * to get real format URLs — without it yt-dlp only returns images. That
+ * needs a JS runtime (--js-runtimes, using the same Node running this
+ * server) plus the official yt-dlp EJS solver component, fetched once from
+ * yt-dlp's own GitHub releases and cached locally. Both are gated behind
+ * the same cookies opt-in so portables (which never set that var) are
+ * untouched.
  */
 export function getYtdlpCommonArgs(): string[] {
-  return isAncloraWindowsRuntime() ? ["--no-check-certificates"] : [];
+  const args: string[] = [];
+  if (isAncloraWindowsRuntime()) {
+    args.push("--no-check-certificates");
+  }
+  if (CONFIG.media.binaries.ytdlpCookiesPath) {
+    args.push("--cookies", CONFIG.media.binaries.ytdlpCookiesPath);
+    args.push("--js-runtimes", `node:${process.execPath}`);
+    args.push("--remote-components", "ejs:github");
+  }
+  return args;
 }
 
 export type OutputFormat = AudioOutputFormat | VideoOutputFormat;
