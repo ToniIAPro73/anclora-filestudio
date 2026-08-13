@@ -15,7 +15,7 @@ import { buildConversionGraph } from "../src/lib/conversion-routing/graph";
 import { findConversionRoutes } from "../src/lib/conversion-routing/router";
 import { rankRoutes } from "../src/lib/conversion-routing/ranking";
 import { qualityBand } from "../src/lib/conversion-routing/scoring";
-import type { ConversionEdge, ConversionRoute } from "../src/lib/conversion-routing/types";
+import type { ConversionRoute } from "../src/lib/conversion-routing/types";
 import type { LossProfile } from "../src/lib/domain/operations";
 
 const ALL_DESKTOP = new Set(

@@ -1,6 +1,3 @@
-type Importer = (specifier: string) => Promise<unknown>;
-
-const dynamicImporter = new Function("specifier", "return import(specifier)") as Importer;
 const isVercelBuild =
   process.env.ANCLORA_FILESTUDIO_DEPLOYMENT_TARGET === "vercel" ||
   process.env.NEXT_PUBLIC_ANCLORA_FILESTUDIO_MODE === "vercel-web";
@@ -32,11 +29,12 @@ const desktopModuleImporters = isVercelBuild
 export async function loadDesktopRoute<T>(routeName: string): Promise<T> {
   const importer = desktopRouteImporters[routeName as keyof typeof desktopRouteImporters];
   if (importer) return importer() as Promise<T>;
-  return dynamicImporter(`@/server/desktop-routes/${routeName}`) as Promise<T>;
+  const specifier = `@/server/desktop-routes/${routeName}`;
+  return import(/* turbopackIgnore: true */ specifier) as Promise<T>;
 }
 
 export async function loadDesktopModule<T>(moduleName: string): Promise<T> {
   const importer = desktopModuleImporters[moduleName as keyof typeof desktopModuleImporters];
   if (importer) return importer() as Promise<T>;
-  return dynamicImporter(moduleName) as Promise<T>;
+  return import(/* turbopackIgnore: true */ moduleName) as Promise<T>;
 }

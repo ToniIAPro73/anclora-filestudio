@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { FileAudio, FileImage, Play, Pause, Sparkles, X, ArrowLeftRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -130,10 +131,15 @@ export function CompareInspectorModal({
             originalUrl ? (
               <div className="relative w-full max-w-2xl h-[320px] select-none overflow-hidden rounded-lg border border-stone-800 bg-[#0a0c10]">
                 {/* Converted (Right / Underneath) */}
-                <img
+                {/* `unoptimized`: downloadUrl carries a short-lived rotating token;
+                    the image optimizer would re-request it server-side per srcSet
+                    width and could consume the one-time token. */}
+                <Image
                   src={convertedUrl}
                   alt="Converted"
-                  className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                  fill
+                  unoptimized
+                  className="object-contain pointer-events-none"
                 />
 
                 {/* Original (Left / Clipped) */}
@@ -141,10 +147,12 @@ export function CompareInspectorModal({
                   className="absolute inset-0 overflow-hidden"
                   style={{ width: `${sliderPos}%` }}
                 >
-                  <img
+                  <Image
                     src={originalUrl}
                     alt="Original"
-                    className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                    fill
+                    unoptimized
+                    className="object-contain pointer-events-none"
                     style={{ width: "100%", maxWidth: "none" }}
                   />
                   <span className="absolute top-3 left-3 bg-black/80 backdrop-blur text-stone-300 text-[10px] font-mono px-2 py-1 rounded border border-white/10">
@@ -178,6 +186,11 @@ export function CompareInspectorModal({
               </div>
             ) : (
               <div className="w-full flex flex-col items-center justify-center py-6 text-center">
+                {/* Native <img> required: intrinsic dimensions of the converted file are
+                    unknown at runtime, and next/image `fill` would upscale small images
+                    inside a fixed-height box, changing the natural-size preview layout.
+                    `unoptimized` Image would add no value over this direct render. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={convertedUrl} alt="Converted" className="max-h-[260px] object-contain rounded-lg shadow-lg mb-3" />
                 <p className="text-xs text-stone-400">Vista previa optimizada del resultado en {format.toUpperCase()}</p>
               </div>
