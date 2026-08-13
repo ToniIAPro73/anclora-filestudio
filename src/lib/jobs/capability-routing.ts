@@ -30,6 +30,7 @@ export function extractEngineIdFromCapabilityId(capabilityId: string): string {
     ["poppler", "poppler"],
     ["calibre", "calibre"],
     ["tesseract", "tesseract"],
+    ["html-renderer", "html-renderer"],
   ];
 
   for (const [prefix, engineId] of PREFIX_TO_ENGINE) {

@@ -35,7 +35,7 @@ const RECOMMENDED_BY_CATEGORY: Partial<Record<FileCategory, string[]>> = {
   pdf: ["docx", "txt", "png"],
   archive: ["zip", "tar"],
   "structured-data": ["json", "csv", "yaml"],
-  "plain-text": ["md", "html", "pdf", "txt"],
+  "plain-text": ["md", "html", "pdf", "png", "tiff", "txt"],
 };
 
 const CLASSIFICATION_RANK: Record<RouteClassification, number> = {

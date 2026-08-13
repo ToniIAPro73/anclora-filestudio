@@ -225,7 +225,15 @@ export function familyWeightsFor(
   source: string,
   target: string
 ): Partial<Record<QualityDimension, number>> {
+  const normalizedSource = normalizeFormatId(source) ?? source;
   const normalizedTarget = normalizeFormatId(target) ?? target;
+  const sourceFamily = CATEGORY_TO_FAMILY[categoryOf(normalizedSource) ?? "unknown"];
+  if (
+    ["png", "tiff"].includes(normalizedTarget) &&
+    (sourceFamily === "document" || sourceFamily === "ebook")
+  ) {
+    return { text: 0.2, layout: 0.25, images: 0.2, tables: 0.15, mediaQuality: 0.1, resolution: 0.08, metadata: 0.02 };
+  }
   return TARGET_WEIGHT_OVERRIDES[normalizedTarget] ?? FAMILY_WEIGHTS[routeFamily(source, target)];
 }
 

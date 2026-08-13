@@ -31,6 +31,9 @@ const DESKTOP_ENGINES = new Set([
   "7z",
   "data-ts",
   "background-removal",
+  "html-renderer",
+  "chromium",
+  "playwright-core",
 ]);
 
 const WEB_ENGINES = new Set(["browser", "data-ts"]);

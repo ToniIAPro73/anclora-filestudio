@@ -132,6 +132,11 @@ const QUALITY_OVERRIDES: Record<string, EdgeQualityInput> = {
   "html->txt": { preservation: { text: 0.9, structure: 0.15, layout: 0.05, tables: 0.15, images: 0, metadata: 0.4 }, irreversibleLosses: ["structure", "layout", "tables", "images"] },
   "rst->txt": { preservation: { text: 0.92, structure: 0.15, layout: 0.05, tables: 0.15, images: 0, metadata: 0.4 }, irreversibleLosses: ["structure", "layout", "tables", "images"] },
   "docx->txt": { preservation: { text: 0.9, structure: 0.15, layout: 0.05, tables: 0.15, images: 0, metadata: 0.4 }, irreversibleLosses: ["structure", "layout", "tables", "images"] },
+  // Markup → HTML is the natural structure-preserving path. It may normalize
+  // authoring syntax, but it should beat detours through DOCX/PDF for raster
+  // rendering pipelines.
+  "md->html": { preservation: { text: 0.96, structure: 0.9, layout: 0.86, tables: 0.86, images: 0.82, metadata: 0.6 }, irreversibleLosses: ["metadata"], reencodeRequired: false, certification: "benchmarked" },
+  "rst->html": { preservation: { text: 0.96, structure: 0.9, layout: 0.84, tables: 0.84, images: 0.8, metadata: 0.6 }, irreversibleLosses: ["metadata"], reencodeRequired: false, certification: "benchmarked" },
 };
 
 function mergeQuality(
@@ -245,6 +250,70 @@ export const CANONICAL_CONVERSION_EDGES: readonly CanonicalConversionEdge[] = [
   ...cross(["png", "jpg", "tiff", "webp"], ["pdf"], { operationId: "ocr:image-to-pdf", implementationId: "tesseract-image-ocr-pdf", engineId: "tesseract", dependencies: ["tesseract"], lossProfile: "lossy", supportsOCR: true, mode: "ocr", priority: 55, declared: false, quality: { preservation: { text: 0.7, structure: 0.4, layout: 0.85, images: 0.95, metadata: 0.4 }, irreversibleLosses: ["structure"], runtimeCost: "high", stability: 0.8, certification: "engine-inferred" } }),
   ...cross(["pdf"], ["txt"], { operationId: "pdf:ocr", implementationId: "tesseract-pdf-ocr-text", engineId: "tesseract", dependencies: ["tesseract", "pdftoppm"], lossProfile: "lossy", supportsOCR: true, mode: "ocr", priority: 55, quality: { preservation: { text: 0.7, structure: 0.2, metadata: 0.3 }, irreversibleLosses: ["structure"], runtimeCost: "high", stability: 0.8, certification: "engine-inferred" } }),
   ...cross(["png", "jpg", "webp"], ["pdf"], { operationId: "browser:images-to-pdf", implementationId: "browser-pdf-images-to-pdf", engineId: "browser", dependencies: ["browser"], environments: ["web"], lossProfile: "lossy-controlled", priority: 75, declared: false, quality: { preservation: { images: 0.9, layout: 0.85, structure: 0.85, metadata: 0.5 }, runtimeCost: "low", stability: 0.85, certification: "engine-inferred" } }),
+  edge({
+    source: "html",
+    target: "png",
+    operationId: "render:html-to-image",
+    implementationId: "playwright-chromium-html-render-png",
+    engineId: "html-renderer",
+    dependencies: ["html-renderer", "chromium", "playwright-core", "sharp"],
+    environments: DESKTOP,
+    lossProfile: "lossy-controlled",
+    priority: 92,
+    supportsAsIntermediate: false,
+    quality: {
+      preservation: {
+        text: 0.95,
+        structure: 0.05,
+        layout: 0.94,
+        images: 0.92,
+        tables: 0.92,
+        metadata: 0.1,
+        mediaQuality: 0.92,
+        resolution: 0.9,
+        alpha: 0.95,
+      },
+      irreversibleLosses: ["structure", "metadata"],
+      reencodeRequired: false,
+      pipelineMode: "na",
+      runtimeCost: "medium",
+      stability: 0.9,
+      certification: "benchmarked",
+    },
+    notes: "Static HTML rendered to a full-page PNG through isolated Chromium. JavaScript disabled; network blocked; local file assets limited to the input directory.",
+  }),
+  edge({
+    source: "html",
+    target: "tiff",
+    operationId: "render:html-to-image",
+    implementationId: "playwright-chromium-html-render-tiff",
+    engineId: "html-renderer",
+    dependencies: ["html-renderer", "chromium", "playwright-core", "sharp"],
+    environments: DESKTOP,
+    lossProfile: "lossy-controlled",
+    priority: 90,
+    supportsAsIntermediate: false,
+    quality: {
+      preservation: {
+        text: 0.95,
+        structure: 0.05,
+        layout: 0.94,
+        images: 0.92,
+        tables: 0.92,
+        metadata: 0.1,
+        mediaQuality: 0.91,
+        resolution: 0.9,
+        alpha: 0.95,
+      },
+      irreversibleLosses: ["structure", "metadata"],
+      reencodeRequired: true,
+      pipelineMode: "transcode",
+      runtimeCost: "medium",
+      stability: 0.9,
+      certification: "benchmarked",
+    },
+    notes: "Static HTML rendered to PNG first, then encoded to TIFF/LZW through Sharp. No direct TIFF renderer is assumed.",
+  }),
   ...cross(["pdf"], ["png", "jpg", "tiff"], {
     operationId: "pdf:rasterize",
     implementationId: "poppler-pdftoppm-rasterize",
@@ -369,6 +438,9 @@ function dependencyAvailable(dependency: string, runtime: RuntimeCapabilitySet):
     return runtime.engines.get("data-ts")?.state === "available";
   }
   if (dependency === "browser") return runtime.engines.get("browser")?.state === "available";
+  if (dependency === "chromium" || dependency === "playwright-core") {
+    return runtime.engines.get("html-renderer")?.state === "available";
+  }
   return runtime.engines.get(dependency)?.state === "available";
 }
 

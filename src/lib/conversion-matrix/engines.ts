@@ -26,6 +26,7 @@ export const CANONICAL_ENGINES: readonly CanonicalEngineDefinition[] = [
   { id: "calibre", label: "Calibre", platforms: ["windows", "linux"], dependencies: ["ebook-convert"], purpose: "Ebook conversion" },
   { id: "sevenzip", label: "7-Zip", platforms: ["windows", "linux"], dependencies: ["7z"], purpose: "Archive repacking" },
   { id: "browser", label: "Browser", platforms: ["web"], dependencies: [], purpose: "Browser-local conversions" },
+  { id: "html-renderer", label: "HTML Renderer", platforms: ["windows", "linux"], dependencies: ["chromium", "playwright-core", "sharp"], purpose: "Safe static HTML and markup raster rendering" },
   { id: "data-ts", label: "Data Engine", platforms: ["windows", "linux", "web"], dependencies: ["yaml", "smol-toml", "fast-xml-parser", "csv-parse", "csv-stringify"], purpose: "Structured data conversion" },
   { id: "background-removal", label: "Background Removal", platforms: ["windows", "linux"], dependencies: ["sharp"], purpose: "Image background removal tool" },
 ] as const;
@@ -38,6 +39,7 @@ function stateForEngineId(engineId: string, availableIds: ReadonlySet<string>): 
   if (availableIds.has(engineId)) return "available";
   if (engineId === "poppler" && availableIds.has("pdftoppm")) return "available";
   if (engineId === "browser" && availableIds.has("browser")) return "available";
+  if (engineId === "html-renderer" && availableIds.has("html-renderer")) return "available";
   return "unavailable";
 }
 
