@@ -1,0 +1,546 @@
+[
+  {
+    "id": "JOURNEY-001",
+    "name": "PDF -> DOCX",
+    "fixture": "fixture-pdf.pdf",
+    "target": "docx",
+    "status": "PASS",
+    "severity": null,
+    "notes": [],
+    "analysis": {
+      "ok": true,
+      "status": 200,
+      "kind": "universal-file",
+      "detectedFormat": "pdf",
+      "extension": "pdf",
+      "category": "pdf"
+    },
+    "capabilities": {
+      "ok": true,
+      "status": 200,
+      "inputFormat": "pdf",
+      "count": 8
+    },
+    "selectedCapability": {
+      "id": "route-pdf-docx",
+      "state": "available",
+      "engineId": "libreoffice",
+      "outputFormat": "docx",
+      "route": {
+        "steps": [
+          {
+            "source": "pdf",
+            "target": "docx"
+          }
+        ],
+        "classification": "lossy",
+        "risk": "high",
+        "qualityBand": "good",
+        "recommended": true
+      }
+    },
+    "createJob": {
+      "ok": true,
+      "status": 200,
+      "jobId": "f18a40e929d74ac67fc1ce56e773be4c"
+    },
+    "final": {
+      "status": "completed",
+      "stage": "Completado",
+      "progress": 100,
+      "error": null,
+      "file": {
+        "name": "fixture-pdf.docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "sizeBytes": 5918,
+        "quality": "0p",
+        "format": "docx"
+      },
+      "downloadAvailable": true
+    },
+    "download": {
+      "status": 200,
+      "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "disposition": "attachment; filename=\"fixture-pdf.docx\"",
+      "bytes": 5918,
+      "sha256": "a4eb6465a808b573073a9fc3d121f21804ae2de7b4ec8f564c758c29a3ab10b4",
+      "file": "artifacts/final-product-audit/api-results/fixture-pdf.docx"
+    }
+  },
+  {
+    "id": "JOURNEY-002",
+    "name": "PDF -> ODT",
+    "fixture": "fixture-pdf.pdf",
+    "target": "odt",
+    "status": "PASS",
+    "severity": null,
+    "notes": [],
+    "analysis": {
+      "ok": true,
+      "status": 200,
+      "kind": "universal-file",
+      "detectedFormat": "pdf",
+      "extension": "pdf",
+      "category": "pdf"
+    },
+    "capabilities": {
+      "ok": true,
+      "status": 200,
+      "inputFormat": "pdf",
+      "count": 8
+    },
+    "selectedCapability": {
+      "id": "route-pdf-odt",
+      "state": "available",
+      "engineId": "libreoffice",
+      "outputFormat": "odt",
+      "route": {
+        "steps": [
+          {
+            "source": "pdf",
+            "target": "odt"
+          }
+        ],
+        "classification": "lossy",
+        "risk": "high",
+        "qualityBand": "good",
+        "recommended": false
+      }
+    },
+    "createJob": {
+      "ok": true,
+      "status": 200,
+      "jobId": "ac45e93f216d1983479ff7b21788580c"
+    },
+    "final": {
+      "status": "completed",
+      "stage": "Completado",
+      "progress": 100,
+      "error": null,
+      "file": {
+        "name": "fixture-pdf.odt",
+        "mimeType": "application/vnd.oasis.opendocument.text",
+        "sizeBytes": 10698,
+        "quality": "0p",
+        "format": "odt"
+      },
+      "downloadAvailable": true
+    },
+    "download": {
+      "status": 200,
+      "mime": "application/vnd.oasis.opendocument.text",
+      "disposition": "attachment; filename=\"fixture-pdf.odt\"",
+      "bytes": 10698,
+      "sha256": "7c4ed9493884f6cee1c6759cb3a6df501de648ddc2b7be9b77c7e10565c410ba",
+      "file": "artifacts/final-product-audit/api-results/fixture-pdf.odt"
+    }
+  },
+  {
+    "id": "JOURNEY-003",
+    "name": "DOCX -> PNG",
+    "fixture": "fixture-docx.docx",
+    "target": "png",
+    "status": "PASS",
+    "severity": null,
+    "notes": [],
+    "analysis": {
+      "ok": true,
+      "status": 200,
+      "kind": "universal-file",
+      "detectedFormat": "docx",
+      "extension": "docx",
+      "category": "document"
+    },
+    "capabilities": {
+      "ok": true,
+      "status": 200,
+      "inputFormat": "docx",
+      "count": 14
+    },
+    "selectedCapability": {
+      "id": "route-docx-png",
+      "state": "available",
+      "engineId": "libreoffice",
+      "outputFormat": "png",
+      "route": {
+        "steps": [
+          {
+            "source": "docx",
+            "target": "pdf"
+          },
+          {
+            "source": "pdf",
+            "target": "png"
+          }
+        ],
+        "classification": "multistep",
+        "risk": "low",
+        "qualityBand": "good",
+        "recommended": false
+      }
+    },
+    "createJob": {
+      "ok": true,
+      "status": 200,
+      "jobId": "f9eecf9a22c92b06e510bf20cba9cd43"
+    },
+    "final": {
+      "status": "completed",
+      "stage": "Completado",
+      "progress": 100,
+      "error": null,
+      "file": {
+        "name": "fixture-docx.png",
+        "mimeType": "image/png",
+        "sizeBytes": 15556,
+        "quality": "0p",
+        "format": "png"
+      },
+      "downloadAvailable": true
+    },
+    "download": {
+      "status": 200,
+      "mime": "image/png",
+      "disposition": "attachment; filename=\"fixture-docx.png\"",
+      "bytes": 15556,
+      "sha256": "1eeaacafa00f9b9cf9fbf7821b31ee74e903ec9ef23da0e4c59cef8b0f9476b3",
+      "file": "artifacts/final-product-audit/api-results/fixture-docx.png"
+    }
+  },
+  {
+    "id": "JOURNEY-004",
+    "name": "PNG -> PDF",
+    "fixture": "fixture-png.png",
+    "target": "pdf",
+    "status": "PASS",
+    "severity": null,
+    "notes": [],
+    "analysis": {
+      "ok": true,
+      "status": 200,
+      "kind": "universal-file",
+      "detectedFormat": "png",
+      "extension": "png",
+      "category": "image"
+    },
+    "capabilities": {
+      "ok": true,
+      "status": 200,
+      "inputFormat": "png",
+      "count": 11
+    },
+    "selectedCapability": {
+      "id": "route-png-pdf",
+      "state": "available",
+      "engineId": "sharp-image",
+      "outputFormat": "pdf",
+      "route": {
+        "steps": [
+          {
+            "source": "png",
+            "target": "pdf"
+          }
+        ],
+        "classification": "direct",
+        "risk": "low",
+        "qualityBand": "excellent",
+        "recommended": false
+      }
+    },
+    "createJob": {
+      "ok": true,
+      "status": 200,
+      "jobId": "0fff97faa6f165e376f6682aaa69c7ce"
+    },
+    "final": {
+      "status": "completed",
+      "stage": "Completado",
+      "progress": 100,
+      "error": null,
+      "file": {
+        "name": "fixture-png.pdf",
+        "mimeType": "application/pdf",
+        "sizeBytes": 8491,
+        "quality": "0p",
+        "format": "pdf"
+      },
+      "downloadAvailable": true
+    },
+    "download": {
+      "status": 200,
+      "mime": "application/pdf",
+      "disposition": "attachment; filename=\"fixture-png.pdf\"",
+      "bytes": 8491,
+      "sha256": "8c65849311bb8b6ff55fb9f34ed7d8741e337e6c146db36c2500fc2ec928cf61",
+      "file": "artifacts/final-product-audit/api-results/fixture-png.pdf"
+    }
+  },
+  {
+    "id": "JOURNEY-005",
+    "name": "MD -> PNG with Chromium available",
+    "fixture": "fixture-md.md",
+    "target": "png",
+    "status": "PASS",
+    "severity": null,
+    "notes": [],
+    "analysis": {
+      "ok": true,
+      "status": 200,
+      "kind": "universal-file",
+      "detectedFormat": "markdown",
+      "extension": "md",
+      "category": "plain-text"
+    },
+    "capabilities": {
+      "ok": true,
+      "status": 200,
+      "inputFormat": "markdown",
+      "count": 13
+    },
+    "selectedCapability": {
+      "id": "route-md-png",
+      "state": "available",
+      "engineId": "pandoc",
+      "outputFormat": "png",
+      "route": {
+        "steps": [
+          {
+            "source": "md",
+            "target": "html"
+          },
+          {
+            "source": "html",
+            "target": "png"
+          }
+        ],
+        "classification": "lossy",
+        "risk": "high",
+        "qualityBand": "good",
+        "recommended": true
+      }
+    },
+    "createJob": {
+      "ok": true,
+      "status": 200,
+      "jobId": "84e930defdb6b4c4a626c7d665d7e0c8"
+    },
+    "final": {
+      "status": "completed",
+      "stage": "Completado",
+      "progress": 100,
+      "error": null,
+      "file": {
+        "name": "fixture-md.png",
+        "mimeType": "image/png",
+        "sizeBytes": 20270,
+        "quality": "0p",
+        "format": "png"
+      },
+      "downloadAvailable": true
+    },
+    "download": {
+      "status": 200,
+      "mime": "image/png",
+      "disposition": "attachment; filename=\"fixture-md.png\"",
+      "bytes": 20270,
+      "sha256": "6c3278d788292b3ff3aa6b9fec201cb072ef4b2a0e5795305724c1c75e4e13bf",
+      "file": "artifacts/final-product-audit/api-results/fixture-md.png"
+    }
+  },
+  {
+    "id": "JOURNEY-007",
+    "name": "AAC -> MP3",
+    "fixture": "fixture-aac.aac",
+    "target": "mp3",
+    "status": "PASS",
+    "severity": null,
+    "notes": [],
+    "analysis": {
+      "ok": true,
+      "status": 200,
+      "kind": "local-media"
+    },
+    "capabilities": {
+      "ok": true,
+      "status": 200,
+      "inputFormat": "aac",
+      "count": 6
+    },
+    "selectedCapability": {
+      "id": "ffmpeg-transcode-audio-mp3",
+      "state": "available",
+      "engineId": "ffmpeg-media",
+      "outputFormat": "mp3"
+    },
+    "createJob": {
+      "ok": true,
+      "status": 200,
+      "jobId": "a9fd507f5d3221142f197506c1950601"
+    },
+    "final": {
+      "status": "completed",
+      "stage": "Completado",
+      "progress": 100,
+      "error": null,
+      "file": {
+        "name": "output_a9fd507f.mp3",
+        "mimeType": "audio/mpeg",
+        "sizeBytes": 4961,
+        "quality": "best kbps",
+        "format": "mp3"
+      },
+      "downloadAvailable": true
+    },
+    "download": {
+      "status": 200,
+      "mime": "audio/mpeg",
+      "disposition": "attachment; filename=\"output_a9fd507f.mp3\"",
+      "bytes": 4961,
+      "sha256": "cbae9dff0d6abce998a42e4b2231b731259b088d56d214dbe6bfbac8f6b123f0",
+      "file": "artifacts/final-product-audit/api-results/output_a9fd507f.mp3"
+    }
+  },
+  {
+    "id": "JOURNEY-008",
+    "name": "WMV -> MP4",
+    "fixture": "fixture-wmv.wmv",
+    "target": "mp4",
+    "status": "PASS",
+    "severity": null,
+    "notes": [],
+    "analysis": {
+      "ok": true,
+      "status": 200,
+      "kind": "local-media"
+    },
+    "capabilities": {
+      "ok": true,
+      "status": 200,
+      "inputFormat": "asf",
+      "count": 12
+    },
+    "selectedCapability": {
+      "id": "ffmpeg-transcode-video-mp4",
+      "state": "available",
+      "engineId": "ffmpeg-media",
+      "outputFormat": "mp4"
+    },
+    "createJob": {
+      "ok": true,
+      "status": 200,
+      "jobId": "ee987ce5156ee54081952d7410cb722b"
+    },
+    "final": {
+      "status": "completed",
+      "stage": "Completado",
+      "progress": 100,
+      "error": null,
+      "file": {
+        "name": "output_ee987ce5.mp4",
+        "mimeType": "video/mp4",
+        "sizeBytes": 19372,
+        "quality": "bestp",
+        "format": "mp4"
+      },
+      "downloadAvailable": true
+    },
+    "download": {
+      "status": 200,
+      "mime": "video/mp4",
+      "disposition": "attachment; filename=\"output_ee987ce5.mp4\"",
+      "bytes": 19372,
+      "sha256": "7b419a597e18781e1987c962ee032de24a473a05bf1f5b359db93d0e261e9d26",
+      "file": "artifacts/final-product-audit/api-results/output_ee987ce5.mp4"
+    }
+  },
+  {
+    "id": "JOURNEY-009",
+    "name": "wrong source MD in DOCX->PNG intent",
+    "fixture": "fixture-md.md",
+    "target": "png",
+    "status": "PASS",
+    "severity": null,
+    "notes": [
+      "Source mismatch should be shown as product message: expected docx, detected markdown"
+    ],
+    "analysis": {
+      "ok": true,
+      "status": 200,
+      "kind": "universal-file",
+      "detectedFormat": "markdown",
+      "extension": "md",
+      "category": "plain-text"
+    },
+    "capabilities": {
+      "ok": true,
+      "status": 200,
+      "inputFormat": "markdown",
+      "count": 13
+    },
+    "selectedCapability": {
+      "id": "route-md-png",
+      "state": "available",
+      "engineId": "pandoc",
+      "outputFormat": "png",
+      "route": {
+        "steps": [
+          {
+            "source": "md",
+            "target": "html"
+          },
+          {
+            "source": "html",
+            "target": "png"
+          }
+        ],
+        "classification": "lossy",
+        "risk": "high",
+        "qualityBand": "good",
+        "recommended": true
+      }
+    },
+    "createJob": {
+      "ok": true,
+      "status": 200,
+      "jobId": "72b5590cdd530753079508f0dc30ef8e"
+    },
+    "final": {
+      "status": "completed",
+      "stage": "Completado",
+      "progress": 100,
+      "error": null,
+      "file": {
+        "name": "fixture-md.png",
+        "mimeType": "image/png",
+        "sizeBytes": 20270,
+        "quality": "0p",
+        "format": "png"
+      },
+      "downloadAvailable": true
+    },
+    "download": {
+      "status": 200,
+      "mime": "image/png",
+      "disposition": "attachment; filename=\"fixture-md.png\"",
+      "bytes": 20270,
+      "sha256": "6c3278d788292b3ff3aa6b9fec201cb072ef4b2a0e5795305724c1c75e4e13bf",
+      "file": "artifacts/final-product-audit/api-results/fixture-md.png"
+    }
+  },
+  {
+    "id": "JOURNEY-012",
+    "name": "conversion final failure corrupt PDF -> DOCX",
+    "fixture": "edge-corrupt.pdf",
+    "target": "docx",
+    "status": "PASS",
+    "severity": null,
+    "notes": [
+      "Analyze failed"
+    ],
+    "analysis": {
+      "ok": false,
+      "status": 422,
+      "error": "El archivo de entrada está corrupto o no se puede leer."
+    }
+  }
+]

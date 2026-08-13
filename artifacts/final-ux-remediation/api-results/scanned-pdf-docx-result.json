@@ -1,0 +1,23 @@
+{
+  "analysis": {
+    "status": 200,
+    "ok": true,
+    "detectedFormat": "pdf",
+    "inputId": "c66ba737d1766f4149f6eedeedf68ccb"
+  },
+  "cap": {
+    "id": "route-pdf-docx",
+    "state": "available",
+    "engineId": "libreoffice"
+  },
+  "createJob": {
+    "status": 200,
+    "ok": true,
+    "jobId": "c63eeddd4c01bc00a6cc964a79d53d07"
+  },
+  "final": {
+    "status": "failed",
+    "error": "Este PDF parece estar escaneado y no contiene texto editable suficiente. Para convertirlo a un documento editable necesitas usar OCR.",
+    "progress": 10
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "date": "2026-08-13",
+  "status": "PASS",
+  "codeCommit": "76a6441",
+  "releaseBlockersBefore": 3,
+  "releaseBlockersAfter": 0,
+  "blockers": [
+    {
+      "id": "FS-FPA-002",
+      "status": "CLOSED",
+      "directRoutes": {
+        "/convert": 200,
+        "/history": 200,
+        "/diagnostics": 200
+      },
+      "refresh": "PASS",
+      "agentBrowser": "PASS"
+    },
+    {
+      "id": "FS-FPA-003",
+      "status": "CLOSED",
+      "normalizedError": "SCANNED_CONTENT_REQUIRES_OCR",
+      "userMessage": "Este PDF parece estar escaneado y no contiene texto editable suficiente. Para convertirlo a un documento editable necesitas usar OCR.",
+      "fallback": "NOT_USED",
+      "normalPdfDocxRegression": "PASS"
+    },
+    {
+      "id": "FS-FPA-004",
+      "status": "CLOSED",
+      "installableState": "PASS",
+      "productName": "Componente de renderizado web",
+      "downloadSizeBytes": 193282658,
+      "noSilentDownload": true,
+      "consent": "PASS",
+      "cancel": "PASS",
+      "backendGate": 428
+    }
+  ],
+  "validation": {
+    "typecheck": "PASS",
+    "lint": "PASS_WITH_WARNINGS",
+    "tests": {
+      "status": "PASS",
+      "passed": 1115,
+      "skipped": 1
+    },
+    "build": "PASS",
+    "productionStart": "PASS",
+    "devMode": "PASS"
+  },
+  "readiness": {
+    "readyForMonetizationCostModel": true,
+    "readyForReleaseHardening": true,
+    "readyToContinueWithoutWindowsBuild": true,
+    "windowsPortableGenerated": false
+  }
+}

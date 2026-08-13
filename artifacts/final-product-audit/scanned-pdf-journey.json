@@ -1,0 +1,33 @@
+{
+  "analysis": {
+    "status": 200,
+    "ok": true,
+    "category": "pdf",
+    "detectedFormat": "pdf",
+    "warnings": [],
+    "attrs": {
+      "kind": "pdf",
+      "pageCount": null,
+      "isEncrypted": false,
+      "isLinearized": false,
+      "pdfVersion": null,
+      "hasAnnotations": false,
+      "hasForms": false,
+      "hasEmbeddedFiles": false
+    }
+  },
+  "cap": {
+    "id": "route-pdf-docx",
+    "state": "available",
+    "engineId": "libreoffice"
+  },
+  "createJob": {
+    "status": 200,
+    "ok": true,
+    "jobId": "89525db65daa3b821a60afaae5eaec86"
+  },
+  "final": {
+    "status": "failed",
+    "error": "Error durante la ejecución del motor de conversión. Comprueba que el archivo de entrada sea válido e inténtalo de nuevo."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "analysis": {
+    "status": 200,
+    "detectedFormat": "pdf"
+  },
+  "cap": {
+    "id": "route-pdf-docx",
+    "state": "available"
+  },
+  "createJob": {
+    "status": 200,
+    "jobId": "c7e562c118cb4322350cb13247b19c6e"
+  },
+  "final": {
+    "status": "completed",
+    "error": null,
+    "downloadAvailable": true,
+    "file": {
+      "name": "fixture-pdf.docx",
+      "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "sizeBytes": 5918,
+      "quality": "0p",
+      "format": "docx"
+    }
+  }
+}

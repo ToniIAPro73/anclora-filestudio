@@ -1,0 +1,26 @@
+{
+  "packStatus": {
+    "http": 200,
+    "productName": "Componente de renderizado web",
+    "state": "NOT_INSTALLED",
+    "compressedSize": 193282658,
+    "installStatus": "idle"
+  },
+  "capability": {
+    "id": "route-md-png",
+    "state": "installable",
+    "runtimeState": "installable",
+    "requiredRuntimePacks": [
+      "chromium-runtime"
+    ]
+  },
+  "noSilentDownload": true,
+  "backendGate": {
+    "status": 428,
+    "code": "RUNTIME_PACK_REQUIRED",
+    "error": "Esta conversión necesita instalar el componente de renderizado HTML.",
+    "requiredRuntimePacks": [
+      "chromium-runtime"
+    ]
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "environment": "linux",
+  "deploymentTarget": "desktop",
+  "effectivePlatform": "linux",
+  "formats": 50,
+  "categories": [
+    {
+      "id": "documents",
+      "count": 12
+    },
+    {
+      "id": "images",
+      "count": 6
+    },
+    {
+      "id": "audio",
+      "count": 6
+    },
+    {
+      "id": "video",
+      "count": 3
+    },
+    {
+      "id": "ebooks",
+      "count": 3
+    },
+    {
+      "id": "archives",
+      "count": 3
+    },
+    {
+      "id": "data",
+      "count": 6
+    }
+  ],
+  "tools": [
+    {
+      "id": "pdf",
+      "count": 4
+    },
+    {
+      "id": "images",
+      "count": 6
+    },
+    {
+      "id": "ocr",
+      "count": 9
+    },
+    {
+      "id": "metadata",
+      "count": 2
+    },
+    {
+      "id": "compression",
+      "count": 3
+    },
+    {
+      "id": "utilities",
+      "count": 1
+    }
+  ],
+  "availableDirectEdges": 244,
+  "availableMultistepRoutes": 239,
+  "totalEffectivePairs": 476,
+  "chromium": {
+    "id": "runtime-pack:chromium-runtime",
+    "displayName": "Chromium Runtime Pack",
+    "status": "available",
+    "available": true,
+    "version": "Google Chrome for Testing 151.0.7922.34",
+    "path": "/home/toni/.local/share/anclora-filestudio/runtime-packs/chromium-runtime/151.0.7922.34/chrome-linux64/chrome",
+    "error": null,
+    "group": "runtime",
+    "requiredFor": [
+      "html-to-png",
+      "html-to-tiff",
+      "md-to-png",
+      "md-to-tiff",
+      "rst-to-png",
+      "rst-to-tiff"
+    ],
+    "recommendedAction": null,
+    "portableInclusion": "optional",
+    "optionalDescription": "Renderizado HTML/Markdown/RST a PNG/TIFF mediante Chromium opcional versionado."
+  },
+  "healthSummary": {
+    "total": 11,
+    "available": 11,
+    "missing": 0,
+    "optionalMissing": 0
+  },
+  "deps": [
+    {
+      "id": "ytdlp",
+      "displayName": "yt-dlp",
+      "status": "available",
+      "available": true,
+      "version": "2024.04.09",
+      "portableInclusion": "required"
+    },
+    {
+      "id": "ffmpeg",
+      "displayName": "FFmpeg",
+      "status": "available",
+      "available": true,
+      "version": "6.1.1-3ubuntu5",
+      "portableInclusion": "required"
+    },
+    {
+      "id": "ffprobe",
+      "displayName": "FFprobe",
+      "status": "available",
+      "available": true,
+      "version": "6.1.1-3ubuntu5",
+      "portableInclusion": "required"
+    },
+    {
+      "id": "qpdf",
+      "displayName": "QPDF",
+      "status": "available",
+      "available": true,
+      "version": "11.9.0",
+      "portableInclusion": "included"
+    },
+    {
+      "id": "sevenzip",
+      "displayName": "7-Zip",
+      "status": "available",
+      "available": true,
+      "version": "23.01",
+      "portableInclusion": "included"
+    },
+    {
+      "id": "pandoc",
+      "displayName": "Pandoc",
+      "status": "available",
+      "available": true,
+      "version": "3.1.3",
+      "portableInclusion": "included"
+    },
+    {
+      "id": "libreoffice",
+      "displayName": "LibreOffice",
+      "status": "available",
+      "available": true,
+      "version": "24.2.7.2",
+      "portableInclusion": "optional"
+    },
+    {
+      "id": "calibre",
+      "displayName": "Calibre",
+      "status": "available",
+      "available": true,
+      "version": "7.6.0",
+      "portableInclusion": "optional"
+    },
+    {
+      "id": "tesseract",
+      "displayName": "Tesseract OCR",
+      "status": "available",
+      "available": true,
+      "version": "5.3.4",
+      "portableInclusion": "optional"
+    },
+    {
+      "id": "poppler",
+      "displayName": "Poppler (pdftoppm)",
+      "status": "available",
+      "available": true,
+      "version": "24.02.0",
+      "portableInclusion": "optional"
+    },
+    {
+      "id": "runtime-pack:chromium-runtime",
+      "displayName": "Chromium Runtime Pack",
+      "status": "available",
+      "available": true,
+      "version": "Google Chrome for Testing 151.0.7922.34",
+      "portableInclusion": "optional"
+    }
+  ]
+}

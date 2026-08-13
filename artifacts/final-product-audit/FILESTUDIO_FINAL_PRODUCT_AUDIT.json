@@ -1,0 +1,566 @@
+{
+  "environment": {
+    "date": "2026-08-13",
+    "repo": "/home/toni/workspace/anclora/anclora-filestudio",
+    "productionBuild": "PASS",
+    "productionStart": "PASS_WITH_WARNING",
+    "devMode": "PASS_AFTER_FIX",
+    "agentBrowser": "PASS_WITH_HOST_NO_SANDBOX"
+  },
+  "capabilities": {
+    "environment": "linux",
+    "deploymentTarget": "desktop",
+    "effectivePlatform": "linux",
+    "formats": 50,
+    "categories": [
+      {
+        "id": "documents",
+        "count": 12
+      },
+      {
+        "id": "images",
+        "count": 6
+      },
+      {
+        "id": "audio",
+        "count": 6
+      },
+      {
+        "id": "video",
+        "count": 3
+      },
+      {
+        "id": "ebooks",
+        "count": 3
+      },
+      {
+        "id": "archives",
+        "count": 3
+      },
+      {
+        "id": "data",
+        "count": 6
+      }
+    ],
+    "tools": [
+      {
+        "id": "pdf",
+        "count": 4
+      },
+      {
+        "id": "images",
+        "count": 6
+      },
+      {
+        "id": "ocr",
+        "count": 9
+      },
+      {
+        "id": "metadata",
+        "count": 2
+      },
+      {
+        "id": "compression",
+        "count": 3
+      },
+      {
+        "id": "utilities",
+        "count": 1
+      }
+    ],
+    "availableDirectEdges": 244,
+    "availableMultistepRoutes": 239,
+    "totalEffectivePairs": 476,
+    "chromium": {
+      "id": "runtime-pack:chromium-runtime",
+      "displayName": "Chromium Runtime Pack",
+      "status": "available",
+      "available": true,
+      "version": "Google Chrome for Testing 151.0.7922.34",
+      "path": "/home/toni/.local/share/anclora-filestudio/runtime-packs/chromium-runtime/151.0.7922.34/chrome-linux64/chrome",
+      "error": null,
+      "group": "runtime",
+      "requiredFor": [
+        "html-to-png",
+        "html-to-tiff",
+        "md-to-png",
+        "md-to-tiff",
+        "rst-to-png",
+        "rst-to-tiff"
+      ],
+      "recommendedAction": null,
+      "portableInclusion": "optional",
+      "optionalDescription": "Renderizado HTML/Markdown/RST a PNG/TIFF mediante Chromium opcional versionado."
+    },
+    "healthSummary": {
+      "total": 11,
+      "available": 11,
+      "missing": 0,
+      "optionalMissing": 0
+    },
+    "deps": [
+      {
+        "id": "ytdlp",
+        "displayName": "yt-dlp",
+        "status": "available",
+        "available": true,
+        "version": "2024.04.09",
+        "portableInclusion": "required"
+      },
+      {
+        "id": "ffmpeg",
+        "displayName": "FFmpeg",
+        "status": "available",
+        "available": true,
+        "version": "6.1.1-3ubuntu5",
+        "portableInclusion": "required"
+      },
+      {
+        "id": "ffprobe",
+        "displayName": "FFprobe",
+        "status": "available",
+        "available": true,
+        "version": "6.1.1-3ubuntu5",
+        "portableInclusion": "required"
+      },
+      {
+        "id": "qpdf",
+        "displayName": "QPDF",
+        "status": "available",
+        "available": true,
+        "version": "11.9.0",
+        "portableInclusion": "included"
+      },
+      {
+        "id": "sevenzip",
+        "displayName": "7-Zip",
+        "status": "available",
+        "available": true,
+        "version": "23.01",
+        "portableInclusion": "included"
+      },
+      {
+        "id": "pandoc",
+        "displayName": "Pandoc",
+        "status": "available",
+        "available": true,
+        "version": "3.1.3",
+        "portableInclusion": "included"
+      },
+      {
+        "id": "libreoffice",
+        "displayName": "LibreOffice",
+        "status": "available",
+        "available": true,
+        "version": "24.2.7.2",
+        "portableInclusion": "optional"
+      },
+      {
+        "id": "calibre",
+        "displayName": "Calibre",
+        "status": "available",
+        "available": true,
+        "version": "7.6.0",
+        "portableInclusion": "optional"
+      },
+      {
+        "id": "tesseract",
+        "displayName": "Tesseract OCR",
+        "status": "available",
+        "available": true,
+        "version": "5.3.4",
+        "portableInclusion": "optional"
+      },
+      {
+        "id": "poppler",
+        "displayName": "Poppler (pdftoppm)",
+        "status": "available",
+        "available": true,
+        "version": "24.02.0",
+        "portableInclusion": "optional"
+      },
+      {
+        "id": "runtime-pack:chromium-runtime",
+        "displayName": "Chromium Runtime Pack",
+        "status": "available",
+        "available": true,
+        "version": "Google Chrome for Testing 151.0.7922.34",
+        "portableInclusion": "optional"
+      }
+    ]
+  },
+  "validation": {
+    "typecheck": "PASS",
+    "lint": "PASS_WITH_WARNINGS",
+    "tests": "PASS",
+    "build": "PASS_WITH_WARNINGS"
+  },
+  "issues": [
+    {
+      "id": "FS-FPA-001",
+      "area": "SOURCE CONTRACT",
+      "severity": "P0",
+      "description": "Quick Converter DOCX→PNG preserved only target, so Markdown could be accepted and converted as MD→PNG.",
+      "impact": "User intent is violated; product can return a successful result for the wrong selected source.",
+      "root": "Desktop shell stored selectedTarget but not selectedSource.",
+      "recommendation": "Preserve source+target pair; restrict picker/drop; validate detected source before capability selection.",
+      "fixed": true,
+      "commit": "not committed"
+    },
+    {
+      "id": "FS-FPA-002",
+      "area": "DIRECT URL / NAVIGATION",
+      "severity": "P1",
+      "description": "Direct URLs /history, /diagnostics, /convert and /convert/docx/png return 404.",
+      "impact": "Refresh/deep link/share workflows fail; release criterion for direct URL is not met.",
+      "root": "Top navigation is local React state on / only; no route pages or URL state sync.",
+      "recommendation": "Add route-backed pages or URL query/hash state for top-level tabs and selected conversion.",
+      "fixed": true,
+      "commit": "76a6441",
+      "verification": "Closed in final UX remediation: /convert, /history and /diagnostics return 200 in production and dev; refresh keeps page content and active nav."
+    },
+    {
+      "id": "FS-FPA-003",
+      "area": "SCANNED PDF UX",
+      "severity": "P1",
+      "description": "Image-only/scanned-like PDF→DOCX fails with generic engine execution message instead of explaining OCR requirement.",
+      "impact": "User cannot understand that OCR is needed for editable text.",
+      "root": "PDF analysis does not classify scanned/image-only content for the normal conversion flow.",
+      "recommendation": "Detect scanned PDFs before conversion and route to OCR-specific UX/actionable copy.",
+      "fixed": true,
+      "commit": "76a6441",
+      "verification": "Closed in final UX remediation: scanned-like PDF to DOCX returns OCR guidance and unit coverage asserts SCANNED_CONTENT_REQUIRES_OCR with no fallback."
+    },
+    {
+      "id": "FS-FPA-004",
+      "area": "RUNTIME PACK UX",
+      "severity": "P1",
+      "description": "Chromium installable state is represented in capabilities/diagnostics, but no minimal install/confirmation UI was found in the conversion flow.",
+      "impact": "On machines without Chromium pack, MD/HTML/RST→PNG/TIFF is discoverable only as a missing component path, not a complete product flow.",
+      "root": "Runtime pack architecture exists; product install action is not wired into normal converter.",
+      "recommendation": "Add a small required-component panel: component name, purpose, approximate size, install-once, confirm/progress/error/success.",
+      "fixed": true,
+      "commit": "76a6441",
+      "verification": "Closed in final UX remediation: isolated missing-pack runtime shows install UI with product name, manifest size, consent and cancel; backend remains gated with 428 until install."
+    },
+    {
+      "id": "FS-FPA-005",
+      "area": "DISCOVERY",
+      "severity": "P2",
+      "description": "Source-only Continue opens unfiltered Convert Hub and loses the chosen source.",
+      "impact": "Source-first discovery is less predictable; user must re-discover targets.",
+      "root": "Quick Converter source-only path calls onOpenConvert without source context.",
+      "recommendation": "Preserve source in hub state and filter target cards to effective targets.",
+      "fixed": false,
+      "commit": "not committed"
+    },
+    {
+      "id": "FS-FPA-006",
+      "area": "HISTORY",
+      "severity": "P2",
+      "description": "History default cards expose engine/loss metadata such as LibreOffice, Poppler and risk badges.",
+      "impact": "Internal architecture leaks into a normal system page.",
+      "root": "History renders technical badges by default for universal jobs.",
+      "recommendation": "Move engine/loss details behind an optional details disclosure; keep default to filename, source, target, status, date, duration/download.",
+      "fixed": false,
+      "commit": "not committed"
+    },
+    {
+      "id": "FS-FPA-007",
+      "area": "MULTISTEP UX",
+      "severity": "P2",
+      "description": "Conversion route summary shows intermediate segments like DOCX→PDF→PNG in the normal flow.",
+      "impact": "Normal users see implementation mechanics before conversion.",
+      "root": "Route summary component optimizes for technical transparency rather than product simplicity.",
+      "recommendation": "Default to concise copy such as “Convirtiendo a PNG”; keep route details collapsed under technical details.",
+      "fixed": false,
+      "commit": "not committed"
+    },
+    {
+      "id": "FS-FPA-008",
+      "area": "PRODUCTION START",
+      "severity": "P2",
+      "description": "pnpm start serves successfully but Next warns that standalone output should run via node .next/standalone/server.js.",
+      "impact": "Release/start instructions can diverge from the built output mode.",
+      "root": "next.config uses output: standalone while package start uses next start.",
+      "recommendation": "Add a production start script for standalone or adjust release runbook.",
+      "fixed": false,
+      "commit": "not committed"
+    },
+    {
+      "id": "FS-FPA-009",
+      "area": "BUILD WARNINGS",
+      "severity": "P3",
+      "description": "next build passes with Turbopack NFT tracing warnings for API routes.",
+      "impact": "No observed runtime failure, but noisy release signal.",
+      "root": "Dynamic fs/config imports trace broad project paths.",
+      "recommendation": "Review trace roots or add targeted Turbopack ignore/static scoping later.",
+      "fixed": false,
+      "commit": "not committed"
+    },
+    {
+      "id": "FS-FPA-010",
+      "area": "DIAGNOSTICS",
+      "severity": "P3",
+      "description": "Diagnostics shows shell commands and Windows/Linux setup helper in the main diagnostics view.",
+      "impact": "Acceptable for diagnostics, but can feel more technical than the product principle wants.",
+      "root": "Diagnostics combines user status and install/runbook details.",
+      "recommendation": "Keep status first; move command snippets into “Advanced install help”.",
+      "fixed": false,
+      "commit": "not committed"
+    }
+  ],
+  "journeys": [
+    {
+      "id": "JOURNEY-001",
+      "flow": "PDF→DOCX",
+      "status": "PASS",
+      "evidence": "API conversion completed; DOCX download non-empty."
+    },
+    {
+      "id": "JOURNEY-002",
+      "flow": "PDF→ODT",
+      "status": "PASS",
+      "evidence": "API conversion completed; ODT download non-empty."
+    },
+    {
+      "id": "JOURNEY-003",
+      "flow": "DOCX→PNG",
+      "status": "PASS",
+      "evidence": "API conversion completed; PNG download non-empty. UI source contract fixed."
+    },
+    {
+      "id": "JOURNEY-004",
+      "flow": "PNG→PDF",
+      "status": "PASS",
+      "evidence": "API conversion completed; PDF download non-empty."
+    },
+    {
+      "id": "JOURNEY-005",
+      "flow": "MD→PNG with Chromium available",
+      "status": "PASS",
+      "evidence": "API conversion completed through Pandoc + HTML renderer; PNG download non-empty."
+    },
+    {
+      "id": "JOURNEY-006",
+      "flow": "MD→PNG without Chromium pack",
+      "status": "WARN",
+      "evidence": "Not physically toggled to avoid disturbing installed runtime. Capabilities/diagnostics show pack architecture; install UI remains P1."
+    },
+    {
+      "id": "JOURNEY-007",
+      "flow": "AAC→MP3",
+      "status": "PASS",
+      "evidence": "API conversion completed; MP3 download non-empty."
+    },
+    {
+      "id": "JOURNEY-008",
+      "flow": "WMV→MP4",
+      "status": "PASS",
+      "evidence": "API conversion completed; MP4 download non-empty."
+    },
+    {
+      "id": "JOURNEY-009",
+      "flow": "wrong source file",
+      "status": "PASS WITH FIX",
+      "evidence": "Original audit reproduced wrong conversion; fixed picker/source preservation. Agent upload bypass could not complete, but DOM accept and tests verify contract."
+    },
+    {
+      "id": "JOURNEY-010",
+      "flow": "scanned PDF rejection",
+      "status": "FAIL",
+      "evidence": "Scanned-like PDF→DOCX failed with generic engine message, not OCR guidance."
+    },
+    {
+      "id": "JOURNEY-011",
+      "flow": "fallback success",
+      "status": "WARN",
+      "evidence": "Existing observability/history metadata reviewed; no controlled primary-failure scenario executed in UI in this phase."
+    },
+    {
+      "id": "JOURNEY-012",
+      "flow": "conversion final failure",
+      "status": "PASS",
+      "evidence": "Corrupt PDF rejected at analyze with human-readable corrupt input message."
+    },
+    {
+      "id": "JOURNEY-013",
+      "flow": "source-first",
+      "status": "WARN",
+      "evidence": "Targets filter while selecting source; source-only Continue loses context (P2)."
+    },
+    {
+      "id": "JOURNEY-014",
+      "flow": "target-first",
+      "status": "PASS",
+      "evidence": "Source list filters when target selected."
+    },
+    {
+      "id": "JOURNEY-015",
+      "flow": "direct Convert From",
+      "status": "WARN",
+      "evidence": "No route-backed Convert From page exists."
+    },
+    {
+      "id": "JOURNEY-016",
+      "flow": "direct Convert To",
+      "status": "WARN",
+      "evidence": "Convert Hub target-first works in UI; direct URL 404 remains P1."
+    },
+    {
+      "id": "JOURNEY-017",
+      "flow": "History",
+      "status": "PASS WITH ISSUES",
+      "evidence": "Loads and downloads are present; technical badges leak (P2)."
+    },
+    {
+      "id": "JOURNEY-018",
+      "flow": "Diagnostics",
+      "status": "PASS WITH ISSUES",
+      "evidence": "Loads tool status and Chromium state; command snippets are technical (P3)."
+    },
+    {
+      "id": "JOURNEY-019",
+      "flow": "batch basic",
+      "status": "WARN",
+      "evidence": "Batch toolbar exists but full browser batch flow not certified in this pass."
+    },
+    {
+      "id": "JOURNEY-020",
+      "flow": "runtime installable state",
+      "status": "WARN",
+      "evidence": "Chromium installed in this environment; not-installed path inferred from diagnostics/capability architecture and remains P1 for install UI."
+    }
+  ],
+  "auditMatrix": [
+    {
+      "area": "HOME",
+      "flow": "home",
+      "expected": "Purpose, CTA, quick converter, nav",
+      "actual": "Clear product purpose and nav; no console errors in prod",
+      "status": "PASS",
+      "severity": null,
+      "issue": "",
+      "recommendation": "Keep."
+    },
+    {
+      "area": "QUICK CONVERTER",
+      "flow": "source+target",
+      "expected": "Preserve pair and enforce source",
+      "actual": "Initially failed; fixed source preservation and accept restriction",
+      "status": "PASS",
+      "severity": "P0 fixed",
+      "issue": "FS-FPA-001",
+      "recommendation": "Add more e2e around drag/drop."
+    },
+    {
+      "area": "CONVERT HUB",
+      "flow": "target discovery",
+      "expected": "Search/categories/formats",
+      "actual": "Loads target cards by category; no duplicates observed",
+      "status": "PASS",
+      "severity": null,
+      "issue": "",
+      "recommendation": "Add route-backed direct URLs."
+    },
+    {
+      "area": "FILE ACQUISITION",
+      "flow": "local file",
+      "expected": "Only relevant modes",
+      "actual": "URL shown only for media targets; file picker works by DOM contract",
+      "status": "PASS",
+      "severity": null,
+      "issue": "",
+      "recommendation": "Continue browser upload validation outside agent limitation."
+    },
+    {
+      "area": "SCANNED PDF",
+      "flow": "PDF→DOCX",
+      "expected": "OCR guidance",
+      "actual": "Generic engine failure for scanned-like PDF",
+      "status": "FAIL",
+      "severity": "P1",
+      "issue": "FS-FPA-003",
+      "recommendation": "Add scanned PDF preflight."
+    },
+    {
+      "area": "RUNTIME PACK",
+      "flow": "MD→PNG no pack",
+      "expected": "Installable, not unsupported",
+      "actual": "Current env installed; install UI absent",
+      "status": "WARN",
+      "severity": "P1",
+      "issue": "FS-FPA-004",
+      "recommendation": "Add minimal runtime required UI."
+    },
+    {
+      "area": "RESULT/DOWNLOAD",
+      "flow": "core conversions",
+      "expected": "Non-empty outputs, MIME/ext",
+      "actual": "API downloads verified non-empty",
+      "status": "PASS",
+      "severity": null,
+      "issue": "",
+      "recommendation": "Keep."
+    },
+    {
+      "area": "HISTORY",
+      "flow": "system page",
+      "expected": "Simple status/date/download",
+      "actual": "Loads, but engine/loss badges show by default",
+      "status": "WARN",
+      "severity": "P2",
+      "issue": "FS-FPA-006",
+      "recommendation": "Hide technical metadata by default."
+    },
+    {
+      "area": "DIAGNOSTICS",
+      "flow": "system page",
+      "expected": "Available/installable/missing/broken",
+      "actual": "Loads dependencies and Chromium version",
+      "status": "PASS WITH ISSUES",
+      "severity": "P3",
+      "issue": "FS-FPA-010",
+      "recommendation": "Move commands behind advanced details."
+    },
+    {
+      "area": "NAVIGATION",
+      "flow": "direct URL",
+      "expected": "/history /diagnostics /convert work",
+      "actual": "All return 404",
+      "status": "FAIL",
+      "severity": "P1",
+      "issue": "FS-FPA-002",
+      "recommendation": "Route-backed top-level pages."
+    },
+    {
+      "area": "DEV MODE",
+      "flow": "hydration",
+      "expected": "No severe divergence",
+      "actual": "Initially broken from dev origin; fixed allowedDevOrigins",
+      "status": "PASS",
+      "severity": "P1 fixed",
+      "issue": "",
+      "recommendation": "Keep config."
+    }
+  ],
+  "release": {
+    "mustFixBeforeRelease": [
+      "FS-FPA-002",
+      "FS-FPA-003",
+      "FS-FPA-004"
+    ],
+    "canShip": [
+      "core conversion execution paths",
+      "fixed source contract",
+      "history/diagnostics available"
+    ],
+    "future": [
+      "source-only filtering",
+      "history technical disclosure",
+      "multistep copy simplification",
+      "build/start warning cleanup"
+    ]
+  },
+  "final": "PASS_WITH_ISSUES"
+}
