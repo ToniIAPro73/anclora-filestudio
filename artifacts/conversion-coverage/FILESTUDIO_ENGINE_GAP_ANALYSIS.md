@@ -1,6 +1,6 @@
 # FileStudio Engine Gap Analysis
 
-Generated: 2026-08-12T23:23:26.133Z
+Generated: 2026-08-13T00:07:39.069Z
 
 ## New Engine / Library Candidates
 
@@ -34,8 +34,6 @@ Generated: 2026-08-12T23:23:26.133Z
 
 | Conversion | Tier | Current pipeline | Current blocker | Existing engine | Existing candidates | New dependency | New candidates | Expected quality | Complexity | Portable impact | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| pdf->docx | TIER 1 | None | No PDF layout extraction to DOCX adapter. | PARTIAL | LibreOffice PDF import is not reliable for headless production, Poppler can extract text/raster but not DOCX layout | YES | pdf2docx, PyMuPDF/MuPDF commercial, Unstructured/Docling pipeline | MEDIUM | MEDIUM | MEDIUM | INVESTIGATE pdf2docx for MVP; avoid AGPL MuPDF/PyMuPDF unless commercial licensing is accepted. |
-| epub->docx | TIER 2 | None | No effective canonical route within two intermediates. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
 | pdf->epub | TIER 3 | None | No structured PDF extraction/reflow adapter is implemented. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
 | pdf->odt | TIER 3 | None | No structured PDF extraction/reflow adapter is implemented. | NO | - | YES | - | UNKNOWN | MEDIUM | UNKNOWN | INVESTIGATE after Tier 1 blockers with clearer user value. |
 

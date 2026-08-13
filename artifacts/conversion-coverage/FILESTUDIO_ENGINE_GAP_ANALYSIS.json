@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-12T23:23:26.133Z",
+  "generatedAt": "2026-08-13T00:07:39.069Z",
   "dependencyCandidates": [
     {
       "name": "Poppler text/html utilities (pdftotext, pdftohtml)",
@@ -92,83 +92,6 @@
     }
   ],
   "requirementsAudit": [
-    {
-      "source": "pdf",
-      "target": "docx",
-      "tier": "TIER 1",
-      "userValue": "high",
-      "qualityExpectation": "medium",
-      "notes": "Expected from a competitive document converter; PDF input quality depends on text/scanned/mixed analysis.",
-      "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
-      },
-      "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
-      },
-      "web": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
-      },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No PDF layout extraction to DOCX adapter.",
-        "existingEngineCanHandle": "PARTIAL",
-        "existingEngineCandidates": [
-          "LibreOffice PDF import is not reliable for headless production",
-          "Poppler can extract text/raster but not DOCX layout"
-        ],
-        "newRequired": true,
-        "candidates": [
-          "pdf2docx",
-          "PyMuPDF/MuPDF commercial",
-          "Unstructured/Docling pipeline"
-        ],
-        "expectedQuality": "MEDIUM",
-        "complexity": "MEDIUM",
-        "portableImpact": "MEDIUM",
-        "recommendation": "INVESTIGATE pdf2docx for MVP; avoid AGPL MuPDF/PyMuPDF unless commercial licensing is accepted."
-      }
-    },
-    {
-      "source": "epub",
-      "target": "docx",
-      "tier": "TIER 2",
-      "userValue": "medium",
-      "qualityExpectation": "medium",
-      "notes": "Ebook extraction/editing workflow.",
-      "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
-      },
-      "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
-      },
-      "web": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
-      },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No effective canonical route within two intermediates.",
-        "existingEngineCanHandle": "NO",
-        "existingEngineCandidates": [],
-        "newRequired": true,
-        "candidates": [],
-        "expectedQuality": "UNKNOWN",
-        "complexity": "MEDIUM",
-        "portableImpact": "UNKNOWN",
-        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-      }
-    },
     {
       "source": "pdf",
       "target": "epub",

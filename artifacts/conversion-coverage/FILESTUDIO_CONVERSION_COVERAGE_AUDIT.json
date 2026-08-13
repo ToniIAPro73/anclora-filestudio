@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-08-12T23:23:26.133Z",
+  "generatedAt": "2026-08-13T00:07:39.069Z",
   "canonicalFormats": 50,
   "totalPossibleOrderedPairs": 2450,
-  "directSupportedPairs": 238,
-  "multistepSupportedPairs": 202,
-  "totalEffectivePairs": 440,
+  "directSupportedPairs": 239,
+  "multistepSupportedPairs": 217,
+  "totalEffectivePairs": 456,
   "tierMetrics": {
     "tier1": {
       "required": 152,
-      "supported": 151,
-      "coveragePercent": 99.3
+      "supported": 152,
+      "coveragePercent": 100
     },
     "tier2": {
       "required": 40,
-      "supported": 39,
-      "coveragePercent": 97.5
+      "supported": 40,
+      "coveragePercent": 100
     },
     "tier3": {
       "required": 6,
@@ -198,6 +198,7 @@
         ],
         "twoIntermediateTargets": [
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -209,6 +210,7 @@
           "tiff",
           "pdf",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -268,6 +270,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -279,6 +282,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -497,22 +501,55 @@
           "rtf",
           "html",
           "md",
+          "pdf",
           "rst"
         ],
         "oneIntermediateSources": [
+          "jpg",
+          "odp",
+          "ods",
+          "png",
+          "ppt",
+          "pptx",
+          "tiff",
+          "webp",
+          "xls",
+          "xlsx",
+          "epub",
           "tex",
           "txt"
         ],
-        "twoIntermediateSources": [],
+        "twoIntermediateSources": [
+          "avif",
+          "gif",
+          "azw3",
+          "mobi"
+        ],
         "allEffectiveSources": [
           "doc",
           "odt",
           "rtf",
           "html",
           "md",
+          "pdf",
           "rst",
+          "jpg",
+          "odp",
+          "ods",
+          "png",
+          "ppt",
+          "pptx",
+          "tiff",
+          "webp",
+          "xls",
+          "xlsx",
+          "epub",
           "tex",
-          "txt"
+          "txt",
+          "avif",
+          "gif",
+          "azw3",
+          "mobi"
         ]
       },
       "highValueMissingConversions": [],
@@ -535,6 +572,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -547,6 +585,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -582,15 +621,8 @@
           "txt"
         ]
       },
-      "highValueMissingConversions": [
-        {
-          "target": "docx",
-          "tier": "TIER 2",
-          "blocker": "No effective canonical route within two intermediates.",
-          "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-        }
-      ],
-      "engineGap": "See highValueMissingConversions and engine gap analysis.",
+      "highValueMissingConversions": [],
+      "engineGap": "No Tier gap identified by this audit.",
       "adapterGap": "No primary adapter gap identified",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
       "qualityRisk": "Low"
@@ -670,6 +702,7 @@
         ],
         "twoIntermediateTargets": [
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -681,6 +714,7 @@
           "tiff",
           "pdf",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -871,6 +905,7 @@
         ],
         "oneIntermediateTargets": [
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -883,6 +918,7 @@
           "pdf",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -1255,6 +1291,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -1266,6 +1303,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -1506,6 +1544,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -1517,6 +1556,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -1546,6 +1586,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -1557,6 +1598,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -1717,6 +1759,7 @@
         "directTargets": [
           "png",
           "txt",
+          "docx",
           "jpg",
           "tiff",
           "html",
@@ -1727,6 +1770,7 @@
         "allEffectiveTargets": [
           "png",
           "txt",
+          "docx",
           "jpg",
           "tiff",
           "html",
@@ -1807,12 +1851,6 @@
       },
       "highValueMissingConversions": [
         {
-          "target": "docx",
-          "tier": "TIER 1",
-          "blocker": "No PDF layout extraction to DOCX adapter.",
-          "recommendation": "INVESTIGATE pdf2docx for MVP; avoid AGPL MuPDF/PyMuPDF unless commercial licensing is accepted."
-        },
-        {
           "target": "epub",
           "tier": "TIER 3",
           "blocker": "No structured PDF extraction/reflow adapter is implemented.",
@@ -1828,7 +1866,7 @@
       "engineGap": "See highValueMissingConversions and engine gap analysis.",
       "adapterGap": "Adapter missing",
       "runtimeGap": "None assumed for Linux desktop audit; runtime-specific differences are recorded per requirement.",
-      "qualityRisk": "Tier 1 gaps may reduce competitive coverage."
+      "qualityRisk": "Low"
     },
     {
       "format": "png",
@@ -1844,6 +1882,7 @@
         ],
         "oneIntermediateTargets": [
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -1856,6 +1895,7 @@
           "pdf",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -1947,6 +1987,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -1958,6 +1999,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -1986,6 +2028,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -1996,6 +2039,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -2283,6 +2327,7 @@
         ],
         "oneIntermediateTargets": [
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -2295,6 +2340,7 @@
           "jpg",
           "pdf",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -2761,6 +2807,7 @@
         ],
         "oneIntermediateTargets": [
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -2773,6 +2820,7 @@
           "pdf",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -2887,6 +2935,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -2899,6 +2948,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -2928,6 +2978,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ],
@@ -2939,6 +2990,7 @@
           "png",
           "tiff",
           "txt",
+          "docx",
           "html",
           "md"
         ]
@@ -3129,39 +3181,63 @@
       "qualityExpectation": "medium",
       "notes": "Expected from a competitive document converter; PDF input quality depends on text/scanned/mixed analysis.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "pdf",
+          "destination": "docx",
+          "steps": [
+            {
+              "source": "pdf",
+              "target": "docx",
+              "operationId": "office:pdf-to-docx",
+              "engineId": "libreoffice",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.6,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "pdf -> docx",
+        "enginePath": "libreoffice",
+        "risk": "high",
+        "score": 0.6
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "direct",
+        "route": {
+          "source": "pdf",
+          "destination": "docx",
+          "steps": [
+            {
+              "source": "pdf",
+              "target": "docx",
+              "operationId": "office:pdf-to-docx",
+              "engineId": "libreoffice",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [],
+          "score": 0.6,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "pdf -> docx",
+        "enginePath": "libreoffice",
+        "risk": "high",
+        "score": 0.6
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No PDF layout extraction to DOCX adapter.",
-        "existingEngineCanHandle": "PARTIAL",
-        "existingEngineCandidates": [
-          "LibreOffice PDF import is not reliable for headless production",
-          "Poppler can extract text/raster but not DOCX layout"
-        ],
-        "newRequired": true,
-        "candidates": [
-          "pdf2docx",
-          "PyMuPDF/MuPDF commercial",
-          "Unstructured/Docling pipeline"
-        ],
-        "expectedQuality": "MEDIUM",
-        "complexity": "MEDIUM",
-        "portableImpact": "MEDIUM",
-        "recommendation": "INVESTIGATE pdf2docx for MVP; avoid AGPL MuPDF/PyMuPDF unless commercial licensing is accepted."
-      }
+      "gap": null
     },
     {
       "source": "pdf",
@@ -13564,32 +13640,83 @@
       "qualityExpectation": "medium",
       "notes": "Ebook extraction/editing workflow.",
       "windows": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "epub",
+          "destination": "docx",
+          "steps": [
+            {
+              "source": "epub",
+              "target": "pdf",
+              "operationId": "ebook:convert",
+              "engineId": "calibre",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "docx",
+              "operationId": "office:pdf-to-docx",
+              "engineId": "libreoffice",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.324,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "epub -> pdf -> docx",
+        "enginePath": "calibre + libreoffice",
+        "risk": "high",
+        "score": 0.324
       },
       "linux": {
-        "status": "missing",
-        "route": null,
-        "routeText": null
+        "status": "supported",
+        "kind": "one-intermediate",
+        "route": {
+          "source": "epub",
+          "destination": "docx",
+          "steps": [
+            {
+              "source": "epub",
+              "target": "pdf",
+              "operationId": "ebook:convert",
+              "engineId": "calibre",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            },
+            {
+              "source": "pdf",
+              "target": "docx",
+              "operationId": "office:pdf-to-docx",
+              "engineId": "libreoffice",
+              "lossProfile": "structural-risk",
+              "resourceProfile": "medium"
+            }
+          ],
+          "intermediateFormats": [
+            "pdf"
+          ],
+          "score": 0.324,
+          "classification": "lossy",
+          "risk": "high"
+        },
+        "routeText": "epub -> pdf -> docx",
+        "enginePath": "calibre + libreoffice",
+        "risk": "high",
+        "score": 0.324
       },
       "web": {
         "status": "missing",
         "route": null,
         "routeText": null
       },
-      "gap": {
-        "currentPipeline": "None",
-        "currentBlocker": "No effective canonical route within two intermediates.",
-        "existingEngineCanHandle": "NO",
-        "existingEngineCandidates": [],
-        "newRequired": true,
-        "candidates": [],
-        "expectedQuality": "UNKNOWN",
-        "complexity": "MEDIUM",
-        "portableImpact": "UNKNOWN",
-        "recommendation": "INVESTIGATE after Tier 1 blockers with clearer user value."
-      }
+      "gap": null
     },
     {
       "source": "epub",
@@ -17147,10 +17274,9 @@
   "familyCoverage": {
     "DOCUMENTS": {
       "required": 25,
-      "supported": 23,
-      "coveragePercent": 92,
+      "supported": 24,
+      "coveragePercent": 96,
       "biggestGaps": [
-        "pdf->docx",
         "pdf->odt"
       ]
     },
@@ -17174,11 +17300,9 @@
     },
     "EBOOKS": {
       "required": 27,
-      "supported": 24,
-      "coveragePercent": 88.9,
+      "supported": 26,
+      "coveragePercent": 96.3,
       "biggestGaps": [
-        "pdf->docx",
-        "epub->docx",
         "pdf->epub"
       ]
     },
@@ -17196,18 +17320,7 @@
     }
   },
   "quickWinsWithoutNewDependencies": [],
-  "tier1RequiringNewDependencies": [
-    {
-      "conversion": "pdf->docx",
-      "blocker": "No PDF layout extraction to DOCX adapter.",
-      "candidates": [
-        "pdf2docx",
-        "PyMuPDF/MuPDF commercial",
-        "Unstructured/Docling pipeline"
-      ],
-      "recommendation": "INVESTIGATE pdf2docx for MVP; avoid AGPL MuPDF/PyMuPDF unless commercial licensing is accepted."
-    }
-  ],
+  "tier1RequiringNewDependencies": [],
   "dependencyCandidates": [
     {
       "name": "Poppler text/html utilities (pdftotext, pdftohtml)",

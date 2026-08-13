@@ -1,0 +1,136 @@
+- region "Notifications alt+T" [ref=e1]
+- generic
+  - banner
+    - image "Anclora FileStudio"
+    - heading "Anclora FileStudio" [level=1, ref=e3]
+      - StaticText "Anclora FileStudio"
+    - StaticText "Desktop PRO"
+    - StaticText "100% local"
+    - paragraph
+      - StaticText "Todo lo de la Web, más motores nativos, lotes pesados, historial local, diagnóstico y portables Windows/Linux."
+  - navigation "Navegación principal FileStudio" [ref=e2]
+    - tab "Inicio" [selected, ref=e4]
+      - StaticText "Inicio"
+    - tab "Convertir" [ref=e5]
+      - StaticText "Convertir"
+    - tab "Herramientas" [ref=e6]
+      - StaticText "Herramientas"
+    - tab "Historial" [ref=e7]
+      - StaticText "Historial"
+    - tab "Diagnóstico" [ref=e8]
+      - StaticText "Diagnóstico"
+  - generic
+    - heading "¿Qué quieres convertir?" [level=2, ref=e9]
+    - LabelText
+      - StaticText "De"
+      - generic
+        - combobox "De" [expanded=false, ref=e28]: PDF
+          - MenuListPopup
+            - option "Seleccionar formato" [ref=e30]
+            - group "Documentos"
+              - option "DOC" [ref=e32]
+              - option "HTML" [ref=e33]
+              - option "LaTeX" [ref=e34]
+              - option "Markdown" [ref=e35]
+              - option "ODP" [ref=e36]
+              - option "ODS" [ref=e37]
+              - option "ODT" [ref=e38]
+              - option "PDF" [selected, ref=e39]
+              - option "PPT" [ref=e40]
+              - option "PPTX" [ref=e41]
+              - option "RST" [ref=e42]
+              - option "RTF" [ref=e43]
+              - option "TXT" [ref=e44]
+              - option "XLS" [ref=e45]
+              - option "XLSX" [ref=e46]
+            - group "Imágenes"
+              - option "AVIF" [ref=e47]
+              - option "GIF" [ref=e48]
+              - option "JPEG" [ref=e49]
+              - option "PNG" [ref=e50]
+              - option "TIFF" [ref=e51]
+              - option "WEBP" [ref=e52]
+            - group "Ebooks"
+              - option "AZW3" [ref=e53]
+              - option "EPUB" [ref=e54]
+              - option "MOBI" [ref=e55]
+      - textbox "Buscar por alias" [ref=e26]
+    - LabelText
+      - StaticText "A"
+      - generic
+        - combobox "A" [expanded=false, ref=e29]: DOCX
+          - MenuListPopup
+            - option "Seleccionar formato" [ref=e31]
+            - group "Documentos"
+              - option "DOCX" [selected, ref=e56]
+              - option "HTML" [ref=e57]
+              - option "Markdown" [ref=e58]
+              - option "TXT" [ref=e59]
+            - group "Imágenes"
+              - option "JPEG" [ref=e60]
+              - option "PNG" [ref=e61]
+              - option "TIFF" [ref=e62]
+      - textbox "Buscar por alias" [ref=e27]
+    - button "Continuar" [ref=e10]
+    - StaticText "PDF"
+    - StaticText "DOCX"
+    - StaticText "Directa"
+  - generic
+    - heading "Convertir" [level=2, ref=e11]
+    - paragraph
+      - StaticText "Explora conversiones por tipo de resultado."
+    - button "Documentos 12 destinos" [ref=e12]
+      - StaticText "Documentos"
+      - StaticText "12"
+      - StaticText " destinos"
+    - button "Imágenes 6 destinos" [ref=e13]
+      - StaticText "Imágenes"
+      - StaticText "6"
+      - StaticText " destinos"
+    - button "Audio 6 destinos" [ref=e14]
+      - StaticText "Audio"
+      - StaticText "6"
+      - StaticText " destinos"
+    - button "Vídeo 3 destinos" [ref=e15]
+      - StaticText "Vídeo"
+      - StaticText "3"
+      - StaticText " destinos"
+    - button "Ebooks 3 destinos" [ref=e16]
+      - StaticText "Ebooks"
+      - StaticText "3"
+      - StaticText " destinos"
+    - button "Archivos comprimidos 3 destinos" [ref=e17]
+      - StaticText "Archivos comprimidos"
+      - StaticText "3"
+      - StaticText " destinos"
+    - button "Datos 6 destinos" [ref=e18]
+      - StaticText "Datos"
+      - StaticText "6"
+      - StaticText " destinos"
+  - generic
+    - heading "Herramientas" [level=2, ref=e19]
+    - button "PDF 4 operaciones" [ref=e20]
+      - StaticText "PDF"
+      - StaticText "4"
+      - StaticText " operaciones"
+    - button "Imágenes 6 operaciones" [ref=e21]
+      - StaticText "Imágenes"
+      - StaticText "6"
+      - StaticText " operaciones"
+    - button "Conversión con OCR 9 operaciones" [ref=e22]
+      - StaticText "Conversión con OCR"
+      - StaticText "9"
+      - StaticText " operaciones"
+    - button "Metadata 2 operaciones" [ref=e23]
+      - StaticText "Metadata"
+      - StaticText "2"
+      - StaticText " operaciones"
+    - button "Compresión 3 operaciones" [ref=e24]
+      - StaticText "Compresión"
+      - StaticText "3"
+      - StaticText " operaciones"
+    - button "Utilidades 1 operaciones" [ref=e25]
+      - StaticText "Utilidades"
+      - StaticText "1"
+      - StaticText " operaciones"
+- alert

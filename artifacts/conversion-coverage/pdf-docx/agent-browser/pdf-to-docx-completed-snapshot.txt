@@ -1,0 +1,50 @@
+- region "Notifications alt+T" [ref=e1]
+- generic
+  - banner
+    - image "Anclora FileStudio"
+    - heading "Anclora FileStudio" [level=1, ref=e3]
+      - StaticText "Anclora FileStudio"
+    - StaticText "Desktop PRO"
+    - StaticText "100% local"
+    - paragraph
+      - StaticText "Todo lo de la Web, más motores nativos, lotes pesados, historial local, diagnóstico y portables Windows/Linux."
+  - navigation "Navegación principal FileStudio" [ref=e2]
+    - tab "Inicio" [ref=e4]
+      - StaticText "Inicio"
+    - tab "Convertir" [selected, ref=e5]
+      - StaticText "Convertir"
+    - tab "Herramientas" [ref=e6]
+      - StaticText "Herramientas"
+    - tab "Historial" [ref=e7]
+      - StaticText "Historial"
+    - tab "Diagnóstico" [ref=e8]
+      - StaticText "Diagnóstico"
+  - button "Volver a Convertir" [ref=e9]
+  - heading "Convertir a DOCX" [level=2, ref=e10]
+    - StaticText "Convertir a DOCX"
+  - paragraph
+    - StaticText "Selecciona el archivo que quieres convertir."
+  - StaticText "Sistema Listo"
+  - StaticText "CPU: "
+  - StaticText "17"
+  - StaticText "%"
+  - StaticText "Disco: "
+  - StaticText "92"
+  - StaticText "% Libre"
+  - generic "Pasos de conversión"
+    - StaticText "Archivo"
+    - StaticText "Análisis"
+    - StaticText "Ruta"
+    - StaticText "Progreso"
+    - generic
+      - StaticText "5. Resultado"
+  - heading "Conversión completada" [level=2, ref=e11]
+  - paragraph
+    - StaticText "agent-smoke.docx"
+  - paragraph
+    - StaticText "DOCX · 6 KB"
+  - button "Descargar archivo" [ref=e12]
+  - button "Procesar otro archivo" [ref=e13]
+  - button "Convertir a otro formato" [ref=e14]
+  - button "Historial" [ref=e15]
+- alert
