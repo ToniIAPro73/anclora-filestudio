@@ -281,6 +281,22 @@ describe("real catalog — certified route anchors", () => {
     expect(ranked[0].quality.score).toBeGreaterThan(viaJpg!.quality.score);
   });
 
+  it("image direct Sharp edges beat inferior GIF detours", () => {
+    const graph = buildConversionGraph(ALL_DESKTOP);
+    for (const [source, target] of [
+      ["png", "jpg"],
+      ["jpg", "png"],
+      ["webp", "jpg"],
+      ["tiff", "jpg"],
+    ] as const) {
+      const ranked = rankRoutes(findConversionRoutes(graph, source, target));
+      expect(ranked[0].steps.map((step) => `${step.source}->${step.target}:${step.engineId}`), `${source}->${target}`).toEqual([
+        `${source}->${target}:sharp-image`,
+      ]);
+      expect(ranked[0].intermediateFormats).not.toContain("gif");
+    }
+  });
+
   it("PDF→DOCX direct remains the winner (§49)", () => {
     const graph = buildConversionGraph(ALL_DESKTOP);
     const best = bestRankedRoute(findConversionRoutes(graph, "pdf", "docx"));

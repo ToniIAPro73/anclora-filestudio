@@ -12,6 +12,7 @@ import {
 } from "../../../src/lib/conversion-routing/destinations";
 import { FORMAT_CATALOG, normalizeFormatId } from "../../../src/lib/domain/format-catalog";
 import type { ConversionRoute } from "../../../src/lib/conversion-routing/types";
+import { buildConversionUxModel, getFormatTargetsForUx } from "../../../src/lib/ux-v3/conversion-ux-model";
 
 const desktopEngines = new Set([
   "libreoffice",
@@ -188,5 +189,18 @@ describe("global effective conversion discovery", () => {
     const targets = getAllEffectiveTargets("docx", desktopEngines, { environment: "linux" });
     const png = targets.oneIntermediate.find((route) => route.destination === "png");
     expect(png?.steps.map((step) => step.target)).toEqual(["pdf", "png"]);
+  });
+
+  it("DISCOVERY-015 keeps UX chips and dropdown targets on the canonical target set", () => {
+    const model = buildConversionUxModel("linux", desktopEngines);
+    const canonicalFormats = Array.from(new Set(FORMAT_CATALOG.map((format) => normalizeFormatId(format.outputExtension)).filter(Boolean))).slice(0, 50);
+
+    for (const source of canonicalFormats) {
+      const fromSelector = getFormatTargetsForUx(source!, "linux", desktopEngines).map((route) => route.target).sort();
+      const fromModel = model.routes.filter((route) => route.source === source).map((route) => route.target).sort();
+      const fromRouting = getTargetsForSource(source!, desktopEngines, { environment: "linux" }).map((route) => route.destination).sort();
+      expect(fromModel, `${source} model routes`).toEqual(fromRouting);
+      expect(fromSelector, `${source} selector routes`).toEqual(fromRouting);
+    }
   });
 });
