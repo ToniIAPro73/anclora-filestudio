@@ -58,6 +58,26 @@ const UX_CATEGORY_TO_LEGACY_GROUP: Partial<Record<UxConversionCategoryId, Deskto
 
 const mediaUrlTargets = new Set(["mp4", "webm", "mkv", "mp3", "m4a", "wav", "ogg"]);
 const VALID_CONVERSION_CATEGORIES: UxConversionCategoryId[] = ["documents", "images", "audio", "video", "ebooks", "archives", "data", "other"];
+const LOCAL_DESKTOP_ENGINE_IDS = new Set([
+  "libreoffice",
+  "pandoc",
+  "sharp-image",
+  "sharp",
+  "ffmpeg-media",
+  "ffmpeg",
+  "ffprobe",
+  "qpdf",
+  "poppler",
+  "tesseract",
+  "pdftoppm",
+  "calibre",
+  "ebook-convert",
+  "sevenzip",
+  "7z",
+  "data-ts",
+  "background-removal",
+]);
+const LOCAL_UX_MODEL = buildConversionUxModel("linux", LOCAL_DESKTOP_ENGINE_IDS);
 
 function normalizeConversionCategory(value: string | null): UxConversionCategoryId | undefined {
   return value && VALID_CONVERSION_CATEGORIES.includes(value as UxConversionCategoryId)
@@ -154,7 +174,7 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<DesktopTab>(tabFromPathname(pathname) ?? initialTab);
   const [activeTool, setActiveTool] = useState<ToolWorkspaceId>(null);
-  const [uxModel, setUxModel] = useState<UxConversionModel | null>(null);
+  const [uxModel, setUxModel] = useState<UxConversionModel | null>(LOCAL_UX_MODEL);
   const [uxModelError, setUxModelError] = useState<string | null>(null);
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
   const [selectedSource, setSelectedSource] = useState<string | null>(null);

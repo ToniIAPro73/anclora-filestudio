@@ -51,6 +51,75 @@ test("home cards and nav buttons perform real navigation", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /Herramientas|Imágenes/i }).first()).toBeVisible();
 });
 
+test.describe("workspace navigation remains usable while the UX API is pending", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route("**/api/capabilities?ux=v3", () => new Promise(() => {}));
+  });
+
+  test("Home to Convertir shows the conversion workspace without waiting for API hydration", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.getByRole("tab", { name: /^Convertir$/i }).click();
+
+    await expect(page).toHaveURL(/\/convert$/);
+    await expect(page.getByRole("heading", { name: /^Convertir$/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Convertir a PDF/i })).toBeVisible();
+  });
+
+  test("Home to Herramientas shows the tools workspace without waiting for API hydration", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.getByRole("tab", { name: /^Herramientas$/i }).click();
+
+    await expect(page).toHaveURL(/\/tools$/);
+    await expect(page.getByRole("heading", { name: /^Herramientas$/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^PDF/i })).toBeVisible();
+  });
+
+  test("direct workspaces render and refresh without the UX API", async ({ page }) => {
+    await page.goto("/convert", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: /^Convertir$/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Convertir a PDF/i })).toBeVisible();
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: /^Convertir$/i })).toBeVisible();
+
+    await page.goto("/tools", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: /^Herramientas$/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^PDF/i })).toBeVisible();
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: /^Herramientas$/i })).toBeVisible();
+  });
+
+  test("back and forward preserve workspace rendering", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.getByRole("tab", { name: /^Convertir$/i }).click();
+    await expect(page).toHaveURL(/\/convert$/);
+    await expect(page.getByRole("heading", { name: /^Convertir$/i })).toBeVisible();
+    await page.goBack();
+    await expect(page).toHaveURL(/\/$/);
+    await page.goForward();
+    await expect(page).toHaveURL(/\/convert$/);
+    await expect(page.getByRole("heading", { name: /^Convertir$/i })).toBeVisible();
+
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.getByRole("tab", { name: /^Herramientas$/i }).click();
+    await expect(page).toHaveURL(/\/tools$/);
+    await expect(page.getByRole("heading", { name: /^Herramientas$/i })).toBeVisible();
+    await page.goBack();
+    await expect(page).toHaveURL(/\/$/);
+    await page.goForward();
+    await expect(page).toHaveURL(/\/tools$/);
+    await expect(page.getByRole("heading", { name: /^Herramientas$/i })).toBeVisible();
+  });
+
+  test("category URLs render the requested workspaces without the UX API", async ({ page }) => {
+    await page.goto("/convert?category=images", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("tab", { name: /^Imágenes/i })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("button", { name: /^Convertir a PNG/i })).toBeVisible();
+
+    await page.goto("/tools?category=pdf", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: /Organizar PDF/i })).toBeVisible();
+  });
+});
+
 test.describe("home quick source-target selector", () => {
   test("DOCX target picker shows categorized canonical targets and continues with PDF", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
