@@ -87,22 +87,43 @@ function classifyYtdlpFailure(stderr: string, exitCode: number | null): YtdlpErr
     return { code: "VIDEO_UNAVAILABLE", message: "El vídeo no está disponible, ha sido eliminado o la URL no existe." };
   }
 
-  // Bot/captcha verification — BEFORE generic "sign in" to give a specific error.
-  // This is a PROVIDER-SIDE challenge (YouTube anti-bot, etc.), not a content restriction.
+  // YouTube's own bot-check wording — BEFORE generic "sign in" to give a
+  // specific error. This is a PROVIDER-SIDE challenge from Google/YouTube
+  // itself, NOT Cloudflare — there is no Cloudflare evidence in this phrasing.
   if (
     s.includes("not a bot") ||
     s.includes("confirm you're not") ||
-    s.includes("i'm not a robot") ||
-    s.includes("captcha") ||
-    s.includes("are you a robot") ||
+    s.includes("confirm you’re not") // curly apostrophe — YouTube's actual stderr text
+  ) {
+    return {
+      code: "YOUTUBE_BOT_VERIFICATION",
+      message:
+        "YouTube ha rechazado el análisis automático de este vídeo (verificación anti-bot). El vídeo puede seguir funcionando desde el portable local o en otra red.",
+    };
+  }
+
+  // Explicit Cloudflare / CAPTCHA challenge — only when the provider's own
+  // response literally names it. Do NOT infer Cloudflare from a bare 403.
+  if (
     s.includes("cloudflare") ||
-    s.includes("access denied") ||
-    s.includes("403")
+    s.includes("captcha") ||
+    s.includes("i'm not a robot") ||
+    s.includes("are you a robot")
   ) {
     return {
       code: "PROVIDER_VERIFICATION",
       message:
-        "El proveedor bloquea el acceso automático (anti-bot, Cloudflare o acceso denegado). Este sitio puede no ser compatible.",
+        "El proveedor exige verificación de seguridad (Cloudflare o captcha) para acceder automáticamente. Este sitio puede no ser compatible.",
+    };
+  }
+
+  // Generic HTTP 403 / access denied without a specific bot-check or
+  // Cloudflare signal — do not over-claim the cause.
+  if (s.includes("access denied") || s.includes("403")) {
+    return {
+      code: "PROVIDER_ACCESS_DENIED",
+      message:
+        "El proveedor ha denegado el acceso (HTTP 403). Puede ser temporal o requerir configuración adicional.",
     };
   }
 

@@ -346,17 +346,17 @@ describe("real extractor failure — classified error, not heuristic block", () 
     });
   });
 
-  it("yt-dlp bot-check failure returns PROVIDER_VERIFICATION, not CONTENT_RESTRICTED", async () => {
+  it("yt-dlp bot-check failure returns YOUTUBE_BOT_VERIFICATION, not CONTENT_RESTRICTED", async () => {
     await setKind("youtube", { sourceProvider: "YouTube" });
     await mockYtdlpFailure(
-      "PROVIDER_VERIFICATION",
-      "El proveedor requiere verificación anti-bot o captcha. Puede ser temporal — inténtalo de nuevo más tarde."
+      "YOUTUBE_BOT_VERIFICATION",
+      "YouTube ha rechazado el análisis automático de este vídeo (verificación anti-bot). El vídeo puede seguir funcionando desde el portable local o en otra red."
     );
 
     const { analyzeRemoteMedia } = await import("../../src/lib/remote-media/remote-media-analyzer");
     const result = await analyzeRemoteMedia("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 
-    expect(result.classifiedError?.code).toBe("PROVIDER_VERIFICATION");
+    expect(result.classifiedError?.code).toBe("YOUTUBE_BOT_VERIFICATION");
     expect(result.classifiedError?.code).not.toBe("CONTENT_RESTRICTED");
     expect(result.ssrfBlocked).toBe(false);
   });

@@ -315,7 +315,7 @@ describe("getVideoMetadata — yt-dlp failure paths", () => {
     });
   });
 
-  it("rejects with PROVIDER_VERIFICATION when stderr contains 'Sign in to confirm you're not a bot'", async () => {
+  it("rejects with YOUTUBE_BOT_VERIFICATION when stderr contains 'Sign in to confirm you're not a bot'", async () => {
     const spawnMock = vi.mocked(child_process.spawn);
     const proc = makeFakeProcess();
     spawnMock.mockReturnValue(proc as unknown as ReturnType<typeof child_process.spawn>);
@@ -329,9 +329,62 @@ describe("getVideoMetadata — yt-dlp failure paths", () => {
     );
     proc.emit("close", 1);
 
-    // Bot check is PROVIDER_VERIFICATION, not CONTENT_RESTRICTED
+    // YouTube's own bot-check text is YOUTUBE_BOT_VERIFICATION, not CONTENT_RESTRICTED,
+    // and must NOT be conflated with Cloudflare/generic-403 (PROVIDER_VERIFICATION).
+    await expect(promise).rejects.toMatchObject({
+      code: "YOUTUBE_BOT_VERIFICATION",
+    });
+  });
+
+  it("rejects with YOUTUBE_BOT_VERIFICATION when stderr uses the curly-apostrophe variant yt-dlp actually emits", async () => {
+    const spawnMock = vi.mocked(child_process.spawn);
+    const proc = makeFakeProcess();
+    spawnMock.mockReturnValue(proc as unknown as ReturnType<typeof child_process.spawn>);
+
+    const { getVideoMetadata } = await import("../../src/lib/media/metadata");
+    const promise = getVideoMetadata("https://www.youtube.com/watch?v=botcheck2");
+
+    proc.stderr.emit(
+      "data",
+      "ERROR: [youtube] botcheck2: Sign in to confirm you’re not a bot. This helps protect our community.\n"
+    );
+    proc.emit("close", 1);
+
+    await expect(promise).rejects.toMatchObject({
+      code: "YOUTUBE_BOT_VERIFICATION",
+    });
+  });
+
+  it("rejects with PROVIDER_VERIFICATION when stderr explicitly mentions Cloudflare", async () => {
+    const spawnMock = vi.mocked(child_process.spawn);
+    const proc = makeFakeProcess();
+    spawnMock.mockReturnValue(proc as unknown as ReturnType<typeof child_process.spawn>);
+
+    const { getVideoMetadata } = await import("../../src/lib/media/metadata");
+    const promise = getVideoMetadata("https://example.com/watch?v=cf");
+
+    proc.stderr.emit("data", "ERROR: cf: Attention Required! | Cloudflare\n");
+    proc.emit("close", 1);
+
     await expect(promise).rejects.toMatchObject({
       code: "PROVIDER_VERIFICATION",
+    });
+  });
+
+  it("rejects with PROVIDER_ACCESS_DENIED on a generic HTTP 403 without bot-check or Cloudflare text", async () => {
+    const spawnMock = vi.mocked(child_process.spawn);
+    const proc = makeFakeProcess();
+    spawnMock.mockReturnValue(proc as unknown as ReturnType<typeof child_process.spawn>);
+
+    const { getVideoMetadata } = await import("../../src/lib/media/metadata");
+    const promise = getVideoMetadata("https://example.com/watch?v=forbidden");
+
+    proc.stderr.emit("data", "ERROR: forbidden: HTTP Error 403: Forbidden\n");
+    proc.emit("close", 1);
+
+    // Must NOT be labeled Cloudflare or YouTube-bot-check without evidence.
+    await expect(promise).rejects.toMatchObject({
+      code: "PROVIDER_ACCESS_DENIED",
     });
   });
 
