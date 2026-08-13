@@ -67,6 +67,11 @@ describe("LibreOfficeEngine — category routing", () => {
     const desc = makeDescriptor("xyz", "document");
     expect(engine.getCapabilities(desc, AVAILABLE_PROBE)).toHaveLength(0);
   });
+
+  it("ODT source does not expose PDF → ODT capability by mismatch", () => {
+    const caps = engine.getCapabilities(makeDescriptor("odt", "document"), AVAILABLE_PROBE);
+    expect(caps.some((c) => c.operation === "convert-pdf-to-odt")).toBe(false);
+  });
 });
 
 describe("LibreOfficeEngine — document capabilities", () => {
@@ -150,6 +155,12 @@ describe("LibreOfficeEngine — loss profiles and recommendations", () => {
     const caps = engine.getCapabilities(makeDescriptor("docx", "document"), AVAILABLE_PROBE);
     const pdf = caps.find((c) => c.outputFormat === "pdf");
     expect(pdf?.lossProfile).toBe("lossy");
+  });
+
+  it("PDF input offers DOCX and ODT editable outputs", () => {
+    const caps = engine.getCapabilities(makeDescriptor("pdf", "pdf"), AVAILABLE_PROBE);
+    expect(caps.map((cap) => cap.outputFormat).sort()).toEqual(["docx", "odt"]);
+    expect(caps.find((cap) => cap.outputFormat === "odt")?.operation).toBe("convert-pdf-to-odt");
   });
 
   it("ODT output has metadata-risk loss profile", () => {

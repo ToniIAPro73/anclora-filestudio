@@ -47,7 +47,7 @@ const AVAILABLE_PROBE: EngineProbeResult = {
   available: true,
   version: "LibreOffice 7.6",
   binaryPath: "/usr/bin/libreoffice",
-  capabilities: ["pdf-to-docx"],
+  capabilities: ["pdf-to-docx", "pdf-to-odt"],
 };
 
 const UNAVAILABLE_PROBE: EngineProbeResult = {
@@ -178,9 +178,10 @@ describe("PDFDOCX-UNIT-004 — unavailable runtime", () => {
   it("capability is unavailable-tool with explanatory reason when LibreOffice is missing", () => {
     const engine = new LibreOfficeEngine();
     const caps = engine.getCapabilities(makePdfDescriptor(), UNAVAILABLE_PROBE);
-    expect(caps).toHaveLength(1);
-    expect(caps[0]!.state).toBe("unavailable-tool");
-    expect(caps[0]!.unavailableReason).toMatch(/LibreOffice/);
+    const docx = caps.find((cap) => cap.outputFormat === "docx");
+    expect(docx).toBeDefined();
+    expect(docx!.state).toBe("unavailable-tool");
+    expect(docx!.unavailableReason).toMatch(/LibreOffice/);
   });
 });
 
@@ -193,11 +194,12 @@ describe("PDFDOCX-UNIT-005 — scanned PDF handling", () => {
   it("capability warnings disclose scanned/table/heading degradation", () => {
     const engine = new LibreOfficeEngine();
     const caps = engine.getCapabilities(makePdfDescriptor(), AVAILABLE_PROBE);
-    const warnings = caps[0]!.warnings.join(" ");
+    const cap = caps.find((item) => item.outputFormat === "docx");
+    expect(cap).toBeDefined();
+    const warnings = cap!.warnings.join(" ");
     expect(warnings).toContain("OCR");
     expect(warnings).toContain("tablas");
-    expect(caps[0]!.outputFormat).toBe("docx");
-    expect(caps[0]!.operation).toBe("convert-pdf-to-docx");
+    expect(cap!.operation).toBe("convert-pdf-to-docx");
   });
 
   it("non-pdf descriptors in pdf category get no PDF→DOCX capability", () => {
