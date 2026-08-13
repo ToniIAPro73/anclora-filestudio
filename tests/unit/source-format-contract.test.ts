@@ -17,6 +17,8 @@ const desktopEngines = new Set([
   "poppler",
   "tesseract",
   "pdftoppm",
+  "pdftotext",
+  "pdftohtml",
   "calibre",
   "ebook-convert",
   "sevenzip",
@@ -63,5 +65,16 @@ describe("explicit source format contract", () => {
     const detected = resolveInputFormatForJob({ detectedFormat: "yaml", extension: "md" });
     expect(detected).toBe("md");
     expect(validateExplicitRouteSource("docx", detected).valid).toBe(false);
+  });
+
+  it("SOURCE-007 explicit PDF→DOCX accepts PDF only", () => {
+    expect(validateExplicitRouteSource("pdf", "pdf").valid).toBe(true);
+    expect(validateExplicitRouteSource("pdf", "docx").valid).toBe(false);
+    expect(validateExplicitRouteSource("pdf", "md").valid).toBe(false);
+  });
+
+  it("SOURCE-008 AUTO→DOCX accepts PDF as reachable source", () => {
+    const pdfTargets = getAllEffectiveTargets("pdf", desktopEngines, { environment: "linux" });
+    expect(pdfTargets.all.some((route) => route.destination === "docx")).toBe(true);
   });
 });

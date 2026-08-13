@@ -128,6 +128,19 @@ describe("Tier 1 quick wins — office edges", () => {
     expect(result?.availability.available).toBe(true);
     expect(result?.edge.engineId).toBe("libreoffice");
   });
+
+  it("pdf→docx available via libreoffice writer_pdf_import", () => {
+    const result = directAvailable("pdf", "docx");
+    expect(result?.availability.available).toBe(true);
+    expect(result?.edge.engineId).toBe("libreoffice");
+    expect(result?.edge.implementationId).toBe("libreoffice-pdf-import-docx");
+    expect(result?.edge.supportsAsIntermediate).toBe(false);
+  });
+
+  it("pdf→docx unavailable without pdftotext (scanned guard dependency)", () => {
+    const result = directAvailable("pdf", "docx", NO_POPPLER_TEXT_TOOLS);
+    expect(result?.availability.available).toBe(false);
+  });
 });
 
 describe("Tier 1 quick wins — image→pdf edges", () => {
@@ -175,5 +188,15 @@ describe("Tier 1 quick wins — global discovery updates automatically", () => {
         expect(directTargets).toContain(target);
       }
     }
+  });
+
+  it("getAllEffectiveTargets(pdf) includes docx as direct (§33)", () => {
+    const discovery = getAllEffectiveTargets("pdf", ALL_DESKTOP, { environment: "linux" });
+    expect(discovery.direct.map((route) => route.destination)).toContain("docx");
+  });
+
+  it("getAllEffectiveSources(docx) includes pdf as direct (§33)", () => {
+    const discovery = getAllEffectiveSources("docx", ALL_DESKTOP, { environment: "linux" });
+    expect(discovery.direct.map((route) => route.source)).toContain("pdf");
   });
 });
