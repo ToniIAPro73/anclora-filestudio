@@ -15,8 +15,14 @@ import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { CONFIG } from "../../config";
 import { isAncloraWindowsRuntime } from "../../runtime-platform";
+import { resolvePopplerTool } from "../pdf/poppler-engine";
+import JSZip from "jszip";
 
 const ENGINE_ID: EngineId = "libreoffice";
+
+export const SCANNED_PDF_DOCX_ERROR =
+  "Este PDF parece estar compuesto principalmente por imágenes escaneadas. " +
+  "PDF → DOCX editable requiere OCR. Usa Conversión con OCR.";
 
 // LibreOffice must use an isolated profile dir per run to avoid single-instance lockfile contention
 let _runner: ProcessRunner | null = null;
@@ -144,7 +150,7 @@ function buildCapability(
 
 export class LibreOfficeEngine implements ConversionEngine {
   readonly id: EngineId = ENGINE_ID;
-  readonly supportedCategories: readonly FileCategory[] = ["document", "spreadsheet", "presentation"];
+  readonly supportedCategories: readonly FileCategory[] = ["document", "spreadsheet", "presentation", "pdf"];
 
   private _probeResult: EngineProbeResult | null = null;
 
@@ -155,10 +161,36 @@ export class LibreOfficeEngine implements ConversionEngine {
       available: result.available,
       version: result.version,
       binaryPath: result.binaryPath,
-      capabilities: result.available ? Object.keys(INPUT_FORMATS) : [],
+      capabilities: result.available ? [...Object.keys(INPUT_FORMATS), "pdf-to-docx"] : [],
       error: result.available ? undefined : "LibreOffice no encontrado. Instálalo desde libreoffice.org o usa el ZIP portable.",
     };
     return this._probeResult;
+  }
+
+  private buildPdfToDocxCapability(
+    descriptor: UniversalFileDescriptor,
+    available: boolean,
+  ): ConversionCapability {
+    return {
+      id: `libreoffice-${descriptor.id}-pdf-docx`,
+      operation: "convert-pdf-to-docx",
+      outputFormat: "docx",
+      outputMime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      label: "Convertir a Word DOCX",
+      description: "PDF → DOCX editable vía importador Writer de LibreOffice",
+      lossProfile: "structure-risk",
+      state: available ? "available" : "unavailable-tool",
+      unavailableReason: available ? undefined : "LibreOffice no está instalado. Disponible en el ZIP portable de Windows.",
+      recommended: true,
+      presets: [{ id: "lo-pdf-docx", label: "Estándar", quality: "0", description: "Importador PDF de LibreOffice Writer", isRecommended: true }],
+      warnings: [
+        "Las tablas se preservan como texto posicionado, no como objetos de tabla editables",
+        "Los estilos de encabezado del PDF no se conservan como estilos de Word",
+        "Los PDF escaneados sin capa de texto requieren OCR",
+      ],
+      engineId: ENGINE_ID,
+      mobilePortability: "desktop-only",
+    };
   }
 
   getCapabilities(
@@ -166,6 +198,15 @@ export class LibreOfficeEngine implements ConversionEngine {
     probeResult: EngineProbeResult
   ): ConversionCapability[] {
     const cat = descriptor.category;
+
+    // PDF → DOCX via Writer PDF import filter (Tier 1 quick win evaluation:
+    // artifacts/conversion-coverage/pdf-docx). Scanned guard runs at execution.
+    if (cat === "pdf") {
+      const ext = (descriptor.extension ?? "").toLowerCase();
+      if (ext !== "pdf") return [];
+      return [this.buildPdfToDocxCapability(descriptor, probeResult.available)];
+    }
+
     if (cat !== "document" && cat !== "spreadsheet" && cat !== "presentation") return [];
 
     const inputExt = (descriptor.extension ?? "").toLowerCase();
@@ -192,6 +233,29 @@ export class LibreOfficeEngine implements ConversionEngine {
       return { success: false, outputPath: plan.outputPath, outputSizeBytes: 0, durationMs: 0, logs: [], warnings: [], error: String(err) };
     }
 
+    const isPdfToDocx = plan.operation === "convert-pdf-to-docx";
+
+    // Scanned guard (§36): ground-truth text check via pdftotext (same Poppler
+    // runtime as the pdf engines — no second resolver). A PDF without a text
+    // layer must not produce an empty image-only DOCX as "success" (§37).
+    if (isPdfToDocx) {
+      const probe = await new ProcessRunner(resolvePopplerTool("pdftotext"), 120_000).run({
+        args: ["-enc", "UTF-8", plan.inputPath, "-"],
+        timeoutMs: plan.timeoutMs,
+      });
+      if (probe.exitCode === 0 && !probe.stdout.trim()) {
+        return {
+          success: false,
+          outputPath: plan.outputPath,
+          outputSizeBytes: 0,
+          durationMs: Date.now() - start,
+          logs: [probe.stderr].filter(Boolean),
+          warnings: [],
+          error: SCANNED_PDF_DOCX_ERROR,
+        };
+      }
+    }
+
     // LibreOffice outputs to --outdir with the same base name but new extension.
     // We redirect to a dedicated temp dir and then move the result.
     const profileDir = path.join(os.tmpdir(), `lo-profile-${crypto.randomBytes(8).toString("hex")}`);
@@ -206,6 +270,7 @@ export class LibreOfficeEngine implements ConversionEngine {
         "--headless",
         "--norestore",
         "--convert-to", outExt,
+        ...(isPdfToDocx ? ["--infilter=writer_pdf_import"] : []),
         "--outdir", outDir,
         plan.inputPath,
       ];
@@ -286,6 +351,34 @@ export class LibreOfficeEngine implements ConversionEngine {
       fs.closeSync(fd);
       const isRtf = buf.toString("ascii") === "{\\rtf";
       checks.push({ name: "rtf-magic-bytes", passed: isRtf, detail: buf.toString("ascii") });
+    }
+
+    // DOCX structure: valid OOXML zip with non-empty text content
+    if (plan.outputFormat === "docx") {
+      const buf = Buffer.alloc(4);
+      const fd = fs.openSync(outputPath, "r");
+      fs.readSync(fd, buf, 0, 4, 0);
+      fs.closeSync(fd);
+      const isZip = buf[0] === 0x50 && buf[1] === 0x4b;
+      checks.push({ name: "docx-zip-signature", passed: isZip, detail: buf.toString("hex") });
+      if (isZip) {
+        try {
+          const zip = await JSZip.loadAsync(fs.readFileSync(outputPath));
+          const documentXml = zip.file("word/document.xml");
+          checks.push({ name: "docx-document-xml", passed: documentXml !== null });
+          if (documentXml) {
+            const xml = await documentXml.async("string");
+            const textLen = (xml.match(/<w:t[\s>]/g) ?? []).length;
+            checks.push({
+              name: "docx-nonempty-text",
+              passed: textLen > 0,
+              detail: `${textLen} w:t nodes`,
+            });
+          }
+        } catch {
+          checks.push({ name: "docx-document-xml", passed: false, detail: "zip parse failed" });
+        }
+      }
     }
 
     return { valid: checks.every((c) => c.passed), checks };

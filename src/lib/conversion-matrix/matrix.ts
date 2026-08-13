@@ -170,6 +170,18 @@ export const CANONICAL_CONVERSION_EDGES: readonly CanonicalConversionEdge[] = [
     supportsAsIntermediate: false,
     notes: "pdftohtml extraction normalized to GFM Markdown via Pandoc. No invented structure. Not an intermediate: PDF→DOCX via Markdown stays UNAVAILABLE by policy.",
   }),
+  edge({
+    source: "pdf",
+    target: "docx",
+    operationId: "office:pdf-to-docx",
+    implementationId: "libreoffice-pdf-import-docx",
+    engineId: "libreoffice",
+    dependencies: ["libreoffice", "pdftotext"],
+    lossProfile: "structural-risk",
+    priority: 90,
+    supportsAsIntermediate: false,
+    notes: "LibreOffice writer_pdf_import rebuilds an editable DOCX. Certified: text, unicode, multipage, embedded images. Degraded: tables flatten to positioned text (no w:tbl), headings lose style. Scanned PDFs rejected with a controlled OCR hint (pdftotext guard). Not an intermediate (§32).",
+  }),
   ...cross(["png", "jpg", "webp", "tiff"], ["pdf"], {
     operationId: "image:to-pdf",
     implementationId: "sharp-image-to-pdf",

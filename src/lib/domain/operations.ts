@@ -544,6 +544,22 @@ const DOCUMENT_OPERATIONS: OperationDefinition[] = [
     supportsBatch: true,
     optionsSchema: { type: "object", properties: {} },
   },
+  {
+    id: "office:pdf-to-docx",
+    category: "document",
+    labelKey: "op.office.pdf-to-docx",
+    descriptionKey: "op.office.pdf-to-docx.desc",
+    inputFormats: ["pdf"],
+    outputFormats: ["docx"],
+    engineId: "libreoffice",
+    // pdftotext (Poppler runtime) powers the scanned-PDF guard before import.
+    dependencies: ["libreoffice", "pdftotext"],
+    lossProfile: "structural-risk",
+    mobilePortability: "desktop-only",
+    resourceProfile: "medium",
+    supportsBatch: false,
+    optionsSchema: { type: "object", properties: {} },
+  },
 ];
 
 const STRUCTURED_DATA_OPERATIONS: OperationDefinition[] = [

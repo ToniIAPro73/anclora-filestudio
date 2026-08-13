@@ -58,7 +58,7 @@ const REGISTERED_ENGINES: EngineRegistration[] = [
   },
   {
     engine: libreOfficeEngine,
-    categories: ["document", "spreadsheet", "presentation"],
+    categories: ["document", "spreadsheet", "presentation", "pdf"],
     requiredTools: ["libreoffice"],
     enabled: true,
   },
