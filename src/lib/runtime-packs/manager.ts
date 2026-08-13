@@ -120,7 +120,9 @@ async function runExecutableProbe(
       if (output.length < 4096) output += chunk.toString("utf8");
     });
     child.on("error", (err) => finish(false, err.message));
-    child.on("close", (code) => finish(code === 0, code === 0 ? null : `exit code ${code}`));
+    child.on("close", (code) => {
+      setTimeout(() => finish(code === 0, code === 0 ? null : `exit code ${code}`), 0);
+    });
   });
 }
 
@@ -208,7 +210,11 @@ export class RuntimePackManager {
       );
     }
     const current = await this.getState(id);
-    if (current.state !== "AVAILABLE" && current.state !== "UPDATE_AVAILABLE") {
+    if (
+      current.state !== "AVAILABLE" &&
+      current.state !== "UPDATE_AVAILABLE" &&
+      current.state !== "BROKEN"
+    ) {
       return current;
     }
     const executable = executablePath(this.rootDir, definition);
@@ -217,7 +223,9 @@ export class RuntimePackManager {
       (probe.version?.includes(definition.healthProbe.expectedVersion) ?? false);
     const next: RuntimePackInstallState = {
       ...current,
-      state: probe.ok && versionOk ? current.state : "BROKEN",
+      state: probe.ok && versionOk
+        ? (current.state === "UPDATE_AVAILABLE" ? "UPDATE_AVAILABLE" : "AVAILABLE")
+        : "BROKEN",
       health: {
         ok: probe.ok && versionOk,
         version: probe.version,
