@@ -9,6 +9,11 @@ import path from "path";
 import fs from "fs";
 import { CONFIG } from "@/lib/config";
 import { isAncloraWindowsRuntime } from "@/lib/runtime-platform";
+import {
+  RuntimePackManager,
+  currentRuntimePackArchitecture,
+  currentRuntimePackPlatform,
+} from "@/lib/runtime-packs";
 
 // Resolve the pdftoppm binary from a Poppler directory.
 // Windows Poppler distributions may place the binary in Library\bin\ or bin\.
@@ -352,6 +357,33 @@ export const toolchainProbe = {
         };
       })
     );
+    const runtimePackManager = new RuntimePackManager({
+      platform: currentRuntimePackPlatform(),
+      architecture: currentRuntimePackArchitecture(),
+    });
+    const chromiumPack = await runtimePackManager.probe("chromium-runtime");
+    results.push({
+      id: "runtime-pack:chromium-runtime",
+      displayName: "Chromium Runtime Pack",
+      status: chromiumPack.state === "AVAILABLE" || chromiumPack.state === "UPDATE_AVAILABLE"
+        ? "available"
+        : chromiumPack.state === "INCOMPATIBLE"
+          ? "unsupported-platform"
+          : chromiumPack.state === "BROKEN"
+            ? "broken"
+            : "missing",
+      available: chromiumPack.state === "AVAILABLE" || chromiumPack.state === "UPDATE_AVAILABLE",
+      version: chromiumPack.health.version ?? chromiumPack.version,
+      path: chromiumPack.executablePath,
+      error: chromiumPack.health.error ?? chromiumPack.error ?? null,
+      group: "runtime",
+      requiredFor: ["html-to-png", "html-to-tiff", "md-to-png", "md-to-tiff", "rst-to-png", "rst-to-tiff"],
+      recommendedAction: chromiumPack.state === "AVAILABLE"
+        ? null
+        : "Instala el runtime pack oficial chromium-runtime desde FileStudio.",
+      portableInclusion: "optional",
+      optionalDescription: "Renderizado HTML/Markdown/RST a PNG/TIFF mediante Chromium opcional versionado.",
+    });
 
     cacheAt = Date.now();
     cachedResults = results;

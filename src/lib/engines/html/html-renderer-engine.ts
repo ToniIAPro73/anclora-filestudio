@@ -114,6 +114,8 @@ export class HtmlRendererEngine implements ConversionEngine {
         binaryPath: null,
         capabilities: [],
         error: runtime.error,
+        requiredRuntimePacks: ["chromium-runtime"],
+        runtimeState: runtime.runtimePackState === "NOT_INSTALLED" ? "installable" : "unavailable",
       };
       return this._probeResult;
     }
@@ -124,6 +126,8 @@ export class HtmlRendererEngine implements ConversionEngine {
       version,
       binaryPath: `${runtime.binaryPath} (${runtime.source})`,
       capabilities: ["html-to-png", "html-to-tiff", "network-blocked", "javascript-disabled"],
+      requiredRuntimePacks: runtime.source === "runtime-pack" ? ["chromium-runtime"] : undefined,
+      runtimeState: "available",
     };
     return this._probeResult;
   }
@@ -144,8 +148,11 @@ export class HtmlRendererEngine implements ConversionEngine {
           ? "HTML estático → imagen PNG de página completa"
           : "HTML estático → PNG renderizado → TIFF LZW",
       lossProfile: "lossy",
-      state: probeResult.available ? "available" : "unavailable-tool",
+      state: probeResult.available ? "available" :
+        probeResult.runtimeState === "installable" ? "runtime-installable" : "unavailable-tool",
       unavailableReason: probeResult.available ? undefined : probeResult.error,
+      requiredRuntimePacks: ["chromium-runtime"],
+      runtimeState: probeResult.available ? "available" : (probeResult.runtimeState ?? "unavailable"),
       recommended: true,
       presets: [
         {
