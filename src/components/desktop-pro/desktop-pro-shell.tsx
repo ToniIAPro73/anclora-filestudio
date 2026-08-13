@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
 import {
   ArrowLeftRight,
@@ -39,7 +39,7 @@ import { VideoQualitySelectionSchema, type QualityProfile } from "@/lib/quality/
 import { DESKTOP_PRO_GROUPS, type DesktopProGroupId } from "@/lib/capabilities/desktop-capabilities";
 import { FILESTUDIO_BRAND } from "@/lib/filestudio-brand";
 import { getFormatByCanonicalId, normalizeFormatId } from "@/lib/domain/format-catalog";
-import type { UxConversionCategoryId, UxConversionModel } from "@/lib/ux-v3/conversion-ux-model";
+import { buildConversionUxModel, type UxConversionCategoryId, type UxConversionModel } from "@/lib/ux-v3/conversion-ux-model";
 import { t } from "@/i18n";
 
 export type DesktopTab = "home" | "convert" | "tools" | "history" | "diagnostics";
@@ -121,6 +121,7 @@ const TAB_ICONS: Record<DesktopTab, React.ReactNode> = {
 const TAB_ROUTES: Partial<Record<DesktopTab, string>> = {
   home: "/",
   convert: "/convert",
+  tools: "/tools",
   history: "/history",
   diagnostics: "/diagnostics",
 };
@@ -128,6 +129,7 @@ const TAB_ROUTES: Partial<Record<DesktopTab, string>> = {
 function tabFromPathname(pathname: string | null): DesktopTab | null {
   if (pathname === "/") return "home";
   if (pathname === "/convert") return "convert";
+  if (pathname === "/tools") return "tools";
   if (pathname === "/history") return "history";
   if (pathname === "/diagnostics") return "diagnostics";
   return null;
@@ -135,6 +137,7 @@ function tabFromPathname(pathname: string | null): DesktopTab | null {
 
 export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopTab }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<DesktopTab>(tabFromPathname(pathname) ?? initialTab);
   const [activeTool, setActiveTool] = useState<ToolWorkspaceId>(null);
   const [uxModel, setUxModel] = useState<UxConversionModel | null>(null);
@@ -193,7 +196,10 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
         if (!cancelled) setUxModel(data);
       })
       .catch((error) => {
-        if (!cancelled) setUxModelError(error instanceof Error ? error.message : "No se pudo cargar la matriz de UX.");
+        if (!cancelled) {
+          setUxModel(buildConversionUxModel("web", new Set(["browser", "data-ts"])));
+          setUxModelError(error instanceof Error ? error.message : "No se pudo cargar la matriz de UX.");
+        }
       });
     return () => {
       cancelled = true;
@@ -323,27 +329,30 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
   }, [activeTab, handleTabChange, pathname]);
 
   const handleOpenConvert = useCallback((_categoryId?: UxConversionCategoryId) => {
+    if (pathname !== "/convert") router.push("/convert");
     setActiveTab("convert");
     setActiveTool(null);
     setInitialConversionCategory(_categoryId);
     setSelectedTarget(null);
     setSelectedSource(null);
     resetFlow();
-  }, [resetFlow]);
+  }, [pathname, resetFlow, router]);
 
   const handleSelectTarget = useCallback((target: string, source?: string) => {
+    if (pathname !== "/convert") router.push("/convert");
     setSelectedTarget(target);
     setSelectedSource(source ? normalizeFormatId(source) : null);
     setActiveTab("convert");
     setActiveTool(null);
     resetFlow();
-  }, [resetFlow]);
+  }, [pathname, resetFlow, router]);
 
   const handleOpenTool = useCallback((toolId: string) => {
+    if (pathname !== "/tools") router.push("/tools");
     setActiveTab("tools");
     setActiveTool(toolId === "pdf" || toolId === "images" || toolId === "ocr" ? toolId : "structured");
     resetFlow();
-  }, [resetFlow]);
+  }, [pathname, resetFlow, router]);
 
   const handleAnalysisResult = useCallback((result: AnalysisResult) => {
     if (selectedSource) {
@@ -474,7 +483,7 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
         <nav className="mb-5 grid grid-cols-2 gap-2 rounded-lg border border-white/8 bg-[#13161b]/90 p-2 shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:grid-cols-5" aria-label="Navegación principal FileStudio">
           <DesktopTabButton id="home" href={TAB_ROUTES.home} active={activeTab === "home"} onClick={() => handleTabChange("home")} label="Inicio" />
           <DesktopTabButton id="convert" href={TAB_ROUTES.convert} active={activeTab === "convert"} onClick={() => handleTabChange("convert")} label={t("nav.convert")} />
-          <DesktopTabButton id="tools" active={activeTab === "tools"} onClick={() => handleTabChange("tools")} label="Herramientas" />
+          <DesktopTabButton id="tools" href={TAB_ROUTES.tools} active={activeTab === "tools"} onClick={() => handleTabChange("tools")} label="Herramientas" />
           <DesktopTabButton id="history" href={TAB_ROUTES.history} active={activeTab === "history"} onClick={() => handleTabChange("history")} label="Historial" />
           <DesktopTabButton id="diagnostics" href={TAB_ROUTES.diagnostics} active={activeTab === "diagnostics"} onClick={() => handleTabChange("diagnostics")} label="Diagnóstico" />
         </nav>

@@ -9,7 +9,7 @@ export function DesktopProRoutePage({ initialTab }: { initialTab: DesktopTab }) 
   if (isWebMode) {
     return (
       <div lang="es" className="min-h-screen bg-[#0d0f12] text-[#f4f1ea]">
-        <WebModeConverter />
+        <WebModeConverter initialTab={initialTab} />
       </div>
     );
   }

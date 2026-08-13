@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowLeftRight, Download, HelpCircle, History, Home, Stethoscope, Wrench } from "lucide-react";
 import { ExternalActionLink } from "@/components/web/external-action-link";
@@ -18,21 +20,37 @@ const windowsUrl = process.env.NEXT_PUBLIC_WINDOWS_DOWNLOAD_URL || "";
 const linuxUrl = process.env.NEXT_PUBLIC_LINUX_DOWNLOAD_URL || "";
 const supportUrl = process.env.NEXT_PUBLIC_SUPPORT_URL || "";
 
-type WebTab = "home" | "convert" | "tools" | "history" | "diagnostics";
+export type WebTab = "home" | "convert" | "tools" | "history" | "diagnostics";
 type ToolTab = "images" | "pdf" | "structured" | null;
 const WEB_UX_MODEL = buildConversionUxModel("web", new Set(["browser", "data-ts"]));
+const TAB_ROUTES: Record<WebTab, string> = {
+  home: "/",
+  convert: "/convert",
+  tools: "/tools",
+  history: "/history",
+  diagnostics: "/diagnostics",
+};
 
-export function WebToolsShell() {
-  const [tab, setTab] = useState<WebTab>("home");
+export function WebToolsShell({ initialTab = "home" }: { initialTab?: WebTab }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [tab, setTab] = useState<WebTab>(initialTab);
   const [toolTab, setToolTab] = useState<ToolTab>(null);
   const [target, setTarget] = useState<string | null>(null);
   const [initialCategory, setInitialCategory] = useState<UxConversionCategoryId | undefined>(undefined);
 
   const openConvert = (categoryId?: UxConversionCategoryId) => {
+    if (pathname !== "/convert") router.push("/convert");
     setInitialCategory(categoryId);
     setTarget(null);
     setToolTab(null);
     setTab("convert");
+  };
+
+  const openTools = () => {
+    if (pathname !== "/tools") router.push("/tools");
+    setTab("tools");
+    setToolTab(null);
   };
 
   return (
@@ -71,14 +89,14 @@ export function WebToolsShell() {
 
         <main className="space-y-5">
           <nav className="grid grid-cols-2 gap-2 rounded-lg border border-white/8 bg-[#13161b]/90 p-2 sm:grid-cols-5" aria-label="Navegación principal FileStudio Web">
-            <TopButton active={tab === "home"} onClick={() => setTab("home")} icon={<Home className="h-4 w-4" />}>Inicio</TopButton>
-            <TopButton active={tab === "convert"} onClick={() => openConvert()} icon={<ArrowLeftRight className="h-4 w-4" />}>Convertir</TopButton>
-            <TopButton active={tab === "tools"} onClick={() => { setTab("tools"); setToolTab(null); }} icon={<Wrench className="h-4 w-4" />}>Herramientas</TopButton>
-            <TopButton active={tab === "history"} onClick={() => setTab("history")} icon={<History className="h-4 w-4" />}>Historial</TopButton>
-            <TopButton active={tab === "diagnostics"} onClick={() => setTab("diagnostics")} icon={<Stethoscope className="h-4 w-4" />}>Diagnóstico</TopButton>
+            <TopButton href={TAB_ROUTES.home} active={tab === "home"} onClick={() => setTab("home")} icon={<Home className="h-4 w-4" />}>Inicio</TopButton>
+            <TopButton href={TAB_ROUTES.convert} active={tab === "convert"} onClick={() => openConvert()} icon={<ArrowLeftRight className="h-4 w-4" />}>Convertir</TopButton>
+            <TopButton href={TAB_ROUTES.tools} active={tab === "tools"} onClick={() => { setTab("tools"); setToolTab(null); }} icon={<Wrench className="h-4 w-4" />}>Herramientas</TopButton>
+            <TopButton href={TAB_ROUTES.history} active={tab === "history"} onClick={() => setTab("history")} icon={<History className="h-4 w-4" />}>Historial</TopButton>
+            <TopButton href={TAB_ROUTES.diagnostics} active={tab === "diagnostics"} onClick={() => setTab("diagnostics")} icon={<Stethoscope className="h-4 w-4" />}>Diagnóstico</TopButton>
           </nav>
 
-          {tab === "home" && <FileStudioHome model={WEB_UX_MODEL} onOpenConvert={openConvert} onOpenTools={() => setTab("tools")} />}
+          {tab === "home" && <FileStudioHome model={WEB_UX_MODEL} onOpenConvert={openConvert} onOpenTools={openTools} />}
           {tab === "convert" && !target && <ConversionHub model={WEB_UX_MODEL} selectedTarget={target} initialCategoryId={initialCategory} onSelectTarget={setTarget} />}
           {tab === "convert" && target && (
             <section className="rounded-lg border border-white/10 bg-[#13161b]/80 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-md sm:p-5">
@@ -112,17 +130,12 @@ export function WebToolsShell() {
   );
 }
 
-function TopButton({ active, onClick, icon, children }: { active: boolean; onClick: () => void; icon: React.ReactNode; children: React.ReactNode }) {
+function TopButton({ href, active, onClick, icon, children }: { href: string; active: boolean; onClick: () => void; icon: React.ReactNode; children: React.ReactNode }) {
+  const className = `flex min-h-11 items-center justify-center gap-2 rounded-md px-3 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60 ${active ? "bg-teal-300 text-[#071112]" : "border border-white/12 text-stone-300 hover:bg-white/6"}`;
   return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={active}
-      onClick={onClick}
-      className={`flex min-h-11 items-center justify-center gap-2 rounded-md px-3 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60 ${active ? "bg-teal-300 text-[#071112]" : "border border-white/12 text-stone-300 hover:bg-white/6"}`}
-    >
+    <Link href={href} role="tab" aria-selected={active} onClick={onClick} className={className}>
       {icon}
       {children}
-    </button>
+    </Link>
   );
 }
