@@ -138,7 +138,7 @@ describe("findConversionRoutes", () => {
     expect(best?.classification).toBe("multistep");
   });
 
-  it("applies the step penalty: direct > one intermediate > two intermediates", () => {
+  it("does not penalize steps in the score: equal-quality routes score equal (steps are a ranking tiebreaker)", () => {
     const graph = graphOf(
       edge("a", "d"),
       edge("a", "b"),
@@ -150,9 +150,10 @@ describe("findConversionRoutes", () => {
     const routes = findConversionRoutes(graph, "a", "d");
     const bySteps = new Map(routes.map((r) => [r.steps.length, r.score]));
 
-    expect(bySteps.get(1)).toBeCloseTo(1.0);
-    expect(bySteps.get(2)).toBeCloseTo(0.9);
-    expect(bySteps.get(3)).toBeCloseTo(0.8);
+    // Quality is identical across paths → identical score; step count only
+    // breaks the tie inside rankRoutes (SHORTER_EQUIVALENT_ROUTE).
+    expect(bySteps.get(1)).toBeCloseTo(bySteps.get(2)!);
+    expect(bySteps.get(2)).toBeCloseTo(bySteps.get(3)!);
   });
 });
 

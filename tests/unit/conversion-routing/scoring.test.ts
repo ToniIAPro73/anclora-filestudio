@@ -1,27 +1,28 @@
-// Unit tests for route scoring — weights, penalties, risk and quality bands.
+// Unit tests for route scoring — classification, risk, quality bands and the
+// quality-model score shim. Numeric behavior is covered in ranking.test.ts.
 
 import { describe, it, expect } from "vitest";
 import {
-  EDGE_QUALITY_WEIGHTS,
-  EXPERIMENTAL_EDGE_FACTOR,
-  STEP_PENALTIES,
   qualityBand,
   routeRisk,
   scoreConversionRoute,
 } from "../../../src/lib/conversion-routing/scoring";
+import { defaultEdgeQuality } from "../../../src/lib/conversion-routing/quality";
 import type { ConversionEdge, ConversionRoute } from "../../../src/lib/conversion-routing/types";
 
 function edge(over: Partial<ConversionEdge> = {}): ConversionEdge {
+  const lossProfile = over.lossProfile ?? "lossless";
   return {
     source: "a",
     target: "b",
     operationId: "op",
     engineId: "engine-a",
-    lossProfile: "lossless",
+    lossProfile,
     resourceProfile: "low",
     experimental: false,
     outputCardinality: "single",
     supportsAsIntermediate: true,
+    quality: over.quality ?? defaultEdgeQuality(lossProfile),
     ...over,
   };
 }
@@ -39,27 +40,33 @@ function route(over: Partial<ConversionRoute> = {}): ConversionRoute {
   };
 }
 
-describe("scoreConversionRoute", () => {
-  it("scores a direct lossless edge as 1.0", () => {
-    expect(scoreConversionRoute([edge()])).toBeCloseTo(1.0);
+describe("scoreConversionRoute (quality model)", () => {
+  it("scores a direct lossless edge high", () => {
+    expect(scoreConversionRoute([edge()])).toBeGreaterThan(0.8);
   });
 
-  it("multiplies edge weights across steps and applies the step penalty", () => {
-    const edges = [
+  it("bottleneck: a destructive step dominates the route score", () => {
+    const clean = scoreConversionRoute([edge({ lossProfile: "lossy-controlled" })]);
+    const chain = scoreConversionRoute([
       edge({ lossProfile: "lossy-controlled" }),
-      edge({ lossProfile: "lossy" }),
-    ];
-    const expected =
-      EDGE_QUALITY_WEIGHTS["lossy-controlled"] *
-      EDGE_QUALITY_WEIGHTS.lossy *
-      STEP_PENALTIES[1];
-    expect(scoreConversionRoute(edges)).toBeCloseTo(expected);
+      edge({ lossProfile: "structural-risk", target: "c" }),
+    ]);
+    expect(chain).toBeLessThan(clean);
   });
 
   it("penalizes experimental edges", () => {
     const plain = scoreConversionRoute([edge()]);
     const experimental = scoreConversionRoute([edge({ experimental: true })]);
-    expect(experimental).toBeCloseTo(plain * EXPERIMENTAL_EDGE_FACTOR);
+    expect(experimental).toBeLessThan(plain);
+  });
+
+  it("does NOT penalize extra steps when quality is equal (steps are a tiebreaker)", () => {
+    const one = scoreConversionRoute([edge({ quality: defaultEdgeQuality("lossless") })]);
+    const two = scoreConversionRoute([
+      edge(),
+      edge({ target: "c" }),
+    ]);
+    expect(two).toBeCloseTo(one);
   });
 
   it("returns 0 for an empty path", () => {

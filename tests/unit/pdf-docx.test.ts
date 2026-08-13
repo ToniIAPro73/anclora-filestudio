@@ -36,7 +36,7 @@ function makePdfDescriptor(name = "input.pdf"): UniversalFileDescriptor {
       hasEmbeddedFonts: true,
       isEncrypted: false,
       pdfVersion: "1.7",
-    } as UniversalFileDescriptor["attributes"],
+    } as unknown as UniversalFileDescriptor["attributes"],
     warnings: [],
     analyzedBy: [],
     analyzedAt: new Date().toISOString(),
@@ -59,12 +59,12 @@ const UNAVAILABLE_PROBE: EngineProbeResult = {
 };
 
 describe("PDFDOCX-UNIT-001 — single runtime resolution source", () => {
-  it("pdftotext resolves through the shared Poppler resolver, same runtime as pdftoppm", () => {
+  it("pdftotext resolves through the shared Poppler resolver, same runtime as pdftohtml", () => {
     const txt = resolvePopplerTool("pdftotext");
-    const ppm = resolvePopplerTool("pdftoppm");
+    const html = resolvePopplerTool("pdftohtml");
     expect(txt).toBeTruthy();
     // Same distribution directory → diagnostics/execution cannot diverge (§39).
-    expect(path.dirname(txt)).toBe(path.dirname(ppm));
+    expect(path.dirname(txt)).toBe(path.dirname(html));
   });
 
   it("canonical edge depends on libreoffice + pdftotext, not on a second resolver", () => {
