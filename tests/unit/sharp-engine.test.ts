@@ -7,6 +7,10 @@ import { SharpEngine } from "../../src/lib/engines/image/sharp-engine";
 import type { UniversalFileDescriptor, ImageAttributes } from "../../src/lib/domain/descriptors";
 import type { EngineProbeResult } from "../../src/lib/domain/engines";
 import crypto from "crypto";
+import fs from "fs";
+import os from "os";
+import path from "path";
+import sharp from "sharp";
 
 function makeImageDescriptor(
   fmt: string,
@@ -66,16 +70,18 @@ describe("SharpEngine — capabilities", () => {
     expect(engine.getCapabilities(desc, AVAILABLE_PROBE)).toHaveLength(0);
   });
 
-  it("returns 6 image outputs plus PDF for JPEG input", () => {
+  it("returns 7 image outputs plus PDF for JPEG input", () => {
     const caps = engine.getCapabilities(makeImageDescriptor("jpeg"), AVAILABLE_PROBE);
-    expect(caps.length).toBe(7);
+    expect(caps.length).toBe(8);
+    expect(caps.map((c) => c.outputFormat)).toContain("jpg");
     expect(caps.map((c) => c.outputFormat)).toContain("pdf");
   });
 
-  it("returns 6 image outputs plus PDF for PNG input (including self)", () => {
+  it("returns 7 image outputs plus PDF for PNG input (including self)", () => {
     const caps = engine.getCapabilities(makeImageDescriptor("png"), AVAILABLE_PROBE);
-    expect(caps.length).toBe(7);
+    expect(caps.length).toBe(8);
     expect(caps.map((c) => c.outputFormat)).toContain("png");
+    expect(caps.map((c) => c.outputFormat)).toContain("jpg");
     expect(caps.map((c) => c.outputFormat)).toContain("pdf");
   });
 
@@ -89,6 +95,8 @@ describe("SharpEngine — capabilities", () => {
     const caps = engine.getCapabilities(makeImageDescriptor("png"), AVAILABLE_PROBE);
     const jpeg = caps.find((c) => c.outputFormat === "jpeg");
     expect(jpeg?.lossProfile).toBe("lossy");
+    const jpg = caps.find((c) => c.outputFormat === "jpg");
+    expect(jpg?.lossProfile).toBe("lossy");
   });
 
   it("tags PNG as lossless", () => {
@@ -103,6 +111,9 @@ describe("SharpEngine — capabilities", () => {
     const jpeg = caps.find((c) => c.outputFormat === "jpeg");
     expect(jpeg?.warnings.length).toBeGreaterThan(0);
     expect(jpeg?.warnings[0]).toMatch(/transparencia/i);
+    const jpg = caps.find((c) => c.outputFormat === "jpg");
+    expect(jpg?.warnings.length).toBeGreaterThan(0);
+    expect(jpg?.warnings[0]).toMatch(/transparencia/i);
   });
 
   it("returns unavailable-tool when sharp not installed", () => {
@@ -152,5 +163,53 @@ describe("SharpEngine — capabilities", () => {
     const desc = makeImageDescriptor("svg");
     const caps = engine.getCapabilities(desc, AVAILABLE_PROBE);
     expect(caps).toHaveLength(0);
+  });
+
+  it("executes PNG to canonical JPG output as a JPEG file", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "sharp-jpg-"));
+    const inputPath = path.join(dir, "input.png");
+    const outputPath = path.join(dir, "output.jpg");
+
+    await sharp({
+      create: {
+        width: 8,
+        height: 8,
+        channels: 3,
+        background: "#2f6fed",
+      },
+    }).png().toFile(inputPath);
+
+    const result = await engine.execute({
+      jobId: "sharp-jpg-test",
+      engineId: "sharp-image",
+      operation: "convert-image",
+      inputPath,
+      outputPath,
+      outputFormat: "jpg",
+      options: {},
+      args: [],
+      env: {},
+      timeoutMs: 30_000,
+      estimatedSizeBytes: null,
+    });
+
+    expect(result.success).toBe(true);
+    const validation = await engine.validate(outputPath, {
+      jobId: "sharp-jpg-test",
+      engineId: "sharp-image",
+      operation: "convert-image",
+      inputPath,
+      outputPath,
+      outputFormat: "jpg",
+      options: {},
+      args: [],
+      env: {},
+      timeoutMs: 30_000,
+      estimatedSizeBytes: null,
+    });
+    expect(validation.valid).toBe(true);
+    expect((await sharp(outputPath).metadata()).format).toBe("jpeg");
+
+    fs.rmSync(dir, { recursive: true, force: true });
   });
 });

@@ -13,10 +13,11 @@ const ENGINE_ID: EngineId = "sharp-image";
 const MAX_MEGAPIXELS = 256;       // 16384×16384 pixels
 const MAX_ANIMATED_FRAMES = 200;
 const SUPPORTED_INPUT_FORMATS = new Set(["jpeg", "jpg", "png", "webp", "avif", "tiff", "gif"]);
-const SUPPORTED_OUTPUT_FORMATS = ["jpeg", "png", "webp", "avif", "tiff", "gif"] as const;
+const SUPPORTED_OUTPUT_FORMATS = ["jpg", "jpeg", "png", "webp", "avif", "tiff", "gif"] as const;
 // Image → PDF is certified for the Tier 1 subset (PNG/JPG/WEBP/TIFF inputs).
 const PDF_INPUT_FORMATS = new Set(["jpeg", "jpg", "png", "webp", "tiff"]);
 type OutputFormat = typeof SUPPORTED_OUTPUT_FORMATS[number];
+type SharpOutputFormat = Exclude<OutputFormat, "jpg">;
 
 interface ImageConversionOptions {
   format: OutputFormat;
@@ -32,9 +33,13 @@ interface ImageConversionOptions {
   animated?: boolean;
 }
 
+function normalizeOutputFormat(format: string): SharpOutputFormat {
+  return (format === "jpg" ? "jpeg" : format) as SharpOutputFormat;
+}
+
 function getMimeType(format: OutputFormat): string {
   const map: Record<OutputFormat, string> = {
-    jpeg: "image/jpeg", png: "image/png", webp: "image/webp",
+    jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp",
     avif: "image/avif", tiff: "image/tiff", gif: "image/gif",
   };
   return map[format];
@@ -53,7 +58,7 @@ function buildCapability(
   const presets = buildPresets(fmt, attrs);
   let recommended = false;
 
-  if (fmt === "jpeg" && hasAlpha) warnings.push("JPEG no soporta transparencia; el fondo se rellenará con blanco");
+  if ((fmt === "jpg" || fmt === "jpeg") && hasAlpha) warnings.push("JPEG no soporta transparencia; el fondo se rellenará con blanco");
   if (fmt === "gif" && !isAnimated) warnings.push("GIF es limitado a 256 colores; considera WebP o AVIF");
   if (fmt === "webp") recommended = true;
   if (fmt === "avif") warnings.push("AVIF tiene excelente compresión pero compatibilidad reducida en navegadores antiguos");
@@ -65,7 +70,7 @@ function buildCapability(
     outputMime: getMimeType(fmt),
     label: `Convertir a ${fmt.toUpperCase()}`,
     description: formatDescription(fmt),
-    lossProfile: ["jpeg", "webp", "avif"].includes(fmt) ? "lossy" : "lossless",
+    lossProfile: ["jpg", "jpeg", "webp", "avif"].includes(fmt) ? "lossy" : "lossless",
     state: available ? "available" : "unavailable-tool",
     recommended,
     presets,
@@ -77,6 +82,7 @@ function buildCapability(
 
 function formatDescription(fmt: OutputFormat): string {
   const d: Record<OutputFormat, string> = {
+    jpg: "Amplia compatibilidad, ideal para fotografías",
     jpeg: "Amplia compatibilidad, ideal para fotografías",
     png: "Sin pérdida con transparencia",
     webp: "Excelente compresión para web con transparencia",
@@ -88,7 +94,7 @@ function formatDescription(fmt: OutputFormat): string {
 }
 
 function buildPresets(fmt: OutputFormat, attrs: ImageAttributes): ConversionCapability["presets"] {
-  if (["jpeg", "webp"].includes(fmt)) {
+  if (["jpg", "jpeg", "webp"].includes(fmt)) {
     return [
       { id: `${fmt}-web`, label: "Web (80%)", quality: "80", description: "Buena relación calidad/tamaño", isRecommended: true },
       { id: `${fmt}-high`, label: "Alta calidad (90%)", quality: "90", description: "Mínima pérdida visual" },
@@ -200,7 +206,7 @@ export class SharpEngine implements ConversionEngine {
     try {
       const sharp = (await import("sharp")).default;
       const opts = plan.options as unknown as ImageConversionOptions;
-      const fmt = plan.outputFormat as OutputFormat;
+      const fmt = normalizeOutputFormat(plan.outputFormat);
 
       let pipeline = sharp(plan.inputPath, { animated: opts.animated ?? true });
 
@@ -369,7 +375,7 @@ export class SharpEngine implements ConversionEngine {
       checks.push({ name: "sharp-readable", passed: true, detail: `${meta.width}×${meta.height} ${meta.format}` });
       const formatMatches =
         meta.format === plan.outputFormat ||
-        (plan.outputFormat === "jpeg" && meta.format === "jpeg") ||
+        ((plan.outputFormat === "jpg" || plan.outputFormat === "jpeg") && meta.format === "jpeg") ||
         (plan.outputFormat === "avif" && meta.format === "heif" && actualMediaType === "image/avif");
       checks.push({ name: "format-matches", passed: formatMatches, detail: `${meta.format}${actualMediaType ? `/${actualMediaType}` : ""}` });
     } catch (err) {
