@@ -325,6 +325,57 @@ else
   (( FAIL++ )) || true
 fi
 
+# ── 7c. Next.js runtime metadata ─────────────────────────────────────────────
+echo ""
+echo "--- 7c. Next.js runtime metadata ---"
+REQUIRED_SERVER_FILES="$PKG/app/.next/required-server-files.json"
+if [[ -f "$REQUIRED_SERVER_FILES" ]]; then
+  if python3 -c "import json; json.load(open('$REQUIRED_SERVER_FILES', encoding='utf-8'))" 2>/dev/null; then
+    echo -e "${GREEN}[PASS]${NC} required-server-files.json is valid JSON"
+    (( PASS++ )) || true
+  else
+    echo -e "${RED}[FAIL]${NC} required-server-files.json is not valid JSON"
+    (( FAIL++ )) || true
+  fi
+
+  REQUIRED_SERVER_FILES_CHECK="$(python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF' 2>&1
+import json
+import pathlib
+import sys
+
+metadata_path = pathlib.Path(sys.argv[1])
+repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
+text = metadata_path.read_text(encoding="utf-8")
+data = json.loads(text)
+
+if repo_root in text:
+    raise SystemExit("contains repository root")
+
+for field in ("version", "config", "files"):
+    if field not in data:
+        raise SystemExit(f"missing field: {field}")
+
+for value in (data.get("appDir"), data.get("config", {}).get("outputFileTracingRoot"), data.get("config", {}).get("turbopack", {}).get("root")):
+    if isinstance(value, str) and value.startswith("/"):
+        raise SystemExit(f"absolute workspace-style metadata field: {value}")
+
+files = data.get("files")
+if not isinstance(files, list) or ".next/routes-manifest.json" not in files:
+    raise SystemExit("runtime files list is missing required Next.js manifests")
+PYEOF
+)"
+  if [[ -z "$REQUIRED_SERVER_FILES_CHECK" ]]; then
+    echo -e "${GREEN}[PASS]${NC} required-server-files.json keeps runtime metadata without workspace paths"
+    (( PASS++ )) || true
+  else
+    echo -e "${RED}[FAIL]${NC} required-server-files.json invalid: $REQUIRED_SERVER_FILES_CHECK"
+    (( FAIL++ )) || true
+  fi
+else
+  echo -e "${RED}[FAIL]${NC} required-server-files.json missing"
+  (( FAIL++ )) || true
+fi
+
 # ── 8. Security: no secrets, no .git, no dev paths ───────────────────────────
 echo ""
 echo "--- 8. Security ---"
@@ -346,15 +397,19 @@ else
   (( PASS++ )) || true
 fi
 
-DEV_PATHS_FOUND=0
-for launcher in "$PKG"/*.sh; do
-  if grep -qE "convertidor_youtube_mp3|/home/toni/projects|/home/antonio" "$launcher" 2>/dev/null; then
-    echo -e "${RED}[FAIL]${NC} Developer path in launcher: $(basename "$launcher")"
-    DEV_PATHS_FOUND=1
-    (( FAIL++ )) || true
-  fi
-done
-[[ "$DEV_PATHS_FOUND" -eq 0 ]] && { echo -e "${GREEN}[PASS]${NC} No developer paths in launchers"; (( PASS++ )) || true; }
+DEV_PATH_REGEX='(/home/[^[:space:]"'"'"'<>]*/[^[:space:]"'"'"'<>]*/anclora/|/workspace/anclora/|/home/toni/)'
+DEV_PATH_FOUND="$(LC_ALL=C grep -IRnE "$DEV_PATH_REGEX" "$PKG" \
+    --exclude-dir=data --exclude-dir=temp --exclude-dir=logs \
+    --exclude="*.node" --exclude="*.tar.zst" \
+    2>/dev/null | head -20 || true)"
+if [[ -n "$DEV_PATH_FOUND" ]]; then
+  echo "$DEV_PATH_FOUND"
+  echo -e "${RED}[FAIL]${NC} Developer workspace path found in package"
+  (( FAIL++ )) || true
+else
+  echo -e "${GREEN}[PASS]${NC} No developer workspace paths in package"
+  (( PASS++ )) || true
+fi
 
 # ── 9. Launchers: no network ports, 127.0.0.1 binding ────────────────────────
 echo ""

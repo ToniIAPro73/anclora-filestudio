@@ -167,6 +167,59 @@ else
   mkdir -p "$PACKAGE_DIR/app/public"
 fi
 
+info "Removing build-only path metadata..."
+find "$PACKAGE_DIR/app" \
+  \( -name "*.map" \
+  -o -name "*.nft.json" \
+  -o -name "trace" \
+  -o -name "turbopack-trace.json" \) \
+  -type f -delete 2>/dev/null || true
+ok "Build-only path metadata removed"
+
+REQUIRED_SERVER_FILES="$PACKAGE_DIR/app/.next/required-server-files.json"
+[[ -f "$REQUIRED_SERVER_FILES" ]] || die "Next.js runtime metadata missing: app/.next/required-server-files.json"
+python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF'
+import json
+import pathlib
+import sys
+
+metadata_path = pathlib.Path(sys.argv[1])
+repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
+
+with metadata_path.open("r", encoding="utf-8") as fh:
+    data = json.load(fh)
+
+config = data.get("config")
+if isinstance(config, dict):
+    if config.get("outputFileTracingRoot") == repo_root:
+        config["outputFileTracingRoot"] = "."
+    turbopack = config.get("turbopack")
+    if isinstance(turbopack, dict) and turbopack.get("root") == repo_root:
+        turbopack["root"] = "."
+
+if data.get("appDir") == repo_root:
+    data["appDir"] = "."
+
+encoded = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+if repo_root in encoded:
+    raise SystemExit("required-server-files.json still contains the build workspace path")
+
+metadata_path.write_text(encoded, encoding="utf-8")
+PYEOF
+ok "Next.js runtime metadata preserved and sanitized"
+
+python3 - "$PACKAGE_DIR/app/server.js" "$REPO_ROOT" << 'PYEOF'
+import pathlib
+import sys
+
+server_js = pathlib.Path(sys.argv[1])
+repo_root = sys.argv[2]
+source = server_js.read_text(encoding="utf-8")
+source = source.replace(repo_root, ".")
+server_js.write_text(source, encoding="utf-8")
+PYEOF
+ok "Standalone server metadata sanitized"
+
 # Minimal package.json for the standalone runtime
 node -e "
 const pkg = require('$REPO_ROOT/package.json');
@@ -721,16 +774,16 @@ SBOM
 # ── Verify no developer paths leaked ─────────────────────────────────────────
 info "Checking for developer path leakage..."
 
-# server.js embeds next config including outputFileTracingRoot — this is expected
-# but we must ensure launcher scripts don't have hardcoded paths
-DEV_PATHS_IN_LAUNCHERS=0
-for f in "$PACKAGE_DIR"/*.sh; do
-  if grep -qE "/home/[a-z]+/projects|convertidor_youtube|anclora-fileStudio" "$f" 2>/dev/null; then
-    warn "Developer path found in launcher: $f"
-    DEV_PATHS_IN_LAUNCHERS=1
-  fi
-done
-[[ "$DEV_PATHS_IN_LAUNCHERS" -eq 0 ]] && ok "No developer paths in launchers"
+DEV_PATH_REGEX='(/home/[^[:space:]"'"'"'<>]*/[^[:space:]"'"'"'<>]*/anclora/|/workspace/anclora/|/home/toni/)'
+DEV_PATH_FOUND="$(LC_ALL=C grep -IRnE "$DEV_PATH_REGEX" "$PACKAGE_DIR" \
+    --exclude-dir=data --exclude-dir=temp --exclude-dir=logs \
+    --exclude="*.node" --exclude="*.tar.zst" \
+    2>/dev/null | head -20 || true)"
+if [[ -n "$DEV_PATH_FOUND" ]]; then
+  echo "$DEV_PATH_FOUND"
+  die "Developer workspace path found in Linux portable package"
+fi
+ok "No developer workspace paths found in package"
 
 # ── Check: no .env.local or secrets ──────────────────────────────────────────
 find "$PACKAGE_DIR" \( -name ".env.local" -o -name ".env" -o -name "*.pem" -o -name "*.key" \) -type f 2>/dev/null | while read -r f; do
