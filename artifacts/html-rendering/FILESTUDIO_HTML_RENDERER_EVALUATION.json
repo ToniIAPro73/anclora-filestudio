@@ -1,0 +1,70 @@
+{
+  "date": "2026-08-13",
+  "selectedCandidate": "playwright-core + explicit Chromium runtime",
+  "newDependency": {
+    "yes": true,
+    "name": "playwright-core",
+    "version": "1.62.1",
+    "license": "Apache-2.0",
+    "installedSize": "14 MB",
+    "source": "npm package locked in pnpm-lock.yaml"
+  },
+  "runtime": {
+    "name": "Chrome for Testing / Chromium",
+    "playwrightRevision": "1234",
+    "browserVersion": "151.0.7922.34",
+    "linuxCachePath": "~/.cache/ms-playwright/chromium-1234/chrome-linux64/chrome",
+    "linuxCacheSize": "389 MB",
+    "linuxExecutableSha256": "0b20b130e7edd9dd51873be867761295fe0cfad490c2b9a64f95bd3cfc08fa71",
+    "coreStrategy": "Explicit runtime resolver; no personal Chrome dependency"
+  },
+  "candidates": [
+    {
+      "name": "Playwright Core + Chromium",
+      "type": "Node API plus browser runtime",
+      "quality": "high",
+      "css": "modern Chromium",
+      "fonts": "system/local allowed",
+      "svg": "native",
+      "security": "controllable",
+      "windows": "bundle strategy required",
+      "linux": "E2E passed",
+      "license": "Apache-2.0 wrapper; Chromium notices required",
+      "bundleSize": "14 MB JS + 389 MB observed Chromium",
+      "runtimeCost": "medium",
+      "maintenance": "active",
+      "decision": "ADOPT"
+    },
+    {
+      "name": "Raw headless Chromium CLI",
+      "decision": "REJECT",
+      "reason": "Equivalent quality but more custom process/security code"
+    },
+    {
+      "name": "Puppeteer / Puppeteer Core",
+      "decision": "REJECT",
+      "reason": "Comparable quality; introduces second automation stack"
+    },
+    {
+      "name": "node-html-to-image",
+      "decision": "REJECT",
+      "reason": "Puppeteer wrapper; does not reduce browser size or improve control"
+    },
+    {
+      "name": "wkhtmltoimage",
+      "decision": "REJECT",
+      "reason": "Stale Qt WebKit quality risk for modern CSS"
+    },
+    {
+      "name": "DOM/canvas libraries",
+      "decision": "REJECT",
+      "reason": "Not a standalone desktop file renderer"
+    },
+    {
+      "name": "System Chrome",
+      "decision": "INVESTIGATE",
+      "reason": "May be optional fallback, not reproducible core runtime"
+    }
+  ]
+}
+
