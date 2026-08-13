@@ -176,6 +176,15 @@ find "$PACKAGE_DIR/app" \
   -type f -delete 2>/dev/null || true
 ok "Build-only path metadata removed"
 
+# ── Supplement untraced Next.js runtime externals ────────────────────────────
+# Turbopack server chunks load Next.js runtime modules through dynamic external
+# requires (e.x("next/dist/...", ...)) that the NFT output tracer does not
+# follow. Copy any missing referenced module from the lockfile-installed
+# Next.js in the repository (fails the build if the source is unavailable).
+info "Checking Next.js runtime external references..."
+python3 "$SCRIPT_DIR/next-runtime-refs.py" fix "$PACKAGE_DIR/app" "$REPO_ROOT"
+ok "Next.js runtime externals complete"
+
 REQUIRED_SERVER_FILES="$PACKAGE_DIR/app/.next/required-server-files.json"
 [[ -f "$REQUIRED_SERVER_FILES" ]] || die "Next.js runtime metadata missing: app/.next/required-server-files.json"
 python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF'

@@ -376,6 +376,35 @@ else
   (( FAIL++ )) || true
 fi
 
+# ── 7d. Next.js runtime externals referenced by server chunks ────────────────
+# Regression guard: Turbopack chunks load Next.js runtime modules via dynamic
+# external requires that the NFT tracer misses. Every referenced next/dist
+# module must exist in app/node_modules.
+echo ""
+echo "--- 7d. Next.js runtime external references ---"
+NEXT_REFS_REPORT="$(python3 "$REPO_ROOT/scripts/next-runtime-refs.py" check "$PKG/app" 2>&1 || true)"
+NEXT_REFS_MISSING=0
+while IFS= read -r line; do
+  case "$line" in
+    "OK "*)
+      echo -e "${GREEN}[PASS]${NC} ${line#OK }"
+      (( PASS++ )) || true
+      ;;
+    "MISSING "*)
+      echo -e "${RED}[FAIL]${NC} missing referenced Next.js runtime module: ${line#MISSING }"
+      (( FAIL++ )) || true
+      NEXT_REFS_MISSING=$((NEXT_REFS_MISSING+1))
+      ;;
+  esac
+done <<< "$NEXT_REFS_REPORT"
+if [[ "$NEXT_REFS_MISSING" -eq 0 && "$NEXT_REFS_REPORT" == *"OK "* ]]; then
+  echo -e "${GREEN}[PASS]${NC} all referenced Next.js runtime modules present"
+  (( PASS++ )) || true
+elif [[ "$NEXT_REFS_REPORT" != *"OK "* ]]; then
+  echo -e "${RED}[FAIL]${NC} could not enumerate Next.js runtime references: $NEXT_REFS_REPORT"
+  (( FAIL++ )) || true
+fi
+
 # ── 8. Security: no secrets, no .git, no dev paths ───────────────────────────
 echo ""
 echo "--- 8. Security ---"

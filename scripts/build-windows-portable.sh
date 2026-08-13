@@ -497,6 +497,15 @@ print(f"  {copied} packages flattened to node_modules/")
 PYEOF
 ok "node_modules flattened"
 
+# ── Supplement untraced Next.js runtime externals ────────────────────────────
+# Turbopack server chunks load Next.js runtime modules through dynamic external
+# requires (e.x("next/dist/...", ...)) that the NFT output tracer does not
+# follow. Copy any missing referenced module from the lockfile-installed
+# Next.js in the repository (fails the build if the source is unavailable).
+info "Checking Next.js runtime external references..."
+python3 "$SCRIPT_DIR/next-runtime-refs.py" fix "$APP_DIR" "$REPO_ROOT"
+ok "Next.js runtime externals complete"
+
 # ── Fix truncated JS dependency stubs ────────────────────────────────────────
 # Next.js standalone traces its own bundled semver (next/dist/compiled/semver) and
 # leaves semver@7.8.1 as a stub in the pnpm flat namespace — only package.json,

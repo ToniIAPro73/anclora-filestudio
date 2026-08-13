@@ -162,6 +162,32 @@ for f in "${NATIVE_FILES[@]}"; do
   fi
 done
 
+# ── 6b. Next.js runtime externals referenced by server chunks ────────────────
+# Regression guard for the Windows native QA P0: Turbopack chunks load Next.js
+# runtime modules via dynamic external requires that the NFT tracer misses.
+# Every referenced next/dist module must exist in app/node_modules.
+info "Verificando módulos runtime de Next.js referenciados por los server chunks..."
+NEXT_REFS_REPORT="$(python3 "$REPO_ROOT/scripts/next-runtime-refs.py" check "$EXTRACTED/app" 2>&1 || true)"
+NEXT_REFS_MISSING=0
+while IFS= read -r line; do
+  case "$line" in
+    "OK "*)
+      ok "  ${line#OK }"
+      PASS=$((PASS+1))
+      ;;
+    "MISSING "*)
+      fail "  Falta módulo runtime referenciado: ${line#MISSING }"
+      NEXT_REFS_MISSING=$((NEXT_REFS_MISSING+1))
+      ;;
+  esac
+done <<< "$NEXT_REFS_REPORT"
+if [[ "$NEXT_REFS_MISSING" -eq 0 && "$NEXT_REFS_REPORT" == *"OK "* ]]; then
+  ok "  Todos los módulos runtime de Next.js referenciados existen en app/node_modules"
+  PASS=$((PASS+1))
+elif [[ "$NEXT_REFS_REPORT" != *"OK "* ]]; then
+  fail "  No se pudieron enumerar referencias runtime de Next.js: $NEXT_REFS_REPORT"
+fi
+
 # ── 7. semver — must NOT be a stub ───────────────────────────────────────────
 info "Verificando paquete semver completo..."
 

@@ -157,6 +157,84 @@ sharp('$TEST_PNG')
   fi
 fi
 
+# ── Runtime smoke: boot server and evaluate an App Route ────────────────────
+# Regression guard for the Next.js untraced runtime module P0: the failure
+# only appears when a route chunk is evaluated, so booting is not enough.
+echo ""
+echo "--- Runtime smoke (server boot + App Route evaluation) ---"
+
+if [[ ! -x "$NODE_BIN" ]]; then
+  echo "[FAIL] runtime/node not executable — cannot run server smoke"
+  (( FAIL++ )) || true
+else
+  SMOKE_PORT=3899
+  SMOKE_LOG="$TMP_DIR/server-smoke.log"
+  mkdir -p "$TMP_DIR/smoke-data" "$TMP_DIR/smoke-temp" "$TMP_DIR/smoke-logs"
+  (
+    cd "$PKG/app"
+    NODE_ENV=production PORT="$SMOKE_PORT" HOSTNAME=127.0.0.1 \
+      ANCLORA_FILESTUDIO_DATA_DIR="$TMP_DIR/smoke-data" \
+      ANCLORA_FILESTUDIO_TEMP_DIR="$TMP_DIR/smoke-temp" \
+      ANCLORA_FILESTUDIO_LOG_DIR="$TMP_DIR/smoke-logs" \
+      "$NODE_BIN" server.js >"$SMOKE_LOG" 2>&1 &
+    echo $! > "$TMP_DIR/server.pid"
+  )
+  SMOKE_PID="$(cat "$TMP_DIR/server.pid")"
+
+  READY=0
+  for _ in $(seq 1 30); do
+    if curl -fsS -o /dev/null "http://127.0.0.1:$SMOKE_PORT/api/health" 2>/dev/null; then
+      READY=1
+      break
+    fi
+    kill -0 "$SMOKE_PID" 2>/dev/null || break
+    sleep 1
+  done
+
+  if [[ "$READY" -eq 1 ]]; then
+    echo "[PASS] /api/health returned 200"
+
+    ROOT_CODE="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$SMOKE_PORT/")"
+    if [[ "$ROOT_CODE" == "200" ]]; then
+      echo "[PASS] GET / returned 200"
+    else
+      echo "[FAIL] GET / returned $ROOT_CODE"
+      (( FAIL++ )) || true
+    fi
+
+    # Any non-5xx status proves the App Route module was evaluated.
+    BATCH_CODE="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$SMOKE_PORT/api/batch")"
+    if [[ "$BATCH_CODE" -lt 500 ]]; then
+      echo "[PASS] GET /api/batch evaluated App Route (HTTP $BATCH_CODE)"
+    else
+      echo "[FAIL] GET /api/batch returned $BATCH_CODE — App Route evaluation failed"
+      (( FAIL++ )) || true
+    fi
+
+    if kill -0 "$SMOKE_PID" 2>/dev/null; then
+      echo "[PASS] Server alive after App Route evaluation"
+    else
+      echo "[FAIL] Server died during smoke"
+      (( FAIL++ )) || true
+    fi
+  else
+    echo "[FAIL] Server did not become ready on port $SMOKE_PORT"
+    tail -20 "$SMOKE_LOG" || true
+    (( FAIL++ )) || true
+  fi
+
+  if grep -qE "MODULE_NOT_FOUND|Failed to load external module|Cannot find module" "$SMOKE_LOG" 2>/dev/null; then
+    echo "[FAIL] Server log contains module load failure:"
+    grep -E "MODULE_NOT_FOUND|Failed to load external module|Cannot find module" "$SMOKE_LOG" | head -5
+    (( FAIL++ )) || true
+  elif [[ "$READY" -eq 1 ]]; then
+    echo "[PASS] No module load failure in server log"
+  fi
+
+  kill "$SMOKE_PID" 2>/dev/null || true
+  wait "$SMOKE_PID" 2>/dev/null || true
+fi
+
 echo ""
 if [[ "$FAIL" -gt 0 ]]; then
   echo "=== Smoke test FAILED ($FAIL issue(s)) ==="

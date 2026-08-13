@@ -248,6 +248,49 @@ try {
     }
     Write-Host ("[PASS] /api/health OK via " + $healthUrl)
 
+    # ── 5b. App Route evaluation (native QA P0 regression) ──────────────────
+    # The packaged server must actually evaluate an App Route: the missing
+    # next-server runtime module only surfaces when a route chunk is loaded.
+    Write-Host "[INFO] Requesting / (App Page)..."
+    $rootResp = Invoke-WebRequest -Uri ("http://127.0.0.1:" + $serverPort + "/") -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
+    if ($rootResp.StatusCode -ne 200) {
+        throw ("GET / status is not 200: " + $rootResp.StatusCode)
+    }
+    Write-Host "[PASS] GET / returned 200"
+
+    Write-Host "[INFO] Requesting /api/batch (App Route module evaluation)..."
+    $batchStatus = $null
+    try {
+        $batchResp = Invoke-WebRequest -Uri ("http://127.0.0.1:" + $serverPort + "/api/batch") -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
+        $batchStatus = [int]$batchResp.StatusCode
+    } catch {
+        $resp = $_.Exception.Response
+        if ($null -eq $resp) { throw ("GET /api/batch failed without HTTP response: " + $_.Exception.Message) }
+        $batchStatus = [int]$resp.StatusCode
+    }
+    # Any non-5xx HTTP status proves the App Route module was evaluated.
+    # 5xx here means the route module failed to load (e.g. MODULE_NOT_FOUND).
+    if ($batchStatus -ge 500) {
+        throw ("GET /api/batch returned " + $batchStatus + " — App Route evaluation failed")
+    }
+    Write-Host ("[PASS] GET /api/batch evaluated App Route (HTTP " + $batchStatus + ")")
+
+    $serverProcess = Get-Process -Id $serverPid -ErrorAction SilentlyContinue
+    if ($null -eq $serverProcess) {
+        throw "Server terminated after App Route evaluation"
+    }
+    Write-Host "[PASS] Server remains alive after App Route evaluation"
+
+    # Server stdout/stderr land in logs\app.log; scan every log for module
+    # load failures, not only error.log.
+    $logHits = Get-ChildItem -Path (Join-Path $PkgDir "logs") -Filter "*.log" -ErrorAction SilentlyContinue |
+        Select-String -Pattern "MODULE_NOT_FOUND", "Failed to load external module", "Cannot find module" -ErrorAction SilentlyContinue
+    if ($logHits) {
+        $logHits | ForEach-Object { Write-Host ("  LOG HIT: " + $_.Path + ": " + $_.Line.Trim()) }
+        throw "Server logs contain module load failure (MODULE_NOT_FOUND)"
+    }
+    Write-Host "[PASS] No module load failure in server logs"
+
     Start-Sleep -Seconds 2
     $serverProcess = Get-Process -Id $serverPid -ErrorAction SilentlyContinue
     if ($null -eq $serverProcess) {
