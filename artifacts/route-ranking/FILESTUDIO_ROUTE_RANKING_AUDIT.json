@@ -1,19 +1,22 @@
 {
-  "generatedAt": "2026-08-13T02:14:12.116Z",
+  "generatedAt": "2026-08-13T03:04:53.882Z",
   "environment": "linux",
   "engineIds": [
     "7z",
     "browser",
     "calibre",
+    "chromium",
     "data-ts",
     "ebook-convert",
     "ffmpeg",
     "ffmpeg-media",
+    "html-renderer",
     "libreoffice",
     "pandoc",
     "pdftohtml",
     "pdftoppm",
     "pdftotext",
+    "playwright-core",
     "poppler",
     "qpdf",
     "sevenzip",
@@ -21,10 +24,10 @@
     "sharp-image",
     "tesseract"
   ],
-  "totalReachablePairs": 403,
-  "multiRoutePairCount": 354,
-  "changedWinnerCount": 36,
-  "notRecommendedWinners": 6,
+  "totalReachablePairs": 407,
+  "multiRoutePairCount": 358,
+  "changedWinnerCount": 38,
+  "notRecommendedWinners": 2,
   "changedWinners": [
     {
       "pair": "avi→pdf",
@@ -161,14 +164,14 @@
       "routeCount": 10,
       "routes": [
         "doc→docx→html [0.659]",
+        "doc→docx→md→html [0.659]",
+        "doc→docx→rst→html [0.659]",
         "doc→odt→docx→html [0.659]",
         "doc→rtf→docx→html [0.659]",
         "doc→pdf→html [0.657]",
         "doc→docx→pdf→html [0.657]",
         "doc→odt→pdf→html [0.657]",
         "doc→rtf→pdf→html [0.657]",
-        "doc→docx→md→html [0.654]",
-        "doc→docx→rst→html [0.654]",
         "doc→docx→txt→html [0.292]"
       ],
       "legacyChoice": "doc→pdf→html",
@@ -190,10 +193,10 @@
         "docx→rst→txt [0.686]",
         "docx→html→md→txt [0.686]",
         "docx→html→rst→txt [0.686]",
-        "docx→md→html→txt [0.686]",
         "docx→md→rst→txt [0.686]",
-        "docx→rst→html→txt [0.686]",
         "docx→rst→md→txt [0.686]",
+        "docx→md→html→txt [0.686]",
+        "docx→rst→html→txt [0.686]",
         "docx→pdf→txt [0.666]",
         "docx→odt→pdf→txt [0.666]",
         "docx→odt→pdf→txt [0.666]",
@@ -303,12 +306,12 @@
       "routes": [
         "md→docx→epub [0.716]",
         "md→odt→docx→epub [0.716]",
-        "md→html→docx→epub [0.701]",
         "md→rst→docx→epub [0.701]",
-        "md→html→epub [0.688]",
+        "md→html→docx→epub [0.701]",
+        "md→html→epub [0.681]",
         "md→docx→html→epub [0.674]",
-        "md→rst→html→epub [0.674]",
         "md→tex→html→epub [0.674]",
+        "md→rst→html→epub [0.674]",
         "md→txt→html→epub [0.402]"
       ],
       "legacyChoice": "md→html→epub",
@@ -325,14 +328,15 @@
       "routeCount": 2,
       "routes": [
         "md→docx→epub→mobi [0.688]",
-        "md→html→epub→mobi [0.688]"
+        "md→html→epub→mobi [0.681]"
       ],
       "legacyChoice": "md→html→epub→mobi",
       "rankedChoice": "md→docx→epub→mobi",
       "rankedScore": 0.688,
       "rankedBand": "good",
       "reasons": [
-        "DETERMINISTIC_TIEBREAK"
+        "HIGHER_FIDELITY",
+        "AVOIDS_IRREVERSIBLE_LOSS"
       ],
       "changed": true
     },
@@ -341,14 +345,15 @@
       "routeCount": 2,
       "routes": [
         "md→docx→epub→azw3 [0.688]",
-        "md→html→epub→azw3 [0.688]"
+        "md→html→epub→azw3 [0.681]"
       ],
       "legacyChoice": "md→html→epub→azw3",
       "rankedChoice": "md→docx→epub→azw3",
       "rankedScore": 0.688,
       "rankedBand": "good",
       "reasons": [
-        "DETERMINISTIC_TIEBREAK"
+        "HIGHER_FIDELITY",
+        "AVOIDS_IRREVERSIBLE_LOSS"
       ],
       "changed": true
     },
@@ -433,12 +438,12 @@
       "routeCount": 8,
       "routes": [
         "odt→docx→html [0.659]",
+        "odt→docx→md→html [0.659]",
+        "odt→docx→rst→html [0.659]",
         "odt→rtf→docx→html [0.659]",
         "odt→pdf→html [0.657]",
         "odt→docx→pdf→html [0.657]",
         "odt→rtf→pdf→html [0.657]",
-        "odt→docx→md→html [0.654]",
-        "odt→docx→rst→html [0.654]",
         "odt→docx→txt→html [0.292]"
       ],
       "legacyChoice": "odt→pdf→html",
@@ -451,17 +456,129 @@
       "changed": true
     },
     {
+      "pair": "rst→docx",
+      "routeCount": 14,
+      "routes": [
+        "rst→html→docx [0.711]",
+        "rst→html→odt→docx [0.711]",
+        "rst→docx [0.707]",
+        "rst→md→docx [0.707]",
+        "rst→odt→docx [0.707]",
+        "rst→md→odt→docx [0.707]",
+        "rst→odt→rtf→docx [0.707]",
+        "rst→html→md→docx [0.701]",
+        "rst→md→html→docx [0.701]",
+        "rst→tex→html→docx [0.679]",
+        "rst→tex→md→docx [0.679]",
+        "rst→odt→pdf→docx [0.6]",
+        "rst→txt→md→docx [0.339]",
+        "rst→txt→html→docx [0.333]"
+      ],
+      "legacyChoice": "rst→docx",
+      "rankedChoice": "rst→html→docx",
+      "rankedScore": 0.711,
+      "rankedBand": "good",
+      "reasons": [
+        "SHORTER_EQUIVALENT_ROUTE",
+        "LOWER_RUNTIME_COST"
+      ],
+      "changed": true
+    },
+    {
+      "pair": "rst→odt",
+      "routeCount": 18,
+      "routes": [
+        "rst→html→odt [0.711]",
+        "rst→html→docx→odt [0.711]",
+        "rst→odt [0.707]",
+        "rst→md→odt [0.707]",
+        "rst→docx→odt [0.707]",
+        "rst→docx→rtf→odt [0.707]",
+        "rst→md→docx→odt [0.707]",
+        "rst→html→md→odt [0.701]",
+        "rst→md→html→odt [0.701]",
+        "rst→docx→odt [0.679]",
+        "rst→docx→html→odt [0.679]",
+        "rst→docx→md→odt [0.679]",
+        "rst→html→docx→odt [0.679]",
+        "rst→md→docx→odt [0.679]",
+        "rst→tex→html→odt [0.679]",
+        "rst→tex→md→odt [0.679]",
+        "rst→txt→md→odt [0.339]",
+        "rst→txt→html→odt [0.333]"
+      ],
+      "legacyChoice": "rst→odt",
+      "rankedChoice": "rst→html→odt",
+      "rankedScore": 0.711,
+      "rankedBand": "good",
+      "reasons": [
+        "SHORTER_EQUIVALENT_ROUTE",
+        "LOWER_RUNTIME_COST"
+      ],
+      "changed": true
+    },
+    {
+      "pair": "rst→rtf",
+      "routeCount": 9,
+      "routes": [
+        "rst→html→docx→rtf [0.711]",
+        "rst→html→odt→rtf [0.711]",
+        "rst→docx→rtf [0.707]",
+        "rst→odt→rtf [0.707]",
+        "rst→docx→odt→rtf [0.707]",
+        "rst→md→docx→rtf [0.707]",
+        "rst→md→odt→rtf [0.707]",
+        "rst→odt→docx→rtf [0.707]",
+        "rst→docx→odt→rtf [0.679]"
+      ],
+      "legacyChoice": "rst→docx→rtf",
+      "rankedChoice": "rst→html→docx→rtf",
+      "rankedScore": 0.711,
+      "rankedBand": "good",
+      "reasons": [
+        "DETERMINISTIC_TIEBREAK"
+      ],
+      "changed": true
+    },
+    {
+      "pair": "rst→pdf",
+      "routeCount": 13,
+      "routes": [
+        "rst→html→docx→pdf [0.679]",
+        "rst→html→odt→pdf [0.679]",
+        "rst→docx→pdf [0.674]",
+        "rst→odt→pdf [0.674]",
+        "rst→docx→odt→pdf [0.674]",
+        "rst→docx→rtf→pdf [0.674]",
+        "rst→md→docx→pdf [0.674]",
+        "rst→md→odt→pdf [0.674]",
+        "rst→odt→docx→pdf [0.674]",
+        "rst→odt→rtf→pdf [0.674]",
+        "rst→docx→odt→pdf [0.649]",
+        "rst→html→epub→pdf [0.598]",
+        "rst→docx→epub→pdf [0.581]"
+      ],
+      "legacyChoice": "rst→docx→pdf",
+      "rankedChoice": "rst→html→docx→pdf",
+      "rankedScore": 0.679,
+      "rankedBand": "good",
+      "reasons": [
+        "DETERMINISTIC_TIEBREAK"
+      ],
+      "changed": true
+    },
+    {
       "pair": "rst→epub",
       "routeCount": 9,
       "routes": [
         "rst→docx→epub [0.701]",
-        "rst→html→docx→epub [0.701]",
         "rst→md→docx→epub [0.701]",
         "rst→odt→docx→epub [0.701]",
-        "rst→html→epub [0.674]",
+        "rst→html→docx→epub [0.701]",
+        "rst→html→epub [0.681]",
         "rst→docx→html→epub [0.674]",
-        "rst→md→html→epub [0.674]",
         "rst→tex→html→epub [0.674]",
+        "rst→md→html→epub [0.674]",
         "rst→txt→html→epub [0.402]"
       ],
       "legacyChoice": "rst→html→epub",
@@ -470,38 +587,6 @@
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
-      ],
-      "changed": true
-    },
-    {
-      "pair": "rst→mobi",
-      "routeCount": 2,
-      "routes": [
-        "rst→docx→epub→mobi [0.674]",
-        "rst→html→epub→mobi [0.674]"
-      ],
-      "legacyChoice": "rst→html→epub→mobi",
-      "rankedChoice": "rst→docx→epub→mobi",
-      "rankedScore": 0.674,
-      "rankedBand": "good",
-      "reasons": [
-        "DETERMINISTIC_TIEBREAK"
-      ],
-      "changed": true
-    },
-    {
-      "pair": "rst→azw3",
-      "routeCount": 2,
-      "routes": [
-        "rst→docx→epub→azw3 [0.674]",
-        "rst→html→epub→azw3 [0.674]"
-      ],
-      "legacyChoice": "rst→html→epub→azw3",
-      "rankedChoice": "rst→docx→epub→azw3",
-      "rankedScore": 0.674,
-      "rankedBand": "good",
-      "reasons": [
-        "DETERMINISTIC_TIEBREAK"
       ],
       "changed": true
     },
@@ -532,12 +617,12 @@
       "routeCount": 8,
       "routes": [
         "rtf→docx→html [0.659]",
+        "rtf→docx→md→html [0.659]",
+        "rtf→docx→rst→html [0.659]",
         "rtf→odt→docx→html [0.659]",
         "rtf→pdf→html [0.657]",
         "rtf→docx→pdf→html [0.657]",
         "rtf→odt→pdf→html [0.657]",
-        "rtf→docx→md→html [0.654]",
-        "rtf→docx→rst→html [0.654]",
         "rtf→docx→txt→html [0.292]"
       ],
       "legacyChoice": "rtf→pdf→html",
@@ -660,8 +745,8 @@
         "tex→html→md→txt [0.686]",
         "tex→html→rst→txt [0.686]",
         "tex→md→docx→txt [0.686]",
-        "tex→md→html→txt [0.686]",
-        "tex→md→rst→txt [0.686]"
+        "tex→md→rst→txt [0.686]",
+        "tex→md→html→txt [0.686]"
       ],
       "legacyChoice": "tex→md→txt",
       "rankedChoice": "tex→html→txt",
@@ -1404,18 +1489,18 @@
       "pair": "avi→png",
       "routeCount": 8,
       "routes": [
-        "avi→gif→png [0.51]",
-        "avi→gif→tiff→png [0.51]",
-        "avi→mkv→gif→png [0.51]",
-        "avi→gif→avif→png [0.472]",
-        "avi→gif→jpg→png [0.472]",
-        "avi→gif→webp→png [0.472]",
-        "avi→mp4→gif→png [0.472]",
-        "avi→webm→gif→png [0.472]"
+        "avi→gif→png [0.576]",
+        "avi→gif→tiff→png [0.576]",
+        "avi→mkv→gif→png [0.576]",
+        "avi→gif→avif→png [0.533]",
+        "avi→gif→jpg→png [0.533]",
+        "avi→gif→webp→png [0.533]",
+        "avi→mp4→gif→png [0.533]",
+        "avi→webm→gif→png [0.533]"
       ],
       "legacyChoice": "avi→gif→png",
       "rankedChoice": "avi→gif→png",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -1470,18 +1555,18 @@
       "pair": "avi→tiff",
       "routeCount": 8,
       "routes": [
-        "avi→gif→tiff [0.51]",
-        "avi→gif→png→tiff [0.51]",
-        "avi→mkv→gif→tiff [0.51]",
-        "avi→gif→avif→tiff [0.472]",
-        "avi→gif→jpg→tiff [0.472]",
-        "avi→gif→webp→tiff [0.472]",
-        "avi→mp4→gif→tiff [0.472]",
-        "avi→webm→gif→tiff [0.472]"
+        "avi→gif→tiff [0.576]",
+        "avi→gif→png→tiff [0.576]",
+        "avi→mkv→gif→tiff [0.576]",
+        "avi→gif→avif→tiff [0.533]",
+        "avi→gif→jpg→tiff [0.533]",
+        "avi→gif→webp→tiff [0.533]",
+        "avi→mp4→gif→tiff [0.533]",
+        "avi→webm→gif→tiff [0.533]"
       ],
       "legacyChoice": "avi→gif→tiff",
       "rankedChoice": "avi→gif→tiff",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -1534,31 +1619,31 @@
       "pair": "avif→png",
       "routeCount": 20,
       "routes": [
-        "avif→png [0.915]",
-        "avif→tiff→png [0.915]",
-        "avif→webp→png [0.819]",
-        "avif→tiff→webp→png [0.819]",
-        "avif→webp→tiff→png [0.819]",
-        "avif→tiff→pdf→png [0.769]",
-        "avif→gif→png [0.723]",
-        "avif→gif→tiff→png [0.723]",
-        "avif→tiff→gif→png [0.723]",
-        "avif→webp→pdf→png [0.715]",
-        "avif→gif→jpg→png [0.669]",
-        "avif→gif→webp→png [0.669]",
-        "avif→webp→gif→png [0.669]",
-        "avif→jpg→png [0.63]",
-        "avif→jpg→tiff→png [0.63]",
-        "avif→tiff→jpg→png [0.63]",
-        "avif→jpg→webp→png [0.582]",
-        "avif→webp→jpg→png [0.582]",
-        "avif→jpg→pdf→png [0.542]",
-        "avif→jpg→gif→png [0.509]"
+        "avif→png [0.812]",
+        "avif→tiff→png [0.812]",
+        "avif→tiff→pdf→png [0.778]",
+        "avif→webp→png [0.746]",
+        "avif→tiff→webp→png [0.746]",
+        "avif→webp→tiff→png [0.746]",
+        "avif→jpg→png [0.742]",
+        "avif→jpg→tiff→png [0.742]",
+        "avif→tiff→jpg→png [0.742]",
+        "avif→jpg→pdf→png [0.724]",
+        "avif→webp→pdf→png [0.724]",
+        "avif→gif→png [0.719]",
+        "avif→gif→tiff→png [0.719]",
+        "avif→tiff→gif→png [0.719]",
+        "avif→jpg→webp→png [0.686]",
+        "avif→webp→jpg→png [0.686]",
+        "avif→gif→jpg→png [0.665]",
+        "avif→gif→webp→png [0.665]",
+        "avif→jpg→gif→png [0.665]",
+        "avif→webp→gif→png [0.665]"
       ],
       "legacyChoice": "avif→png",
       "rankedChoice": "avif→png",
-      "rankedScore": 0.915,
-      "rankedBand": "excellent",
+      "rankedScore": 0.812,
+      "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
       ],
@@ -1599,33 +1684,34 @@
       "pair": "avif→tiff",
       "routeCount": 20,
       "routes": [
-        "avif→tiff [0.925]",
-        "avif→png→tiff [0.915]",
-        "avif→webp→tiff [0.819]",
-        "avif→png→webp→tiff [0.819]",
-        "avif→webp→png→tiff [0.819]",
-        "avif→png→pdf→tiff [0.769]",
-        "avif→gif→tiff [0.723]",
-        "avif→gif→png→tiff [0.723]",
-        "avif→png→gif→tiff [0.723]",
-        "avif→webp→pdf→tiff [0.715]",
-        "avif→gif→jpg→tiff [0.669]",
-        "avif→gif→webp→tiff [0.669]",
-        "avif→webp→gif→tiff [0.669]",
-        "avif→jpg→tiff [0.63]",
-        "avif→jpg→png→tiff [0.63]",
-        "avif→png→jpg→tiff [0.63]",
-        "avif→jpg→webp→tiff [0.582]",
-        "avif→webp→jpg→tiff [0.582]",
-        "avif→jpg→pdf→tiff [0.542]",
-        "avif→jpg→gif→tiff [0.509]"
+        "avif→tiff [0.815]",
+        "avif→png→tiff [0.812]",
+        "avif→png→pdf→tiff [0.778]",
+        "avif→webp→tiff [0.746]",
+        "avif→png→webp→tiff [0.746]",
+        "avif→webp→png→tiff [0.746]",
+        "avif→jpg→tiff [0.742]",
+        "avif→jpg→png→tiff [0.742]",
+        "avif→png→jpg→tiff [0.742]",
+        "avif→jpg→pdf→tiff [0.724]",
+        "avif→webp→pdf→tiff [0.724]",
+        "avif→gif→tiff [0.719]",
+        "avif→gif→png→tiff [0.719]",
+        "avif→png→gif→tiff [0.719]",
+        "avif→jpg→webp→tiff [0.686]",
+        "avif→webp→jpg→tiff [0.686]",
+        "avif→gif→jpg→tiff [0.665]",
+        "avif→gif→webp→tiff [0.665]",
+        "avif→jpg→gif→tiff [0.665]",
+        "avif→webp→gif→tiff [0.665]"
       ],
       "legacyChoice": "avif→tiff",
       "rankedChoice": "avif→tiff",
-      "rankedScore": 0.925,
-      "rankedBand": "excellent",
+      "rankedScore": 0.815,
+      "rankedBand": "good",
       "reasons": [
-        "HIGHER_FIDELITY"
+        "HIGHER_FIDELITY",
+        "SHORTER_EQUIVALENT_ROUTE"
       ],
       "changed": false
     },
@@ -1965,16 +2051,17 @@
     },
     {
       "pair": "doc→png",
-      "routeCount": 4,
+      "routeCount": 5,
       "routes": [
-        "doc→pdf→png [0.74]",
-        "doc→docx→pdf→png [0.74]",
-        "doc→odt→pdf→png [0.74]",
-        "doc→rtf→pdf→png [0.74]"
+        "doc→pdf→png [0.778]",
+        "doc→docx→pdf→png [0.778]",
+        "doc→odt→pdf→png [0.778]",
+        "doc→rtf→pdf→png [0.778]",
+        "doc→docx→html→png [0.574]"
       ],
       "legacyChoice": "doc→pdf→png",
       "rankedChoice": "doc→pdf→png",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -1983,16 +2070,17 @@
     },
     {
       "pair": "doc→tiff",
-      "routeCount": 4,
+      "routeCount": 5,
       "routes": [
-        "doc→pdf→tiff [0.74]",
-        "doc→docx→pdf→tiff [0.74]",
-        "doc→odt→pdf→tiff [0.74]",
-        "doc→rtf→pdf→tiff [0.74]"
+        "doc→pdf→tiff [0.778]",
+        "doc→docx→pdf→tiff [0.778]",
+        "doc→odt→pdf→tiff [0.778]",
+        "doc→rtf→pdf→tiff [0.778]",
+        "doc→docx→html→tiff [0.534]"
       ],
       "legacyChoice": "doc→pdf→tiff",
       "rankedChoice": "doc→pdf→tiff",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -2138,14 +2226,14 @@
       "routeCount": 10,
       "routes": [
         "doc→docx→html [0.659]",
+        "doc→docx→md→html [0.659]",
+        "doc→docx→rst→html [0.659]",
         "doc→odt→docx→html [0.659]",
         "doc→rtf→docx→html [0.659]",
         "doc→pdf→html [0.657]",
         "doc→docx→pdf→html [0.657]",
         "doc→odt→pdf→html [0.657]",
         "doc→rtf→pdf→html [0.657]",
-        "doc→docx→md→html [0.654]",
-        "doc→docx→rst→html [0.654]",
         "doc→docx→txt→html [0.292]"
       ],
       "legacyChoice": "doc→pdf→html",
@@ -2194,17 +2282,21 @@
     },
     {
       "pair": "docx→png",
-      "routeCount": 5,
+      "routeCount": 9,
       "routes": [
-        "docx→pdf→png [0.74]",
-        "docx→odt→pdf→png [0.74]",
-        "docx→rtf→pdf→png [0.74]",
-        "docx→epub→pdf→png [0.448]",
-        "docx→odt→pdf→png [0.448]"
+        "docx→pdf→png [0.778]",
+        "docx→odt→pdf→png [0.778]",
+        "docx→rtf→pdf→png [0.778]",
+        "docx→html→png [0.574]",
+        "docx→md→html→png [0.574]",
+        "docx→rst→html→png [0.574]",
+        "docx→odt→pdf→png [0.562]",
+        "docx→epub→pdf→png [0.56]",
+        "docx→txt→html→png [0.292]"
       ],
       "legacyChoice": "docx→pdf→png",
       "rankedChoice": "docx→pdf→png",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -2213,17 +2305,21 @@
     },
     {
       "pair": "docx→tiff",
-      "routeCount": 5,
+      "routeCount": 9,
       "routes": [
-        "docx→pdf→tiff [0.74]",
-        "docx→odt→pdf→tiff [0.74]",
-        "docx→rtf→pdf→tiff [0.74]",
-        "docx→epub→pdf→tiff [0.448]",
-        "docx→odt→pdf→tiff [0.448]"
+        "docx→pdf→tiff [0.778]",
+        "docx→odt→pdf→tiff [0.778]",
+        "docx→rtf→pdf→tiff [0.778]",
+        "docx→odt→pdf→tiff [0.562]",
+        "docx→epub→pdf→tiff [0.56]",
+        "docx→html→tiff [0.534]",
+        "docx→md→html→tiff [0.534]",
+        "docx→rst→html→tiff [0.534]",
+        "docx→txt→html→tiff [0.272]"
       ],
       "legacyChoice": "docx→pdf→tiff",
       "rankedChoice": "docx→pdf→tiff",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -2313,8 +2409,8 @@
       "routes": [
         "docx→epub [0.738]",
         "docx→html→epub [0.681]",
-        "docx→md→html→epub [0.674]",
-        "docx→rst→html→epub [0.674]",
+        "docx→md→html→epub [0.681]",
+        "docx→rst→html→epub [0.681]",
         "docx→txt→html→epub [0.402]"
       ],
       "legacyChoice": "docx→epub",
@@ -2371,10 +2467,10 @@
         "docx→rst→txt [0.686]",
         "docx→html→md→txt [0.686]",
         "docx→html→rst→txt [0.686]",
-        "docx→md→html→txt [0.686]",
         "docx→md→rst→txt [0.686]",
-        "docx→rst→html→txt [0.686]",
         "docx→rst→md→txt [0.686]",
+        "docx→md→html→txt [0.686]",
+        "docx→rst→html→txt [0.686]",
         "docx→pdf→txt [0.666]",
         "docx→odt→pdf→txt [0.666]",
         "docx→odt→pdf→txt [0.666]",
@@ -2395,11 +2491,11 @@
       "routeCount": 16,
       "routes": [
         "docx→html [0.659]",
+        "docx→md→html [0.659]",
+        "docx→rst→html [0.659]",
         "docx→pdf→html [0.657]",
         "docx→odt→pdf→html [0.657]",
         "docx→rtf→pdf→html [0.657]",
-        "docx→md→html [0.654]",
-        "docx→rst→html [0.654]",
         "docx→md→rst→html [0.654]",
         "docx→md→tex→html [0.654]",
         "docx→rst→md→html [0.654]",
@@ -2416,11 +2512,7 @@
       "rankedScore": 0.659,
       "rankedBand": "good",
       "reasons": [
-        "HIGHER_FIDELITY",
-        "PRESERVES_TABLES",
-        "AVOIDS_LOSSY_INTERMEDIATE",
-        "SHORTER_EQUIVALENT_ROUTE",
-        "LOWER_RUNTIME_COST"
+        "SHORTER_EQUIVALENT_ROUTE"
       ],
       "changed": false
     },
@@ -2626,31 +2718,31 @@
       "pair": "gif→png",
       "routeCount": 20,
       "routes": [
-        "gif→png [0.915]",
-        "gif→tiff→png [0.915]",
-        "gif→avif→png [0.819]",
-        "gif→webp→png [0.819]",
-        "gif→avif→tiff→png [0.819]",
-        "gif→tiff→avif→png [0.819]",
-        "gif→tiff→webp→png [0.819]",
-        "gif→webp→tiff→png [0.819]",
-        "gif→jpg→png [0.787]",
-        "gif→jpg→tiff→png [0.787]",
-        "gif→tiff→pdf→png [0.769]",
-        "gif→avif→webp→png [0.757]",
-        "gif→webp→avif→png [0.757]",
-        "gif→jpg→avif→png [0.728]",
-        "gif→jpg→webp→png [0.728]",
-        "gif→webp→pdf→png [0.715]",
-        "gif→jpg→pdf→png [0.699]",
-        "gif→tiff→jpg→png [0.63]",
-        "gif→avif→jpg→png [0.582]",
-        "gif→webp→jpg→png [0.582]"
+        "gif→png [0.812]",
+        "gif→tiff→png [0.812]",
+        "gif→tiff→pdf→png [0.778]",
+        "gif→avif→png [0.746]",
+        "gif→webp→png [0.746]",
+        "gif→avif→tiff→png [0.746]",
+        "gif→tiff→avif→png [0.746]",
+        "gif→tiff→webp→png [0.746]",
+        "gif→webp→tiff→png [0.746]",
+        "gif→tiff→jpg→png [0.742]",
+        "gif→jpg→png [0.737]",
+        "gif→jpg→tiff→png [0.737]",
+        "gif→webp→pdf→png [0.724]",
+        "gif→jpg→pdf→png [0.719]",
+        "gif→avif→webp→png [0.69]",
+        "gif→webp→avif→png [0.69]",
+        "gif→avif→jpg→png [0.686]",
+        "gif→webp→jpg→png [0.686]",
+        "gif→jpg→avif→png [0.681]",
+        "gif→jpg→webp→png [0.681]"
       ],
       "legacyChoice": "gif→png",
       "rankedChoice": "gif→png",
-      "rankedScore": 0.915,
-      "rankedBand": "excellent",
+      "rankedScore": 0.812,
+      "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
       ],
@@ -2722,33 +2814,34 @@
       "pair": "gif→tiff",
       "routeCount": 20,
       "routes": [
-        "gif→tiff [0.925]",
-        "gif→png→tiff [0.915]",
-        "gif→avif→tiff [0.819]",
-        "gif→webp→tiff [0.819]",
-        "gif→avif→png→tiff [0.819]",
-        "gif→png→avif→tiff [0.819]",
-        "gif→png→webp→tiff [0.819]",
-        "gif→webp→png→tiff [0.819]",
-        "gif→jpg→tiff [0.787]",
-        "gif→jpg→png→tiff [0.787]",
-        "gif→png→pdf→tiff [0.769]",
-        "gif→avif→webp→tiff [0.757]",
-        "gif→webp→avif→tiff [0.757]",
-        "gif→jpg→avif→tiff [0.728]",
-        "gif→jpg→webp→tiff [0.728]",
-        "gif→webp→pdf→tiff [0.715]",
-        "gif→jpg→pdf→tiff [0.699]",
-        "gif→png→jpg→tiff [0.63]",
-        "gif→avif→jpg→tiff [0.582]",
-        "gif→webp→jpg→tiff [0.582]"
+        "gif→tiff [0.815]",
+        "gif→png→tiff [0.812]",
+        "gif→png→pdf→tiff [0.778]",
+        "gif→avif→tiff [0.746]",
+        "gif→webp→tiff [0.746]",
+        "gif→avif→png→tiff [0.746]",
+        "gif→png→avif→tiff [0.746]",
+        "gif→png→webp→tiff [0.746]",
+        "gif→webp→png→tiff [0.746]",
+        "gif→png→jpg→tiff [0.742]",
+        "gif→jpg→tiff [0.737]",
+        "gif→jpg→png→tiff [0.737]",
+        "gif→webp→pdf→tiff [0.724]",
+        "gif→jpg→pdf→tiff [0.719]",
+        "gif→avif→webp→tiff [0.69]",
+        "gif→webp→avif→tiff [0.69]",
+        "gif→avif→jpg→tiff [0.686]",
+        "gif→webp→jpg→tiff [0.686]",
+        "gif→jpg→avif→tiff [0.681]",
+        "gif→jpg→webp→tiff [0.681]"
       ],
       "legacyChoice": "gif→tiff",
       "rankedChoice": "gif→tiff",
-      "rankedScore": 0.925,
-      "rankedBand": "excellent",
+      "rankedScore": 0.815,
+      "rankedBand": "good",
       "reasons": [
-        "HIGHER_FIDELITY"
+        "HIGHER_FIDELITY",
+        "SHORTER_EQUIVALENT_ROUTE"
       ],
       "changed": false
     },
@@ -2899,35 +2992,49 @@
     },
     {
       "pair": "html→png",
-      "routeCount": 3,
+      "routeCount": 4,
       "routes": [
-        "html→docx→pdf→png [0.448]",
-        "html→epub→pdf→png [0.448]",
-        "html→odt→pdf→png [0.448]"
+        "html→png [0.84]",
+        "html→docx→pdf→png [0.577]",
+        "html→odt→pdf→png [0.577]",
+        "html→epub→pdf→png [0.55]"
       ],
-      "legacyChoice": "html→docx→pdf→png",
-      "rankedChoice": "html→docx→pdf→png",
-      "rankedScore": 0.448,
-      "rankedBand": "not-recommended",
+      "legacyChoice": "html→png",
+      "rankedChoice": "html→png",
+      "rankedScore": 0.84,
+      "rankedBand": "good",
       "reasons": [
-        "HIGHER_STABILITY"
+        "HIGHER_FIDELITY",
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_IMAGES",
+        "PRESERVES_TABLES",
+        "PRESERVES_RESOLUTION",
+        "AVOIDS_LOSSY_INTERMEDIATE",
+        "CERTIFIED_ROUTE"
       ],
       "changed": false
     },
     {
       "pair": "html→tiff",
-      "routeCount": 3,
+      "routeCount": 4,
       "routes": [
-        "html→docx→pdf→tiff [0.448]",
-        "html→epub→pdf→tiff [0.448]",
-        "html→odt→pdf→tiff [0.448]"
+        "html→tiff [0.84]",
+        "html→docx→pdf→tiff [0.577]",
+        "html→odt→pdf→tiff [0.577]",
+        "html→epub→pdf→tiff [0.55]"
       ],
-      "legacyChoice": "html→docx→pdf→tiff",
-      "rankedChoice": "html→docx→pdf→tiff",
-      "rankedScore": 0.448,
-      "rankedBand": "not-recommended",
+      "legacyChoice": "html→tiff",
+      "rankedChoice": "html→tiff",
+      "rankedScore": 0.84,
+      "rankedBand": "good",
       "reasons": [
-        "HIGHER_STABILITY"
+        "HIGHER_FIDELITY",
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_IMAGES",
+        "PRESERVES_TABLES",
+        "PRESERVES_RESOLUTION",
+        "AVOIDS_LOSSY_INTERMEDIATE",
+        "CERTIFIED_ROUTE"
       ],
       "changed": false
     },
@@ -3167,31 +3274,31 @@
       "pair": "jpg→png",
       "routeCount": 20,
       "routes": [
-        "jpg→png [0.915]",
-        "jpg→tiff→png [0.915]",
-        "jpg→avif→png [0.819]",
-        "jpg→webp→png [0.819]",
-        "jpg→avif→tiff→png [0.819]",
-        "jpg→tiff→avif→png [0.819]",
-        "jpg→tiff→webp→png [0.819]",
-        "jpg→webp→tiff→png [0.819]",
-        "jpg→pdf→png [0.785]",
-        "jpg→tiff→pdf→png [0.769]",
-        "jpg→avif→webp→png [0.757]",
-        "jpg→webp→avif→png [0.757]",
-        "jpg→gif→png [0.723]",
-        "jpg→gif→tiff→png [0.723]",
-        "jpg→tiff→gif→png [0.723]",
-        "jpg→webp→pdf→png [0.715]",
-        "jpg→avif→gif→png [0.669]",
-        "jpg→gif→avif→png [0.669]",
-        "jpg→gif→webp→png [0.669]",
-        "jpg→webp→gif→png [0.669]"
+        "jpg→png [0.812]",
+        "jpg→tiff→png [0.812]",
+        "jpg→pdf→png [0.794]",
+        "jpg→tiff→pdf→png [0.778]",
+        "jpg→avif→png [0.746]",
+        "jpg→webp→png [0.746]",
+        "jpg→avif→tiff→png [0.746]",
+        "jpg→tiff→avif→png [0.746]",
+        "jpg→tiff→webp→png [0.746]",
+        "jpg→webp→tiff→png [0.746]",
+        "jpg→webp→pdf→png [0.724]",
+        "jpg→gif→png [0.719]",
+        "jpg→gif→tiff→png [0.719]",
+        "jpg→tiff→gif→png [0.719]",
+        "jpg→avif→webp→png [0.69]",
+        "jpg→webp→avif→png [0.69]",
+        "jpg→avif→gif→png [0.665]",
+        "jpg→gif→avif→png [0.665]",
+        "jpg→gif→webp→png [0.665]",
+        "jpg→webp→gif→png [0.665]"
       ],
       "legacyChoice": "jpg→png",
       "rankedChoice": "jpg→png",
-      "rankedScore": 0.915,
-      "rankedBand": "excellent",
+      "rankedScore": 0.812,
+      "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
       ],
@@ -3263,33 +3370,34 @@
       "pair": "jpg→tiff",
       "routeCount": 20,
       "routes": [
-        "jpg→tiff [0.925]",
-        "jpg→png→tiff [0.915]",
-        "jpg→avif→tiff [0.819]",
-        "jpg→webp→tiff [0.819]",
-        "jpg→avif→png→tiff [0.819]",
-        "jpg→png→avif→tiff [0.819]",
-        "jpg→png→webp→tiff [0.819]",
-        "jpg→webp→png→tiff [0.819]",
-        "jpg→pdf→tiff [0.769]",
-        "jpg→png→pdf→tiff [0.769]",
-        "jpg→avif→webp→tiff [0.757]",
-        "jpg→webp→avif→tiff [0.757]",
-        "jpg→gif→tiff [0.723]",
-        "jpg→gif→png→tiff [0.723]",
-        "jpg→png→gif→tiff [0.723]",
-        "jpg→webp→pdf→tiff [0.715]",
-        "jpg→avif→gif→tiff [0.669]",
-        "jpg→gif→avif→tiff [0.669]",
-        "jpg→gif→webp→tiff [0.669]",
-        "jpg→webp→gif→tiff [0.669]"
+        "jpg→tiff [0.815]",
+        "jpg→png→tiff [0.812]",
+        "jpg→pdf→tiff [0.778]",
+        "jpg→png→pdf→tiff [0.778]",
+        "jpg→avif→tiff [0.746]",
+        "jpg→webp→tiff [0.746]",
+        "jpg→avif→png→tiff [0.746]",
+        "jpg→png→avif→tiff [0.746]",
+        "jpg→png→webp→tiff [0.746]",
+        "jpg→webp→png→tiff [0.746]",
+        "jpg→webp→pdf→tiff [0.724]",
+        "jpg→gif→tiff [0.719]",
+        "jpg→gif→png→tiff [0.719]",
+        "jpg→png→gif→tiff [0.719]",
+        "jpg→avif→webp→tiff [0.69]",
+        "jpg→webp→avif→tiff [0.69]",
+        "jpg→avif→gif→tiff [0.665]",
+        "jpg→gif→avif→tiff [0.665]",
+        "jpg→gif→webp→tiff [0.665]",
+        "jpg→webp→gif→tiff [0.665]"
       ],
       "legacyChoice": "jpg→tiff",
       "rankedChoice": "jpg→tiff",
-      "rankedScore": 0.925,
-      "rankedBand": "excellent",
+      "rankedScore": 0.815,
+      "rankedBand": "good",
       "reasons": [
-        "HIGHER_FIDELITY"
+        "HIGHER_FIDELITY",
+        "SHORTER_EQUIVALENT_ROUTE"
       ],
       "changed": false
     },
@@ -3724,33 +3832,53 @@
     },
     {
       "pair": "md→png",
-      "routeCount": 2,
+      "routeCount": 7,
       "routes": [
-        "md→docx→pdf→png [0.448]",
-        "md→odt→pdf→png [0.448]"
+        "md→html→png [0.781]",
+        "md→rst→html→png [0.588]",
+        "md→docx→pdf→png [0.572]",
+        "md→odt→pdf→png [0.572]",
+        "md→docx→html→png [0.564]",
+        "md→tex→html→png [0.564]",
+        "md→txt→html→png [0.296]"
       ],
-      "legacyChoice": "md→docx→pdf→png",
-      "rankedChoice": "md→docx→pdf→png",
-      "rankedScore": 0.448,
-      "rankedBand": "not-recommended",
+      "legacyChoice": "md→html→png",
+      "rankedChoice": "md→html→png",
+      "rankedScore": 0.781,
+      "rankedBand": "good",
       "reasons": [
-        "DETERMINISTIC_TIEBREAK"
+        "HIGHER_FIDELITY",
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_IMAGES",
+        "PRESERVES_TABLES",
+        "AVOIDS_LOSSY_INTERMEDIATE",
+        "CERTIFIED_ROUTE"
       ],
       "changed": false
     },
     {
       "pair": "md→tiff",
-      "routeCount": 2,
+      "routeCount": 7,
       "routes": [
-        "md→docx→pdf→tiff [0.448]",
-        "md→odt→pdf→tiff [0.448]"
+        "md→html→tiff [0.726]",
+        "md→docx→pdf→tiff [0.572]",
+        "md→odt→pdf→tiff [0.572]",
+        "md→rst→html→tiff [0.546]",
+        "md→docx→html→tiff [0.525]",
+        "md→tex→html→tiff [0.525]",
+        "md→txt→html→tiff [0.275]"
       ],
-      "legacyChoice": "md→docx→pdf→tiff",
-      "rankedChoice": "md→docx→pdf→tiff",
-      "rankedScore": 0.448,
-      "rankedBand": "not-recommended",
+      "legacyChoice": "md→html→tiff",
+      "rankedChoice": "md→html→tiff",
+      "rankedScore": 0.726,
+      "rankedBand": "good",
       "reasons": [
-        "DETERMINISTIC_TIEBREAK"
+        "HIGHER_FIDELITY",
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_IMAGES",
+        "PRESERVES_TABLES",
+        "AVOIDS_LOSSY_INTERMEDIATE",
+        "CERTIFIED_ROUTE"
       ],
       "changed": false
     },
@@ -3761,12 +3889,12 @@
         "md→docx [0.714]",
         "md→odt→docx [0.714]",
         "md→odt→rtf→docx [0.714]",
+        "md→html→docx [0.711]",
+        "md→html→odt→docx [0.711]",
         "md→rst→docx [0.707]",
         "md→rst→odt→docx [0.707]",
-        "md→html→docx [0.701]",
         "md→html→rst→docx [0.701]",
         "md→rst→html→docx [0.701]",
-        "md→html→odt→docx [0.701]",
         "md→tex→html→docx [0.679]",
         "md→odt→pdf→docx [0.6]",
         "md→txt→html→docx [0.333]"
@@ -3788,12 +3916,12 @@
         "md→odt [0.714]",
         "md→docx→odt [0.714]",
         "md→docx→rtf→odt [0.714]",
+        "md→html→odt [0.711]",
+        "md→html→docx→odt [0.711]",
         "md→rst→odt [0.707]",
         "md→rst→docx→odt [0.707]",
-        "md→html→odt [0.701]",
         "md→html→rst→odt [0.701]",
         "md→rst→html→odt [0.701]",
-        "md→html→docx→odt [0.701]",
         "md→docx→odt [0.679]",
         "md→docx→html→odt [0.679]",
         "md→docx→rst→odt [0.679]",
@@ -3820,10 +3948,10 @@
         "md→odt→rtf [0.714]",
         "md→docx→odt→rtf [0.714]",
         "md→odt→docx→rtf [0.714]",
+        "md→html→docx→rtf [0.711]",
+        "md→html→odt→rtf [0.711]",
         "md→rst→docx→rtf [0.707]",
         "md→rst→odt→rtf [0.707]",
-        "md→html→docx→rtf [0.701]",
-        "md→html→odt→rtf [0.701]",
         "md→docx→odt→rtf [0.679]"
       ],
       "legacyChoice": "md→docx→rtf",
@@ -3845,13 +3973,13 @@
         "md→docx→rtf→pdf [0.681]",
         "md→odt→docx→pdf [0.681]",
         "md→odt→rtf→pdf [0.681]",
+        "md→html→docx→pdf [0.679]",
+        "md→html→odt→pdf [0.679]",
         "md→rst→docx→pdf [0.674]",
         "md→rst→odt→pdf [0.674]",
-        "md→html→docx→pdf [0.669]",
-        "md→html→odt→pdf [0.669]",
         "md→docx→odt→pdf [0.649]",
-        "md→docx→epub→pdf [0.581]",
-        "md→html→epub→pdf [0.581]"
+        "md→html→epub→pdf [0.598]",
+        "md→docx→epub→pdf [0.581]"
       ],
       "legacyChoice": "md→docx→pdf",
       "rankedChoice": "md→docx→pdf",
@@ -3868,12 +3996,12 @@
       "routes": [
         "md→docx→epub [0.716]",
         "md→odt→docx→epub [0.716]",
-        "md→html→docx→epub [0.701]",
         "md→rst→docx→epub [0.701]",
-        "md→html→epub [0.688]",
+        "md→html→docx→epub [0.701]",
+        "md→html→epub [0.681]",
         "md→docx→html→epub [0.674]",
-        "md→rst→html→epub [0.674]",
         "md→tex→html→epub [0.674]",
+        "md→rst→html→epub [0.674]",
         "md→txt→html→epub [0.402]"
       ],
       "legacyChoice": "md→html→epub",
@@ -3890,14 +4018,15 @@
       "routeCount": 2,
       "routes": [
         "md→docx→epub→mobi [0.688]",
-        "md→html→epub→mobi [0.688]"
+        "md→html→epub→mobi [0.681]"
       ],
       "legacyChoice": "md→html→epub→mobi",
       "rankedChoice": "md→docx→epub→mobi",
       "rankedScore": 0.688,
       "rankedBand": "good",
       "reasons": [
-        "DETERMINISTIC_TIEBREAK"
+        "HIGHER_FIDELITY",
+        "AVOIDS_IRREVERSIBLE_LOSS"
       ],
       "changed": true
     },
@@ -3906,14 +4035,15 @@
       "routeCount": 2,
       "routes": [
         "md→docx→epub→azw3 [0.688]",
-        "md→html→epub→azw3 [0.688]"
+        "md→html→epub→azw3 [0.681]"
       ],
       "legacyChoice": "md→html→epub→azw3",
       "rankedChoice": "md→docx→epub→azw3",
       "rankedScore": 0.688,
       "rankedBand": "good",
       "reasons": [
-        "DETERMINISTIC_TIEBREAK"
+        "HIGHER_FIDELITY",
+        "AVOIDS_IRREVERSIBLE_LOSS"
       ],
       "changed": true
     },
@@ -3924,15 +4054,15 @@
         "md→txt [0.7]",
         "md→rst→txt [0.7]",
         "md→docx→txt [0.686]",
-        "md→html→txt [0.686]",
         "md→docx→html→txt [0.686]",
         "md→docx→rst→txt [0.686]",
-        "md→html→docx→txt [0.686]",
-        "md→html→rst→txt [0.686]",
         "md→rst→docx→txt [0.686]",
-        "md→rst→html→txt [0.686]",
         "md→tex→html→txt [0.686]",
         "md→odt→docx→txt [0.686]",
+        "md→html→txt [0.686]",
+        "md→html→docx→txt [0.686]",
+        "md→html→rst→txt [0.686]",
+        "md→rst→html→txt [0.686]",
         "md→docx→pdf→txt [0.666]",
         "md→odt→pdf→txt [0.666]"
       ],
@@ -3949,8 +4079,8 @@
       "pair": "md→html",
       "routeCount": 13,
       "routes": [
-        "md→html [0.691]",
-        "md→rst→html [0.686]",
+        "md→html [0.893]",
+        "md→rst→html [0.691]",
         "md→docx→html [0.654]",
         "md→tex→html [0.654]",
         "md→docx→rst→html [0.654]",
@@ -3965,11 +4095,15 @@
       ],
       "legacyChoice": "md→html",
       "rankedChoice": "md→html",
-      "rankedScore": 0.691,
-      "rankedBand": "good",
+      "rankedScore": 0.893,
+      "rankedBand": "excellent",
       "reasons": [
+        "HIGHER_FIDELITY",
+        "HIGHER_LAYOUT_FIDELITY",
         "PRESERVES_TABLES",
-        "SHORTER_EQUIVALENT_ROUTE"
+        "PRESERVES_IMAGES",
+        "AVOIDS_LOSSY_INTERMEDIATE",
+        "CERTIFIED_ROUTE"
       ],
       "changed": false
     },
@@ -3978,7 +4112,7 @@
       "routeCount": 8,
       "routes": [
         "md→rst [0.714]",
-        "md→html→rst [0.701]",
+        "md→html→rst [0.711]",
         "md→docx→rst [0.679]",
         "md→docx→html→rst [0.679]",
         "md→html→docx→rst [0.679]",
@@ -3992,7 +4126,8 @@
       "rankedBand": "good",
       "reasons": [
         "HIGHER_FIDELITY",
-        "PRESERVES_TABLES"
+        "PRESERVES_TABLES",
+        "SHORTER_EQUIVALENT_ROUTE"
       ],
       "changed": false
     },
@@ -4380,17 +4515,17 @@
       "pair": "mkv→png",
       "routeCount": 7,
       "routes": [
-        "mkv→gif→png [0.51]",
-        "mkv→gif→tiff→png [0.51]",
-        "mkv→gif→avif→png [0.472]",
-        "mkv→gif→jpg→png [0.472]",
-        "mkv→gif→webp→png [0.472]",
-        "mkv→mp4→gif→png [0.472]",
-        "mkv→webm→gif→png [0.472]"
+        "mkv→gif→png [0.576]",
+        "mkv→gif→tiff→png [0.576]",
+        "mkv→gif→avif→png [0.533]",
+        "mkv→gif→jpg→png [0.533]",
+        "mkv→gif→webp→png [0.533]",
+        "mkv→mp4→gif→png [0.533]",
+        "mkv→webm→gif→png [0.533]"
       ],
       "legacyChoice": "mkv→gif→png",
       "rankedChoice": "mkv→gif→png",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -4443,17 +4578,17 @@
       "pair": "mkv→tiff",
       "routeCount": 7,
       "routes": [
-        "mkv→gif→tiff [0.51]",
-        "mkv→gif→png→tiff [0.51]",
-        "mkv→gif→avif→tiff [0.472]",
-        "mkv→gif→jpg→tiff [0.472]",
-        "mkv→gif→webp→tiff [0.472]",
-        "mkv→mp4→gif→tiff [0.472]",
-        "mkv→webm→gif→tiff [0.472]"
+        "mkv→gif→tiff [0.576]",
+        "mkv→gif→png→tiff [0.576]",
+        "mkv→gif→avif→tiff [0.533]",
+        "mkv→gif→jpg→tiff [0.533]",
+        "mkv→gif→webp→tiff [0.533]",
+        "mkv→mp4→gif→tiff [0.533]",
+        "mkv→webm→gif→tiff [0.533]"
       ],
       "legacyChoice": "mkv→gif→tiff",
       "rankedChoice": "mkv→gif→tiff",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -4948,18 +5083,18 @@
       "pair": "mov→png",
       "routeCount": 8,
       "routes": [
-        "mov→gif→png [0.51]",
-        "mov→gif→tiff→png [0.51]",
-        "mov→mkv→gif→png [0.51]",
-        "mov→gif→avif→png [0.472]",
-        "mov→gif→jpg→png [0.472]",
-        "mov→gif→webp→png [0.472]",
-        "mov→mp4→gif→png [0.472]",
-        "mov→webm→gif→png [0.472]"
+        "mov→gif→png [0.576]",
+        "mov→gif→tiff→png [0.576]",
+        "mov→mkv→gif→png [0.576]",
+        "mov→gif→avif→png [0.533]",
+        "mov→gif→jpg→png [0.533]",
+        "mov→gif→webp→png [0.533]",
+        "mov→mp4→gif→png [0.533]",
+        "mov→webm→gif→png [0.533]"
       ],
       "legacyChoice": "mov→gif→png",
       "rankedChoice": "mov→gif→png",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -5014,18 +5149,18 @@
       "pair": "mov→tiff",
       "routeCount": 8,
       "routes": [
-        "mov→gif→tiff [0.51]",
-        "mov→gif→png→tiff [0.51]",
-        "mov→mkv→gif→tiff [0.51]",
-        "mov→gif→avif→tiff [0.472]",
-        "mov→gif→jpg→tiff [0.472]",
-        "mov→gif→webp→tiff [0.472]",
-        "mov→mp4→gif→tiff [0.472]",
-        "mov→webm→gif→tiff [0.472]"
+        "mov→gif→tiff [0.576]",
+        "mov→gif→png→tiff [0.576]",
+        "mov→mkv→gif→tiff [0.576]",
+        "mov→gif→avif→tiff [0.533]",
+        "mov→gif→jpg→tiff [0.533]",
+        "mov→gif→webp→tiff [0.533]",
+        "mov→mp4→gif→tiff [0.533]",
+        "mov→webm→gif→tiff [0.533]"
       ],
       "legacyChoice": "mov→gif→tiff",
       "rankedChoice": "mov→gif→tiff",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -5596,17 +5731,17 @@
       "pair": "mp4→png",
       "routeCount": 7,
       "routes": [
-        "mp4→gif→png [0.51]",
-        "mp4→gif→tiff→png [0.51]",
-        "mp4→mkv→gif→png [0.51]",
-        "mp4→gif→avif→png [0.472]",
-        "mp4→gif→jpg→png [0.472]",
-        "mp4→gif→webp→png [0.472]",
-        "mp4→webm→gif→png [0.472]"
+        "mp4→gif→png [0.576]",
+        "mp4→gif→tiff→png [0.576]",
+        "mp4→mkv→gif→png [0.576]",
+        "mp4→gif→avif→png [0.533]",
+        "mp4→gif→jpg→png [0.533]",
+        "mp4→gif→webp→png [0.533]",
+        "mp4→webm→gif→png [0.533]"
       ],
       "legacyChoice": "mp4→gif→png",
       "rankedChoice": "mp4→gif→png",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -5659,17 +5794,17 @@
       "pair": "mp4→tiff",
       "routeCount": 7,
       "routes": [
-        "mp4→gif→tiff [0.51]",
-        "mp4→gif→png→tiff [0.51]",
-        "mp4→mkv→gif→tiff [0.51]",
-        "mp4→gif→avif→tiff [0.472]",
-        "mp4→gif→jpg→tiff [0.472]",
-        "mp4→gif→webp→tiff [0.472]",
-        "mp4→webm→gif→tiff [0.472]"
+        "mp4→gif→tiff [0.576]",
+        "mp4→gif→png→tiff [0.576]",
+        "mp4→mkv→gif→tiff [0.576]",
+        "mp4→gif→avif→tiff [0.533]",
+        "mp4→gif→jpg→tiff [0.533]",
+        "mp4→gif→webp→tiff [0.533]",
+        "mp4→webm→gif→tiff [0.533]"
       ],
       "legacyChoice": "mp4→gif→tiff",
       "rankedChoice": "mp4→gif→tiff",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -5717,15 +5852,16 @@
       "pair": "odp→png",
       "routeCount": 2,
       "routes": [
-        "odp→pdf→png [0.74]",
-        "odp→pptx→pdf→png [0.74]"
+        "odp→pdf→png [0.778]",
+        "odp→pptx→pdf→png [0.751]"
       ],
       "legacyChoice": "odp→pdf→png",
       "rankedChoice": "odp→pdf→png",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
-        "SHORTER_EQUIVALENT_ROUTE"
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_TABLES"
       ],
       "changed": false
     },
@@ -5733,15 +5869,16 @@
       "pair": "odp→tiff",
       "routeCount": 2,
       "routes": [
-        "odp→pdf→tiff [0.74]",
-        "odp→pptx→pdf→tiff [0.74]"
+        "odp→pdf→tiff [0.778]",
+        "odp→pptx→pdf→tiff [0.751]"
       ],
       "legacyChoice": "odp→pdf→tiff",
       "rankedChoice": "odp→pdf→tiff",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
-        "SHORTER_EQUIVALENT_ROUTE"
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_TABLES"
       ],
       "changed": false
     },
@@ -5816,12 +5953,12 @@
       "pair": "ods→png",
       "routeCount": 2,
       "routes": [
-        "ods→pdf→png [0.74]",
-        "ods→xlsx→pdf→png [0.74]"
+        "ods→pdf→png [0.778]",
+        "ods→xlsx→pdf→png [0.778]"
       ],
       "legacyChoice": "ods→pdf→png",
       "rankedChoice": "ods→pdf→png",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -5832,12 +5969,12 @@
       "pair": "ods→tiff",
       "routeCount": 2,
       "routes": [
-        "ods→pdf→tiff [0.74]",
-        "ods→xlsx→pdf→tiff [0.74]"
+        "ods→pdf→tiff [0.778]",
+        "ods→xlsx→pdf→tiff [0.778]"
       ],
       "legacyChoice": "ods→pdf→tiff",
       "rankedChoice": "ods→pdf→tiff",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -5910,15 +6047,16 @@
     },
     {
       "pair": "odt→png",
-      "routeCount": 3,
+      "routeCount": 4,
       "routes": [
-        "odt→pdf→png [0.74]",
-        "odt→docx→pdf→png [0.74]",
-        "odt→rtf→pdf→png [0.74]"
+        "odt→pdf→png [0.778]",
+        "odt→docx→pdf→png [0.778]",
+        "odt→rtf→pdf→png [0.778]",
+        "odt→docx→html→png [0.574]"
       ],
       "legacyChoice": "odt→pdf→png",
       "rankedChoice": "odt→pdf→png",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -5927,15 +6065,16 @@
     },
     {
       "pair": "odt→tiff",
-      "routeCount": 3,
+      "routeCount": 4,
       "routes": [
-        "odt→pdf→tiff [0.74]",
-        "odt→docx→pdf→tiff [0.74]",
-        "odt→rtf→pdf→tiff [0.74]"
+        "odt→pdf→tiff [0.778]",
+        "odt→docx→pdf→tiff [0.778]",
+        "odt→rtf→pdf→tiff [0.778]",
+        "odt→docx→html→tiff [0.534]"
       ],
       "legacyChoice": "odt→pdf→tiff",
       "rankedChoice": "odt→pdf→tiff",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -6043,12 +6182,12 @@
       "routeCount": 8,
       "routes": [
         "odt→docx→html [0.659]",
+        "odt→docx→md→html [0.659]",
+        "odt→docx→rst→html [0.659]",
         "odt→rtf→docx→html [0.659]",
         "odt→pdf→html [0.657]",
         "odt→docx→pdf→html [0.657]",
         "odt→rtf→pdf→html [0.657]",
-        "odt→docx→md→html [0.654]",
-        "odt→docx→rst→html [0.654]",
         "odt→docx→txt→html [0.292]"
       ],
       "legacyChoice": "odt→pdf→html",
@@ -6315,34 +6454,35 @@
       "pair": "png→tiff",
       "routeCount": 20,
       "routes": [
-        "png→tiff [0.925]",
-        "png→avif→tiff [0.819]",
-        "png→webp→tiff [0.819]",
-        "png→pdf→tiff [0.769]",
-        "png→avif→webp→tiff [0.757]",
-        "png→webp→avif→tiff [0.757]",
-        "png→gif→tiff [0.723]",
-        "png→webp→pdf→tiff [0.715]",
-        "png→avif→gif→tiff [0.669]",
-        "png→gif→avif→tiff [0.669]",
-        "png→gif→jpg→tiff [0.669]",
-        "png→gif→webp→tiff [0.669]",
-        "png→webp→gif→tiff [0.669]",
-        "png→jpg→tiff [0.63]",
-        "png→avif→jpg→tiff [0.582]",
-        "png→jpg→avif→tiff [0.582]",
-        "png→jpg→webp→tiff [0.582]",
-        "png→webp→jpg→tiff [0.582]",
-        "png→jpg→pdf→tiff [0.542]",
-        "png→jpg→gif→tiff [0.509]"
+        "png→tiff [0.815]",
+        "png→pdf→tiff [0.778]",
+        "png→avif→tiff [0.746]",
+        "png→webp→tiff [0.746]",
+        "png→jpg→tiff [0.742]",
+        "png→jpg→pdf→tiff [0.724]",
+        "png→webp→pdf→tiff [0.724]",
+        "png→gif→tiff [0.719]",
+        "png→avif→webp→tiff [0.69]",
+        "png→webp→avif→tiff [0.69]",
+        "png→avif→jpg→tiff [0.686]",
+        "png→jpg→avif→tiff [0.686]",
+        "png→jpg→webp→tiff [0.686]",
+        "png→webp→jpg→tiff [0.686]",
+        "png→avif→gif→tiff [0.665]",
+        "png→gif→avif→tiff [0.665]",
+        "png→gif→jpg→tiff [0.665]",
+        "png→gif→webp→tiff [0.665]",
+        "png→jpg→gif→tiff [0.665]",
+        "png→webp→gif→tiff [0.665]"
       ],
       "legacyChoice": "png→tiff",
       "rankedChoice": "png→tiff",
-      "rankedScore": 0.925,
-      "rankedBand": "excellent",
+      "rankedScore": 0.815,
+      "rankedBand": "good",
       "reasons": [
         "HIGHER_FIDELITY",
-        "AVOIDS_REENCODE"
+        "PRESERVES_RESOLUTION",
+        "LOWER_RUNTIME_COST"
       ],
       "changed": false
     },
@@ -6469,15 +6609,16 @@
       "pair": "ppt→png",
       "routeCount": 2,
       "routes": [
-        "ppt→pdf→png [0.74]",
-        "ppt→pptx→pdf→png [0.74]"
+        "ppt→pdf→png [0.778]",
+        "ppt→pptx→pdf→png [0.751]"
       ],
       "legacyChoice": "ppt→pdf→png",
       "rankedChoice": "ppt→pdf→png",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
-        "SHORTER_EQUIVALENT_ROUTE"
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_TABLES"
       ],
       "changed": false
     },
@@ -6485,15 +6626,16 @@
       "pair": "ppt→tiff",
       "routeCount": 2,
       "routes": [
-        "ppt→pdf→tiff [0.74]",
-        "ppt→pptx→pdf→tiff [0.74]"
+        "ppt→pdf→tiff [0.778]",
+        "ppt→pptx→pdf→tiff [0.751]"
       ],
       "legacyChoice": "ppt→pdf→tiff",
       "rankedChoice": "ppt→pdf→tiff",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
-        "SHORTER_EQUIVALENT_ROUTE"
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_TABLES"
       ],
       "changed": false
     },
@@ -6566,33 +6708,53 @@
     },
     {
       "pair": "rst→png",
-      "routeCount": 2,
+      "routeCount": 7,
       "routes": [
-        "rst→docx→pdf→png [0.448]",
-        "rst→odt→pdf→png [0.448]"
+        "rst→html→png [0.769]",
+        "rst→md→html→png [0.58]",
+        "rst→docx→pdf→png [0.564]",
+        "rst→odt→pdf→png [0.564]",
+        "rst→docx→html→png [0.564]",
+        "rst→tex→html→png [0.564]",
+        "rst→txt→html→png [0.296]"
       ],
-      "legacyChoice": "rst→docx→pdf→png",
-      "rankedChoice": "rst→docx→pdf→png",
-      "rankedScore": 0.448,
-      "rankedBand": "not-recommended",
+      "legacyChoice": "rst→html→png",
+      "rankedChoice": "rst→html→png",
+      "rankedScore": 0.769,
+      "rankedBand": "good",
       "reasons": [
-        "DETERMINISTIC_TIEBREAK"
+        "HIGHER_FIDELITY",
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_IMAGES",
+        "PRESERVES_TABLES",
+        "AVOIDS_LOSSY_INTERMEDIATE",
+        "CERTIFIED_ROUTE"
       ],
       "changed": false
     },
     {
       "pair": "rst→tiff",
-      "routeCount": 2,
+      "routeCount": 7,
       "routes": [
-        "rst→docx→pdf→tiff [0.448]",
-        "rst→odt→pdf→tiff [0.448]"
+        "rst→html→tiff [0.715]",
+        "rst→docx→pdf→tiff [0.564]",
+        "rst→odt→pdf→tiff [0.564]",
+        "rst→md→html→tiff [0.54]",
+        "rst→docx→html→tiff [0.525]",
+        "rst→tex→html→tiff [0.525]",
+        "rst→txt→html→tiff [0.275]"
       ],
-      "legacyChoice": "rst→docx→pdf→tiff",
-      "rankedChoice": "rst→docx→pdf→tiff",
-      "rankedScore": 0.448,
-      "rankedBand": "not-recommended",
+      "legacyChoice": "rst→html→tiff",
+      "rankedChoice": "rst→html→tiff",
+      "rankedScore": 0.715,
+      "rankedBand": "good",
       "reasons": [
-        "DETERMINISTIC_TIEBREAK"
+        "HIGHER_FIDELITY",
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_IMAGES",
+        "PRESERVES_TABLES",
+        "AVOIDS_LOSSY_INTERMEDIATE",
+        "CERTIFIED_ROUTE"
       ],
       "changed": false
     },
@@ -6600,15 +6762,15 @@
       "pair": "rst→docx",
       "routeCount": 14,
       "routes": [
+        "rst→html→docx [0.711]",
+        "rst→html→odt→docx [0.711]",
         "rst→docx [0.707]",
         "rst→md→docx [0.707]",
         "rst→odt→docx [0.707]",
         "rst→md→odt→docx [0.707]",
         "rst→odt→rtf→docx [0.707]",
-        "rst→html→docx [0.701]",
         "rst→html→md→docx [0.701]",
         "rst→md→html→docx [0.701]",
-        "rst→html→odt→docx [0.701]",
         "rst→tex→html→docx [0.679]",
         "rst→tex→md→docx [0.679]",
         "rst→odt→pdf→docx [0.6]",
@@ -6616,27 +6778,28 @@
         "rst→txt→html→docx [0.333]"
       ],
       "legacyChoice": "rst→docx",
-      "rankedChoice": "rst→docx",
-      "rankedScore": 0.707,
+      "rankedChoice": "rst→html→docx",
+      "rankedScore": 0.711,
       "rankedBand": "good",
       "reasons": [
-        "SHORTER_EQUIVALENT_ROUTE"
+        "SHORTER_EQUIVALENT_ROUTE",
+        "LOWER_RUNTIME_COST"
       ],
-      "changed": false
+      "changed": true
     },
     {
       "pair": "rst→odt",
       "routeCount": 18,
       "routes": [
+        "rst→html→odt [0.711]",
+        "rst→html→docx→odt [0.711]",
         "rst→odt [0.707]",
         "rst→md→odt [0.707]",
         "rst→docx→odt [0.707]",
         "rst→docx→rtf→odt [0.707]",
         "rst→md→docx→odt [0.707]",
-        "rst→html→odt [0.701]",
         "rst→html→md→odt [0.701]",
         "rst→md→html→odt [0.701]",
-        "rst→html→docx→odt [0.701]",
         "rst→docx→odt [0.679]",
         "rst→docx→html→odt [0.679]",
         "rst→docx→md→odt [0.679]",
@@ -6648,41 +6811,44 @@
         "rst→txt→html→odt [0.333]"
       ],
       "legacyChoice": "rst→odt",
-      "rankedChoice": "rst→odt",
-      "rankedScore": 0.707,
+      "rankedChoice": "rst→html→odt",
+      "rankedScore": 0.711,
       "rankedBand": "good",
       "reasons": [
-        "SHORTER_EQUIVALENT_ROUTE"
+        "SHORTER_EQUIVALENT_ROUTE",
+        "LOWER_RUNTIME_COST"
       ],
-      "changed": false
+      "changed": true
     },
     {
       "pair": "rst→rtf",
       "routeCount": 9,
       "routes": [
+        "rst→html→docx→rtf [0.711]",
+        "rst→html→odt→rtf [0.711]",
         "rst→docx→rtf [0.707]",
         "rst→odt→rtf [0.707]",
         "rst→docx→odt→rtf [0.707]",
         "rst→md→docx→rtf [0.707]",
         "rst→md→odt→rtf [0.707]",
         "rst→odt→docx→rtf [0.707]",
-        "rst→html→docx→rtf [0.701]",
-        "rst→html→odt→rtf [0.701]",
         "rst→docx→odt→rtf [0.679]"
       ],
       "legacyChoice": "rst→docx→rtf",
-      "rankedChoice": "rst→docx→rtf",
-      "rankedScore": 0.707,
+      "rankedChoice": "rst→html→docx→rtf",
+      "rankedScore": 0.711,
       "rankedBand": "good",
       "reasons": [
         "DETERMINISTIC_TIEBREAK"
       ],
-      "changed": false
+      "changed": true
     },
     {
       "pair": "rst→pdf",
       "routeCount": 13,
       "routes": [
+        "rst→html→docx→pdf [0.679]",
+        "rst→html→odt→pdf [0.679]",
         "rst→docx→pdf [0.674]",
         "rst→odt→pdf [0.674]",
         "rst→docx→odt→pdf [0.674]",
@@ -6691,33 +6857,31 @@
         "rst→md→odt→pdf [0.674]",
         "rst→odt→docx→pdf [0.674]",
         "rst→odt→rtf→pdf [0.674]",
-        "rst→html→docx→pdf [0.669]",
-        "rst→html→odt→pdf [0.669]",
         "rst→docx→odt→pdf [0.649]",
-        "rst→docx→epub→pdf [0.581]",
-        "rst→html→epub→pdf [0.581]"
+        "rst→html→epub→pdf [0.598]",
+        "rst→docx→epub→pdf [0.581]"
       ],
       "legacyChoice": "rst→docx→pdf",
-      "rankedChoice": "rst→docx→pdf",
-      "rankedScore": 0.674,
+      "rankedChoice": "rst→html→docx→pdf",
+      "rankedScore": 0.679,
       "rankedBand": "good",
       "reasons": [
         "DETERMINISTIC_TIEBREAK"
       ],
-      "changed": false
+      "changed": true
     },
     {
       "pair": "rst→epub",
       "routeCount": 9,
       "routes": [
         "rst→docx→epub [0.701]",
-        "rst→html→docx→epub [0.701]",
         "rst→md→docx→epub [0.701]",
         "rst→odt→docx→epub [0.701]",
-        "rst→html→epub [0.674]",
+        "rst→html→docx→epub [0.701]",
+        "rst→html→epub [0.681]",
         "rst→docx→html→epub [0.674]",
-        "rst→md→html→epub [0.674]",
         "rst→tex→html→epub [0.674]",
+        "rst→md→html→epub [0.674]",
         "rst→txt→html→epub [0.402]"
       ],
       "legacyChoice": "rst→html→epub",
@@ -6733,33 +6897,33 @@
       "pair": "rst→mobi",
       "routeCount": 2,
       "routes": [
-        "rst→docx→epub→mobi [0.674]",
-        "rst→html→epub→mobi [0.674]"
+        "rst→html→epub→mobi [0.681]",
+        "rst→docx→epub→mobi [0.674]"
       ],
       "legacyChoice": "rst→html→epub→mobi",
-      "rankedChoice": "rst→docx→epub→mobi",
-      "rankedScore": 0.674,
+      "rankedChoice": "rst→html→epub→mobi",
+      "rankedScore": 0.681,
       "rankedBand": "good",
       "reasons": [
-        "DETERMINISTIC_TIEBREAK"
+        "PRESERVES_IMAGES"
       ],
-      "changed": true
+      "changed": false
     },
     {
       "pair": "rst→azw3",
       "routeCount": 2,
       "routes": [
-        "rst→docx→epub→azw3 [0.674]",
-        "rst→html→epub→azw3 [0.674]"
+        "rst→html→epub→azw3 [0.681]",
+        "rst→docx→epub→azw3 [0.674]"
       ],
       "legacyChoice": "rst→html→epub→azw3",
-      "rankedChoice": "rst→docx→epub→azw3",
-      "rankedScore": 0.674,
+      "rankedChoice": "rst→html→epub→azw3",
+      "rankedScore": 0.681,
       "rankedBand": "good",
       "reasons": [
-        "DETERMINISTIC_TIEBREAK"
+        "PRESERVES_IMAGES"
       ],
-      "changed": true
+      "changed": false
     },
     {
       "pair": "rst→txt",
@@ -6768,16 +6932,16 @@
         "rst→txt [0.7]",
         "rst→md→txt [0.7]",
         "rst→docx→txt [0.686]",
-        "rst→html→txt [0.686]",
         "rst→docx→html→txt [0.686]",
         "rst→docx→md→txt [0.686]",
-        "rst→html→docx→txt [0.686]",
-        "rst→html→md→txt [0.686]",
         "rst→md→docx→txt [0.686]",
-        "rst→md→html→txt [0.686]",
         "rst→tex→html→txt [0.686]",
         "rst→tex→md→txt [0.686]",
         "rst→odt→docx→txt [0.686]",
+        "rst→html→txt [0.686]",
+        "rst→html→docx→txt [0.686]",
+        "rst→html→md→txt [0.686]",
+        "rst→md→html→txt [0.686]",
         "rst→docx→pdf→txt [0.666]",
         "rst→odt→pdf→txt [0.666]"
       ],
@@ -6794,7 +6958,7 @@
       "pair": "rst→html",
       "routeCount": 15,
       "routes": [
-        "rst→html [0.686]",
+        "rst→html [0.884]",
         "rst→md→html [0.686]",
         "rst→docx→html [0.654]",
         "rst→tex→html [0.654]",
@@ -6812,10 +6976,15 @@
       ],
       "legacyChoice": "rst→html",
       "rankedChoice": "rst→html",
-      "rankedScore": 0.686,
-      "rankedBand": "good",
+      "rankedScore": 0.884,
+      "rankedBand": "excellent",
       "reasons": [
-        "SHORTER_EQUIVALENT_ROUTE"
+        "HIGHER_FIDELITY",
+        "HIGHER_LAYOUT_FIDELITY",
+        "PRESERVES_TABLES",
+        "PRESERVES_IMAGES",
+        "AVOIDS_LOSSY_INTERMEDIATE",
+        "CERTIFIED_ROUTE"
       ],
       "changed": false
     },
@@ -6840,15 +7009,16 @@
     },
     {
       "pair": "rtf→png",
-      "routeCount": 3,
+      "routeCount": 4,
       "routes": [
-        "rtf→pdf→png [0.74]",
-        "rtf→docx→pdf→png [0.74]",
-        "rtf→odt→pdf→png [0.74]"
+        "rtf→pdf→png [0.778]",
+        "rtf→docx→pdf→png [0.778]",
+        "rtf→odt→pdf→png [0.778]",
+        "rtf→docx→html→png [0.574]"
       ],
       "legacyChoice": "rtf→pdf→png",
       "rankedChoice": "rtf→pdf→png",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -6857,15 +7027,16 @@
     },
     {
       "pair": "rtf→tiff",
-      "routeCount": 3,
+      "routeCount": 4,
       "routes": [
-        "rtf→pdf→tiff [0.74]",
-        "rtf→docx→pdf→tiff [0.74]",
-        "rtf→odt→pdf→tiff [0.74]"
+        "rtf→pdf→tiff [0.778]",
+        "rtf→docx→pdf→tiff [0.778]",
+        "rtf→odt→pdf→tiff [0.778]",
+        "rtf→docx→html→tiff [0.534]"
       ],
       "legacyChoice": "rtf→pdf→tiff",
       "rankedChoice": "rtf→pdf→tiff",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -6975,12 +7146,12 @@
       "routeCount": 8,
       "routes": [
         "rtf→docx→html [0.659]",
+        "rtf→docx→md→html [0.659]",
+        "rtf→docx→rst→html [0.659]",
         "rtf→odt→docx→html [0.659]",
         "rtf→pdf→html [0.657]",
         "rtf→docx→pdf→html [0.657]",
         "rtf→odt→pdf→html [0.657]",
-        "rtf→docx→md→html [0.654]",
-        "rtf→docx→rst→html [0.654]",
         "rtf→docx→txt→html [0.292]"
       ],
       "legacyChoice": "rtf→pdf→html",
@@ -7053,6 +7224,38 @@
       "rankedChoice": "tar→7z",
       "rankedScore": 0.929,
       "rankedBand": "excellent",
+      "reasons": [
+        "SHORTER_EQUIVALENT_ROUTE"
+      ],
+      "changed": false
+    },
+    {
+      "pair": "tex→png",
+      "routeCount": 2,
+      "routes": [
+        "tex→html→png [0.564]",
+        "tex→md→html→png [0.564]"
+      ],
+      "legacyChoice": "tex→html→png",
+      "rankedChoice": "tex→html→png",
+      "rankedScore": 0.564,
+      "rankedBand": "format-loss",
+      "reasons": [
+        "SHORTER_EQUIVALENT_ROUTE"
+      ],
+      "changed": false
+    },
+    {
+      "pair": "tex→tiff",
+      "routeCount": 2,
+      "routes": [
+        "tex→html→tiff [0.525]",
+        "tex→md→html→tiff [0.525]"
+      ],
+      "legacyChoice": "tex→html→tiff",
+      "rankedChoice": "tex→html→tiff",
+      "rankedScore": 0.525,
+      "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
       ],
@@ -7169,8 +7372,8 @@
         "tex→html→md→txt [0.686]",
         "tex→html→rst→txt [0.686]",
         "tex→md→docx→txt [0.686]",
-        "tex→md→html→txt [0.686]",
-        "tex→md→rst→txt [0.686]"
+        "tex→md→rst→txt [0.686]",
+        "tex→md→html→txt [0.686]"
       ],
       "legacyChoice": "tex→md→txt",
       "rankedChoice": "tex→html→txt",
@@ -7224,34 +7427,35 @@
       "pair": "tiff→png",
       "routeCount": 20,
       "routes": [
-        "tiff→png [0.915]",
-        "tiff→avif→png [0.819]",
-        "tiff→webp→png [0.819]",
-        "tiff→pdf→png [0.785]",
-        "tiff→avif→webp→png [0.757]",
-        "tiff→webp→avif→png [0.757]",
-        "tiff→gif→png [0.723]",
-        "tiff→webp→pdf→png [0.715]",
-        "tiff→avif→gif→png [0.669]",
-        "tiff→gif→avif→png [0.669]",
-        "tiff→gif→jpg→png [0.669]",
-        "tiff→gif→webp→png [0.669]",
-        "tiff→webp→gif→png [0.669]",
-        "tiff→jpg→png [0.63]",
-        "tiff→avif→jpg→png [0.582]",
-        "tiff→jpg→avif→png [0.582]",
-        "tiff→jpg→webp→png [0.582]",
-        "tiff→webp→jpg→png [0.582]",
-        "tiff→jpg→pdf→png [0.542]",
-        "tiff→jpg→gif→png [0.509]"
+        "tiff→png [0.812]",
+        "tiff→pdf→png [0.794]",
+        "tiff→avif→png [0.746]",
+        "tiff→webp→png [0.746]",
+        "tiff→jpg→png [0.742]",
+        "tiff→jpg→pdf→png [0.724]",
+        "tiff→webp→pdf→png [0.724]",
+        "tiff→gif→png [0.719]",
+        "tiff→avif→webp→png [0.69]",
+        "tiff→webp→avif→png [0.69]",
+        "tiff→avif→jpg→png [0.686]",
+        "tiff→jpg→avif→png [0.686]",
+        "tiff→jpg→webp→png [0.686]",
+        "tiff→webp→jpg→png [0.686]",
+        "tiff→avif→gif→png [0.665]",
+        "tiff→gif→avif→png [0.665]",
+        "tiff→gif→jpg→png [0.665]",
+        "tiff→gif→webp→png [0.665]",
+        "tiff→jpg→gif→png [0.665]",
+        "tiff→webp→gif→png [0.665]"
       ],
       "legacyChoice": "tiff→png",
       "rankedChoice": "tiff→png",
-      "rankedScore": 0.915,
-      "rankedBand": "excellent",
+      "rankedScore": 0.812,
+      "rankedBand": "good",
       "reasons": [
         "HIGHER_FIDELITY",
-        "AVOIDS_REENCODE"
+        "PRESERVES_RESOLUTION",
+        "LOWER_RUNTIME_COST"
       ],
       "changed": false
     },
@@ -8042,18 +8246,18 @@
       "pair": "ts→png",
       "routeCount": 8,
       "routes": [
-        "ts→gif→png [0.51]",
-        "ts→gif→tiff→png [0.51]",
-        "ts→mkv→gif→png [0.51]",
-        "ts→gif→avif→png [0.472]",
-        "ts→gif→jpg→png [0.472]",
-        "ts→gif→webp→png [0.472]",
-        "ts→mp4→gif→png [0.472]",
-        "ts→webm→gif→png [0.472]"
+        "ts→gif→png [0.576]",
+        "ts→gif→tiff→png [0.576]",
+        "ts→mkv→gif→png [0.576]",
+        "ts→gif→avif→png [0.533]",
+        "ts→gif→jpg→png [0.533]",
+        "ts→gif→webp→png [0.533]",
+        "ts→mp4→gif→png [0.533]",
+        "ts→webm→gif→png [0.533]"
       ],
       "legacyChoice": "ts→gif→png",
       "rankedChoice": "ts→gif→png",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -8108,18 +8312,18 @@
       "pair": "ts→tiff",
       "routeCount": 8,
       "routes": [
-        "ts→gif→tiff [0.51]",
-        "ts→gif→png→tiff [0.51]",
-        "ts→mkv→gif→tiff [0.51]",
-        "ts→gif→avif→tiff [0.472]",
-        "ts→gif→jpg→tiff [0.472]",
-        "ts→gif→webp→tiff [0.472]",
-        "ts→mp4→gif→tiff [0.472]",
-        "ts→webm→gif→tiff [0.472]"
+        "ts→gif→tiff [0.576]",
+        "ts→gif→png→tiff [0.576]",
+        "ts→mkv→gif→tiff [0.576]",
+        "ts→gif→avif→tiff [0.533]",
+        "ts→gif→jpg→tiff [0.533]",
+        "ts→gif→webp→tiff [0.533]",
+        "ts→mp4→gif→tiff [0.533]",
+        "ts→webm→gif→tiff [0.533]"
       ],
       "legacyChoice": "ts→gif→tiff",
       "rankedChoice": "ts→gif→tiff",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -8324,6 +8528,38 @@
       "changed": false
     },
     {
+      "pair": "txt→png",
+      "routeCount": 2,
+      "routes": [
+        "txt→html→png [0.446]",
+        "txt→md→html→png [0.446]"
+      ],
+      "legacyChoice": "txt→html→png",
+      "rankedChoice": "txt→html→png",
+      "rankedScore": 0.446,
+      "rankedBand": "not-recommended",
+      "reasons": [
+        "SHORTER_EQUIVALENT_ROUTE"
+      ],
+      "changed": false
+    },
+    {
+      "pair": "txt→tiff",
+      "routeCount": 2,
+      "routes": [
+        "txt→html→tiff [0.415]",
+        "txt→md→html→tiff [0.415]"
+      ],
+      "legacyChoice": "txt→html→tiff",
+      "rankedChoice": "txt→html→tiff",
+      "rankedScore": 0.415,
+      "rankedBand": "not-recommended",
+      "reasons": [
+        "SHORTER_EQUIVALENT_ROUTE"
+      ],
+      "changed": false
+    },
+    {
       "pair": "txt→docx",
       "routeCount": 8,
       "routes": [
@@ -8429,7 +8665,7 @@
       "routeCount": 5,
       "routes": [
         "txt→html [0.492]",
-        "txt→md→html [0.485]",
+        "txt→md→html [0.492]",
         "txt→md→rst→html [0.485]",
         "txt→md→docx→html [0.48]",
         "txt→md→tex→html [0.48]"
@@ -8439,7 +8675,7 @@
       "rankedScore": 0.492,
       "rankedBand": "format-loss",
       "reasons": [
-        "HIGHER_FIDELITY"
+        "SHORTER_EQUIVALENT_ROUTE"
       ],
       "changed": false
     },
@@ -9003,17 +9239,17 @@
       "pair": "webm→png",
       "routeCount": 7,
       "routes": [
-        "webm→gif→png [0.51]",
-        "webm→gif→tiff→png [0.51]",
-        "webm→mkv→gif→png [0.51]",
-        "webm→gif→avif→png [0.472]",
-        "webm→gif→jpg→png [0.472]",
-        "webm→gif→webp→png [0.472]",
-        "webm→mp4→gif→png [0.472]"
+        "webm→gif→png [0.576]",
+        "webm→gif→tiff→png [0.576]",
+        "webm→mkv→gif→png [0.576]",
+        "webm→gif→avif→png [0.533]",
+        "webm→gif→jpg→png [0.533]",
+        "webm→gif→webp→png [0.533]",
+        "webm→mp4→gif→png [0.533]"
       ],
       "legacyChoice": "webm→gif→png",
       "rankedChoice": "webm→gif→png",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -9066,17 +9302,17 @@
       "pair": "webm→tiff",
       "routeCount": 7,
       "routes": [
-        "webm→gif→tiff [0.51]",
-        "webm→gif→png→tiff [0.51]",
-        "webm→mkv→gif→tiff [0.51]",
-        "webm→gif→avif→tiff [0.472]",
-        "webm→gif→jpg→tiff [0.472]",
-        "webm→gif→webp→tiff [0.472]",
-        "webm→mp4→gif→tiff [0.472]"
+        "webm→gif→tiff [0.576]",
+        "webm→gif→png→tiff [0.576]",
+        "webm→mkv→gif→tiff [0.576]",
+        "webm→gif→avif→tiff [0.533]",
+        "webm→gif→jpg→tiff [0.533]",
+        "webm→gif→webp→tiff [0.533]",
+        "webm→mp4→gif→tiff [0.533]"
       ],
       "legacyChoice": "webm→gif→tiff",
       "rankedChoice": "webm→gif→tiff",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -9124,31 +9360,31 @@
       "pair": "webp→png",
       "routeCount": 20,
       "routes": [
-        "webp→png [0.915]",
-        "webp→tiff→png [0.915]",
-        "webp→avif→png [0.819]",
-        "webp→avif→tiff→png [0.819]",
-        "webp→tiff→avif→png [0.819]",
-        "webp→pdf→png [0.785]",
-        "webp→tiff→pdf→png [0.769]",
-        "webp→gif→png [0.723]",
-        "webp→gif→tiff→png [0.723]",
-        "webp→tiff→gif→png [0.723]",
-        "webp→avif→gif→png [0.669]",
-        "webp→gif→avif→png [0.669]",
-        "webp→gif→jpg→png [0.669]",
-        "webp→jpg→png [0.63]",
-        "webp→jpg→tiff→png [0.63]",
-        "webp→tiff→jpg→png [0.63]",
-        "webp→avif→jpg→png [0.582]",
-        "webp→jpg→avif→png [0.582]",
-        "webp→jpg→pdf→png [0.542]",
-        "webp→jpg→gif→png [0.509]"
+        "webp→png [0.812]",
+        "webp→tiff→png [0.812]",
+        "webp→pdf→png [0.794]",
+        "webp→tiff→pdf→png [0.778]",
+        "webp→avif→png [0.746]",
+        "webp→avif→tiff→png [0.746]",
+        "webp→tiff→avif→png [0.746]",
+        "webp→jpg→png [0.742]",
+        "webp→jpg→tiff→png [0.742]",
+        "webp→tiff→jpg→png [0.742]",
+        "webp→jpg→pdf→png [0.724]",
+        "webp→gif→png [0.719]",
+        "webp→gif→tiff→png [0.719]",
+        "webp→tiff→gif→png [0.719]",
+        "webp→avif→jpg→png [0.686]",
+        "webp→jpg→avif→png [0.686]",
+        "webp→avif→gif→png [0.665]",
+        "webp→gif→avif→png [0.665]",
+        "webp→gif→jpg→png [0.665]",
+        "webp→jpg→gif→png [0.665]"
       ],
       "legacyChoice": "webp→png",
       "rankedChoice": "webp→png",
-      "rankedScore": 0.915,
-      "rankedBand": "excellent",
+      "rankedScore": 0.812,
+      "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
       ],
@@ -9189,33 +9425,34 @@
       "pair": "webp→tiff",
       "routeCount": 20,
       "routes": [
-        "webp→tiff [0.925]",
-        "webp→png→tiff [0.915]",
-        "webp→avif→tiff [0.819]",
-        "webp→avif→png→tiff [0.819]",
-        "webp→png→avif→tiff [0.819]",
-        "webp→pdf→tiff [0.769]",
-        "webp→png→pdf→tiff [0.769]",
-        "webp→gif→tiff [0.723]",
-        "webp→gif→png→tiff [0.723]",
-        "webp→png→gif→tiff [0.723]",
-        "webp→avif→gif→tiff [0.669]",
-        "webp→gif→avif→tiff [0.669]",
-        "webp→gif→jpg→tiff [0.669]",
-        "webp→jpg→tiff [0.63]",
-        "webp→jpg→png→tiff [0.63]",
-        "webp→png→jpg→tiff [0.63]",
-        "webp→avif→jpg→tiff [0.582]",
-        "webp→jpg→avif→tiff [0.582]",
-        "webp→jpg→pdf→tiff [0.542]",
-        "webp→jpg→gif→tiff [0.509]"
+        "webp→tiff [0.815]",
+        "webp→png→tiff [0.812]",
+        "webp→pdf→tiff [0.778]",
+        "webp→png→pdf→tiff [0.778]",
+        "webp→avif→tiff [0.746]",
+        "webp→avif→png→tiff [0.746]",
+        "webp→png→avif→tiff [0.746]",
+        "webp→jpg→tiff [0.742]",
+        "webp→jpg→png→tiff [0.742]",
+        "webp→png→jpg→tiff [0.742]",
+        "webp→jpg→pdf→tiff [0.724]",
+        "webp→gif→tiff [0.719]",
+        "webp→gif→png→tiff [0.719]",
+        "webp→png→gif→tiff [0.719]",
+        "webp→avif→jpg→tiff [0.686]",
+        "webp→jpg→avif→tiff [0.686]",
+        "webp→avif→gif→tiff [0.665]",
+        "webp→gif→avif→tiff [0.665]",
+        "webp→gif→jpg→tiff [0.665]",
+        "webp→jpg→gif→tiff [0.665]"
       ],
       "legacyChoice": "webp→tiff",
       "rankedChoice": "webp→tiff",
-      "rankedScore": 0.925,
-      "rankedBand": "excellent",
+      "rankedScore": 0.815,
+      "rankedBand": "good",
       "reasons": [
-        "HIGHER_FIDELITY"
+        "HIGHER_FIDELITY",
+        "SHORTER_EQUIVALENT_ROUTE"
       ],
       "changed": false
     },
@@ -9789,18 +10026,18 @@
       "pair": "wmv→png",
       "routeCount": 8,
       "routes": [
-        "wmv→gif→png [0.51]",
-        "wmv→gif→tiff→png [0.51]",
-        "wmv→mkv→gif→png [0.51]",
-        "wmv→gif→avif→png [0.472]",
-        "wmv→gif→jpg→png [0.472]",
-        "wmv→gif→webp→png [0.472]",
-        "wmv→mp4→gif→png [0.472]",
-        "wmv→webm→gif→png [0.472]"
+        "wmv→gif→png [0.576]",
+        "wmv→gif→tiff→png [0.576]",
+        "wmv→mkv→gif→png [0.576]",
+        "wmv→gif→avif→png [0.533]",
+        "wmv→gif→jpg→png [0.533]",
+        "wmv→gif→webp→png [0.533]",
+        "wmv→mp4→gif→png [0.533]",
+        "wmv→webm→gif→png [0.533]"
       ],
       "legacyChoice": "wmv→gif→png",
       "rankedChoice": "wmv→gif→png",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -9855,18 +10092,18 @@
       "pair": "wmv→tiff",
       "routeCount": 8,
       "routes": [
-        "wmv→gif→tiff [0.51]",
-        "wmv→gif→png→tiff [0.51]",
-        "wmv→mkv→gif→tiff [0.51]",
-        "wmv→gif→avif→tiff [0.472]",
-        "wmv→gif→jpg→tiff [0.472]",
-        "wmv→gif→webp→tiff [0.472]",
-        "wmv→mp4→gif→tiff [0.472]",
-        "wmv→webm→gif→tiff [0.472]"
+        "wmv→gif→tiff [0.576]",
+        "wmv→gif→png→tiff [0.576]",
+        "wmv→mkv→gif→tiff [0.576]",
+        "wmv→gif→avif→tiff [0.533]",
+        "wmv→gif→jpg→tiff [0.533]",
+        "wmv→gif→webp→tiff [0.533]",
+        "wmv→mp4→gif→tiff [0.533]",
+        "wmv→webm→gif→tiff [0.533]"
       ],
       "legacyChoice": "wmv→gif→tiff",
       "rankedChoice": "wmv→gif→tiff",
-      "rankedScore": 0.51,
+      "rankedScore": 0.576,
       "rankedBand": "format-loss",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -9919,13 +10156,13 @@
       "pair": "xls→png",
       "routeCount": 3,
       "routes": [
-        "xls→pdf→png [0.74]",
-        "xls→ods→pdf→png [0.74]",
-        "xls→xlsx→pdf→png [0.74]"
+        "xls→pdf→png [0.778]",
+        "xls→ods→pdf→png [0.778]",
+        "xls→xlsx→pdf→png [0.778]"
       ],
       "legacyChoice": "xls→pdf→png",
       "rankedChoice": "xls→pdf→png",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -9936,13 +10173,13 @@
       "pair": "xls→tiff",
       "routeCount": 3,
       "routes": [
-        "xls→pdf→tiff [0.74]",
-        "xls→ods→pdf→tiff [0.74]",
-        "xls→xlsx→pdf→tiff [0.74]"
+        "xls→pdf→tiff [0.778]",
+        "xls→ods→pdf→tiff [0.778]",
+        "xls→xlsx→pdf→tiff [0.778]"
       ],
       "legacyChoice": "xls→pdf→tiff",
       "rankedChoice": "xls→pdf→tiff",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -10055,12 +10292,12 @@
       "pair": "xlsx→png",
       "routeCount": 2,
       "routes": [
-        "xlsx→pdf→png [0.74]",
-        "xlsx→ods→pdf→png [0.74]"
+        "xlsx→pdf→png [0.778]",
+        "xlsx→ods→pdf→png [0.778]"
       ],
       "legacyChoice": "xlsx→pdf→png",
       "rankedChoice": "xlsx→pdf→png",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -10071,12 +10308,12 @@
       "pair": "xlsx→tiff",
       "routeCount": 2,
       "routes": [
-        "xlsx→pdf→tiff [0.74]",
-        "xlsx→ods→pdf→tiff [0.74]"
+        "xlsx→pdf→tiff [0.778]",
+        "xlsx→ods→pdf→tiff [0.778]"
       ],
       "legacyChoice": "xlsx→pdf→tiff",
       "rankedChoice": "xlsx→pdf→tiff",
-      "rankedScore": 0.74,
+      "rankedScore": 0.778,
       "rankedBand": "good",
       "reasons": [
         "SHORTER_EQUIVALENT_ROUTE"

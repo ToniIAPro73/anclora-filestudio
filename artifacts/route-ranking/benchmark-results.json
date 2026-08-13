@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-13T02:22:37.701Z",
+  "generated": "2026-08-13T03:16:40.013Z",
   "environment": "linux",
   "records": [
     {
@@ -9,8 +9,8 @@
       "winnerScore": 0.681,
       "challenger": "md>odt:doc:convert|odt>pdf:office:to-pdf",
       "challengerScore": 0.681,
-      "winnerDurationMs": 3631,
-      "challengerDurationMs": 4641,
+      "winnerDurationMs": 7351,
+      "challengerDurationMs": 8615,
       "winnerReasons": [
         "DETERMINISTIC_TIEBREAK"
       ],
@@ -23,8 +23,8 @@
       "winnerScore": 0.679,
       "challenger": "html>odt:doc:convert|odt>pdf:office:to-pdf",
       "challengerScore": 0.679,
-      "winnerDurationMs": 4148,
-      "challengerDurationMs": 6243,
+      "winnerDurationMs": 6927,
+      "challengerDurationMs": 6095,
       "winnerReasons": [
         "DETERMINISTIC_TIEBREAK"
       ],
@@ -37,8 +37,8 @@
       "winnerScore": 0.889,
       "challenger": "docx>odt:office:to-pdf|odt>pdf:office:to-pdf",
       "challengerScore": 0.889,
-      "winnerDurationMs": 6809,
-      "challengerDurationMs": 10531,
+      "winnerDurationMs": 5381,
+      "challengerDurationMs": 8905,
       "winnerReasons": [
         "SHORTER_EQUIVALENT_ROUTE"
       ],
@@ -51,7 +51,7 @@
       "winnerScore": 0.548,
       "challenger": null,
       "challengerScore": null,
-      "winnerDurationMs": 125,
+      "winnerDurationMs": 118,
       "challengerDurationMs": null,
       "winnerReasons": [
         "ONLY_VIABLE_ROUTE"
@@ -65,7 +65,7 @@
       "winnerScore": 0.668,
       "challenger": null,
       "challengerScore": null,
-      "winnerDurationMs": 4996,
+      "winnerDurationMs": 4301,
       "challengerDurationMs": null,
       "winnerReasons": [
         "ONLY_VIABLE_ROUTE"
@@ -74,12 +74,12 @@
     },
     {
       "pair": "docx->png",
-      "routes": 5,
+      "routes": 9,
       "winner": "docx>pdf:office:to-pdf|pdf>png:pdf:rasterize",
-      "winnerScore": 0.74,
+      "winnerScore": 0.778,
       "challenger": null,
       "challengerScore": null,
-      "winnerDurationMs": 4526,
+      "winnerDurationMs": 4038,
       "challengerDurationMs": null,
       "winnerReasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -93,8 +93,8 @@
       "winnerScore": 0.87,
       "challenger": "png>tiff:image:convert|tiff>pdf:image:to-pdf",
       "challengerScore": 0.791,
-      "winnerDurationMs": 69,
-      "challengerDurationMs": 64,
+      "winnerDurationMs": 55,
+      "challengerDurationMs": 52,
       "winnerReasons": [
         "HIGHER_FIDELITY",
         "HIGHER_LAYOUT_FIDELITY",
@@ -110,7 +110,7 @@
       "winnerScore": 0.87,
       "challenger": null,
       "challengerScore": null,
-      "winnerDurationMs": 27,
+      "winnerDurationMs": 17,
       "challengerDurationMs": null,
       "winnerReasons": [
         "HIGHER_FIDELITY",
@@ -127,8 +127,8 @@
       "winnerScore": 0.789,
       "challenger": "aac>flac:media:convert-audio|flac>mp3:media:convert-audio",
       "challengerScore": 0.789,
-      "winnerDurationMs": 185,
-      "challengerDurationMs": 521,
+      "winnerDurationMs": 220,
+      "challengerDurationMs": 323,
       "winnerReasons": [
         "SHORTER_EQUIVALENT_ROUTE"
       ],
@@ -155,7 +155,7 @@
       "winnerScore": 0.823,
       "challenger": null,
       "challengerScore": null,
-      "winnerDurationMs": 160,
+      "winnerDurationMs": 165,
       "challengerDurationMs": null,
       "winnerReasons": [
         "SHORTER_EQUIVALENT_ROUTE"
@@ -169,7 +169,7 @@
       "winnerScore": 0.823,
       "challenger": null,
       "challengerScore": null,
-      "winnerDurationMs": 162,
+      "winnerDurationMs": 149,
       "challengerDurationMs": null,
       "winnerReasons": [
         "SHORTER_EQUIVALENT_ROUTE"

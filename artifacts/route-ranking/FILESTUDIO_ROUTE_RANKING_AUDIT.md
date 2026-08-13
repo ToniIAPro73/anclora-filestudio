@@ -1,11 +1,11 @@
 # FileStudio — Route Ranking Audit
 
-Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
+Generated: 2026-08-13T03:04:53.882Z (linux, full desktop toolchain)
 
-- Reachable pairs: 403
-- Multi-route pairs: 354
-- Changed winners vs legacy heuristic: 36
-- Winners scoring not-recommended: 6
+- Reachable pairs: 407
+- Multi-route pairs: 358
+- Changed winners vs legacy heuristic: 38
+- Winners scoring not-recommended: 2
 
 ## Changed winners (legacy → ranked)
 
@@ -24,16 +24,18 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | gif→txt | gif→jpg→pdf→txt | gif→png→pdf→txt | 0.598 | DETERMINISTIC_TIEBREAK |
 | gif→html | gif→jpg→pdf→html | gif→png→pdf→html | 0.632 | DETERMINISTIC_TIEBREAK |
 | md→epub | md→html→epub | md→docx→epub | 0.716 | SHORTER_EQUIVALENT_ROUTE |
-| md→mobi | md→html→epub→mobi | md→docx→epub→mobi | 0.688 | DETERMINISTIC_TIEBREAK |
-| md→azw3 | md→html→epub→azw3 | md→docx→epub→azw3 | 0.688 | DETERMINISTIC_TIEBREAK |
+| md→mobi | md→html→epub→mobi | md→docx→epub→mobi | 0.688 | HIGHER_FIDELITY, AVOIDS_IRREVERSIBLE_LOSS |
+| md→azw3 | md→html→epub→azw3 | md→docx→epub→azw3 | 0.688 | HIGHER_FIDELITY, AVOIDS_IRREVERSIBLE_LOSS |
 | mkv→pdf | mkv→gif→jpg→pdf | mkv→gif→png→pdf | 0.547 | DETERMINISTIC_TIEBREAK |
 | mov→pdf | mov→gif→jpg→pdf | mov→gif→png→pdf | 0.547 | DETERMINISTIC_TIEBREAK |
 | mp4→pdf | mp4→gif→jpg→pdf | mp4→gif→png→pdf | 0.547 | DETERMINISTIC_TIEBREAK |
 | odt→txt | odt→pdf→txt | odt→docx→txt | 0.686 | SHORTER_EQUIVALENT_ROUTE |
 | odt→html | odt→pdf→html | odt→docx→html | 0.659 | SHORTER_EQUIVALENT_ROUTE |
+| rst→docx | rst→docx | rst→html→docx | 0.711 | SHORTER_EQUIVALENT_ROUTE, LOWER_RUNTIME_COST |
+| rst→odt | rst→odt | rst→html→odt | 0.711 | SHORTER_EQUIVALENT_ROUTE, LOWER_RUNTIME_COST |
+| rst→rtf | rst→docx→rtf | rst→html→docx→rtf | 0.711 | DETERMINISTIC_TIEBREAK |
+| rst→pdf | rst→docx→pdf | rst→html→docx→pdf | 0.679 | DETERMINISTIC_TIEBREAK |
 | rst→epub | rst→html→epub | rst→docx→epub | 0.701 | SHORTER_EQUIVALENT_ROUTE |
-| rst→mobi | rst→html→epub→mobi | rst→docx→epub→mobi | 0.674 | DETERMINISTIC_TIEBREAK |
-| rst→azw3 | rst→html→epub→azw3 | rst→docx→epub→azw3 | 0.674 | DETERMINISTIC_TIEBREAK |
 | rtf→txt | rtf→pdf→txt | rtf→docx→txt | 0.686 | SHORTER_EQUIVALENT_ROUTE |
 | rtf→html | rtf→pdf→html | rtf→docx→html | 0.659 | SHORTER_EQUIVALENT_ROUTE |
 | tex→docx | tex→md→docx | tex→html→docx | 0.679 | DETERMINISTIC_TIEBREAK |
@@ -74,9 +76,9 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | avi→tiff | 8 | avi→gif→tiff | avi→gif→tiff | format-loss | no |
 | avi→gif | 10 | avi→gif | avi→gif | format-loss | no |
 | avi→pdf | 4 | avi→gif→jpg→pdf | avi→gif→png→pdf | format-loss | YES |
-| avif→png | 20 | avif→png | avif→png | excellent | no |
+| avif→png | 20 | avif→png | avif→png | good | no |
 | avif→webp | 17 | avif→webp | avif→webp | good | no |
-| avif→tiff | 20 | avif→tiff | avif→tiff | excellent | no |
+| avif→tiff | 20 | avif→tiff | avif→tiff | good | no |
 | avif→gif | 17 | avif→gif | avif→gif | format-loss | no |
 | avif→docx | 4 | avif→jpg→pdf→docx | avif→png→pdf→docx | format-loss | YES |
 | avif→pdf | 20 | avif→jpg→pdf | avif→png→pdf | good | YES |
@@ -90,8 +92,8 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | csv→toml | 17 | csv→toml | csv→toml | good | no |
 | csv→xml | 17 | csv→xml | csv→xml | good | no |
 | csv→tsv | 17 | csv→tsv | csv→tsv | good | no |
-| doc→png | 4 | doc→pdf→png | doc→pdf→png | good | no |
-| doc→tiff | 4 | doc→pdf→tiff | doc→pdf→tiff | good | no |
+| doc→png | 5 | doc→pdf→png | doc→pdf→png | good | no |
+| doc→tiff | 5 | doc→pdf→tiff | doc→pdf→tiff | good | no |
 | doc→docx | 8 | doc→docx | doc→docx | excellent | no |
 | doc→odt | 10 | doc→odt | doc→odt | excellent | no |
 | doc→rtf | 6 | doc→rtf | doc→rtf | good | no |
@@ -101,8 +103,8 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | doc→html | 10 | doc→pdf→html | doc→docx→html | good | YES |
 | doc→rst | 5 | doc→docx→rst | doc→docx→rst | good | no |
 | doc→tex | 2 | doc→docx→md→tex | doc→docx→md→tex | good | no |
-| docx→png | 5 | docx→pdf→png | docx→pdf→png | good | no |
-| docx→tiff | 5 | docx→pdf→tiff | docx→pdf→tiff | good | no |
+| docx→png | 9 | docx→pdf→png | docx→pdf→png | good | no |
+| docx→tiff | 9 | docx→pdf→tiff | docx→pdf→tiff | good | no |
 | docx→odt | 14 | docx→odt | docx→odt | excellent | no |
 | docx→rtf | 6 | docx→rtf | docx→rtf | good | no |
 | docx→pdf | 12 | docx→pdf | docx→pdf | excellent | no |
@@ -118,10 +120,10 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | flac→wav | 17 | flac→wav | flac→wav | excellent | no |
 | flac→ogg | 17 | flac→ogg | flac→ogg | good | no |
 | flac→aac | 17 | flac→aac | flac→aac | good | no |
-| gif→png | 20 | gif→png | gif→png | excellent | no |
+| gif→png | 20 | gif→png | gif→png | good | no |
 | gif→webp | 17 | gif→webp | gif→webp | good | no |
 | gif→avif | 17 | gif→avif | gif→avif | good | no |
-| gif→tiff | 20 | gif→tiff | gif→tiff | excellent | no |
+| gif→tiff | 20 | gif→tiff | gif→tiff | good | no |
 | gif→docx | 4 | gif→jpg→pdf→docx | gif→png→pdf→docx | format-loss | YES |
 | gif→pdf | 20 | gif→jpg→pdf | gif→png→pdf | good | YES |
 | gif→txt | 4 | gif→jpg→pdf→txt | gif→png→pdf→txt | format-loss | YES |
@@ -129,8 +131,8 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | gz→zip | 5 | gz→zip | gz→zip | excellent | no |
 | gz→7z | 5 | gz→7z | gz→7z | excellent | no |
 | gz→tar | 5 | gz→tar | gz→tar | excellent | no |
-| html→png | 3 | html→docx→pdf→png | html→docx→pdf→png | not-recommended | no |
-| html→tiff | 3 | html→docx→pdf→tiff | html→docx→pdf→tiff | not-recommended | no |
+| html→png | 4 | html→png | html→png | good | no |
+| html→tiff | 4 | html→tiff | html→tiff | good | no |
 | html→docx | 12 | html→docx | html→docx | good | no |
 | html→odt | 15 | html→odt | html→odt | good | no |
 | html→rtf | 9 | html→docx→rtf | html→docx→rtf | good | no |
@@ -141,10 +143,10 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | html→txt | 14 | html→txt | html→txt | good | no |
 | html→rst | 7 | html→rst | html→rst | good | no |
 | html→tex | 7 | html→md→tex | html→md→tex | good | no |
-| jpg→png | 20 | jpg→png | jpg→png | excellent | no |
+| jpg→png | 20 | jpg→png | jpg→png | good | no |
 | jpg→webp | 17 | jpg→webp | jpg→webp | good | no |
 | jpg→avif | 17 | jpg→avif | jpg→avif | good | no |
-| jpg→tiff | 20 | jpg→tiff | jpg→tiff | excellent | no |
+| jpg→tiff | 20 | jpg→tiff | jpg→tiff | good | no |
 | jpg→gif | 17 | jpg→gif | jpg→gif | format-loss | no |
 | jpg→docx | 4 | jpg→pdf→docx | jpg→pdf→docx | format-loss | no |
 | jpg→pdf | 16 | jpg→pdf | jpg→pdf | excellent | no |
@@ -160,8 +162,8 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | m4a→flac | 17 | m4a→flac | m4a→flac | excellent | no |
 | m4a→ogg | 17 | m4a→ogg | m4a→ogg | good | no |
 | m4a→aac | 17 | m4a→aac | m4a→aac | good | no |
-| md→png | 2 | md→docx→pdf→png | md→docx→pdf→png | not-recommended | no |
-| md→tiff | 2 | md→docx→pdf→tiff | md→docx→pdf→tiff | not-recommended | no |
+| md→png | 7 | md→html→png | md→html→png | good | no |
+| md→tiff | 7 | md→html→tiff | md→html→tiff | good | no |
 | md→docx | 12 | md→docx | md→docx | good | no |
 | md→odt | 16 | md→odt | md→odt | good | no |
 | md→rtf | 9 | md→docx→rtf | md→docx→rtf | good | no |
@@ -170,7 +172,7 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | md→mobi | 2 | md→html→epub→mobi | md→docx→epub→mobi | good | YES |
 | md→azw3 | 2 | md→html→epub→azw3 | md→docx→epub→azw3 | good | YES |
 | md→txt | 14 | md→txt | md→txt | good | no |
-| md→html | 13 | md→html | md→html | good | no |
+| md→html | 13 | md→html | md→html | excellent | no |
 | md→rst | 8 | md→rst | md→rst | good | no |
 | md→tex | 4 | md→tex | md→tex | good | no |
 | mkv→mp3 | 40 | mkv→mp3 | mkv→mp3 | good | no |
@@ -233,8 +235,8 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | ods→pdf | 2 | ods→pdf | ods→pdf | excellent | no |
 | ods→txt | 2 | ods→pdf→txt | ods→pdf→txt | good | no |
 | ods→html | 2 | ods→pdf→html | ods→pdf→html | good | no |
-| odt→png | 3 | odt→pdf→png | odt→pdf→png | good | no |
-| odt→tiff | 3 | odt→pdf→tiff | odt→pdf→tiff | good | no |
+| odt→png | 4 | odt→pdf→png | odt→pdf→png | good | no |
+| odt→tiff | 4 | odt→pdf→tiff | odt→pdf→tiff | good | no |
 | odt→docx | 4 | odt→docx | odt→docx | excellent | no |
 | odt→rtf | 2 | odt→rtf | odt→rtf | good | no |
 | odt→pdf | 6 | odt→pdf | odt→pdf | excellent | no |
@@ -250,7 +252,7 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | ogg→aac | 17 | ogg→aac | ogg→aac | good | no |
 | png→webp | 17 | png→webp | png→webp | good | no |
 | png→avif | 17 | png→avif | png→avif | good | no |
-| png→tiff | 20 | png→tiff | png→tiff | excellent | no |
+| png→tiff | 20 | png→tiff | png→tiff | good | no |
 | png→gif | 17 | png→gif | png→gif | format-loss | no |
 | png→docx | 4 | png→pdf→docx | png→pdf→docx | format-loss | no |
 | png→pdf | 16 | png→pdf | png→pdf | excellent | no |
@@ -262,20 +264,20 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | ppt→pdf | 2 | ppt→pdf | ppt→pdf | excellent | no |
 | ppt→txt | 2 | ppt→pdf→txt | ppt→pdf→txt | good | no |
 | ppt→html | 2 | ppt→pdf→html | ppt→pdf→html | good | no |
-| rst→png | 2 | rst→docx→pdf→png | rst→docx→pdf→png | not-recommended | no |
-| rst→tiff | 2 | rst→docx→pdf→tiff | rst→docx→pdf→tiff | not-recommended | no |
-| rst→docx | 14 | rst→docx | rst→docx | good | no |
-| rst→odt | 18 | rst→odt | rst→odt | good | no |
-| rst→rtf | 9 | rst→docx→rtf | rst→docx→rtf | good | no |
-| rst→pdf | 13 | rst→docx→pdf | rst→docx→pdf | good | no |
+| rst→png | 7 | rst→html→png | rst→html→png | good | no |
+| rst→tiff | 7 | rst→html→tiff | rst→html→tiff | good | no |
+| rst→docx | 14 | rst→docx | rst→html→docx | good | YES |
+| rst→odt | 18 | rst→odt | rst→html→odt | good | YES |
+| rst→rtf | 9 | rst→docx→rtf | rst→html→docx→rtf | good | YES |
+| rst→pdf | 13 | rst→docx→pdf | rst→html→docx→pdf | good | YES |
 | rst→epub | 9 | rst→html→epub | rst→docx→epub | good | YES |
-| rst→mobi | 2 | rst→html→epub→mobi | rst→docx→epub→mobi | good | YES |
-| rst→azw3 | 2 | rst→html→epub→azw3 | rst→docx→epub→azw3 | good | YES |
+| rst→mobi | 2 | rst→html→epub→mobi | rst→html→epub→mobi | good | no |
+| rst→azw3 | 2 | rst→html→epub→azw3 | rst→html→epub→azw3 | good | no |
 | rst→txt | 15 | rst→txt | rst→txt | good | no |
-| rst→html | 15 | rst→html | rst→html | good | no |
+| rst→html | 15 | rst→html | rst→html | excellent | no |
 | rst→tex | 5 | rst→tex | rst→tex | good | no |
-| rtf→png | 3 | rtf→pdf→png | rtf→pdf→png | good | no |
-| rtf→tiff | 3 | rtf→pdf→tiff | rtf→pdf→tiff | good | no |
+| rtf→png | 4 | rtf→pdf→png | rtf→pdf→png | good | no |
+| rtf→tiff | 4 | rtf→pdf→tiff | rtf→pdf→tiff | good | no |
 | rtf→docx | 4 | rtf→docx | rtf→docx | excellent | no |
 | rtf→odt | 6 | rtf→odt | rtf→odt | excellent | no |
 | rtf→pdf | 7 | rtf→pdf | rtf→pdf | excellent | no |
@@ -286,6 +288,8 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | rtf→tex | 2 | rtf→docx→md→tex | rtf→docx→md→tex | good | no |
 | tar→zip | 2 | tar→zip | tar→zip | excellent | no |
 | tar→7z | 2 | tar→7z | tar→7z | excellent | no |
+| tex→png | 2 | tex→html→png | tex→html→png | format-loss | no |
+| tex→tiff | 2 | tex→html→tiff | tex→html→tiff | format-loss | no |
 | tex→docx | 8 | tex→md→docx | tex→html→docx | good | YES |
 | tex→odt | 10 | tex→md→odt | tex→html→odt | good | YES |
 | tex→rtf | 4 | tex→md→docx→rtf | tex→html→docx→rtf | good | YES |
@@ -294,7 +298,7 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | tex→txt | 8 | tex→md→txt | tex→html→txt | good | YES |
 | tex→html | 5 | tex→html | tex→html | good | no |
 | tex→rst | 6 | tex→md→rst | tex→html→rst | good | YES |
-| tiff→png | 20 | tiff→png | tiff→png | excellent | no |
+| tiff→png | 20 | tiff→png | tiff→png | good | no |
 | tiff→webp | 17 | tiff→webp | tiff→webp | good | no |
 | tiff→avif | 17 | tiff→avif | tiff→avif | good | no |
 | tiff→gif | 17 | tiff→gif | tiff→gif | format-loss | no |
@@ -327,6 +331,8 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | tsv→toml | 17 | tsv→toml | tsv→toml | good | no |
 | tsv→xml | 17 | tsv→xml | tsv→xml | good | no |
 | tsv→csv | 17 | tsv→csv | tsv→csv | good | no |
+| txt→png | 2 | txt→html→png | txt→html→png | not-recommended | no |
+| txt→tiff | 2 | txt→html→tiff | txt→html→tiff | not-recommended | no |
 | txt→docx | 8 | txt→md→docx | txt→md→docx | format-loss | no |
 | txt→odt | 10 | txt→md→odt | txt→md→odt | format-loss | no |
 | txt→rtf | 4 | txt→md→docx→rtf | txt→md→docx→rtf | format-loss | no |
@@ -354,9 +360,9 @@ Generated: 2026-08-13T02:14:12.116Z (linux, full desktop toolchain)
 | webm→tiff | 7 | webm→gif→tiff | webm→gif→tiff | format-loss | no |
 | webm→gif | 5 | webm→gif | webm→gif | format-loss | no |
 | webm→pdf | 4 | webm→gif→jpg→pdf | webm→gif→png→pdf | format-loss | YES |
-| webp→png | 20 | webp→png | webp→png | excellent | no |
+| webp→png | 20 | webp→png | webp→png | good | no |
 | webp→avif | 17 | webp→avif | webp→avif | good | no |
-| webp→tiff | 20 | webp→tiff | webp→tiff | excellent | no |
+| webp→tiff | 20 | webp→tiff | webp→tiff | good | no |
 | webp→gif | 17 | webp→gif | webp→gif | format-loss | no |
 | webp→docx | 4 | webp→pdf→docx | webp→pdf→docx | format-loss | no |
 | webp→pdf | 16 | webp→pdf | webp→pdf | excellent | no |

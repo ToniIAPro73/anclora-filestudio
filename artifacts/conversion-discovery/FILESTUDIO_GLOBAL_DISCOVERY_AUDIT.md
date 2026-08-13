@@ -1,6 +1,6 @@
 # FileStudio Global Conversion Discovery Audit
 
-Generated: 2026-08-12T21:49:27.312Z
+Generated: 2026-08-13T03:04:53.568Z
 Canonical formats audited: 50
 
 ## WINDOWS
@@ -25,24 +25,24 @@ ALL EFFECTIVE SOURCES: bz2, gz, tar, xz, zip
 ### AAC
 
 AS SOURCE:
-DIRECT TARGETS: -
+DIRECT TARGETS: wav, mp3, ogg, flac, m4a
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: -
+ALL EFFECTIVE TARGETS: wav, mp3, ogg, flac, m4a
 
 AS TARGET:
-DIRECT SOURCES: -
+DIRECT SOURCES: flac, m4a, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: -
+ALL EFFECTIVE SOURCES: flac, m4a, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### AVI
 
 AS SOURCE:
-DIRECT TARGETS: mp4, webm, flac, m4a, mkv, mp3, ogg, wav, gif
-ONE-INTERMEDIATE TARGETS: avif, jpg, png, tiff, webp
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp4, webm, flac, m4a, mkv, mp3, ogg, wav, gif, avif, jpg, png, tiff, webp
+DIRECT TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -53,30 +53,30 @@ ALL EFFECTIVE SOURCES: -
 ### AVIF
 
 AS SOURCE:
-DIRECT TARGETS: png, webp, gif, jpg, tiff
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: webp, png, tiff, gif
+ONE-INTERMEDIATE TARGETS: pdf, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: png, webp, gif, jpg, tiff
+ALL EFFECTIVE TARGETS: webp, png, tiff, gif, pdf, jpg
 
 AS TARGET:
 DIRECT SOURCES: gif, jpg, png, tiff, webp
-ONE-INTERMEDIATE SOURCES: avi, mkv, mov, mp4, webm
+ONE-INTERMEDIATE SOURCES: avi, mkv, mov, mp4, ts, webm, wmv
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: gif, jpg, png, tiff, webp, avi, mkv, mov, mp4, webm
+ALL EFFECTIVE SOURCES: gif, jpg, png, tiff, webp, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### AZW3
 
 AS SOURCE:
 DIRECT TARGETS: epub
 ONE-INTERMEDIATE TARGETS: mobi, pdf
-TWO-INTERMEDIATE TARGETS: jpg, png, tiff
-ALL EFFECTIVE TARGETS: epub, mobi, pdf, jpg, png, tiff
+TWO-INTERMEDIATE TARGETS: png, tiff, jpg
+ALL EFFECTIVE TARGETS: epub, mobi, pdf, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: epub
-ONE-INTERMEDIATE SOURCES: docx, html, mobi
+ONE-INTERMEDIATE SOURCES: mobi, docx, html
 TWO-INTERMEDIATE SOURCES: doc, odt, rtf, md, rst, tex, txt
-ALL EFFECTIVE SOURCES: epub, docx, html, mobi, doc, odt, rtf, md, rst, tex, txt
+ALL EFFECTIVE SOURCES: epub, mobi, docx, html, doc, odt, rtf, md, rst, tex, txt
 
 ### BZ2
 
@@ -101,18 +101,18 @@ TWO-INTERMEDIATE TARGETS: -
 ALL EFFECTIVE TARGETS: json, yaml, toml, tsv, xml
 
 AS TARGET:
-DIRECT SOURCES: json, toml, tsv, xml, yaml
+DIRECT SOURCES: tsv, json, toml, xml, yaml
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: json, toml, tsv, xml, yaml
+ALL EFFECTIVE SOURCES: tsv, json, toml, xml, yaml
 
 ### DOC
 
 AS SOURCE:
-DIRECT TARGETS: odt, pdf, docx
-ONE-INTERMEDIATE TARGETS: html, md, txt, jpg, png, tiff, epub, rst
+DIRECT TARGETS: odt, pdf, docx, rtf
+ONE-INTERMEDIATE TARGETS: md, txt, html, png, tiff, jpg, epub, rst
 TWO-INTERMEDIATE TARGETS: azw3, mobi, tex
-ALL EFFECTIVE TARGETS: odt, pdf, html, md, txt, docx, jpg, png, tiff, epub, rst, azw3, mobi, tex
+ALL EFFECTIVE TARGETS: odt, pdf, md, txt, html, docx, rtf, png, tiff, jpg, epub, azw3, mobi, rst, tex
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -123,58 +123,58 @@ ALL EFFECTIVE SOURCES: -
 ### DOCX
 
 AS SOURCE:
-DIRECT TARGETS: odt, pdf, html, md, txt, epub, rst
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff, azw3, mobi, tex
+DIRECT TARGETS: odt, pdf, md, txt, html, rtf, epub, rst
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg, azw3, mobi, tex
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: odt, pdf, html, md, txt, jpg, png, tiff, epub, rst, azw3, mobi, tex
+ALL EFFECTIVE TARGETS: odt, pdf, md, txt, html, rtf, png, tiff, jpg, epub, azw3, mobi, rst, tex
 
 AS TARGET:
-DIRECT SOURCES: doc, odt, rtf, html, md, rst
-ONE-INTERMEDIATE SOURCES: tex, txt
+DIRECT SOURCES: doc, odt, rtf, md, html
+ONE-INTERMEDIATE SOURCES: rst, tex, txt
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: doc, odt, rtf, html, md, rst, tex, txt
+ALL EFFECTIVE SOURCES: doc, odt, rtf, md, html, rst, tex, txt
 
 ### EPUB
 
 AS SOURCE:
 DIRECT TARGETS: mobi, pdf, azw3
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mobi, pdf, azw3, jpg, png, tiff
+ALL EFFECTIVE TARGETS: mobi, pdf, azw3, png, tiff, jpg
 
 AS TARGET:
-DIRECT SOURCES: azw3, docx, html, mobi
-ONE-INTERMEDIATE SOURCES: doc, odt, rtf, md, rst, tex, txt
-TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: azw3, docx, html, mobi, doc, odt, rtf, md, rst, tex, txt
+DIRECT SOURCES: docx, azw3, mobi, html
+ONE-INTERMEDIATE SOURCES: doc, odt, rtf, md, rst
+TWO-INTERMEDIATE SOURCES: tex, txt
+ALL EFFECTIVE SOURCES: docx, doc, odt, rtf, azw3, mobi, md, html, rst, tex, txt
 
 ### FLAC
 
 AS SOURCE:
-DIRECT TARGETS: mp3, ogg, wav, m4a
+DIRECT TARGETS: wav, mp3, ogg, aac, m4a
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp3, ogg, wav, m4a
+ALL EFFECTIVE TARGETS: wav, mp3, ogg, aac, m4a
 
 AS TARGET:
-DIRECT SOURCES: avi, m4a, mkv, mov, mp3, mp4, ogg, wav, webm
+DIRECT SOURCES: aac, m4a, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, m4a, mkv, mov, mp3, mp4, ogg, wav, webm
+ALL EFFECTIVE SOURCES: aac, m4a, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### GIF
 
 AS SOURCE:
-DIRECT TARGETS: avif, png, webp, jpg, tiff
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: avif, webp, png, tiff, jpg
+ONE-INTERMEDIATE TARGETS: pdf
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: avif, png, webp, jpg, tiff
+ALL EFFECTIVE TARGETS: avif, webp, png, tiff, jpg, pdf
 
 AS TARGET:
-DIRECT SOURCES: avif, jpg, png, tiff, webp, avi, mkv, mov, mp4, webm
+DIRECT SOURCES: avif, jpg, png, tiff, webp, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avif, jpg, png, tiff, webp, avi, mkv, mov, mp4, webm
+ALL EFFECTIVE SOURCES: avif, jpg, png, tiff, webp, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### GZ
 
@@ -193,38 +193,38 @@ ALL EFFECTIVE SOURCES: -
 ### HTML
 
 AS SOURCE:
-DIRECT TARGETS: md, txt, docx, epub, odt, rst
-ONE-INTERMEDIATE TARGETS: pdf, azw3, mobi, tex
-TWO-INTERMEDIATE TARGETS: jpg, png, tiff
-ALL EFFECTIVE TARGETS: md, txt, pdf, docx, epub, odt, rst, jpg, png, tiff, azw3, mobi, tex
+DIRECT TARGETS: md, txt, png, tiff, docx, odt, rst, epub
+ONE-INTERMEDIATE TARGETS: pdf, rtf, azw3, mobi, tex
+TWO-INTERMEDIATE TARGETS: jpg
+ALL EFFECTIVE TARGETS: md, txt, pdf, png, tiff, docx, odt, rst, rtf, azw3, epub, mobi, tex, jpg
 
 AS TARGET:
-DIRECT SOURCES: docx, md, rst, tex, txt
+DIRECT SOURCES: md, rst, docx, tex, txt
 ONE-INTERMEDIATE SOURCES: doc, odt, rtf
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: docx, md, rst, tex, txt, doc, odt, rtf
+ALL EFFECTIVE SOURCES: md, rst, docx, doc, odt, rtf, tex, txt
 
 ### JPG
 
 AS SOURCE:
-DIRECT TARGETS: avif, png, webp, gif, tiff
+DIRECT TARGETS: avif, webp, png, pdf, tiff, gif
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: avif, png, webp, gif, tiff
+ALL EFFECTIVE TARGETS: avif, webp, png, pdf, tiff, gif
 
 AS TARGET:
-DIRECT SOURCES: avif, gif, pdf, png, tiff, webp
-ONE-INTERMEDIATE SOURCES: doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub
-TWO-INTERMEDIATE SOURCES: html, md, rst, azw3, mobi
-ALL EFFECTIVE SOURCES: avif, gif, pdf, png, tiff, webp, doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub, html, md, rst, azw3, mobi
+DIRECT SOURCES: gif, pdf
+ONE-INTERMEDIATE SOURCES: avif, png, tiff, webp, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, ts, webm, wmv, epub
+TWO-INTERMEDIATE SOURCES: azw3, html, md, mobi, rst
+ALL EFFECTIVE SOURCES: gif, avif, png, tiff, webp, pdf, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, ts, webm, wmv, epub, azw3, html, md, mobi, rst
 
 ### JSON
 
 AS SOURCE:
-DIRECT TARGETS: csv, yaml, toml, tsv, xml
+DIRECT TARGETS: yaml, csv, toml, xml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, yaml, toml, tsv, xml
+ALL EFFECTIVE TARGETS: yaml, csv, toml, xml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, toml, tsv, xml, yaml
@@ -235,52 +235,52 @@ ALL EFFECTIVE SOURCES: csv, toml, tsv, xml, yaml
 ### M4A
 
 AS SOURCE:
-DIRECT TARGETS: mp3, ogg, wav, flac
+DIRECT TARGETS: wav, mp3, ogg, flac, aac
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp3, ogg, wav, flac
+ALL EFFECTIVE TARGETS: wav, mp3, ogg, flac, aac
 
 AS TARGET:
-DIRECT SOURCES: avi, flac, mkv, mov, mp3, mp4, ogg, wav, webm
+DIRECT SOURCES: aac, flac, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, flac, mkv, mov, mp3, mp4, ogg, wav, webm
+ALL EFFECTIVE SOURCES: aac, flac, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### MD
 
 AS SOURCE:
 DIRECT TARGETS: html, txt, docx, odt, rst, tex
-ONE-INTERMEDIATE TARGETS: pdf, epub
-TWO-INTERMEDIATE TARGETS: jpg, png, tiff, azw3, mobi
-ALL EFFECTIVE TARGETS: html, txt, pdf, docx, odt, rst, tex, jpg, png, tiff, epub, azw3, mobi
+ONE-INTERMEDIATE TARGETS: pdf, png, tiff, epub, rtf
+TWO-INTERMEDIATE TARGETS: azw3, mobi, jpg
+ALL EFFECTIVE TARGETS: html, txt, pdf, png, tiff, epub, docx, odt, rst, rtf, tex, azw3, mobi, jpg
 
 AS TARGET:
-DIRECT SOURCES: docx, html, rst, tex, txt
+DIRECT SOURCES: rst, html, docx, tex, txt
 ONE-INTERMEDIATE SOURCES: doc, odt, rtf
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: docx, html, rst, tex, txt, doc, odt, rtf
+ALL EFFECTIVE SOURCES: rst, html, docx, doc, odt, rtf, tex, txt
 
 ### MKV
 
 AS SOURCE:
-DIRECT TARGETS: mp4, webm, flac, m4a, mp3, ogg, wav, gif
-ONE-INTERMEDIATE TARGETS: avif, jpg, png, tiff, webp
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp4, webm, flac, m4a, mp3, ogg, wav, gif, avif, jpg, png, tiff, webp
+DIRECT TARGETS: mp4, webm, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, webm, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
-DIRECT SOURCES: avi, mov, mp4, webm
+DIRECT SOURCES: avi, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, mov, mp4, webm
+ALL EFFECTIVE SOURCES: avi, mov, mp4, ts, webm, wmv
 
 ### MOBI
 
 AS SOURCE:
 DIRECT TARGETS: epub
 ONE-INTERMEDIATE TARGETS: pdf, azw3
-TWO-INTERMEDIATE TARGETS: jpg, png, tiff
-ALL EFFECTIVE TARGETS: epub, pdf, azw3, jpg, png, tiff
+TWO-INTERMEDIATE TARGETS: png, tiff, jpg
+ALL EFFECTIVE TARGETS: epub, pdf, azw3, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: epub
@@ -291,10 +291,10 @@ ALL EFFECTIVE SOURCES: epub, azw3, docx, html, doc, odt, rtf, md, rst, tex, txt
 ### MOV
 
 AS SOURCE:
-DIRECT TARGETS: mp4, webm, flac, m4a, mkv, mp3, ogg, wav, gif
-ONE-INTERMEDIATE TARGETS: avif, jpg, png, tiff, webp
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp4, webm, flac, m4a, mkv, mp3, ogg, wav, gif, avif, jpg, png, tiff, webp
+DIRECT TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -305,38 +305,38 @@ ALL EFFECTIVE SOURCES: -
 ### MP3
 
 AS SOURCE:
-DIRECT TARGETS: ogg, wav, flac, m4a
+DIRECT TARGETS: wav, ogg, flac, aac, m4a
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: ogg, wav, flac, m4a
+ALL EFFECTIVE TARGETS: wav, ogg, flac, aac, m4a
 
 AS TARGET:
-DIRECT SOURCES: avi, flac, m4a, mkv, mov, mp4, ogg, wav, webm
+DIRECT SOURCES: aac, flac, m4a, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, flac, m4a, mkv, mov, mp4, ogg, wav, webm
+ALL EFFECTIVE SOURCES: aac, flac, m4a, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### MP4
 
 AS SOURCE:
-DIRECT TARGETS: webm, flac, m4a, mkv, mp3, ogg, wav, gif
-ONE-INTERMEDIATE TARGETS: avif, jpg, png, tiff, webp
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: webm, flac, m4a, mkv, mp3, ogg, wav, gif, avif, jpg, png, tiff, webp
+DIRECT TARGETS: webm, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: webm, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
-DIRECT SOURCES: avi, mkv, mov, webm
+DIRECT SOURCES: avi, mkv, mov, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, mkv, mov, webm
+ALL EFFECTIVE SOURCES: avi, mkv, mov, ts, webm, wmv
 
 ### ODP
 
 AS SOURCE:
-DIRECT TARGETS: -
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: pdf, pptx
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: -
+ALL EFFECTIVE TARGETS: pdf, pptx, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -347,10 +347,10 @@ ALL EFFECTIVE SOURCES: -
 ### ODS
 
 AS SOURCE:
-DIRECT TARGETS: pdf, xlsx
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+DIRECT TARGETS: xlsx, pdf
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: pdf, xlsx, jpg, png, tiff
+ALL EFFECTIVE TARGETS: xlsx, pdf, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: xls, xlsx
@@ -361,66 +361,66 @@ ALL EFFECTIVE SOURCES: xls, xlsx
 ### ODT
 
 AS SOURCE:
-DIRECT TARGETS: pdf, docx
-ONE-INTERMEDIATE TARGETS: html, md, txt, jpg, png, tiff, epub, rst
+DIRECT TARGETS: pdf, docx, rtf
+ONE-INTERMEDIATE TARGETS: md, txt, html, png, tiff, jpg, epub, rst
 TWO-INTERMEDIATE TARGETS: azw3, mobi, tex
-ALL EFFECTIVE TARGETS: pdf, html, md, txt, docx, jpg, png, tiff, epub, rst, azw3, mobi, tex
+ALL EFFECTIVE TARGETS: pdf, md, txt, html, docx, rtf, png, tiff, jpg, epub, azw3, mobi, rst, tex
 
 AS TARGET:
-DIRECT SOURCES: doc, docx, rtf, html, md, rst
-ONE-INTERMEDIATE SOURCES: tex, txt
+DIRECT SOURCES: doc, docx, rtf, md, html
+ONE-INTERMEDIATE SOURCES: rst, tex, txt
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: doc, docx, rtf, html, md, rst, tex, txt
+ALL EFFECTIVE SOURCES: doc, docx, rtf, md, html, rst, tex, txt
 
 ### OGG
 
 AS SOURCE:
-DIRECT TARGETS: mp3, wav, flac, m4a
+DIRECT TARGETS: wav, mp3, flac, aac, m4a
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp3, wav, flac, m4a
+ALL EFFECTIVE TARGETS: wav, mp3, flac, aac, m4a
 
 AS TARGET:
-DIRECT SOURCES: avi, flac, m4a, mkv, mov, mp3, mp4, wav, webm
+DIRECT SOURCES: aac, flac, m4a, mp3, wav, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, flac, m4a, mkv, mov, mp3, mp4, wav, webm
+ALL EFFECTIVE SOURCES: aac, flac, m4a, mp3, wav, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### PDF
 
 AS SOURCE:
-DIRECT TARGETS: png, jpg, tiff
+DIRECT TARGETS: png, tiff, jpg
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: png, jpg, tiff
+ALL EFFECTIVE TARGETS: png, tiff, jpg
 
 AS TARGET:
-DIRECT SOURCES: doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, epub
-ONE-INTERMEDIATE SOURCES: html, md, rst, azw3, mobi
-TWO-INTERMEDIATE SOURCES: tex, txt
-ALL EFFECTIVE SOURCES: doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, epub, html, md, rst, azw3, mobi, tex, txt
+DIRECT SOURCES: ods, xls, xlsx, doc, docx, odp, odt, ppt, pptx, rtf, jpg, png, tiff, webp, epub
+ONE-INTERMEDIATE SOURCES: avif, gif, md, html, azw3, mobi
+TWO-INTERMEDIATE SOURCES: rst, tex, avi, mkv, mov, mp4, ts, webm, wmv, txt
+ALL EFFECTIVE SOURCES: ods, xls, xlsx, doc, docx, odp, odt, ppt, pptx, rtf, jpg, png, tiff, webp, avif, gif, md, html, rst, tex, epub, azw3, mobi, avi, mkv, mov, mp4, ts, webm, wmv, txt
 
 ### PNG
 
 AS SOURCE:
-DIRECT TARGETS: avif, webp, gif, jpg, tiff
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: avif, webp, pdf, tiff, gif
+ONE-INTERMEDIATE TARGETS: jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: avif, webp, gif, jpg, tiff
+ALL EFFECTIVE TARGETS: avif, webp, pdf, tiff, gif, jpg
 
 AS TARGET:
-DIRECT SOURCES: avif, gif, jpg, pdf, tiff, webp
-ONE-INTERMEDIATE SOURCES: doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub
-TWO-INTERMEDIATE SOURCES: html, md, rst, azw3, mobi
-ALL EFFECTIVE SOURCES: avif, gif, jpg, pdf, tiff, webp, doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub, html, md, rst, azw3, mobi
+DIRECT SOURCES: html, pdf, avif, gif, jpg, tiff, webp
+ONE-INTERMEDIATE SOURCES: md, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, rst, avi, mkv, mov, mp4, ts, webm, wmv, epub, tex, txt
+TWO-INTERMEDIATE SOURCES: azw3, mobi
+ALL EFFECTIVE SOURCES: html, pdf, avif, gif, jpg, tiff, webp, md, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, rst, avi, mkv, mov, mp4, ts, webm, wmv, epub, tex, azw3, mobi, txt
 
 ### PPT
 
 AS SOURCE:
 DIRECT TARGETS: pdf, pptx
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: pdf, pptx, jpg, png, tiff
+ALL EFFECTIVE TARGETS: pdf, pptx, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -432,43 +432,43 @@ ALL EFFECTIVE SOURCES: -
 
 AS SOURCE:
 DIRECT TARGETS: pdf
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: pdf, jpg, png, tiff
+ALL EFFECTIVE TARGETS: pdf, png, tiff, jpg
 
 AS TARGET:
-DIRECT SOURCES: ppt
+DIRECT SOURCES: odp, ppt
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: ppt
+ALL EFFECTIVE SOURCES: odp, ppt
 
 ### RST
 
 AS SOURCE:
-DIRECT TARGETS: html, md, txt, docx, odt, tex
-ONE-INTERMEDIATE TARGETS: pdf, epub
-TWO-INTERMEDIATE TARGETS: jpg, png, tiff, azw3, mobi
-ALL EFFECTIVE TARGETS: html, md, txt, pdf, docx, odt, tex, jpg, png, tiff, epub, azw3, mobi
+DIRECT TARGETS: html, md, txt, tex
+ONE-INTERMEDIATE TARGETS: png, tiff, docx, odt, epub
+TWO-INTERMEDIATE TARGETS: pdf, rtf, azw3, mobi, jpg
+ALL EFFECTIVE TARGETS: html, md, txt, pdf, png, tiff, docx, odt, rtf, tex, epub, azw3, mobi, jpg
 
 AS TARGET:
-DIRECT SOURCES: docx, html, md
+DIRECT SOURCES: md, html, docx
 ONE-INTERMEDIATE SOURCES: doc, odt, rtf, tex, txt
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: docx, html, md, doc, odt, rtf, tex, txt
+ALL EFFECTIVE SOURCES: md, html, docx, doc, odt, rtf, tex, txt
 
 ### RTF
 
 AS SOURCE:
 DIRECT TARGETS: odt, pdf, docx
-ONE-INTERMEDIATE TARGETS: html, md, txt, jpg, png, tiff, epub, rst
+ONE-INTERMEDIATE TARGETS: md, txt, html, png, tiff, jpg, epub, rst
 TWO-INTERMEDIATE TARGETS: azw3, mobi, tex
-ALL EFFECTIVE TARGETS: odt, pdf, html, md, txt, docx, jpg, png, tiff, epub, rst, azw3, mobi, tex
+ALL EFFECTIVE TARGETS: odt, pdf, md, txt, html, docx, png, tiff, jpg, epub, azw3, mobi, rst, tex
 
 AS TARGET:
-DIRECT SOURCES: -
-ONE-INTERMEDIATE SOURCES: -
-TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: -
+DIRECT SOURCES: doc, docx, odt
+ONE-INTERMEDIATE SOURCES: md, html
+TWO-INTERMEDIATE SOURCES: rst, tex, txt
+ALL EFFECTIVE SOURCES: doc, docx, odt, md, html, rst, tex, txt
 
 ### TAR
 
@@ -487,38 +487,38 @@ ALL EFFECTIVE SOURCES: 7z, bz2, gz, xz, zip
 ### TEX
 
 AS SOURCE:
-DIRECT TARGETS: html, md
-ONE-INTERMEDIATE TARGETS: txt, docx, epub, odt, rst
-TWO-INTERMEDIATE TARGETS: pdf, azw3, mobi
-ALL EFFECTIVE TARGETS: html, md, txt, pdf, docx, epub, odt, rst, azw3, mobi
+DIRECT TARGETS: md, html
+ONE-INTERMEDIATE TARGETS: txt, docx, odt, rst, png, tiff
+TWO-INTERMEDIATE TARGETS: pdf, epub, rtf, azw3, mobi
+ALL EFFECTIVE TARGETS: md, txt, html, pdf, epub, docx, odt, rst, rtf, azw3, mobi, png, tiff
 
 AS TARGET:
 DIRECT SOURCES: md, rst
-ONE-INTERMEDIATE SOURCES: docx, html, txt
+ONE-INTERMEDIATE SOURCES: html, docx, txt
 TWO-INTERMEDIATE SOURCES: doc, odt, rtf
-ALL EFFECTIVE SOURCES: md, rst, docx, html, txt, doc, odt, rtf
+ALL EFFECTIVE SOURCES: md, rst, html, docx, doc, odt, rtf, txt
 
 ### TIFF
 
 AS SOURCE:
-DIRECT TARGETS: avif, png, webp, gif, jpg
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: avif, webp, png, pdf, gif
+ONE-INTERMEDIATE TARGETS: jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: avif, png, webp, gif, jpg
+ALL EFFECTIVE TARGETS: avif, webp, png, pdf, gif, jpg
 
 AS TARGET:
-DIRECT SOURCES: avif, gif, jpg, pdf, png, webp
-ONE-INTERMEDIATE SOURCES: doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub
-TWO-INTERMEDIATE SOURCES: html, md, rst, azw3, mobi
-ALL EFFECTIVE SOURCES: avif, gif, jpg, pdf, png, webp, doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub, html, md, rst, azw3, mobi
+DIRECT SOURCES: html, avif, gif, jpg, png, webp, pdf
+ONE-INTERMEDIATE SOURCES: doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, md, rst, avi, mkv, mov, mp4, ts, webm, wmv, epub, tex, txt
+TWO-INTERMEDIATE SOURCES: azw3, mobi
+ALL EFFECTIVE SOURCES: html, avif, gif, jpg, png, webp, pdf, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, md, rst, avi, mkv, mov, mp4, ts, webm, wmv, epub, azw3, mobi, tex, txt
 
 ### TOML
 
 AS SOURCE:
-DIRECT TARGETS: csv, json, yaml, tsv, xml
+DIRECT TARGETS: json, yaml, csv, xml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, json, yaml, tsv, xml
+ALL EFFECTIVE TARGETS: json, yaml, csv, xml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, json, tsv, xml, yaml
@@ -529,10 +529,10 @@ ALL EFFECTIVE SOURCES: csv, json, tsv, xml, yaml
 ### TS
 
 AS SOURCE:
-DIRECT TARGETS: -
-ONE-INTERMEDIATE TARGETS: -
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: -
+DIRECT TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -557,66 +557,66 @@ ALL EFFECTIVE SOURCES: csv, json, toml, xml, yaml
 ### TXT
 
 AS SOURCE:
-DIRECT TARGETS: html, md
-ONE-INTERMEDIATE TARGETS: docx, epub, odt, rst, tex
-TWO-INTERMEDIATE TARGETS: pdf, azw3, mobi
-ALL EFFECTIVE TARGETS: html, md, pdf, docx, epub, odt, rst, tex, azw3, mobi
+DIRECT TARGETS: md, html
+ONE-INTERMEDIATE TARGETS: docx, odt, rst, tex, png, tiff
+TWO-INTERMEDIATE TARGETS: pdf, epub, azw3, mobi, rtf
+ALL EFFECTIVE TARGETS: md, pdf, html, epub, azw3, mobi, docx, odt, rst, rtf, tex, png, tiff
 
 AS TARGET:
-DIRECT SOURCES: docx, html, md, rst
+DIRECT SOURCES: md, rst, docx, html
 ONE-INTERMEDIATE SOURCES: doc, odt, rtf, tex
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: docx, html, md, rst, doc, odt, rtf, tex
+ALL EFFECTIVE SOURCES: md, rst, docx, html, doc, odt, rtf, tex
 
 ### WAV
 
 AS SOURCE:
-DIRECT TARGETS: mp3, ogg, flac, m4a
+DIRECT TARGETS: mp3, ogg, flac, aac, m4a
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp3, ogg, flac, m4a
+ALL EFFECTIVE TARGETS: mp3, ogg, flac, aac, m4a
 
 AS TARGET:
-DIRECT SOURCES: avi, flac, m4a, mkv, mov, mp3, mp4, ogg, webm
+DIRECT SOURCES: aac, flac, m4a, mp3, ogg, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, flac, m4a, mkv, mov, mp3, mp4, ogg, webm
+ALL EFFECTIVE SOURCES: aac, flac, m4a, mp3, ogg, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### WEBM
 
 AS SOURCE:
-DIRECT TARGETS: mp4, flac, m4a, mkv, mp3, ogg, wav, gif
-ONE-INTERMEDIATE TARGETS: avif, jpg, png, tiff, webp
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp4, flac, m4a, mkv, mp3, ogg, wav, gif, avif, jpg, png, tiff, webp
+DIRECT TARGETS: mp4, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
-DIRECT SOURCES: avi, mkv, mov, mp4
+DIRECT SOURCES: avi, mkv, mov, mp4, ts, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, mkv, mov, mp4
+ALL EFFECTIVE SOURCES: avi, mkv, mov, mp4, ts, wmv
 
 ### WEBP
 
 AS SOURCE:
-DIRECT TARGETS: avif, png, gif, jpg, tiff
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: avif, png, pdf, tiff, gif
+ONE-INTERMEDIATE TARGETS: jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: avif, png, gif, jpg, tiff
+ALL EFFECTIVE TARGETS: avif, png, pdf, tiff, gif, jpg
 
 AS TARGET:
 DIRECT SOURCES: avif, gif, jpg, png, tiff
-ONE-INTERMEDIATE SOURCES: avi, mkv, mov, mp4, webm
+ONE-INTERMEDIATE SOURCES: avi, mkv, mov, mp4, ts, webm, wmv
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avif, gif, jpg, png, tiff, avi, mkv, mov, mp4, webm
+ALL EFFECTIVE SOURCES: avif, gif, jpg, png, tiff, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### WMV
 
 AS SOURCE:
-DIRECT TARGETS: -
-ONE-INTERMEDIATE TARGETS: -
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: -
+DIRECT TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -627,10 +627,10 @@ ALL EFFECTIVE SOURCES: -
 ### XLS
 
 AS SOURCE:
-DIRECT TARGETS: ods, pdf, xlsx
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+DIRECT TARGETS: ods, xlsx, pdf
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: ods, pdf, xlsx, jpg, png, tiff
+ALL EFFECTIVE TARGETS: ods, xlsx, pdf, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -642,9 +642,9 @@ ALL EFFECTIVE SOURCES: -
 
 AS SOURCE:
 DIRECT TARGETS: ods, pdf
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: ods, pdf, jpg, png, tiff
+ALL EFFECTIVE TARGETS: ods, pdf, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: ods, xls
@@ -655,10 +655,10 @@ ALL EFFECTIVE SOURCES: ods, xls
 ### XML
 
 AS SOURCE:
-DIRECT TARGETS: csv, json, yaml, toml, tsv
+DIRECT TARGETS: json, yaml, csv, toml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, json, yaml, toml, tsv
+ALL EFFECTIVE TARGETS: json, yaml, csv, toml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, json, toml, tsv, yaml
@@ -683,10 +683,10 @@ ALL EFFECTIVE SOURCES: -
 ### YAML
 
 AS SOURCE:
-DIRECT TARGETS: csv, json, toml, tsv, xml
+DIRECT TARGETS: json, csv, toml, xml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, json, toml, tsv, xml
+ALL EFFECTIVE TARGETS: json, csv, toml, xml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, json, toml, tsv, xml
@@ -730,24 +730,24 @@ ALL EFFECTIVE SOURCES: bz2, gz, tar, xz, zip
 ### AAC
 
 AS SOURCE:
-DIRECT TARGETS: -
+DIRECT TARGETS: wav, mp3, ogg, flac, m4a
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: -
+ALL EFFECTIVE TARGETS: wav, mp3, ogg, flac, m4a
 
 AS TARGET:
-DIRECT SOURCES: -
+DIRECT SOURCES: flac, m4a, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: -
+ALL EFFECTIVE SOURCES: flac, m4a, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### AVI
 
 AS SOURCE:
-DIRECT TARGETS: mp4, webm, flac, m4a, mkv, mp3, ogg, wav, gif
-ONE-INTERMEDIATE TARGETS: avif, jpg, png, tiff, webp
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp4, webm, flac, m4a, mkv, mp3, ogg, wav, gif, avif, jpg, png, tiff, webp
+DIRECT TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -758,30 +758,30 @@ ALL EFFECTIVE SOURCES: -
 ### AVIF
 
 AS SOURCE:
-DIRECT TARGETS: png, webp, gif, jpg, tiff
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: webp, png, tiff, gif
+ONE-INTERMEDIATE TARGETS: pdf, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: png, webp, gif, jpg, tiff
+ALL EFFECTIVE TARGETS: webp, png, tiff, gif, pdf, jpg
 
 AS TARGET:
 DIRECT SOURCES: gif, jpg, png, tiff, webp
-ONE-INTERMEDIATE SOURCES: avi, mkv, mov, mp4, webm
+ONE-INTERMEDIATE SOURCES: avi, mkv, mov, mp4, ts, webm, wmv
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: gif, jpg, png, tiff, webp, avi, mkv, mov, mp4, webm
+ALL EFFECTIVE SOURCES: gif, jpg, png, tiff, webp, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### AZW3
 
 AS SOURCE:
 DIRECT TARGETS: epub
 ONE-INTERMEDIATE TARGETS: mobi, pdf
-TWO-INTERMEDIATE TARGETS: jpg, png, tiff
-ALL EFFECTIVE TARGETS: epub, mobi, pdf, jpg, png, tiff
+TWO-INTERMEDIATE TARGETS: png, tiff, jpg
+ALL EFFECTIVE TARGETS: epub, mobi, pdf, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: epub
-ONE-INTERMEDIATE SOURCES: docx, html, mobi
+ONE-INTERMEDIATE SOURCES: mobi, docx, html
 TWO-INTERMEDIATE SOURCES: doc, odt, rtf, md, rst, tex, txt
-ALL EFFECTIVE SOURCES: epub, docx, html, mobi, doc, odt, rtf, md, rst, tex, txt
+ALL EFFECTIVE SOURCES: epub, mobi, docx, html, doc, odt, rtf, md, rst, tex, txt
 
 ### BZ2
 
@@ -806,18 +806,18 @@ TWO-INTERMEDIATE TARGETS: -
 ALL EFFECTIVE TARGETS: json, yaml, toml, tsv, xml
 
 AS TARGET:
-DIRECT SOURCES: json, toml, tsv, xml, yaml
+DIRECT SOURCES: tsv, json, toml, xml, yaml
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: json, toml, tsv, xml, yaml
+ALL EFFECTIVE SOURCES: tsv, json, toml, xml, yaml
 
 ### DOC
 
 AS SOURCE:
-DIRECT TARGETS: odt, pdf, docx
-ONE-INTERMEDIATE TARGETS: html, md, txt, jpg, png, tiff, epub, rst
+DIRECT TARGETS: odt, pdf, docx, rtf
+ONE-INTERMEDIATE TARGETS: md, txt, html, png, tiff, jpg, epub, rst
 TWO-INTERMEDIATE TARGETS: azw3, mobi, tex
-ALL EFFECTIVE TARGETS: odt, pdf, html, md, txt, docx, jpg, png, tiff, epub, rst, azw3, mobi, tex
+ALL EFFECTIVE TARGETS: odt, pdf, md, txt, html, docx, rtf, png, tiff, jpg, epub, azw3, mobi, rst, tex
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -828,58 +828,58 @@ ALL EFFECTIVE SOURCES: -
 ### DOCX
 
 AS SOURCE:
-DIRECT TARGETS: odt, pdf, html, md, txt, epub, rst
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff, azw3, mobi, tex
+DIRECT TARGETS: odt, pdf, md, txt, html, rtf, epub, rst
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg, azw3, mobi, tex
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: odt, pdf, html, md, txt, jpg, png, tiff, epub, rst, azw3, mobi, tex
+ALL EFFECTIVE TARGETS: odt, pdf, md, txt, html, rtf, png, tiff, jpg, epub, azw3, mobi, rst, tex
 
 AS TARGET:
-DIRECT SOURCES: doc, odt, rtf, html, md, rst
-ONE-INTERMEDIATE SOURCES: tex, txt
+DIRECT SOURCES: doc, odt, rtf, md, html
+ONE-INTERMEDIATE SOURCES: rst, tex, txt
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: doc, odt, rtf, html, md, rst, tex, txt
+ALL EFFECTIVE SOURCES: doc, odt, rtf, md, html, rst, tex, txt
 
 ### EPUB
 
 AS SOURCE:
 DIRECT TARGETS: mobi, pdf, azw3
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mobi, pdf, azw3, jpg, png, tiff
+ALL EFFECTIVE TARGETS: mobi, pdf, azw3, png, tiff, jpg
 
 AS TARGET:
-DIRECT SOURCES: azw3, docx, html, mobi
-ONE-INTERMEDIATE SOURCES: doc, odt, rtf, md, rst, tex, txt
-TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: azw3, docx, html, mobi, doc, odt, rtf, md, rst, tex, txt
+DIRECT SOURCES: docx, azw3, mobi, html
+ONE-INTERMEDIATE SOURCES: doc, odt, rtf, md, rst
+TWO-INTERMEDIATE SOURCES: tex, txt
+ALL EFFECTIVE SOURCES: docx, doc, odt, rtf, azw3, mobi, md, html, rst, tex, txt
 
 ### FLAC
 
 AS SOURCE:
-DIRECT TARGETS: mp3, ogg, wav, m4a
+DIRECT TARGETS: wav, mp3, ogg, aac, m4a
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp3, ogg, wav, m4a
+ALL EFFECTIVE TARGETS: wav, mp3, ogg, aac, m4a
 
 AS TARGET:
-DIRECT SOURCES: avi, m4a, mkv, mov, mp3, mp4, ogg, wav, webm
+DIRECT SOURCES: aac, m4a, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, m4a, mkv, mov, mp3, mp4, ogg, wav, webm
+ALL EFFECTIVE SOURCES: aac, m4a, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### GIF
 
 AS SOURCE:
-DIRECT TARGETS: avif, png, webp, jpg, tiff
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: avif, webp, png, tiff, jpg
+ONE-INTERMEDIATE TARGETS: pdf
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: avif, png, webp, jpg, tiff
+ALL EFFECTIVE TARGETS: avif, webp, png, tiff, jpg, pdf
 
 AS TARGET:
-DIRECT SOURCES: avif, jpg, png, tiff, webp, avi, mkv, mov, mp4, webm
+DIRECT SOURCES: avif, jpg, png, tiff, webp, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avif, jpg, png, tiff, webp, avi, mkv, mov, mp4, webm
+ALL EFFECTIVE SOURCES: avif, jpg, png, tiff, webp, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### GZ
 
@@ -898,38 +898,38 @@ ALL EFFECTIVE SOURCES: -
 ### HTML
 
 AS SOURCE:
-DIRECT TARGETS: md, txt, docx, epub, odt, rst
-ONE-INTERMEDIATE TARGETS: pdf, azw3, mobi, tex
-TWO-INTERMEDIATE TARGETS: jpg, png, tiff
-ALL EFFECTIVE TARGETS: md, txt, pdf, docx, epub, odt, rst, jpg, png, tiff, azw3, mobi, tex
+DIRECT TARGETS: md, txt, png, tiff, docx, odt, rst, epub
+ONE-INTERMEDIATE TARGETS: pdf, rtf, azw3, mobi, tex
+TWO-INTERMEDIATE TARGETS: jpg
+ALL EFFECTIVE TARGETS: md, txt, pdf, png, tiff, docx, odt, rst, rtf, azw3, epub, mobi, tex, jpg
 
 AS TARGET:
-DIRECT SOURCES: docx, md, rst, tex, txt
+DIRECT SOURCES: md, rst, docx, tex, txt
 ONE-INTERMEDIATE SOURCES: doc, odt, rtf
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: docx, md, rst, tex, txt, doc, odt, rtf
+ALL EFFECTIVE SOURCES: md, rst, docx, doc, odt, rtf, tex, txt
 
 ### JPG
 
 AS SOURCE:
-DIRECT TARGETS: avif, png, webp, gif, tiff
+DIRECT TARGETS: avif, webp, png, pdf, tiff, gif
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: avif, png, webp, gif, tiff
+ALL EFFECTIVE TARGETS: avif, webp, png, pdf, tiff, gif
 
 AS TARGET:
-DIRECT SOURCES: avif, gif, pdf, png, tiff, webp
-ONE-INTERMEDIATE SOURCES: doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub
-TWO-INTERMEDIATE SOURCES: html, md, rst, azw3, mobi
-ALL EFFECTIVE SOURCES: avif, gif, pdf, png, tiff, webp, doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub, html, md, rst, azw3, mobi
+DIRECT SOURCES: gif, pdf
+ONE-INTERMEDIATE SOURCES: avif, png, tiff, webp, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, ts, webm, wmv, epub
+TWO-INTERMEDIATE SOURCES: azw3, html, md, mobi, rst
+ALL EFFECTIVE SOURCES: gif, avif, png, tiff, webp, pdf, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, ts, webm, wmv, epub, azw3, html, md, mobi, rst
 
 ### JSON
 
 AS SOURCE:
-DIRECT TARGETS: csv, yaml, toml, tsv, xml
+DIRECT TARGETS: yaml, csv, toml, xml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, yaml, toml, tsv, xml
+ALL EFFECTIVE TARGETS: yaml, csv, toml, xml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, toml, tsv, xml, yaml
@@ -940,52 +940,52 @@ ALL EFFECTIVE SOURCES: csv, toml, tsv, xml, yaml
 ### M4A
 
 AS SOURCE:
-DIRECT TARGETS: mp3, ogg, wav, flac
+DIRECT TARGETS: wav, mp3, ogg, flac, aac
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp3, ogg, wav, flac
+ALL EFFECTIVE TARGETS: wav, mp3, ogg, flac, aac
 
 AS TARGET:
-DIRECT SOURCES: avi, flac, mkv, mov, mp3, mp4, ogg, wav, webm
+DIRECT SOURCES: aac, flac, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, flac, mkv, mov, mp3, mp4, ogg, wav, webm
+ALL EFFECTIVE SOURCES: aac, flac, mp3, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### MD
 
 AS SOURCE:
 DIRECT TARGETS: html, txt, docx, odt, rst, tex
-ONE-INTERMEDIATE TARGETS: pdf, epub
-TWO-INTERMEDIATE TARGETS: jpg, png, tiff, azw3, mobi
-ALL EFFECTIVE TARGETS: html, txt, pdf, docx, odt, rst, tex, jpg, png, tiff, epub, azw3, mobi
+ONE-INTERMEDIATE TARGETS: pdf, png, tiff, epub, rtf
+TWO-INTERMEDIATE TARGETS: azw3, mobi, jpg
+ALL EFFECTIVE TARGETS: html, txt, pdf, png, tiff, epub, docx, odt, rst, rtf, tex, azw3, mobi, jpg
 
 AS TARGET:
-DIRECT SOURCES: docx, html, rst, tex, txt
+DIRECT SOURCES: rst, html, docx, tex, txt
 ONE-INTERMEDIATE SOURCES: doc, odt, rtf
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: docx, html, rst, tex, txt, doc, odt, rtf
+ALL EFFECTIVE SOURCES: rst, html, docx, doc, odt, rtf, tex, txt
 
 ### MKV
 
 AS SOURCE:
-DIRECT TARGETS: mp4, webm, flac, m4a, mp3, ogg, wav, gif
-ONE-INTERMEDIATE TARGETS: avif, jpg, png, tiff, webp
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp4, webm, flac, m4a, mp3, ogg, wav, gif, avif, jpg, png, tiff, webp
+DIRECT TARGETS: mp4, webm, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, webm, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
-DIRECT SOURCES: avi, mov, mp4, webm
+DIRECT SOURCES: avi, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, mov, mp4, webm
+ALL EFFECTIVE SOURCES: avi, mov, mp4, ts, webm, wmv
 
 ### MOBI
 
 AS SOURCE:
 DIRECT TARGETS: epub
 ONE-INTERMEDIATE TARGETS: pdf, azw3
-TWO-INTERMEDIATE TARGETS: jpg, png, tiff
-ALL EFFECTIVE TARGETS: epub, pdf, azw3, jpg, png, tiff
+TWO-INTERMEDIATE TARGETS: png, tiff, jpg
+ALL EFFECTIVE TARGETS: epub, pdf, azw3, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: epub
@@ -996,10 +996,10 @@ ALL EFFECTIVE SOURCES: epub, azw3, docx, html, doc, odt, rtf, md, rst, tex, txt
 ### MOV
 
 AS SOURCE:
-DIRECT TARGETS: mp4, webm, flac, m4a, mkv, mp3, ogg, wav, gif
-ONE-INTERMEDIATE TARGETS: avif, jpg, png, tiff, webp
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp4, webm, flac, m4a, mkv, mp3, ogg, wav, gif, avif, jpg, png, tiff, webp
+DIRECT TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -1010,38 +1010,38 @@ ALL EFFECTIVE SOURCES: -
 ### MP3
 
 AS SOURCE:
-DIRECT TARGETS: ogg, wav, flac, m4a
+DIRECT TARGETS: wav, ogg, flac, aac, m4a
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: ogg, wav, flac, m4a
+ALL EFFECTIVE TARGETS: wav, ogg, flac, aac, m4a
 
 AS TARGET:
-DIRECT SOURCES: avi, flac, m4a, mkv, mov, mp4, ogg, wav, webm
+DIRECT SOURCES: aac, flac, m4a, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, flac, m4a, mkv, mov, mp4, ogg, wav, webm
+ALL EFFECTIVE SOURCES: aac, flac, m4a, ogg, wav, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### MP4
 
 AS SOURCE:
-DIRECT TARGETS: webm, flac, m4a, mkv, mp3, ogg, wav, gif
-ONE-INTERMEDIATE TARGETS: avif, jpg, png, tiff, webp
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: webm, flac, m4a, mkv, mp3, ogg, wav, gif, avif, jpg, png, tiff, webp
+DIRECT TARGETS: webm, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: webm, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
-DIRECT SOURCES: avi, mkv, mov, webm
+DIRECT SOURCES: avi, mkv, mov, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, mkv, mov, webm
+ALL EFFECTIVE SOURCES: avi, mkv, mov, ts, webm, wmv
 
 ### ODP
 
 AS SOURCE:
-DIRECT TARGETS: -
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: pdf, pptx
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: -
+ALL EFFECTIVE TARGETS: pdf, pptx, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -1052,10 +1052,10 @@ ALL EFFECTIVE SOURCES: -
 ### ODS
 
 AS SOURCE:
-DIRECT TARGETS: pdf, xlsx
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+DIRECT TARGETS: xlsx, pdf
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: pdf, xlsx, jpg, png, tiff
+ALL EFFECTIVE TARGETS: xlsx, pdf, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: xls, xlsx
@@ -1066,66 +1066,66 @@ ALL EFFECTIVE SOURCES: xls, xlsx
 ### ODT
 
 AS SOURCE:
-DIRECT TARGETS: pdf, docx
-ONE-INTERMEDIATE TARGETS: html, md, txt, jpg, png, tiff, epub, rst
+DIRECT TARGETS: pdf, docx, rtf
+ONE-INTERMEDIATE TARGETS: md, txt, html, png, tiff, jpg, epub, rst
 TWO-INTERMEDIATE TARGETS: azw3, mobi, tex
-ALL EFFECTIVE TARGETS: pdf, html, md, txt, docx, jpg, png, tiff, epub, rst, azw3, mobi, tex
+ALL EFFECTIVE TARGETS: pdf, md, txt, html, docx, rtf, png, tiff, jpg, epub, azw3, mobi, rst, tex
 
 AS TARGET:
-DIRECT SOURCES: doc, docx, rtf, html, md, rst
-ONE-INTERMEDIATE SOURCES: tex, txt
+DIRECT SOURCES: doc, docx, rtf, md, html
+ONE-INTERMEDIATE SOURCES: rst, tex, txt
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: doc, docx, rtf, html, md, rst, tex, txt
+ALL EFFECTIVE SOURCES: doc, docx, rtf, md, html, rst, tex, txt
 
 ### OGG
 
 AS SOURCE:
-DIRECT TARGETS: mp3, wav, flac, m4a
+DIRECT TARGETS: wav, mp3, flac, aac, m4a
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp3, wav, flac, m4a
+ALL EFFECTIVE TARGETS: wav, mp3, flac, aac, m4a
 
 AS TARGET:
-DIRECT SOURCES: avi, flac, m4a, mkv, mov, mp3, mp4, wav, webm
+DIRECT SOURCES: aac, flac, m4a, mp3, wav, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, flac, m4a, mkv, mov, mp3, mp4, wav, webm
+ALL EFFECTIVE SOURCES: aac, flac, m4a, mp3, wav, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### PDF
 
 AS SOURCE:
-DIRECT TARGETS: png, jpg, tiff
+DIRECT TARGETS: png, tiff, jpg
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: png, jpg, tiff
+ALL EFFECTIVE TARGETS: png, tiff, jpg
 
 AS TARGET:
-DIRECT SOURCES: doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, epub
-ONE-INTERMEDIATE SOURCES: html, md, rst, azw3, mobi
-TWO-INTERMEDIATE SOURCES: tex, txt
-ALL EFFECTIVE SOURCES: doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, epub, html, md, rst, azw3, mobi, tex, txt
+DIRECT SOURCES: ods, xls, xlsx, doc, docx, odp, odt, ppt, pptx, rtf, jpg, png, tiff, webp, epub
+ONE-INTERMEDIATE SOURCES: avif, gif, md, html, azw3, mobi
+TWO-INTERMEDIATE SOURCES: rst, tex, avi, mkv, mov, mp4, ts, webm, wmv, txt
+ALL EFFECTIVE SOURCES: ods, xls, xlsx, doc, docx, odp, odt, ppt, pptx, rtf, jpg, png, tiff, webp, avif, gif, md, html, rst, tex, epub, azw3, mobi, avi, mkv, mov, mp4, ts, webm, wmv, txt
 
 ### PNG
 
 AS SOURCE:
-DIRECT TARGETS: avif, webp, gif, jpg, tiff
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: avif, webp, pdf, tiff, gif
+ONE-INTERMEDIATE TARGETS: jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: avif, webp, gif, jpg, tiff
+ALL EFFECTIVE TARGETS: avif, webp, pdf, tiff, gif, jpg
 
 AS TARGET:
-DIRECT SOURCES: avif, gif, jpg, pdf, tiff, webp
-ONE-INTERMEDIATE SOURCES: doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub
-TWO-INTERMEDIATE SOURCES: html, md, rst, azw3, mobi
-ALL EFFECTIVE SOURCES: avif, gif, jpg, pdf, tiff, webp, doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub, html, md, rst, azw3, mobi
+DIRECT SOURCES: html, pdf, avif, gif, jpg, tiff, webp
+ONE-INTERMEDIATE SOURCES: md, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, rst, avi, mkv, mov, mp4, ts, webm, wmv, epub, tex, txt
+TWO-INTERMEDIATE SOURCES: azw3, mobi
+ALL EFFECTIVE SOURCES: html, pdf, avif, gif, jpg, tiff, webp, md, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, rst, avi, mkv, mov, mp4, ts, webm, wmv, epub, tex, azw3, mobi, txt
 
 ### PPT
 
 AS SOURCE:
 DIRECT TARGETS: pdf, pptx
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: pdf, pptx, jpg, png, tiff
+ALL EFFECTIVE TARGETS: pdf, pptx, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -1137,43 +1137,43 @@ ALL EFFECTIVE SOURCES: -
 
 AS SOURCE:
 DIRECT TARGETS: pdf
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: pdf, jpg, png, tiff
+ALL EFFECTIVE TARGETS: pdf, png, tiff, jpg
 
 AS TARGET:
-DIRECT SOURCES: ppt
+DIRECT SOURCES: odp, ppt
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: ppt
+ALL EFFECTIVE SOURCES: odp, ppt
 
 ### RST
 
 AS SOURCE:
-DIRECT TARGETS: html, md, txt, docx, odt, tex
-ONE-INTERMEDIATE TARGETS: pdf, epub
-TWO-INTERMEDIATE TARGETS: jpg, png, tiff, azw3, mobi
-ALL EFFECTIVE TARGETS: html, md, txt, pdf, docx, odt, tex, jpg, png, tiff, epub, azw3, mobi
+DIRECT TARGETS: html, md, txt, tex
+ONE-INTERMEDIATE TARGETS: png, tiff, docx, odt, epub
+TWO-INTERMEDIATE TARGETS: pdf, rtf, azw3, mobi, jpg
+ALL EFFECTIVE TARGETS: html, md, txt, pdf, png, tiff, docx, odt, rtf, tex, epub, azw3, mobi, jpg
 
 AS TARGET:
-DIRECT SOURCES: docx, html, md
+DIRECT SOURCES: md, html, docx
 ONE-INTERMEDIATE SOURCES: doc, odt, rtf, tex, txt
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: docx, html, md, doc, odt, rtf, tex, txt
+ALL EFFECTIVE SOURCES: md, html, docx, doc, odt, rtf, tex, txt
 
 ### RTF
 
 AS SOURCE:
 DIRECT TARGETS: odt, pdf, docx
-ONE-INTERMEDIATE TARGETS: html, md, txt, jpg, png, tiff, epub, rst
+ONE-INTERMEDIATE TARGETS: md, txt, html, png, tiff, jpg, epub, rst
 TWO-INTERMEDIATE TARGETS: azw3, mobi, tex
-ALL EFFECTIVE TARGETS: odt, pdf, html, md, txt, docx, jpg, png, tiff, epub, rst, azw3, mobi, tex
+ALL EFFECTIVE TARGETS: odt, pdf, md, txt, html, docx, png, tiff, jpg, epub, azw3, mobi, rst, tex
 
 AS TARGET:
-DIRECT SOURCES: -
-ONE-INTERMEDIATE SOURCES: -
-TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: -
+DIRECT SOURCES: doc, docx, odt
+ONE-INTERMEDIATE SOURCES: md, html
+TWO-INTERMEDIATE SOURCES: rst, tex, txt
+ALL EFFECTIVE SOURCES: doc, docx, odt, md, html, rst, tex, txt
 
 ### TAR
 
@@ -1192,38 +1192,38 @@ ALL EFFECTIVE SOURCES: 7z, bz2, gz, xz, zip
 ### TEX
 
 AS SOURCE:
-DIRECT TARGETS: html, md
-ONE-INTERMEDIATE TARGETS: txt, docx, epub, odt, rst
-TWO-INTERMEDIATE TARGETS: pdf, azw3, mobi
-ALL EFFECTIVE TARGETS: html, md, txt, pdf, docx, epub, odt, rst, azw3, mobi
+DIRECT TARGETS: md, html
+ONE-INTERMEDIATE TARGETS: txt, docx, odt, rst, png, tiff
+TWO-INTERMEDIATE TARGETS: pdf, epub, rtf, azw3, mobi
+ALL EFFECTIVE TARGETS: md, txt, html, pdf, epub, docx, odt, rst, rtf, azw3, mobi, png, tiff
 
 AS TARGET:
 DIRECT SOURCES: md, rst
-ONE-INTERMEDIATE SOURCES: docx, html, txt
+ONE-INTERMEDIATE SOURCES: html, docx, txt
 TWO-INTERMEDIATE SOURCES: doc, odt, rtf
-ALL EFFECTIVE SOURCES: md, rst, docx, html, txt, doc, odt, rtf
+ALL EFFECTIVE SOURCES: md, rst, html, docx, doc, odt, rtf, txt
 
 ### TIFF
 
 AS SOURCE:
-DIRECT TARGETS: avif, png, webp, gif, jpg
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: avif, webp, png, pdf, gif
+ONE-INTERMEDIATE TARGETS: jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: avif, png, webp, gif, jpg
+ALL EFFECTIVE TARGETS: avif, webp, png, pdf, gif, jpg
 
 AS TARGET:
-DIRECT SOURCES: avif, gif, jpg, pdf, png, webp
-ONE-INTERMEDIATE SOURCES: doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub
-TWO-INTERMEDIATE SOURCES: html, md, rst, azw3, mobi
-ALL EFFECTIVE SOURCES: avif, gif, jpg, pdf, png, webp, doc, docx, ods, odt, ppt, pptx, rtf, xls, xlsx, avi, mkv, mov, mp4, webm, epub, html, md, rst, azw3, mobi
+DIRECT SOURCES: html, avif, gif, jpg, png, webp, pdf
+ONE-INTERMEDIATE SOURCES: doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, md, rst, avi, mkv, mov, mp4, ts, webm, wmv, epub, tex, txt
+TWO-INTERMEDIATE SOURCES: azw3, mobi
+ALL EFFECTIVE SOURCES: html, avif, gif, jpg, png, webp, pdf, doc, docx, odp, ods, odt, ppt, pptx, rtf, xls, xlsx, md, rst, avi, mkv, mov, mp4, ts, webm, wmv, epub, azw3, mobi, tex, txt
 
 ### TOML
 
 AS SOURCE:
-DIRECT TARGETS: csv, json, yaml, tsv, xml
+DIRECT TARGETS: json, yaml, csv, xml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, json, yaml, tsv, xml
+ALL EFFECTIVE TARGETS: json, yaml, csv, xml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, json, tsv, xml, yaml
@@ -1234,10 +1234,10 @@ ALL EFFECTIVE SOURCES: csv, json, tsv, xml, yaml
 ### TS
 
 AS SOURCE:
-DIRECT TARGETS: -
-ONE-INTERMEDIATE TARGETS: -
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: -
+DIRECT TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -1262,66 +1262,66 @@ ALL EFFECTIVE SOURCES: csv, json, toml, xml, yaml
 ### TXT
 
 AS SOURCE:
-DIRECT TARGETS: html, md
-ONE-INTERMEDIATE TARGETS: docx, epub, odt, rst, tex
-TWO-INTERMEDIATE TARGETS: pdf, azw3, mobi
-ALL EFFECTIVE TARGETS: html, md, pdf, docx, epub, odt, rst, tex, azw3, mobi
+DIRECT TARGETS: md, html
+ONE-INTERMEDIATE TARGETS: docx, odt, rst, tex, png, tiff
+TWO-INTERMEDIATE TARGETS: pdf, epub, azw3, mobi, rtf
+ALL EFFECTIVE TARGETS: md, pdf, html, epub, azw3, mobi, docx, odt, rst, rtf, tex, png, tiff
 
 AS TARGET:
-DIRECT SOURCES: docx, html, md, rst
+DIRECT SOURCES: md, rst, docx, html
 ONE-INTERMEDIATE SOURCES: doc, odt, rtf, tex
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: docx, html, md, rst, doc, odt, rtf, tex
+ALL EFFECTIVE SOURCES: md, rst, docx, html, doc, odt, rtf, tex
 
 ### WAV
 
 AS SOURCE:
-DIRECT TARGETS: mp3, ogg, flac, m4a
+DIRECT TARGETS: mp3, ogg, flac, aac, m4a
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp3, ogg, flac, m4a
+ALL EFFECTIVE TARGETS: mp3, ogg, flac, aac, m4a
 
 AS TARGET:
-DIRECT SOURCES: avi, flac, m4a, mkv, mov, mp3, mp4, ogg, webm
+DIRECT SOURCES: aac, flac, m4a, mp3, ogg, avi, mkv, mov, mp4, ts, webm, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, flac, m4a, mkv, mov, mp3, mp4, ogg, webm
+ALL EFFECTIVE SOURCES: aac, flac, m4a, mp3, ogg, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### WEBM
 
 AS SOURCE:
-DIRECT TARGETS: mp4, flac, m4a, mkv, mp3, ogg, wav, gif
-ONE-INTERMEDIATE TARGETS: avif, jpg, png, tiff, webp
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: mp4, flac, m4a, mkv, mp3, ogg, wav, gif, avif, jpg, png, tiff, webp
+DIRECT TARGETS: mp4, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
-DIRECT SOURCES: avi, mkv, mov, mp4
+DIRECT SOURCES: avi, mkv, mov, mp4, ts, wmv
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avi, mkv, mov, mp4
+ALL EFFECTIVE SOURCES: avi, mkv, mov, mp4, ts, wmv
 
 ### WEBP
 
 AS SOURCE:
-DIRECT TARGETS: avif, png, gif, jpg, tiff
-ONE-INTERMEDIATE TARGETS: -
+DIRECT TARGETS: avif, png, pdf, tiff, gif
+ONE-INTERMEDIATE TARGETS: jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: avif, png, gif, jpg, tiff
+ALL EFFECTIVE TARGETS: avif, png, pdf, tiff, gif, jpg
 
 AS TARGET:
 DIRECT SOURCES: avif, gif, jpg, png, tiff
-ONE-INTERMEDIATE SOURCES: avi, mkv, mov, mp4, webm
+ONE-INTERMEDIATE SOURCES: avi, mkv, mov, mp4, ts, webm, wmv
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: avif, gif, jpg, png, tiff, avi, mkv, mov, mp4, webm
+ALL EFFECTIVE SOURCES: avif, gif, jpg, png, tiff, avi, mkv, mov, mp4, ts, webm, wmv
 
 ### WMV
 
 AS SOURCE:
-DIRECT TARGETS: -
-ONE-INTERMEDIATE TARGETS: -
-TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: -
+DIRECT TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, gif
+ONE-INTERMEDIATE TARGETS: png, tiff, avif, jpg, webp
+TWO-INTERMEDIATE TARGETS: pdf
+ALL EFFECTIVE TARGETS: mp4, webm, mkv, aac, flac, m4a, mp3, ogg, wav, png, tiff, pdf, avif, jpg, webp, gif
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -1332,10 +1332,10 @@ ALL EFFECTIVE SOURCES: -
 ### XLS
 
 AS SOURCE:
-DIRECT TARGETS: ods, pdf, xlsx
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+DIRECT TARGETS: ods, xlsx, pdf
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: ods, pdf, xlsx, jpg, png, tiff
+ALL EFFECTIVE TARGETS: ods, xlsx, pdf, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: -
@@ -1347,9 +1347,9 @@ ALL EFFECTIVE SOURCES: -
 
 AS SOURCE:
 DIRECT TARGETS: ods, pdf
-ONE-INTERMEDIATE TARGETS: jpg, png, tiff
+ONE-INTERMEDIATE TARGETS: png, tiff, jpg
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: ods, pdf, jpg, png, tiff
+ALL EFFECTIVE TARGETS: ods, pdf, png, tiff, jpg
 
 AS TARGET:
 DIRECT SOURCES: ods, xls
@@ -1360,10 +1360,10 @@ ALL EFFECTIVE SOURCES: ods, xls
 ### XML
 
 AS SOURCE:
-DIRECT TARGETS: csv, json, yaml, toml, tsv
+DIRECT TARGETS: json, yaml, csv, toml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, json, yaml, toml, tsv
+ALL EFFECTIVE TARGETS: json, yaml, csv, toml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, json, toml, tsv, yaml
@@ -1388,10 +1388,10 @@ ALL EFFECTIVE SOURCES: -
 ### YAML
 
 AS SOURCE:
-DIRECT TARGETS: csv, json, toml, tsv, xml
+DIRECT TARGETS: json, csv, toml, xml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, json, toml, tsv, xml
+ALL EFFECTIVE TARGETS: json, csv, toml, xml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, json, toml, tsv, xml
@@ -1511,10 +1511,10 @@ TWO-INTERMEDIATE TARGETS: -
 ALL EFFECTIVE TARGETS: json, yaml, toml, tsv, xml
 
 AS TARGET:
-DIRECT SOURCES: json, toml, tsv, xml, yaml
+DIRECT SOURCES: tsv, json, toml, xml, yaml
 ONE-INTERMEDIATE SOURCES: -
 TWO-INTERMEDIATE SOURCES: -
-ALL EFFECTIVE SOURCES: json, toml, tsv, xml, yaml
+ALL EFFECTIVE SOURCES: tsv, json, toml, xml, yaml
 
 ### DOC
 
@@ -1631,10 +1631,10 @@ ALL EFFECTIVE SOURCES: png, webp
 ### JSON
 
 AS SOURCE:
-DIRECT TARGETS: csv, yaml, toml, tsv, xml
+DIRECT TARGETS: yaml, csv, toml, xml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, yaml, toml, tsv, xml
+ALL EFFECTIVE TARGETS: yaml, csv, toml, xml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, toml, tsv, xml, yaml
@@ -1813,10 +1813,10 @@ ALL EFFECTIVE SOURCES: jpg, png, webp
 ### PNG
 
 AS SOURCE:
-DIRECT TARGETS: webp, jpg, pdf
+DIRECT TARGETS: webp, pdf, jpg
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: webp, jpg, pdf
+ALL EFFECTIVE TARGETS: webp, pdf, jpg
 
 AS TARGET:
 DIRECT SOURCES: jpg, webp
@@ -1925,10 +1925,10 @@ ALL EFFECTIVE SOURCES: -
 ### TOML
 
 AS SOURCE:
-DIRECT TARGETS: csv, json, yaml, tsv, xml
+DIRECT TARGETS: json, yaml, csv, xml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, json, yaml, tsv, xml
+ALL EFFECTIVE TARGETS: json, yaml, csv, xml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, json, tsv, xml, yaml
@@ -2009,10 +2009,10 @@ ALL EFFECTIVE SOURCES: -
 ### WEBP
 
 AS SOURCE:
-DIRECT TARGETS: png, jpg, pdf
+DIRECT TARGETS: png, pdf, jpg
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: png, jpg, pdf
+ALL EFFECTIVE TARGETS: png, pdf, jpg
 
 AS TARGET:
 DIRECT SOURCES: jpg, png
@@ -2065,10 +2065,10 @@ ALL EFFECTIVE SOURCES: -
 ### XML
 
 AS SOURCE:
-DIRECT TARGETS: csv, json, yaml, toml, tsv
+DIRECT TARGETS: json, yaml, csv, toml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, json, yaml, toml, tsv
+ALL EFFECTIVE TARGETS: json, yaml, csv, toml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, json, toml, tsv, yaml
@@ -2093,10 +2093,10 @@ ALL EFFECTIVE SOURCES: -
 ### YAML
 
 AS SOURCE:
-DIRECT TARGETS: csv, json, toml, tsv, xml
+DIRECT TARGETS: json, csv, toml, xml, tsv
 ONE-INTERMEDIATE TARGETS: -
 TWO-INTERMEDIATE TARGETS: -
-ALL EFFECTIVE TARGETS: csv, json, toml, tsv, xml
+ALL EFFECTIVE TARGETS: json, csv, toml, xml, tsv
 
 AS TARGET:
 DIRECT SOURCES: csv, json, toml, tsv, xml
@@ -2120,9 +2120,9 @@ ALL EFFECTIVE SOURCES: -
 
 ## PDF Windows Regression
 
-PDF DIRECT TARGETS: png, jpg, tiff
+PDF DIRECT TARGETS: png, tiff, jpg
 PDF MULTISTEP TARGETS: -
-PDF ALL EFFECTIVE TARGETS: png, jpg, tiff
+PDF ALL EFFECTIVE TARGETS: png, tiff, jpg
 
 PDF -> DOCX: UNAVAILABLE — No effective route within two intermediates
 PDF -> TXT: UNAVAILABLE — No effective route within two intermediates

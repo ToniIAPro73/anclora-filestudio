@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-08-13T02:16:15.974Z",
+  "generatedAt": "2026-08-13T03:11:22.080Z",
   "canonicalFormats": 50,
   "totalPossibleOrderedPairs": 2450,
   "directSupportedPairs": 236,
-  "multistepSupportedPairs": 220,
-  "totalEffectivePairs": 456,
+  "multistepSupportedPairs": 224,
+  "totalEffectivePairs": 460,
   "tierMetrics": {
     "tier1": {
       "required": 152,
@@ -269,9 +269,9 @@
           "txt",
           "docx",
           "html",
-          "md",
           "png",
           "tiff",
+          "md",
           "jpg"
         ],
         "allEffectiveTargets": [
@@ -281,9 +281,9 @@
           "txt",
           "docx",
           "html",
-          "md",
           "png",
           "tiff",
+          "md",
           "jpg"
         ]
       },
@@ -501,10 +501,10 @@
           "rtf",
           "md",
           "html",
-          "rst",
           "pdf"
         ],
         "oneIntermediateSources": [
+          "rst",
           "tex",
           "odp",
           "ods",
@@ -571,9 +571,9 @@
           "txt",
           "docx",
           "html",
-          "md",
           "png",
           "tiff",
+          "md",
           "jpg"
         ],
         "twoIntermediateTargets": [],
@@ -584,9 +584,9 @@
           "txt",
           "docx",
           "html",
-          "md",
           "png",
           "tiff",
+          "md",
           "jpg"
         ]
       },
@@ -794,6 +794,8 @@
         "directTargets": [
           "md",
           "txt",
+          "png",
+          "tiff",
           "docx",
           "odt",
           "rst",
@@ -807,14 +809,14 @@
           "tex"
         ],
         "twoIntermediateTargets": [
-          "png",
-          "tiff",
           "jpg"
         ],
         "allEffectiveTargets": [
           "md",
           "txt",
           "pdf",
+          "png",
+          "tiff",
           "docx",
           "odt",
           "rst",
@@ -823,8 +825,6 @@
           "epub",
           "mobi",
           "tex",
-          "png",
-          "tiff",
           "jpg"
         ]
       },
@@ -1107,8 +1107,8 @@
       "category": "plain-text",
       "asSource": {
         "directTargets": [
-          "txt",
           "html",
+          "txt",
           "docx",
           "odt",
           "rst",
@@ -1116,20 +1116,22 @@
         ],
         "oneIntermediateTargets": [
           "pdf",
+          "png",
+          "tiff",
           "epub",
           "rtf"
         ],
         "twoIntermediateTargets": [
           "azw3",
           "mobi",
-          "png",
-          "tiff",
           "jpg"
         ],
         "allEffectiveTargets": [
-          "txt",
           "html",
+          "txt",
           "pdf",
+          "png",
+          "tiff",
           "epub",
           "docx",
           "odt",
@@ -1138,8 +1140,6 @@
           "tex",
           "azw3",
           "mobi",
-          "png",
-          "tiff",
           "jpg"
         ]
       },
@@ -1291,9 +1291,9 @@
           "txt",
           "docx",
           "html",
-          "md",
           "png",
           "tiff",
+          "md",
           "jpg"
         ],
         "allEffectiveTargets": [
@@ -1303,9 +1303,9 @@
           "txt",
           "docx",
           "html",
-          "md",
           "png",
           "tiff",
+          "md",
           "jpg"
         ]
       },
@@ -1669,10 +1669,10 @@
           "docx",
           "rtf",
           "md",
-          "html",
-          "rst"
+          "html"
         ],
         "oneIntermediateSources": [
+          "rst",
           "tex",
           "txt"
         ],
@@ -1801,11 +1801,11 @@
           "gif",
           "md",
           "html",
-          "rst",
           "azw3",
           "mobi"
         ],
         "twoIntermediateSources": [
+          "rst",
           "tex",
           "avi",
           "mkv",
@@ -1908,9 +1908,11 @@
           "jpg",
           "tiff",
           "webp",
+          "html",
           "pdf"
         ],
         "oneIntermediateSources": [
+          "md",
           "doc",
           "docx",
           "odp",
@@ -1921,6 +1923,9 @@
           "rtf",
           "xls",
           "xlsx",
+          "rst",
+          "epub",
+          "tex",
           "avi",
           "mkv",
           "mov",
@@ -1928,14 +1933,11 @@
           "ts",
           "webm",
           "wmv",
-          "epub"
+          "txt"
         ],
         "twoIntermediateSources": [
           "azw3",
-          "html",
-          "md",
-          "mobi",
-          "rst"
+          "mobi"
         ],
         "allEffectiveSources": [
           "avif",
@@ -1943,7 +1945,9 @@
           "jpg",
           "tiff",
           "webp",
+          "html",
           "pdf",
+          "md",
           "doc",
           "docx",
           "odp",
@@ -1954,6 +1958,11 @@
           "rtf",
           "xls",
           "xlsx",
+          "rst",
+          "epub",
+          "tex",
+          "azw3",
+          "mobi",
           "avi",
           "mkv",
           "mov",
@@ -1961,12 +1970,7 @@
           "ts",
           "webm",
           "wmv",
-          "epub",
-          "azw3",
-          "html",
-          "md",
-          "mobi",
-          "rst"
+          "txt"
         ]
       },
       "highValueMissingConversions": [],
@@ -2068,30 +2072,32 @@
       "category": "plain-text",
       "asSource": {
         "directTargets": [
+          "html",
           "md",
           "txt",
-          "html",
-          "docx",
-          "odt",
           "tex"
         ],
         "oneIntermediateTargets": [
-          "pdf",
-          "rtf",
+          "png",
+          "tiff",
+          "docx",
+          "odt",
           "epub"
         ],
         "twoIntermediateTargets": [
+          "pdf",
+          "rtf",
           "azw3",
           "mobi",
-          "png",
-          "tiff",
           "jpg"
         ],
         "allEffectiveTargets": [
+          "html",
           "md",
           "txt",
-          "html",
           "pdf",
+          "png",
+          "tiff",
           "docx",
           "odt",
           "rtf",
@@ -2099,8 +2105,6 @@
           "epub",
           "azw3",
           "mobi",
-          "png",
-          "tiff",
           "jpg"
         ]
       },
@@ -2184,10 +2188,10 @@
         ],
         "oneIntermediateSources": [
           "md",
-          "html",
-          "rst"
+          "html"
         ],
         "twoIntermediateSources": [
+          "rst",
           "tex",
           "txt"
         ],
@@ -2259,7 +2263,9 @@
           "txt",
           "docx",
           "odt",
-          "rst"
+          "rst",
+          "png",
+          "tiff"
         ],
         "twoIntermediateTargets": [
           "pdf",
@@ -2279,7 +2285,9 @@
           "rst",
           "rtf",
           "azw3",
-          "mobi"
+          "mobi",
+          "png",
+          "tiff"
         ]
       },
       "asTarget": {
@@ -2353,6 +2361,7 @@
           "jpg",
           "png",
           "webp",
+          "html",
           "pdf"
         ],
         "oneIntermediateSources": [
@@ -2366,6 +2375,10 @@
           "rtf",
           "xls",
           "xlsx",
+          "md",
+          "rst",
+          "epub",
+          "tex",
           "avi",
           "mkv",
           "mov",
@@ -2373,14 +2386,11 @@
           "ts",
           "webm",
           "wmv",
-          "epub"
+          "txt"
         ],
         "twoIntermediateSources": [
           "azw3",
-          "html",
-          "md",
-          "mobi",
-          "rst"
+          "mobi"
         ],
         "allEffectiveSources": [
           "avif",
@@ -2388,6 +2398,7 @@
           "jpg",
           "png",
           "webp",
+          "html",
           "pdf",
           "doc",
           "docx",
@@ -2399,6 +2410,12 @@
           "rtf",
           "xls",
           "xlsx",
+          "md",
+          "rst",
+          "epub",
+          "azw3",
+          "mobi",
+          "tex",
           "avi",
           "mkv",
           "mov",
@@ -2406,12 +2423,7 @@
           "ts",
           "webm",
           "wmv",
-          "epub",
-          "azw3",
-          "html",
-          "md",
-          "mobi",
-          "rst"
+          "txt"
         ]
       },
       "highValueMissingConversions": [],
@@ -2579,7 +2591,9 @@
           "docx",
           "odt",
           "rst",
-          "tex"
+          "tex",
+          "png",
+          "tiff"
         ],
         "twoIntermediateTargets": [
           "pdf",
@@ -2599,7 +2613,9 @@
           "odt",
           "rst",
           "rtf",
-          "tex"
+          "tex",
+          "png",
+          "tiff"
         ]
       },
       "asTarget": {
@@ -4373,11 +4389,7 @@
           },
           "rank": 1,
           "reasons": [
-            "HIGHER_FIDELITY",
-            "PRESERVES_TABLES",
-            "AVOIDS_LOSSY_INTERMEDIATE",
-            "SHORTER_EQUIVALENT_ROUTE",
-            "LOWER_RUNTIME_COST"
+            "SHORTER_EQUIVALENT_ROUTE"
           ],
           "rejected": false,
           "rejectionReasons": []
@@ -4449,11 +4461,7 @@
           },
           "rank": 1,
           "reasons": [
-            "HIGHER_FIDELITY",
-            "PRESERVES_TABLES",
-            "AVOIDS_LOSSY_INTERMEDIATE",
-            "SHORTER_EQUIVALENT_ROUTE",
-            "LOWER_RUNTIME_COST"
+            "SHORTER_EQUIVALENT_ROUTE"
           ],
           "rejected": false,
           "rejectionReasons": []
@@ -5029,54 +5037,56 @@
               "resourceProfile": "medium",
               "quality": {
                 "preservation": {
-                  "text": 0.92,
-                  "structure": 0.8,
-                  "layout": 0.4,
-                  "images": 0.6,
-                  "tables": 0.75,
-                  "metadata": 0.7,
+                  "text": 0.96,
+                  "structure": 0.9,
+                  "layout": 0.86,
+                  "images": 0.82,
+                  "tables": 0.86,
+                  "metadata": 0.6,
                   "mediaQuality": 0.45,
                   "resolution": 0.45,
                   "alpha": 0.45
                 },
                 "irreversibleLosses": [
-                  "layout"
+                  "metadata"
                 ],
                 "reencodeRequired": false,
                 "pipelineMode": "na",
                 "runtimeCost": "low",
                 "stability": 0.9,
-                "certification": "engine-inferred"
+                "certification": "benchmarked"
               }
             }
           ],
           "intermediateFormats": [],
-          "score": 0.691,
+          "score": 0.893,
           "classification": "lossy",
           "risk": "high",
           "routeId": "md>html:doc:convert",
           "quality": {
             "family": "document",
             "dimensions": {
-              "text": 0.92,
-              "structure": 0.8,
-              "layout": 0.4,
-              "tables": 0.75,
-              "images": 0.6
+              "text": 0.96,
+              "structure": 0.9,
+              "layout": 0.86,
+              "tables": 0.86,
+              "images": 0.82
             },
-            "irreversibleLosses": [
-              "layout"
-            ],
+            "irreversibleLosses": [],
             "reencodeCount": 0,
             "runtimeCost": "low",
             "stability": 0.9,
-            "certification": "engine-inferred",
-            "score": 0.691
+            "certification": "benchmarked",
+            "score": 0.893
           },
           "rank": 1,
           "reasons": [
+            "HIGHER_FIDELITY",
+            "HIGHER_LAYOUT_FIDELITY",
             "PRESERVES_TABLES",
-            "SHORTER_EQUIVALENT_ROUTE"
+            "PRESERVES_IMAGES",
+            "AVOIDS_LOSSY_INTERMEDIATE",
+            "CERTIFIED_ROUTE"
           ],
           "rejected": false,
           "rejectionReasons": []
@@ -5084,7 +5094,7 @@
         "routeText": "md -> html",
         "enginePath": "pandoc",
         "risk": "high",
-        "score": 0.691
+        "score": 0.893
       },
       "linux": {
         "status": "supported",
@@ -5102,54 +5112,56 @@
               "resourceProfile": "medium",
               "quality": {
                 "preservation": {
-                  "text": 0.92,
-                  "structure": 0.8,
-                  "layout": 0.4,
-                  "images": 0.6,
-                  "tables": 0.75,
-                  "metadata": 0.7,
+                  "text": 0.96,
+                  "structure": 0.9,
+                  "layout": 0.86,
+                  "images": 0.82,
+                  "tables": 0.86,
+                  "metadata": 0.6,
                   "mediaQuality": 0.45,
                   "resolution": 0.45,
                   "alpha": 0.45
                 },
                 "irreversibleLosses": [
-                  "layout"
+                  "metadata"
                 ],
                 "reencodeRequired": false,
                 "pipelineMode": "na",
                 "runtimeCost": "low",
                 "stability": 0.9,
-                "certification": "engine-inferred"
+                "certification": "benchmarked"
               }
             }
           ],
           "intermediateFormats": [],
-          "score": 0.691,
+          "score": 0.893,
           "classification": "lossy",
           "risk": "high",
           "routeId": "md>html:doc:convert",
           "quality": {
             "family": "document",
             "dimensions": {
-              "text": 0.92,
-              "structure": 0.8,
-              "layout": 0.4,
-              "tables": 0.75,
-              "images": 0.6
+              "text": 0.96,
+              "structure": 0.9,
+              "layout": 0.86,
+              "tables": 0.86,
+              "images": 0.82
             },
-            "irreversibleLosses": [
-              "layout"
-            ],
+            "irreversibleLosses": [],
             "reencodeCount": 0,
             "runtimeCost": "low",
             "stability": 0.9,
-            "certification": "engine-inferred",
-            "score": 0.691
+            "certification": "benchmarked",
+            "score": 0.893
           },
           "rank": 1,
           "reasons": [
+            "HIGHER_FIDELITY",
+            "HIGHER_LAYOUT_FIDELITY",
             "PRESERVES_TABLES",
-            "SHORTER_EQUIVALENT_ROUTE"
+            "PRESERVES_IMAGES",
+            "AVOIDS_LOSSY_INTERMEDIATE",
+            "CERTIFIED_ROUTE"
           ],
           "rejected": false,
           "rejectionReasons": []
@@ -5157,7 +5169,7 @@
         "routeText": "md -> html",
         "enginePath": "pandoc",
         "risk": "high",
-        "score": 0.691
+        "score": 0.893
       },
       "web": {
         "status": "missing",
@@ -7737,7 +7749,7 @@
           },
           "rank": 1,
           "reasons": [
-            "HIGHER_FIDELITY"
+            "SHORTER_EQUIVALENT_ROUTE"
           ],
           "rejected": false,
           "rejectionReasons": []
@@ -7811,7 +7823,7 @@
           },
           "rank": 1,
           "reasons": [
-            "HIGHER_FIDELITY"
+            "SHORTER_EQUIVALENT_ROUTE"
           ],
           "rejected": false,
           "rejectionReasons": []
