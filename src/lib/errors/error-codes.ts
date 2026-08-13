@@ -27,7 +27,13 @@ export type ErrorCode =
   | "RATE_LIMITED"
   | "CONCURRENCY_LIMIT"
   | "DEPENDENCY_MISSING"
-  | "QUALITY_NOT_DELIVERED";
+  | "QUALITY_NOT_DELIVERED"
+  | "RUNTIME_PACK_REQUIRED"
+  | "RUNTIME_PACK_DOWNLOAD_FAILED"
+  | "RUNTIME_PACK_HASH_MISMATCH"
+  | "RUNTIME_PACK_INSTALL_FAILED"
+  | "RUNTIME_PACK_BROKEN"
+  | "RUNTIME_PACK_INCOMPATIBLE";
 
 export interface AppError extends Error {
   code: ErrorCode;
@@ -45,6 +51,7 @@ const RETRYABLE_CODES: ReadonlySet<ErrorCode> = new Set<ErrorCode>([
   "INSUFFICIENT_DISK_SPACE",
   "RATE_LIMITED",
   "CONCURRENCY_LIMIT",
+  "RUNTIME_PACK_DOWNLOAD_FAILED",
 ]);
 
 export function isRetryable(code: ErrorCode): boolean {
@@ -105,4 +112,10 @@ export const ERROR_MESSAGES: Readonly<Record<ErrorCode, string>> = {
   CONCURRENCY_LIMIT: "Se ha alcanzado el límite de conversiones simultáneas.",
   DEPENDENCY_MISSING: "No se han encontrado las dependencias necesarias (ffprobe/ffmpeg/yt-dlp). Verifica la instalación.",
   QUALITY_NOT_DELIVERED: "La resolución entregada es inferior a la solicitada. El vídeo puede no tener ese formato disponible.",
+  RUNTIME_PACK_REQUIRED: "Esta conversión requiere instalar un componente opcional.",
+  RUNTIME_PACK_DOWNLOAD_FAILED: "No se pudo descargar el componente opcional.",
+  RUNTIME_PACK_HASH_MISMATCH: "La verificación del componente opcional falló.",
+  RUNTIME_PACK_INSTALL_FAILED: "No se pudo instalar el componente opcional.",
+  RUNTIME_PACK_BROKEN: "El componente opcional instalado está dañado.",
+  RUNTIME_PACK_INCOMPATIBLE: "El componente opcional no es compatible con esta plataforma.",
 };

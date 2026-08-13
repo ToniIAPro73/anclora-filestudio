@@ -18,5 +18,13 @@ export async function getAvailableEngineIds(): Promise<ReadonlySet<string>> {
       available.add(capability);
     }
   }
+  for (const diag of diagnostics) {
+    if (diag.engineId === "html-renderer" && diag.probe.runtimeState === "installable") {
+      available.add("html-renderer-installable");
+      for (const pack of diag.probe.requiredRuntimePacks ?? []) {
+        available.add(`runtime-pack:${pack}:installable`);
+      }
+    }
+  }
   return available;
 }

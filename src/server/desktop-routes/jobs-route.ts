@@ -183,6 +183,16 @@ async function handleUniversalJob(
   // Probe the engine
   const probeResult = await engine.probe();
   if (!probeResult.available) {
+    if (probeResult.runtimeState === "installable") {
+      return NextResponse.json(
+        {
+          error: "Esta conversión necesita instalar el runtime opcional Chromium.",
+          code: "RUNTIME_PACK_REQUIRED",
+          requiredRuntimePacks: probeResult.requiredRuntimePacks ?? ["chromium-runtime"],
+        },
+        { status: 428 },
+      );
+    }
     return NextResponse.json(
       {
         error: `Motor no disponible: ${engineId}. ${probeResult.error ?? ""}`,
@@ -378,6 +388,21 @@ async function handleMultistepJob(
         code: "ROUTE_NOT_AVAILABLE",
       },
       { status: 422 },
+    );
+  }
+
+  const requiresChromiumInstall = route.steps.some((step) => step.engineId === "html-renderer") &&
+    availableEngineIds.has("html-renderer-installable") &&
+    !availableEngineIds.has("html-renderer");
+  if (requiresChromiumInstall) {
+    return NextResponse.json(
+      {
+        error: "Esta conversión necesita instalar el componente de renderizado HTML.",
+        code: "RUNTIME_PACK_REQUIRED",
+        requiredRuntimePacks: ["chromium-runtime"],
+        runtimeState: "installable",
+      },
+      { status: 428 },
     );
   }
 

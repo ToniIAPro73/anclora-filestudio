@@ -20,6 +20,7 @@ export type EngineId =
 
 export type CapabilityState =
   | "available"
+  | "runtime-installable"
   | "unavailable-tool"
   | "unsupported-input"
   | "unsafe"
@@ -54,6 +55,8 @@ export interface ConversionCapability {
   warnings: string[];
   engineId: EngineId;
   mobilePortability: MobilePortability;
+  requiredRuntimePacks?: string[];
+  runtimeState?: "available" | "installable" | "unavailable";
 }
 
 export interface EngineProbeResult {
@@ -62,6 +65,8 @@ export interface EngineProbeResult {
   binaryPath: string | null;
   capabilities: string[];
   error?: string;
+  requiredRuntimePacks?: string[];
+  runtimeState?: "available" | "installable" | "unavailable";
 }
 
 export interface StoredInput {

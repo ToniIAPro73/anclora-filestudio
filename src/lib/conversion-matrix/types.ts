@@ -7,6 +7,7 @@ export type ConversionEnvironment = "windows" | "linux" | "web";
 
 export type RuntimeAvailabilityState =
   | "available"
+  | "installable"
   | "unavailable"
   | "degraded"
   | "unknown";
@@ -18,6 +19,7 @@ export type EffectiveAvailabilityState =
   | "disabled"
   | "wrong-platform"
   | "engine-unavailable"
+  | "runtime-installable"
   | "engine-degraded"
   | "engine-unknown"
   | "dependency-unavailable"

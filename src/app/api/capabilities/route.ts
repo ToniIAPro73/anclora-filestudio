@@ -177,7 +177,10 @@ function universalCapToCapabilityInfo(cap: ConversionCapability): CapabilityInfo
     mobilePortability: cap.mobilePortability,
     warnings: cap.warnings,
     unavailableReason: cap.unavailableReason,
+    runtimeState: cap.runtimeState,
+    requiredRuntimePacks: cap.requiredRuntimePacks,
     state: cap.state === "available" ? "available" :
+      cap.state === "runtime-installable" ? "installable" :
       cap.state === "unsupported-input" ? "unsupported" :
       cap.state === "unsafe" ? "unsupported" :
       cap.state === "experimental" ? "available" :
@@ -239,15 +242,22 @@ async function buildRouteDiscoveredCapabilities(
           ...(metadata?.warnings ?? []),
           ...(route.steps.length > 1 ? [`Conversión en ${route.steps.length} pasos.`] : []),
         ];
+        const requiresChromiumInstall = route.steps.some((step) => step.engineId === "html-renderer") &&
+          availableEngineIds.has("html-renderer-installable") &&
+          !availableEngineIds.has("html-renderer");
       return {
         id: `${ROUTE_CAPABILITY_PREFIX}${canonicalInput}-${route.destination}`,
         outputFormat: route.destination,
         outputLabel: metadata?.outputLabel ?? route.destination.toUpperCase(),
-        state: "available",
+        state: requiresChromiumInstall ? "installable" : "available",
         lossProfile: ROUTE_LOSS_TO_CAPABILITY[worstStepLossProfile(route)],
         engineId: (route.steps[0]?.engineId ?? metadata?.engineId ?? "data-ts") as EngineId,
         mobilePortability: metadata?.mobilePortability ?? "desktop-only",
         warnings,
+        ...(requiresChromiumInstall ? {
+          runtimeState: "installable" as const,
+          requiredRuntimePacks: ["chromium-runtime"],
+        } : {}),
         route: toConversionRouteSummary(route, recommendedSet.has(route.destination)),
       };
     });

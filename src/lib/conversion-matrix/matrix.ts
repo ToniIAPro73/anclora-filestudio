@@ -439,7 +439,8 @@ function dependencyAvailable(dependency: string, runtime: RuntimeCapabilitySet):
   }
   if (dependency === "browser") return runtime.engines.get("browser")?.state === "available";
   if (dependency === "chromium" || dependency === "playwright-core") {
-    return runtime.engines.get("html-renderer")?.state === "available";
+    const state = runtime.engines.get("html-renderer")?.state;
+    return state === "available" || state === "installable";
   }
   return runtime.engines.get(dependency)?.state === "available";
 }
@@ -477,6 +478,9 @@ export function getEffectiveAvailability(
     if (engineRuntime.state === "unavailable") {
       state = "engine-unavailable";
       reasons.push(`engine ${edge.engineId} is unavailable`);
+    } else if (engineRuntime.state === "installable") {
+      state = "runtime-installable";
+      reasons.push(`engine ${edge.engineId} requires an optional runtime pack`);
     } else if (engineRuntime.state === "degraded") {
       state = "engine-degraded";
       reasons.push(`engine ${edge.engineId} is degraded`);
@@ -496,7 +500,7 @@ export function getEffectiveAvailability(
 
   return {
     state,
-    available: state === "available",
+    available: state === "available" || state === "runtime-installable",
     reasons,
     edge,
     runtime: engineRuntime,

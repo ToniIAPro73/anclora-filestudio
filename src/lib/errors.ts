@@ -21,6 +21,12 @@ export const ERROR_CODES = {
   DOWNLOAD_TOKEN_EXPIRED: 'DOWNLOAD_TOKEN_EXPIRED',
   CANCELLED: 'CANCELLED',
   INTERNAL_ERROR: 'INTERNAL_ERROR',
+  RUNTIME_PACK_REQUIRED: 'RUNTIME_PACK_REQUIRED',
+  RUNTIME_PACK_DOWNLOAD_FAILED: 'RUNTIME_PACK_DOWNLOAD_FAILED',
+  RUNTIME_PACK_HASH_MISMATCH: 'RUNTIME_PACK_HASH_MISMATCH',
+  RUNTIME_PACK_INSTALL_FAILED: 'RUNTIME_PACK_INSTALL_FAILED',
+  RUNTIME_PACK_BROKEN: 'RUNTIME_PACK_BROKEN',
+  RUNTIME_PACK_INCOMPATIBLE: 'RUNTIME_PACK_INCOMPATIBLE',
 } as const;
 
 export type ErrorCode = keyof typeof ERROR_CODES;
@@ -60,5 +66,10 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   DOWNLOAD_TOKEN_EXPIRED: 'El token de descarga ha caducado.',
   CANCELLED: 'El proceso ha sido cancelado.',
   INTERNAL_ERROR: 'Ocurrió un error interno en el servidor.',
+  RUNTIME_PACK_REQUIRED: 'Esta conversión requiere instalar un componente opcional.',
+  RUNTIME_PACK_DOWNLOAD_FAILED: 'No se pudo descargar el componente opcional.',
+  RUNTIME_PACK_HASH_MISMATCH: 'La verificación del componente opcional falló.',
+  RUNTIME_PACK_INSTALL_FAILED: 'No se pudo instalar el componente opcional.',
+  RUNTIME_PACK_BROKEN: 'El componente opcional instalado está dañado.',
+  RUNTIME_PACK_INCOMPATIBLE: 'El componente opcional no es compatible con esta plataforma.',
 };
-

@@ -40,6 +40,7 @@ function stateForEngineId(engineId: string, availableIds: ReadonlySet<string>): 
   if (engineId === "poppler" && availableIds.has("pdftoppm")) return "available";
   if (engineId === "browser" && availableIds.has("browser")) return "available";
   if (engineId === "html-renderer" && availableIds.has("html-renderer")) return "available";
+  if (engineId === "html-renderer" && availableIds.has("html-renderer-installable")) return "installable";
   return "unavailable";
 }
 

@@ -89,6 +89,7 @@ export type CapabilityLossProfile =
 
 export type CapabilityState =
   | "available"
+  | "installable"
   | "unavailable-tool"
   | "unsupported";
 
@@ -109,6 +110,10 @@ export interface CapabilityInfo {
   mobilePortability: MobilePortability;
   /** Warnings specific to this capability */
   warnings: string[];
+  /** Runtime delivery state, when the capability depends on an optional pack. */
+  runtimeState?: "available" | "installable" | "unavailable";
+  /** Optional runtime packs required before execution can start. */
+  requiredRuntimePacks?: string[];
   /** Route summary when this capability is (or is reachable via) a conversion route */
   route?: ConversionRouteSummary;
 }
@@ -153,6 +158,8 @@ export function normalizeCapabilityInfo(
     mobilePortability: MobilePortability;
     warnings: string[];
     unavailableReason?: string;
+    runtimeState?: "available" | "installable" | "unavailable";
+    requiredRuntimePacks?: string[];
     route?: ConversionRouteSummary;
   }
 ): CapabilityInfo {
@@ -179,6 +186,8 @@ export function normalizeCapabilityInfo(
     engineId: cap.engineId,
     mobilePortability: cap.mobilePortability,
     warnings: cap.warnings ?? [],
+    ...(cap.runtimeState ? { runtimeState: cap.runtimeState } : {}),
+    ...(cap.requiredRuntimePacks ? { requiredRuntimePacks: cap.requiredRuntimePacks } : {}),
     ...(cap.route ? { route: cap.route } : {}),
   };
 }
