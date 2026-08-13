@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { DesktopProShell, type DesktopTab } from "@/components/desktop-pro/desktop-pro-shell";
 import { WebModeConverter } from "@/components/converter/web-mode-converter";
 
@@ -14,5 +15,9 @@ export function DesktopProRoutePage({ initialTab }: { initialTab: DesktopTab }) 
     );
   }
 
-  return <DesktopProShell initialTab={initialTab} />;
+  return (
+    <Suspense fallback={null}>
+      <DesktopProShell initialTab={initialTab} />
+    </Suspense>
+  );
 }

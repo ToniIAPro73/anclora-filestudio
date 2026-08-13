@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Toaster, toast } from "sonner";
 import {
   ArrowLeftRight,
@@ -57,6 +57,19 @@ const UX_CATEGORY_TO_LEGACY_GROUP: Partial<Record<UxConversionCategoryId, Deskto
 };
 
 const mediaUrlTargets = new Set(["mp4", "webm", "mkv", "mp3", "m4a", "wav", "ogg"]);
+const VALID_CONVERSION_CATEGORIES: UxConversionCategoryId[] = ["documents", "images", "audio", "video", "ebooks", "archives", "data", "other"];
+
+function normalizeConversionCategory(value: string | null): UxConversionCategoryId | undefined {
+  return value && VALID_CONVERSION_CATEGORIES.includes(value as UxConversionCategoryId)
+    ? value as UxConversionCategoryId
+    : undefined;
+}
+
+function toolWorkspaceFromCategory(value: string | null): ToolWorkspaceId {
+  if (value === "pdf" || value === "images" || value === "ocr") return value;
+  if (value === "metadata" || value === "compression" || value === "utilities" || value === "structured") return "structured";
+  return null;
+}
 
 function getFormatLabel(formatId: string): string {
   const canonical = normalizeFormatId(formatId) ?? formatId;
@@ -138,6 +151,7 @@ function tabFromPathname(pathname: string | null): DesktopTab | null {
 export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopTab }) {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<DesktopTab>(tabFromPathname(pathname) ?? initialTab);
   const [activeTool, setActiveTool] = useState<ToolWorkspaceId>(null);
   const [uxModel, setUxModel] = useState<UxConversionModel | null>(null);
@@ -172,6 +186,14 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
     const legacyGroupId = targetCategory ? UX_CATEGORY_TO_LEGACY_GROUP[targetCategory] : undefined;
     return DESKTOP_PRO_GROUPS.find((group) => group.id === legacyGroupId);
   }, [selectedTarget, uxModel]);
+  const routeConversionCategory = pathname === "/convert"
+    ? normalizeConversionCategory(searchParams.get("category"))
+    : undefined;
+  const effectiveInitialConversionCategory = routeConversionCategory ?? initialConversionCategory;
+  const routeToolWorkspace = pathname === "/tools"
+    ? toolWorkspaceFromCategory(searchParams.get("category"))
+    : null;
+  const effectiveActiveTool = activeTab === "tools" ? (routeToolWorkspace ?? activeTool) : activeTool;
   const steps = useMemo(
     () => [
       { key: "source" as FlowStep, label: "Archivo", num: 1 },
@@ -328,15 +350,16 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
     return () => window.clearTimeout(timer);
   }, [activeTab, handleTabChange, pathname]);
 
-  const handleOpenConvert = useCallback((_categoryId?: UxConversionCategoryId) => {
-    if (pathname !== "/convert") router.push("/convert");
+  const handleOpenConvert = useCallback((categoryId?: UxConversionCategoryId) => {
+    const href = categoryId ? `/convert?category=${categoryId}` : "/convert";
+    if (pathname !== "/convert" || searchParams.get("category") !== (categoryId ?? null)) router.push(href);
     setActiveTab("convert");
     setActiveTool(null);
-    setInitialConversionCategory(_categoryId);
+    setInitialConversionCategory(categoryId);
     setSelectedTarget(null);
     setSelectedSource(null);
     resetFlow();
-  }, [pathname, resetFlow, router]);
+  }, [pathname, resetFlow, router, searchParams]);
 
   const handleSelectTarget = useCallback((target: string, source?: string) => {
     if (pathname !== "/convert") router.push("/convert");
@@ -348,11 +371,12 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
   }, [pathname, resetFlow, router]);
 
   const handleOpenTool = useCallback((toolId: string) => {
-    if (pathname !== "/tools") router.push("/tools");
+    const href = `/tools?category=${encodeURIComponent(toolId)}`;
+    if (pathname !== "/tools" || searchParams.get("category") !== toolId) router.push(href);
     setActiveTab("tools");
     setActiveTool(toolId === "pdf" || toolId === "images" || toolId === "ocr" ? toolId : "structured");
     resetFlow();
-  }, [pathname, resetFlow, router]);
+  }, [pathname, resetFlow, router, searchParams]);
 
   const handleAnalysisResult = useCallback((result: AnalysisResult) => {
     if (selectedSource) {
@@ -505,9 +529,10 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
 
         {activeTab === "convert" && uxModel && !selectedTarget && !analysisResult && (
           <ConversionHub
+            key={effectiveInitialConversionCategory ?? "all"}
             model={uxModel}
             selectedTarget={selectedTarget}
-            initialCategoryId={initialConversionCategory}
+            initialCategoryId={effectiveInitialConversionCategory}
             onSelectTarget={handleSelectTarget}
           />
         )}
@@ -551,11 +576,11 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
             }}
           />
         )}
-        {activeTab === "tools" && uxModel && !activeTool && <ToolHub model={uxModel} onOpenTool={handleOpenTool} />}
-        {activeTab === "tools" && activeTool === "images" && <Panel><ImageTool /></Panel>}
-        {activeTab === "tools" && activeTool === "pdf" && <Panel><PdfTool /></Panel>}
-        {activeTab === "tools" && activeTool === "structured" && <Panel><StructuredDataTool /></Panel>}
-        {activeTab === "tools" && activeTool === "ocr" && (
+        {activeTab === "tools" && uxModel && !effectiveActiveTool && <ToolHub model={uxModel} onOpenTool={handleOpenTool} />}
+        {activeTab === "tools" && effectiveActiveTool === "images" && <Panel><ImageTool /></Panel>}
+        {activeTab === "tools" && effectiveActiveTool === "pdf" && <Panel><PdfTool /></Panel>}
+        {activeTab === "tools" && effectiveActiveTool === "structured" && <Panel><StructuredDataTool /></Panel>}
+        {activeTab === "tools" && effectiveActiveTool === "ocr" && (
           <Panel>
             <div className="space-y-3">
               <h2 className="text-xl font-black text-stone-100">Conversión con OCR</h2>

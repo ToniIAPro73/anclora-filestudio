@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { DesktopProShell } from "@/components/desktop-pro/desktop-pro-shell";
 import { WebModeConverter } from "@/components/converter/web-mode-converter";
 
@@ -14,5 +15,9 @@ export default function Home() {
     );
   }
 
-  return <DesktopProShell />;
+  return (
+    <Suspense fallback={null}>
+      <DesktopProShell />
+    </Suspense>
+  );
 }
