@@ -29,6 +29,9 @@ const ALL_DESKTOP = new Set([
   "7z",
   "data-ts",
   "tesseract",
+  "html-renderer",
+  "chromium",
+  "playwright-core",
   "poppler",
   "pdftoppm",
   "pdftotext",
@@ -154,6 +157,23 @@ describe("Tier 1 quick wins — image→pdf edges", () => {
 });
 
 describe("Tier 1 quick wins — global discovery updates automatically", () => {
+  it("getAllEffectiveTargets(html) includes png and tiff as direct renderer targets", () => {
+    const discovery = getAllEffectiveTargets("html", ALL_DESKTOP, { environment: "linux" });
+    const directTargets = discovery.direct.map((route) => route.destination);
+    expect(directTargets).toContain("png");
+    expect(directTargets).toContain("tiff");
+  });
+
+  it("getAllEffectiveTargets(md/rst) derives png and tiff through html", () => {
+    for (const source of ["md", "rst"]) {
+      const discovery = getAllEffectiveTargets(source, ALL_DESKTOP, { environment: "linux" });
+      const png = discovery.oneIntermediate.find((route) => route.destination === "png");
+      const tiff = discovery.oneIntermediate.find((route) => route.destination === "tiff");
+      expect(png?.steps.map((step) => `${step.source}->${step.target}`)).toEqual([`${source}->html`, "html->png"]);
+      expect(tiff?.steps.map((step) => `${step.source}->${step.target}`)).toEqual([`${source}->html`, "html->tiff"]);
+    }
+  });
+
   it("getAllEffectiveTargets(pdf) includes txt, html and md as direct", () => {
     const discovery = getAllEffectiveTargets("pdf", ALL_DESKTOP, { environment: "linux" });
     const directTargets = discovery.direct.map((route) => route.destination);

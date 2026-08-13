@@ -300,7 +300,8 @@ describe("real catalog — certified route anchors", () => {
       ["pdf", "txt"], ["pdf", "html"], ["pdf", "md"], ["pdf", "docx"],
       ["docx", "pdf"], ["docx", "rtf"], ["odp", "pdf"], ["odp", "pptx"],
       ["png", "pdf"], ["jpg", "pdf"], ["aac", "mp3"], ["wmv", "mp4"], ["ts", "mp4"],
-      ["md", "docx"], ["docx", "odt"],
+      ["md", "docx"], ["docx", "odt"], ["html", "png"], ["html", "tiff"],
+      ["md", "png"], ["md", "tiff"], ["rst", "png"], ["rst", "tiff"],
     ] as const) {
       const best = bestRankedRoute(findConversionRoutes(graph, source, target));
       expect(best, `${source}→${target} must have a viable route`).not.toBeNull();
