@@ -1,0 +1,74 @@
+{
+  "phase": "FILESTUDIO_MONETIZATION_AND_EXECUTION_COST_MODEL",
+  "date": "2026-08-13",
+  "status": "ANALYSIS_ONLY",
+  "codeChanged": false,
+  "cloudCostCertainty": "UNKNOWN",
+  "separation": {
+    "quality": "src/lib/conversion-routing (never influenced by price)",
+    "executionCost": "estimated after route selection, never an input to ranking",
+    "commercialPolicy": "applied after cost estimation; limits size/volume, never degrades route"
+  },
+  "costBands": ["VERY_LOW", "LOW", "MEDIUM", "HIGH", "VERY_HIGH"],
+  "executionCostProfile": {
+    "computeCost": "band",
+    "memoryCost": "band",
+    "startupCost": "negligible|low|medium|high",
+    "ioCost": "band",
+    "bandwidthCost": "none|low|medium|high",
+    "runtimePackRequirement": "string|null",
+    "estimatedDuration": { "basis": "size|pages|durationSeconds|pixels|flat", "typicalMs": "number?" },
+    "fallbackRisk": "low|medium|high"
+  },
+  "costFormula": "jobCostUnits = base(route) + computeFactor(engine, durationSeconds|pages|pixels) + sizeFactor(bytes) + specialEngineFactor(libreofficeStartup|chromiumStartup|ocrPerPage|aiModel)",
+  "engines": {
+    "sharp":            { "execution": "in-process", "startup": "negligible", "desktopBand": "LOW",      "cloudBand": "LOW",       "license": "Apache-2.0", "runtimePack": null },
+    "data-ts":          { "execution": "in-process", "startup": "negligible", "desktopBand": "VERY_LOW", "cloudBand": "VERY_LOW",  "license": "MIT-family", "runtimePack": null, "browser": true },
+    "pdf-lib":          { "execution": "in-process", "startup": "negligible", "desktopBand": "LOW",      "cloudBand": "LOW",       "license": "MIT",        "runtimePack": null, "browser": true },
+    "qpdf":             { "execution": "spawn",      "startup": "low",        "desktopBand": "VERY_LOW", "cloudBand": "VERY_LOW",  "license": "Apache-2.0", "runtimePack": null },
+    "poppler":          { "execution": "spawn",      "startup": "low",        "desktopBand": "MEDIUM",   "cloudBand": "MEDIUM",    "license": "GPL-2.0 (process-separated)", "runtimePack": null, "scalesWith": "pages x DPI" },
+    "sevenzip":         { "execution": "spawn",      "startup": "low",        "desktopBand": "MEDIUM",   "cloudBand": "MEDIUM",    "license": "LGPL-2.1+unRAR", "runtimePack": null, "scalesWith": "bytes" },
+    "pandoc":           { "execution": "spawn",      "startup": "low",        "desktopBand": "LOW",      "cloudBand": "LOW",       "license": "GPL-2.0+ (process-separated)", "runtimePack": null },
+    "libreoffice":      { "execution": "spawn, serialized per profile", "startup": "high", "desktopBand": "HIGH", "cloudBand": "HIGH", "license": "LGPL-3.0", "runtimePack": null, "footprint": "~300MB" },
+    "ffmpeg":           { "execution": "spawn",      "startup": "low",        "desktopBand": "MEDIUM(audio)/HIGH-VERY_HIGH(video)", "cloudBand": "MEDIUM(audio)/HIGH-VERY_HIGH(video)", "license": "GPL-2.0-or-later per toolchain.lock.json (docs conflict, unify)", "runtimePack": null, "scalesWith": "durationSeconds x pixels" },
+    "calibre":          { "execution": "spawn",      "startup": "medium-high", "desktopBand": "MEDIUM",  "cloudBand": "MEDIUM",    "license": "GPL-3.0 (process-separated)", "runtimePack": null, "inputCap": "50MB" },
+    "tesseract":        { "execution": "spawn (+poppler raster for PDF)", "startup": "medium", "desktopBand": "HIGH/VERY_HIGH", "cloudBand": "HIGH/VERY_HIGH", "license": "Apache-2.0", "runtimePack": null, "limits": "max 50 PDF pages, 300-600 DPI", "scalesWith": "pageCount x DPI" },
+    "chromium-renderer":{ "execution": "playwright-core + chromium", "startup": "high", "desktopBand": "MEDIUM-HIGH", "cloudBand": "MEDIUM-HIGH", "license": "BSD-style", "runtimePack": "chromium-runtime", "packSize": { "downloadBytes": { "linux-x64": 193282658, "win-x64": 201068834 }, "installedBytes": { "linux-x64": 406847046, "win-x64": 447417940 } } },
+    "background-removal": { "execution": "in-process (deterministic) / onnxruntime-node (AI)", "startup": "medium", "desktopBand": "LOW(deterministic)/HIGH(AI)", "cloudBand": "LOW/HIGH", "license": "Apache-2.0 models only", "runtimePack": null },
+    "yt-dlp":           { "execution": "spawn (outside engine registry)", "startup": "low", "desktopBand": "MEDIUM (bandwidth-bound)", "cloudBand": "MEDIUM", "license": "Unlicense", "runtimePack": null }
+  },
+  "representativeRoutes": [
+    { "pair": "txt->md",       "engines": ["pandoc"],                          "quality": "excellent/good",  "desktop": "VERY_LOW", "webVercel": "N/A",           "cloudEst": "VERY_LOW", "runtimePack": null },
+    { "pair": "json->yaml",    "engines": ["data-ts"],                         "quality": "excellent",       "desktop": "VERY_LOW", "webVercel": "browser (~0)", "cloudEst": "VERY_LOW", "runtimePack": null },
+    { "pair": "png->pdf",      "engines": ["sharp", "pdf-lib"],                "quality": "benchmarked",     "desktop": "LOW",      "webVercel": "partial browser", "cloudEst": "LOW", "runtimePack": null },
+    { "pair": "pdf->txt",      "engines": ["poppler"],                         "quality": "good",            "desktop": "LOW",      "webVercel": "N/A",           "cloudEst": "LOW",      "runtimePack": null },
+    { "pair": "pdf->png",      "engines": ["poppler"],                         "quality": "benchmarked 0.95","desktop": "MEDIUM",   "webVercel": "N/A",           "cloudEst": "MEDIUM",   "runtimePack": null },
+    { "pair": "docx->rtf",     "engines": ["libreoffice"],                     "quality": "engine-inferred", "desktop": "MEDIUM",   "webVercel": "N/A",           "cloudEst": "MEDIUM",   "runtimePack": null },
+    { "pair": "docx->pdf",     "engines": ["libreoffice"],                     "quality": "benchmarked",     "desktop": "MEDIUM",   "webVercel": "N/A",           "cloudEst": "MEDIUM",   "runtimePack": null },
+    { "pair": "docx->png",     "engines": ["libreoffice", "poppler"],          "quality": "good",            "desktop": "HIGH",     "webVercel": "N/A",           "cloudEst": "HIGH",     "runtimePack": null },
+    { "pair": "pdf->docx",     "engines": ["libreoffice"],                     "quality": "benchmarked",     "desktop": "HIGH",     "webVercel": "N/A",           "cloudEst": "HIGH",     "runtimePack": null, "note": "requiresTextLayer" },
+    { "pair": "pdf->odt",      "engines": ["libreoffice"],                     "quality": "benchmarked",     "desktop": "HIGH",     "webVercel": "N/A",           "cloudEst": "HIGH",     "runtimePack": null },
+    { "pair": "md->png",       "engines": ["pandoc", "chromium-renderer"],     "quality": "benchmarked",     "desktop": "HIGH",     "webVercel": "N/A",           "cloudEst": "HIGH",     "runtimePack": "chromium-runtime" },
+    { "pair": "html->png",     "engines": ["chromium-renderer"],               "quality": "benchmarked",     "desktop": "MEDIUM-HIGH", "webVercel": "N/A",        "cloudEst": "MEDIUM-HIGH", "runtimePack": "chromium-runtime" },
+    { "pair": "epub->pdf",     "engines": ["calibre"],                         "quality": "structural-risk", "desktop": "MEDIUM",   "webVercel": "N/A",           "cloudEst": "MEDIUM",   "runtimePack": null },
+    { "pair": "aac->mp3",      "engines": ["ffmpeg"],                          "quality": "0.88",            "desktop": "MEDIUM",   "webVercel": "N/A",           "cloudEst": "MEDIUM",   "runtimePack": null },
+    { "pair": "wav->mp3",      "engines": ["ffmpeg"],                          "quality": "0.88",            "desktop": "MEDIUM",   "webVercel": "N/A",           "cloudEst": "MEDIUM",   "runtimePack": null },
+    { "pair": "wmv->mp4",      "engines": ["ffmpeg"],                          "quality": "0.9",             "desktop": "HIGH",     "webVercel": "N/A",           "cloudEst": "HIGH",     "runtimePack": null },
+    { "pair": "ts->mp4",       "engines": ["ffmpeg"],                          "quality": "high",            "desktop": "HIGH",     "webVercel": "N/A",           "cloudEst": "HIGH",     "runtimePack": null },
+    { "pair": "mp4->webm",     "engines": ["ffmpeg"],                          "quality": "0.82",            "desktop": "HIGH",     "webVercel": "N/A",           "cloudEst": "HIGH",     "runtimePack": null },
+    { "pair": "mkv->mp4(remux)","engines": ["ffmpeg"],                         "quality": "lossless",        "desktop": "LOW",      "webVercel": "N/A",           "cloudEst": "LOW",      "runtimePack": null },
+    { "pair": "ocr (img/pdf->txt/pdf)", "engines": ["tesseract", "poppler"],   "quality": "mode:ocr",        "desktop": "HIGH-VERY_HIGH", "webVercel": "N/A",     "cloudEst": "HIGH-VERY_HIGH", "runtimePack": null }
+  ],
+  "fallbackPolicy": {
+    "chargeOn": "successful job only",
+    "technicalFailure": "never charged",
+    "userContentError": "not charged",
+    "doubleChargeOnFallback": "forbidden",
+    "currentBounds": { "maxFallbackAttempts": 1, "minimumAbsoluteScore": 0.55, "maxQualityDelta": 0.18 }
+  },
+  "observabilityReuse": {
+    "captured": ["durationMs per conversion/attempt/step", "engineId", "routeId+score+qualityBand", "attemptCount", "fallbackUsed/Reason", "error taxonomy (18 codes)", "outputSize per step", "inputs.size_bytes", "artifacts.size_bytes", "pageCount/durationSeconds/dimensions in inputs.attributes_json", "batch tables"],
+    "gaps": ["CPU not measured", "RAM not measured", "disk temp usage not persisted", "content attributes not joined into job execution metadata"],
+    "rules": ["no content collection", "local-only or anonymized", "explicit consent", "no external telemetry without separate decision"]
+  }
+}
