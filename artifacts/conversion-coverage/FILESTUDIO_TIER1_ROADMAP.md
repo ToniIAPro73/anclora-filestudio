@@ -1,6 +1,6 @@
 # FileStudio Tier 1 Coverage Roadmap
 
-Generated: 2026-08-13T00:07:39.069Z
+Generated: 2026-08-13T02:16:15.974Z
 
 ## Coverage Target
 

@@ -1,0 +1,60 @@
+{
+  "phase": "quality-aware-routing",
+  "generated": "2026-08-13",
+  "implementation": {
+    "model": "src/lib/conversion-routing/quality.ts",
+    "ranking": "src/lib/conversion-routing/ranking.ts",
+    "annotations": "src/lib/conversion-matrix/matrix.ts (QUALITY_OVERRIDES + group bases)",
+    "entryPoints": ["rankRoutes", "bestRankedRoute", "selectBestConversionRoute", "getBestRoute"]
+  },
+  "dimensions": ["text", "structure", "layout", "images", "tables", "metadata", "mediaQuality", "resolution", "alpha"],
+  "edgeProfile": {
+    "preservation": "partial record dimension -> 0..1",
+    "irreversibleLosses": "dimensions no later step can recover",
+    "reencodeRequired": "boolean",
+    "pipelineMode": ["remux", "transcode", "na"],
+    "runtimeCost": ["low", "medium", "high"],
+    "stability": "0..1",
+    "certification": ["benchmarked", "engine-inferred", "unknown"]
+  },
+  "composition": {
+    "principle": "bottleneck-min per dimension, renormalized over touched dimensions only",
+    "reencodePenalty": 0.07,
+    "reencodePenaltyAppliesFromGeneration": 2,
+    "irreversibleLossCap": 0.84,
+    "certificationFactors": { "benchmarked": 1.0, "engine-inferred": 0.98, "unknown": 0.92 },
+    "experimentalEdgeFactor": 0.85
+  },
+  "tiebreakers": [
+    "1. quality score desc",
+    "2. irreversible loss count asc",
+    "3. certification rank desc (benchmarked > engine-inferred > unknown)",
+    "4. steps asc",
+    "5. runtime cost asc",
+    "6. stable route id asc"
+  ],
+  "removedHeuristics": ["direct-first", "shortest-first"],
+  "reasonCodes": {
+    "positive": ["HIGHER_FIDELITY", "HIGHER_LAYOUT_FIDELITY", "PRESERVES_TABLES", "PRESERVES_IMAGES", "PRESERVES_ALPHA", "PRESERVES_RESOLUTION", "AVOIDS_LOSSY_INTERMEDIATE", "AVOIDS_IRREVERSIBLE_LOSS", "AVOIDS_REENCODE", "REMUX_OVER_TRANSCODE", "HIGHER_STABILITY", "CERTIFIED_ROUTE", "SHORTER_EQUIVALENT_ROUTE", "LOWER_RUNTIME_COST", "DETERMINISTIC_TIEBREAK", "ONLY_VIABLE_ROUTE"],
+    "rejection": ["UNSAFE_CARDINALITY", "CATASTROPHIC_STRUCTURAL_LOSS", "UNSUPPORTED_CONTENT_PATH", "KNOWN_BROKEN_ADAPTER"]
+  },
+  "sourceAware": {
+    "input": "RouteSourceAnalysis { kind, hasTextLayer }",
+    "effect": "edges with contentRequirements.requiresTextLayer are rejected with UNSUPPORTED_CONTENT_PATH for scanned PDFs"
+  },
+  "familyRules": {
+    "document": "text/structure/layout/tables/images dominate; TXT targets zero out layout/images",
+    "image": "mediaQuality/resolution/alpha; JPG targets destroy alpha irreversibly",
+    "audio": "mediaQuality + reencode generations; lossless targets add no codec loss",
+    "video": "mediaQuality/resolution + pipelineMode; remux (→mkv) over transcode",
+    "data": "structure; tabular targets flatten types irreversibly",
+    "archive": "structure/metadata only"
+  },
+  "unknownPolicy": "UNKNOWN edges get conservative defaults with factor 0.92 and never displace BENCHMARKED routes (certification is tiebreaker #3)",
+  "fallbackPolicy": "designed, not activated: ranked alternatives are available to the executor; silent fallback is forbidden; fallbackUsed must be recorded if ever enabled",
+  "engineRealityFindings": [
+    "ffmpeg adapter only stream-copies for →mkv targets; →mp4 is always transcode-video (annotations aligned)",
+    "binary detection guard added to probeTextStructure so media containers stop misdetecting as text/plain"
+  ],
+  "monetization": "none — quality score is never a price; product policy layer explicitly out of scope"
+}
