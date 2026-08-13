@@ -460,9 +460,18 @@ function probeTextStructure(
   ext: string | null,
 ): { mime: string; format: string } | null {
   try {
-    const sample = fs
-      .readFileSync(filePath, { encoding: "utf8", flag: "r" })
-      .slice(0, 4096);
+    const raw = fs.readFileSync(filePath, { flag: "r" }).subarray(0, 4096);
+    // Binary guard: files with NUL bytes or a high control-char ratio are not
+    // text — return null so the extension/category fallback decides instead of
+    // misreporting e.g. MP4/WMV/TS/AAC as text/plain (which then wins over the
+    // extension category and breaks engine capability resolution).
+    let control = 0;
+    for (const byte of raw) {
+      if (byte === 0x00) return null;
+      if (byte < 0x09 || (byte > 0x0d && byte < 0x20)) control += 1;
+    }
+    if (raw.length > 0 && control / raw.length > 0.3) return null;
+    const sample = raw.toString("utf8");
     const trimmed = sample.trimStart();
     if (trimmed.startsWith("{\\rtf"))
       return { mime: "application/rtf", format: "rtf" };
