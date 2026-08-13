@@ -32,12 +32,12 @@ export function resolvePopplerRuntimeBinary(): string {
   const executable = isWindows ? "pdftoppm.exe" : "pdftoppm";
 
   if (configured) {
-    if (fs.existsSync(configured) && fs.statSync(configured).isFile()) return configured;
+    if (fs.existsSync(/* turbopackIgnore: true */ configured) && fs.statSync(/* turbopackIgnore: true */ configured).isFile()) return configured;
     return resolveDiagnosticPopplerBinary(configured, isWindows);
   }
 
   const portableRoot = path.resolve(process.cwd(), "tools", "poppler");
-  if (fs.existsSync(portableRoot)) return resolveDiagnosticPopplerBinary(portableRoot, isWindows);
+  if (fs.existsSync(/* turbopackIgnore: true */ portableRoot)) return resolveDiagnosticPopplerBinary(portableRoot, isWindows);
 
   return executable;
 }
@@ -50,7 +50,7 @@ export function resolvePopplerTool(tool: PopplerTool): string {
   const pdftoppm = resolvePopplerRuntimeBinary();
   if (pdftoppm.includes("/") || pdftoppm.includes("\\")) {
     const sibling = path.join(path.dirname(pdftoppm), executable);
-    if (fs.existsSync(sibling)) return sibling;
+    if (fs.existsSync(/* turbopackIgnore: true */ sibling)) return sibling;
   }
   return executable;
 }

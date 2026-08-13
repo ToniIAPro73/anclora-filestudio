@@ -62,8 +62,11 @@ function assertTrustedSource(definition: RuntimePackDefinition): void {
 }
 
 function ensureInside(root: string, target: string): string {
-  const resolvedRoot = path.resolve(root);
-  const resolvedTarget = path.resolve(target);
+  // turbopackIgnore: root/target are runtime pack paths under a dynamic,
+  // user-configurable root (see platform.ts). The cwd-relative resolution is
+  // intentional runtime behavior; there is nothing project-local to trace.
+  const resolvedRoot = path.resolve(/* turbopackIgnore: true */ root);
+  const resolvedTarget = path.resolve(/* turbopackIgnore: true */ target);
   const relative = path.relative(resolvedRoot, resolvedTarget);
   if (relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative))) {
     return resolvedTarget;
@@ -72,7 +75,10 @@ function ensureInside(root: string, target: string): string {
 }
 
 function packageRoot(rootDir: string, definition: RuntimePackDefinition): string {
-  return path.join(rootDir, definition.id, definition.version);
+  // turbopackIgnore: rootDir is the dynamic runtime pack root (env override or
+  // per-OS user data dir, see platform.ts). Pack install paths are runtime
+  // state outside the project and must not be traced into the NFT file list.
+  return path.join(/* turbopackIgnore: true */ rootDir, definition.id, definition.version);
 }
 
 function statePath(rootDir: string, definition: RuntimePackDefinition): string {
@@ -81,13 +87,14 @@ function statePath(rootDir: string, definition: RuntimePackDefinition): string {
 
 function executablePath(rootDir: string, definition: RuntimePackDefinition): string {
   const rel = definition.executablePaths[definition.platform];
-  return ensureInside(packageRoot(rootDir, definition), path.join(packageRoot(rootDir, definition), rel));
+  // turbopackIgnore: executable path lives under the dynamic pack root (see packageRoot).
+  return ensureInside(packageRoot(rootDir, definition), path.join(/* turbopackIgnore: true */ packageRoot(rootDir, definition), rel));
 }
 
 function sha256File(filePath: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const hash = crypto.createHash("sha256");
-    const stream = fs.createReadStream(filePath);
+    const stream = fs.createReadStream(/* turbopackIgnore: true */ filePath);
     stream.on("data", (chunk) => hash.update(chunk));
     stream.on("error", reject);
     stream.on("end", () => resolve(hash.digest("hex")));
@@ -102,7 +109,7 @@ async function runExecutableProbe(
   return new Promise((resolve) => {
     let output = "";
     let done = false;
-    const child = spawn(binary, args, { shell: false, windowsHide: true });
+    const child = spawn(/* turbopackIgnore: true */ binary, args, { shell: false, windowsHide: true });
     const finish = (ok: boolean, error: string | null) => {
       if (done) return;
       done = true;
@@ -172,18 +179,18 @@ export class RuntimePackManager {
     const installPath = packageRoot(this.rootDir, definition);
     const stateFile = statePath(this.rootDir, definition);
     const executable = executablePath(this.rootDir, definition);
-    if (!fs.existsSync(stateFile)) {
+    if (!fs.existsSync(/* turbopackIgnore: true */ stateFile)) {
       return this.emptyState(definition, "NOT_INSTALLED", null);
     }
 
     let installed: RuntimePackInstallState;
     try {
-      installed = JSON.parse(fs.readFileSync(stateFile, "utf8")) as RuntimePackInstallState;
+      installed = JSON.parse(fs.readFileSync(/* turbopackIgnore: true */ stateFile, "utf8")) as RuntimePackInstallState;
     } catch {
       return this.emptyState(definition, "BROKEN", "Install state is unreadable");
     }
 
-    if (!fs.existsSync(executable)) {
+    if (!fs.existsSync(/* turbopackIgnore: true */ executable)) {
       return {
         ...installed,
         state: "BROKEN",
@@ -233,7 +240,7 @@ export class RuntimePackManager {
         checkedAt: new Date().toISOString(),
       },
     };
-    fs.writeFileSync(statePath(this.rootDir, definition), JSON.stringify(next, null, 2));
+    fs.writeFileSync(/* turbopackIgnore: true */ statePath(this.rootDir, definition), JSON.stringify(next, null, 2));
     return next;
   }
 
@@ -251,13 +258,13 @@ export class RuntimePackManager {
   async installFromSource(id: RuntimePackId, options: RuntimePackInstallOptions = {}): Promise<RuntimePackInstallState> {
     const definition = this.requireDefinition(id);
     assertTrustedSource(definition);
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `${definition.id}-download-`));
-    const archivePath = path.join(tempDir, path.basename(new URL(definition.source.url).pathname));
+    const tempDir = fs.mkdtempSync(path.join(/* turbopackIgnore: true */ os.tmpdir(), `${definition.id}-download-`));
+    const archivePath = path.join(/* turbopackIgnore: true */ tempDir, path.basename(new URL(definition.source.url).pathname));
     try {
       await this.download(definition, archivePath, options);
       return await this.installArchive(definition, archivePath, options);
     } finally {
-      fs.rmSync(tempDir, { recursive: true, force: true });
+      fs.rmSync(/* turbopackIgnore: true */ tempDir, { recursive: true, force: true });
     }
   }
 
@@ -270,10 +277,10 @@ export class RuntimePackManager {
       throw new RuntimePackError("RUNTIME_PACK_INCOMPATIBLE", "Runtime pack is not compatible with this platform");
     }
     assertTrustedSource(definition);
-    options.onProgress?.(this.progress(definition.id, "VERIFYING", fs.statSync(archivePath).size, definition.compressedSize));
+    options.onProgress?.(this.progress(definition.id, "VERIFYING", fs.statSync(/* turbopackIgnore: true */ archivePath).size, definition.compressedSize));
     const actualSha = await sha256File(archivePath);
     if (actualSha.toLowerCase() !== definition.sha256.toLowerCase()) {
-      fs.rmSync(archivePath, { force: true });
+      fs.rmSync(/* turbopackIgnore: true */ archivePath, { force: true });
       throw new RuntimePackError("RUNTIME_PACK_HASH_MISMATCH", "Runtime pack SHA256 mismatch");
     }
 
@@ -281,15 +288,16 @@ export class RuntimePackManager {
     const finalRoot = packageRoot(this.rootDir, definition);
     const parent = path.dirname(finalRoot);
     const staging = `${finalRoot}.staging-${process.pid}-${Date.now()}`;
-    fs.rmSync(staging, { recursive: true, force: true });
-    fs.mkdirSync(staging, { recursive: true });
-    fs.mkdirSync(parent, { recursive: true });
+    fs.rmSync(/* turbopackIgnore: true */ staging, { recursive: true, force: true });
+    fs.mkdirSync(/* turbopackIgnore: true */ staging, { recursive: true });
+    fs.mkdirSync(/* turbopackIgnore: true */ parent, { recursive: true });
     try {
       await this.extractZipSafe(archivePath, staging);
-      fs.writeFileSync(path.join(staging, MANIFEST_FILE), JSON.stringify(definition, null, 2));
-      const executable = ensureInside(staging, path.join(staging, definition.executablePaths[definition.platform]));
-      if (process.platform !== "win32" && fs.existsSync(executable)) {
-        fs.chmodSync(executable, 0o755);
+      // turbopackIgnore: staging paths derive from the dynamic pack root (see packageRoot).
+      fs.writeFileSync(path.join(/* turbopackIgnore: true */ staging, MANIFEST_FILE), JSON.stringify(definition, null, 2));
+      const executable = ensureInside(staging, path.join(/* turbopackIgnore: true */ staging, definition.executablePaths[definition.platform]));
+      if (process.platform !== "win32" && fs.existsSync(/* turbopackIgnore: true */ executable)) {
+        fs.chmodSync(/* turbopackIgnore: true */ executable, 0o755);
       }
       const probe = await runExecutableProbe(executable, definition.healthProbe.args, definition.healthProbe.timeoutMs);
       if (!probe.ok) {
@@ -308,19 +316,19 @@ export class RuntimePackManager {
         installedAt: new Date().toISOString(),
         health: { ok: true, version: probe.version, error: null, checkedAt: new Date().toISOString() },
       };
-      fs.writeFileSync(path.join(staging, INSTALL_STATE_FILE), JSON.stringify(installed, null, 2));
+      fs.writeFileSync(path.join(/* turbopackIgnore: true */ staging, INSTALL_STATE_FILE), JSON.stringify(installed, null, 2));
       const previous = `${finalRoot}.previous-${process.pid}-${Date.now()}`;
-      if (fs.existsSync(finalRoot)) fs.renameSync(finalRoot, previous);
+      if (fs.existsSync(/* turbopackIgnore: true */ finalRoot)) fs.renameSync(/* turbopackIgnore: true */ finalRoot, previous);
       try {
-        fs.renameSync(staging, finalRoot);
-        fs.rmSync(previous, { recursive: true, force: true });
+        fs.renameSync(/* turbopackIgnore: true */ staging, finalRoot);
+        fs.rmSync(/* turbopackIgnore: true */ previous, { recursive: true, force: true });
       } catch (err) {
-        if (fs.existsSync(previous) && !fs.existsSync(finalRoot)) fs.renameSync(previous, finalRoot);
+        if (fs.existsSync(/* turbopackIgnore: true */ previous) && !fs.existsSync(/* turbopackIgnore: true */ finalRoot)) fs.renameSync(/* turbopackIgnore: true */ previous, finalRoot);
         throw err;
       }
       return installed;
     } catch (err) {
-      fs.rmSync(staging, { recursive: true, force: true });
+      fs.rmSync(/* turbopackIgnore: true */ staging, { recursive: true, force: true });
       if (err instanceof RuntimePackError) throw err;
       throw new RuntimePackError("RUNTIME_PACK_INSTALL_FAILED", String(err));
     }
@@ -330,7 +338,7 @@ export class RuntimePackManager {
     const definition = this.requireDefinition(id);
     const target = packageRoot(this.rootDir, definition);
     ensureInside(path.join(this.rootDir, definition.id), target);
-    fs.rmSync(target, { recursive: true, force: true });
+    fs.rmSync(/* turbopackIgnore: true */ target, { recursive: true, force: true });
   }
 
   requiredPacksForCapability(capability: string): RuntimePackDefinition[] {
@@ -404,7 +412,7 @@ export class RuntimePackManager {
         throw new RuntimePackError("RUNTIME_PACK_DOWNLOAD_FAILED", "Download redirected to an insecure URL");
       }
       const total = Number(response.headers.get("content-length")) || definition.compressedSize || null;
-      const out = fs.createWriteStream(destination, { flags: "wx" });
+      const out = fs.createWriteStream(/* turbopackIgnore: true */ destination, { flags: "wx" });
       let downloaded = 0;
       try {
         for await (const chunk of response.body as unknown as AsyncIterable<Uint8Array>) {
@@ -417,7 +425,7 @@ export class RuntimePackManager {
         out.end();
       }
     } catch (err) {
-      fs.rmSync(destination, { force: true });
+      fs.rmSync(/* turbopackIgnore: true */ destination, { force: true });
       if (err instanceof RuntimePackError) throw err;
       throw new RuntimePackError("RUNTIME_PACK_DOWNLOAD_FAILED", String(err));
     } finally {
@@ -426,7 +434,7 @@ export class RuntimePackManager {
   }
 
   private async extractZipSafe(archivePath: string, destination: string): Promise<void> {
-    const zip = await JSZip.loadAsync(fs.readFileSync(archivePath));
+    const zip = await JSZip.loadAsync(fs.readFileSync(/* turbopackIgnore: true */ archivePath));
     const entries = Object.values(zip.files);
     for (const entry of entries) {
       const unsafeOriginalName = "unsafeOriginalName" in entry && typeof entry.unsafeOriginalName === "string"
@@ -440,22 +448,23 @@ export class RuntimePackManager {
       ) {
         throw new RuntimePackError("RUNTIME_PACK_INSTALL_FAILED", `Unsafe archive path: ${unsafeOriginalName}`);
       }
-      const target = ensureInside(destination, path.join(destination, entry.name));
+      // turbopackIgnore: extraction targets live under the dynamic pack root (see packageRoot).
+      const target = ensureInside(destination, path.join(/* turbopackIgnore: true */ destination, entry.name));
       if (entry.dir) {
-        fs.mkdirSync(target, { recursive: true });
+        fs.mkdirSync(/* turbopackIgnore: true */ target, { recursive: true });
         continue;
       }
       const unixPermissions = entry.unixPermissions;
       if (typeof unixPermissions === "number" && (unixPermissions & 0o170000) === 0o120000) {
         throw new RuntimePackError("RUNTIME_PACK_INSTALL_FAILED", `Unsafe archive symlink: ${entry.name}`);
       }
-      fs.mkdirSync(path.dirname(target), { recursive: true });
-      fs.writeFileSync(target, Buffer.from(await entry.async("uint8array")));
+      fs.mkdirSync(/* turbopackIgnore: true */ path.dirname(target), { recursive: true });
+      fs.writeFileSync(/* turbopackIgnore: true */ target, Buffer.from(await entry.async("uint8array")));
       const executableByMode = typeof unixPermissions === "number" && (unixPermissions & 0o111) !== 0;
       const executableByName = process.platform !== "win32" &&
         ["chrome", "chrome_crashpad_handler"].includes(path.basename(entry.name));
       if (process.platform !== "win32" && (executableByMode || executableByName)) {
-        fs.chmodSync(target, 0o755);
+        fs.chmodSync(/* turbopackIgnore: true */ target, 0o755);
       }
     }
   }

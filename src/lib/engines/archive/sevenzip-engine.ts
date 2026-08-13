@@ -32,7 +32,7 @@ function findSevenZipBinary(): string {
     path.resolve(process.cwd(), "tools", "7zip", "7z.exe"),
   ];
   for (const p of portablePaths) {
-    if (fs.existsSync(p)) return p;
+    if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
   // 3. Fall back to PATH
   return "7z";

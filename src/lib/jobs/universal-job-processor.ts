@@ -62,7 +62,7 @@ const MAGIC_SIGNATURES: Array<{
 
 function detectOutputMime(filePath: string): string | null {
   try {
-    const fd = fs.openSync(filePath, "r");
+    const fd = fs.openSync(/* turbopackIgnore: true */ filePath, "r");
     try {
       for (const sig of MAGIC_SIGNATURES) {
         const buf = Buffer.alloc(sig.bytes.length);
@@ -190,7 +190,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
 
     // 2. Get input file path
     const inputPath = resolveInputPath(job.input_reference, job.input_kind);
-    if (!fs.existsSync(inputPath)) {
+    if (!fs.existsSync(/* turbopackIgnore: true */ inputPath)) {
       throw createAppError("INPUT_NOT_FOUND", `Input file not found`, {
         stage: "recovery",
         technicalDetail: `Input not found at ${redact(inputPath)}`,
@@ -246,7 +246,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
     });
 
     // 5. Check disk space before starting large conversions
-    const inputStat = fs.statSync(inputPath);
+    const inputStat = fs.statSync(/* turbopackIgnore: true */ inputPath);
     // Estimate output as 2x input size as a safety margin
     const estimatedRequired = inputStat.size * 2;
     const diskCheck = await checkDiskSpace(
@@ -261,14 +261,14 @@ export async function processUniversalJob(jobId: string): Promise<void> {
     }
 
     // 6. Create isolated working directory
-    const jobDir = path.join(CONFIG.media.tempDir, jobId);
-    if (!fs.existsSync(jobDir)) {
-      fs.mkdirSync(jobDir, { recursive: true });
+    const jobDir = path.join(/* turbopackIgnore: true */ CONFIG.media.tempDir, jobId);
+    if (!fs.existsSync(/* turbopackIgnore: true */ jobDir)) {
+      fs.mkdirSync(/* turbopackIgnore: true */ jobDir, { recursive: true });
     }
 
     const outputFormat = job.output_format;
     const outputExt = `.${outputFormat}`;
-    const outputPath = path.join(jobDir, `output${outputExt}`);
+    const outputPath = path.join(/* turbopackIgnore: true */ jobDir, `output${outputExt}`);
 
     // Ensure output path is safe
     try {
@@ -342,7 +342,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
     const actualPlan = actualOutputPath === outputPath ? plan : { ...plan, outputPath: actualOutputPath };
 
     // Guard: engine reported success but output file is missing or empty
-    if (!fs.existsSync(actualOutputPath)) {
+    if (!fs.existsSync(/* turbopackIgnore: true */ actualOutputPath)) {
       throw createAppError(
         "ENGINE_EXECUTE_FAILED",
         `Engine reported success but output file was not created`,
@@ -353,7 +353,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
         },
       );
     }
-    const outputStat = fs.statSync(actualOutputPath);
+    const outputStat = fs.statSync(/* turbopackIgnore: true */ actualOutputPath);
     if (outputStat.size === 0) {
       throw createAppError(
         "ENGINE_EXECUTE_FAILED",
@@ -431,7 +431,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
 
     // Compute safe relative path
-    const relOutputPath = path.relative(CONFIG.media.tempDir, actualOutputPath);
+    const relOutputPath = path.relative(/* turbopackIgnore: true */ CONFIG.media.tempDir, actualOutputPath);
 
     // Build output file name from input title or fallback
     const currentJob = jobManager.getJob(jobId);
@@ -532,7 +532,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
 function resolveInputPath(inputReference: string, inputKind: string): string {
   if (inputKind === "local-file" || inputKind === "universal-file") {
     // inputReference is a relative path under the temp dir
-    return path.resolve(CONFIG.media.tempDir, inputReference);
+    return path.resolve(/* turbopackIgnore: true */ CONFIG.media.tempDir, inputReference);
   }
   // For remote URLs, inputReference is the URL itself — but universal jobs
   // should always have a local file. If not, this will fail at the exists check.
@@ -559,14 +559,14 @@ function validateOutputArtifact(
   const checks: Array<{ name: string; passed: boolean; detail?: string }> = [];
 
   // File exists
-  const exists = fs.existsSync(outputPath);
+  const exists = fs.existsSync(/* turbopackIgnore: true */ outputPath);
   checks.push({ name: "file-exists", passed: exists });
   if (!exists) {
     return { valid: false, checks, error: "Output file does not exist" };
   }
 
   // Size > 0
-  const stat = fs.statSync(outputPath);
+  const stat = fs.statSync(/* turbopackIgnore: true */ outputPath);
   checks.push({
     name: "size-nonzero",
     passed: stat.size > 0,

@@ -51,7 +51,7 @@ export async function resolveHtmlRendererRuntimeAsync(): Promise<HtmlRendererRun
   }
 
   for (const candidate of candidatePaths()) {
-    if (fs.existsSync(candidate.path)) {
+    if (fs.existsSync(/* turbopackIgnore: true */ candidate.path)) {
       return {
         available: true,
         version: null,
@@ -85,7 +85,7 @@ export function resolveHtmlRendererRuntime(): HtmlRendererRuntime {
     const installRoot = path.join(root, definition.id, definition.version);
     const executable = path.join(installRoot, definition.executablePaths[definition.platform]);
     const stateFile = path.join(installRoot, "install.json");
-    if (fs.existsSync(stateFile) && fs.existsSync(executable)) {
+    if (fs.existsSync(/* turbopackIgnore: true */ stateFile) && fs.existsSync(/* turbopackIgnore: true */ executable)) {
       return {
         available: true,
         version: null,
@@ -98,7 +98,7 @@ export function resolveHtmlRendererRuntime(): HtmlRendererRuntime {
   }
 
   for (const candidate of candidatePaths()) {
-    if (fs.existsSync(candidate.path)) {
+    if (fs.existsSync(/* turbopackIgnore: true */ candidate.path)) {
       return {
         available: true,
         version: null,

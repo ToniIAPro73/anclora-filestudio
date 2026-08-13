@@ -57,7 +57,7 @@ export function findLibreofficeBinary(): string {
       ];
   for (const c of candidates) {
     if (c.includes("/") || c.includes("\\")) {
-      if (fs.existsSync(c)) return c;
+      if (fs.existsSync(/* turbopackIgnore: true */ c)) return c;
     } else {
       return c; // PATH-based — ProcessRunner.probe() will verify
     }

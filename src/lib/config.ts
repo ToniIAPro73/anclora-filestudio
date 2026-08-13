@@ -11,16 +11,20 @@ export const CONFIG = {
     // Prefer ANCLORA_FILESTUDIO_* env vars for tool paths (portable distribution),
     // fall back to legacy env vars (YTDLP_BINARY, FFMPEG_BINARY, etc.),
     // then to bare command names for PATH lookup (dev mode).
+    // turbopackIgnore: data/temp/log dirs are intentionally dynamic — env-driven
+    // for portable distributions, cwd-based otherwise. They are runtime state,
+    // not bundle inputs; annotating prevents Turbopack NFT from tracing the
+    // whole project for every route that imports CONFIG.
     tempDir: env.ANCLORA_FILESTUDIO_TEMP_DIR
-      ? path.resolve(env.ANCLORA_FILESTUDIO_TEMP_DIR)
-      : path.resolve(process.cwd(), env.MEDIA_TEMP_DIR),
+      ? path.resolve(/* turbopackIgnore: true */ env.ANCLORA_FILESTUDIO_TEMP_DIR)
+      : path.resolve(/* turbopackIgnore: true */ process.cwd(), env.MEDIA_TEMP_DIR),
     dataDir: env.ANCLORA_FILESTUDIO_DATA_DIR
-      ? path.resolve(env.ANCLORA_FILESTUDIO_DATA_DIR)
+      ? path.resolve(/* turbopackIgnore: true */ env.ANCLORA_FILESTUDIO_DATA_DIR)
       : path.resolve(process.cwd(), "data"),
     logsDir: env.ANCLORA_FILESTUDIO_LOGS_DIR
-      ? path.resolve(env.ANCLORA_FILESTUDIO_LOGS_DIR)
+      ? path.resolve(/* turbopackIgnore: true */ env.ANCLORA_FILESTUDIO_LOGS_DIR)
       : env.ANCLORA_FILESTUDIO_DATA_DIR
-        ? path.resolve(env.ANCLORA_FILESTUDIO_DATA_DIR, "..", "logs")
+        ? path.resolve(/* turbopackIgnore: true */ env.ANCLORA_FILESTUDIO_DATA_DIR, "..", "logs")
         : path.resolve(process.cwd(), ".tmp", "logs"),
     binaries: {
       ytdlp: resolveToolPath(env.ANCLORA_FILESTUDIO_YTDLP_PATH, env.YTDLP_BINARY),

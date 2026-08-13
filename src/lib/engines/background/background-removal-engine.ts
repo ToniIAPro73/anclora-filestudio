@@ -185,7 +185,9 @@ export function applyMaskToPixels(
 // ── ONNX probe ────────────────────────────────────────────────────────────────
 
 function resolveModelPath(): string {
-  return process.env[MODEL_ENV_KEY] ?? path.resolve(process.cwd(), DEFAULT_MODEL_PATH);
+  // turbopackIgnore: model path is env-overridable runtime state, not a bundle
+  // input; keep Turbopack NFT from tracing the whole project for this probe.
+  return process.env[MODEL_ENV_KEY] ?? path.resolve(/* turbopackIgnore: true */ process.cwd(), DEFAULT_MODEL_PATH);
 }
 
 async function probeOnnx(): Promise<{ available: boolean; version: string | null; error?: string }> {
@@ -198,7 +200,8 @@ async function probeOnnx(): Promise<{ available: boolean; version: string | null
      
     const version = String((ort as { version?: string }).version ?? (ort as { default?: { version?: string } }).default?.version ?? "unknown");
     const modelPath = resolveModelPath();
-    const modelExists = fs.existsSync(modelPath);
+    // turbopackIgnore: modelPath is env-overridable runtime state (see resolveModelPath).
+    const modelExists = fs.existsSync(/* turbopackIgnore: true */ modelPath);
     if (!modelExists) {
       return { available: false, version, error: `Modelo no encontrado: ${modelPath}` };
     }

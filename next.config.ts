@@ -32,6 +32,36 @@ const nextConfig: NextConfig = {
       "./artifacts/**",
       "./scripts/**",
       "./deploy/**",
+      // Root-level project files are never runtime dependencies of the
+      // standalone server: docs, branding assets, tooling configs, lockfiles
+      // and test configs. Dynamic runtime fs paths (portable temp/data dirs,
+      // engine binary probing) make Turbopack's tracer fall back to including
+      // the whole project root; without these excludes the NFT list pulls in
+      // junk like AGENTS.md and next.config.ts itself, which trips the
+      // "unexpected file in NFT list" warning for every API route.
+      // package.json stays: it is a legitimate runtime-adjacent manifest.
+      "./next.config.ts",
+      "./tsconfig.json",
+      "./tsconfig.tsbuildinfo",
+      "./vitest.config.ts",
+      "./vitest.*.config.ts",
+      "./playwright.config.ts",
+      "./eslint.config.mjs",
+      "./postcss.config.mjs",
+      "./components.json",
+      "./vercel.json",
+      "./render.yaml",
+      "./metadata.json",
+      "./release-manifest.json",
+      "./SBOM.cdx.json",
+      "./THIRD_PARTY_NOTICES.txt",
+      "./pnpm-lock.yaml",
+      "./pnpm-workspace.yaml",
+      "./*.md",
+      "./*.png",
+      "./*.bat",
+      "./*.sh",
+      "./public/**",
     ],
   },
 };

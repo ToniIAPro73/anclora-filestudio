@@ -33,7 +33,7 @@ function findQpdfBinary(): string {
     path.resolve(process.cwd(), "tools", "qpdf", "bin", "qpdf.exe"),
   ];
   for (const portablePath of portablePaths) {
-    if (fs.existsSync(portablePath)) return portablePath;
+    if (fs.existsSync(/* turbopackIgnore: true */ portablePath)) return portablePath;
   }
   return "qpdf";
 }

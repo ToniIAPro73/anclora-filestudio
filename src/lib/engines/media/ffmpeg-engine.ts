@@ -584,7 +584,7 @@ function findFfmpegBinary(): string {
     path.resolve(process.cwd(), "tools", "ffmpeg", "ffmpeg"),
   ];
   for (const p of portablePaths) {
-    if (fs.existsSync(p)) return p;
+    if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
   // 3. Fall back to PATH
   return "ffmpeg";
@@ -601,7 +601,7 @@ function findFfprobeBinary(): string {
     path.resolve(process.cwd(), "tools", "ffmpeg", "ffprobe"),
   ];
   for (const p of portablePaths) {
-    if (fs.existsSync(p)) return p;
+    if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
   // 3. Fall back to PATH
   return "ffprobe";

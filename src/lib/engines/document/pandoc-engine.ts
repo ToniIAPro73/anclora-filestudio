@@ -31,7 +31,7 @@ export function findPandocBinary(): string {
     path.resolve(process.cwd(), "tools", "pandoc", "pandoc"),
   ];
   for (const p of portablePaths) {
-    if (fs.existsSync(p)) return p;
+    if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
   // 3. Fall back to PATH
   return "pandoc";
@@ -56,10 +56,10 @@ function resolveDataDir(pandocDir: string): string | null {
   ];
 
   for (const candidate of candidates) {
-    const resolved = path.resolve(candidate);
+    const resolved = path.resolve(/* turbopackIgnore: true */ candidate);
     // Check if this directory contains templates/ or defaults/
     const templatesDir = path.join(resolved, "templates");
-    if (fs.existsSync(templatesDir)) return resolved;
+    if (fs.existsSync(/* turbopackIgnore: true */ templatesDir)) return resolved;
   }
 
   // If no templates dir found, still pass the pandoc binary directory

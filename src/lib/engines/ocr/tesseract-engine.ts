@@ -92,7 +92,7 @@ function findTesseractBinary(): string {
     path.resolve(process.cwd(), "tools", "tesseract", "tesseract"),
   ];
   for (const p of portablePaths) {
-    if (fs.existsSync(p)) return p;
+    if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
   // 3. Fall back to PATH
   return "tesseract";
@@ -105,26 +105,26 @@ function findPdftoppmBinary(): string {
   function candidatesFromDir(dir: string): string[] {
     if (isWindows) {
       return [
-        path.join(dir, "Library", "bin", "pdftoppm.exe"),
-        path.join(dir, "bin", "pdftoppm.exe"),
-        path.join(dir, "pdftoppm.exe"),
+        path.join(/* turbopackIgnore: true */ dir, "Library", "bin", "pdftoppm.exe"),
+        path.join(/* turbopackIgnore: true */ dir, "bin", "pdftoppm.exe"),
+        path.join(/* turbopackIgnore: true */ dir, "pdftoppm.exe"),
       ];
     }
-    return [path.join(dir, "pdftoppm")];
+    return [path.join(/* turbopackIgnore: true */ dir, "pdftoppm")];
   }
 
   // 1. Prefer ANCLORA_FILESTUDIO_POPPLER_PATH env var (portable distribution)
   const popplerDir = CONFIG.media.binaries.poppler;
   if (popplerDir) {
     for (const c of candidatesFromDir(popplerDir)) {
-      if (fs.existsSync(c)) return c;
+      if (fs.existsSync(/* turbopackIgnore: true */ c)) return c;
     }
   }
 
   // 2. Portable path relative to cwd
   const portableBase = path.resolve(process.cwd(), "tools", "poppler");
   for (const c of candidatesFromDir(portableBase)) {
-    if (fs.existsSync(c)) return c;
+    if (fs.existsSync(/* turbopackIgnore: true */ c)) return c;
   }
 
   // 3. Fall back to PATH
@@ -385,8 +385,8 @@ export class TesseractEngine implements ConversionEngine {
       : `${outputBase}.txt`;
 
     const success = result.exitCode === 0;
-    const finalOutputPath = fs.existsSync(actualOutputPath) ? actualOutputPath : plan.outputPath;
-    const stat = success && fs.existsSync(finalOutputPath) ? fs.statSync(finalOutputPath) : null;
+    const finalOutputPath = fs.existsSync(/* turbopackIgnore: true */ actualOutputPath) ? actualOutputPath : plan.outputPath;
+    const stat = success && fs.existsSync(/* turbopackIgnore: true */ finalOutputPath) ? fs.statSync(/* turbopackIgnore: true */ finalOutputPath) : null;
 
     onProgress?.(100, success ? "Completado" : "Error");
 
@@ -408,8 +408,8 @@ export class TesseractEngine implements ConversionEngine {
     start: number
   ): Promise<ExecutionResult> {
     // 1. Convert PDF pages to images using pdftoppm
-    const workDir = path.dirname(plan.outputPath);
-    const imagePrefix = path.join(workDir, `ocr_page_${plan.jobId.substring(0, 8)}`);
+    const workDir = path.dirname(/* turbopackIgnore: true */ plan.outputPath);
+    const imagePrefix = path.join(/* turbopackIgnore: true */ workDir, `ocr_page_${plan.jobId.substring(0, 8)}`);
     const dpi = Math.min(
       typeof plan.options.ocrDpi === "number" ? plan.options.ocrDpi : DEFAULT_DPI,
       MAX_DPI
@@ -443,10 +443,10 @@ export class TesseractEngine implements ConversionEngine {
     }
 
     // 2. Find generated images
-    const imageFiles = fs.readdirSync(workDir)
+    const imageFiles = fs.readdirSync(/* turbopackIgnore: true */ workDir)
       .filter((f) => f.startsWith(`ocr_page_${plan.jobId.substring(0, 8)}`) && f.endsWith(".png"))
       .sort()
-      .map((f) => path.join(workDir, f));
+      .map((f) => path.join(/* turbopackIgnore: true */ workDir, f));
 
     if (imageFiles.length === 0) {
       return {
@@ -471,7 +471,7 @@ export class TesseractEngine implements ConversionEngine {
 
     for (let i = 0; i < imageFiles.length; i++) {
       const imageFile = imageFiles[i]!;
-      const pageOutputBase = path.join(workDir, `ocr_result_${plan.jobId.substring(0, 8)}_${i}`);
+      const pageOutputBase = path.join(/* turbopackIgnore: true */ workDir, `ocr_result_${plan.jobId.substring(0, 8)}_${i}`);
       const pageOutputTxt = `${pageOutputBase}.txt`;
       intermediateOutputs.push(pageOutputTxt);
 
@@ -483,8 +483,8 @@ export class TesseractEngine implements ConversionEngine {
         timeoutMs: 30_000,
       });
 
-      if (ocrResult.exitCode === 0 && fs.existsSync(pageOutputTxt)) {
-        textParts.push(fs.readFileSync(pageOutputTxt, "utf8"));
+      if (ocrResult.exitCode === 0 && fs.existsSync(/* turbopackIgnore: true */ pageOutputTxt)) {
+        textParts.push(fs.readFileSync(/* turbopackIgnore: true */ pageOutputTxt, "utf8"));
       } else {
         textParts.push(`[Error en página ${i + 1}]\n`);
       }
@@ -492,21 +492,21 @@ export class TesseractEngine implements ConversionEngine {
 
     // 4. Write concatenated text
     const fullText = textParts.join("\n\n---\n\n");
-    fs.writeFileSync(plan.outputPath, fullText, "utf8");
+    fs.writeFileSync(/* turbopackIgnore: true */ plan.outputPath, fullText, "utf8");
 
     // 5. Cleanup intermediate files
     try {
       for (const img of imageFiles) {
-        fs.unlinkSync(img);
+        fs.unlinkSync(/* turbopackIgnore: true */ img);
       }
       for (const txt of intermediateOutputs) {
-        if (fs.existsSync(txt)) fs.unlinkSync(txt);
+        if (fs.existsSync(/* turbopackIgnore: true */ txt)) fs.unlinkSync(/* turbopackIgnore: true */ txt);
       }
     } catch {
       // Non-fatal cleanup errors
     }
 
-    const stat = fs.statSync(plan.outputPath);
+    const stat = fs.statSync(/* turbopackIgnore: true */ plan.outputPath);
     onProgress?.(100, "Completado");
 
     return {
@@ -523,12 +523,12 @@ export class TesseractEngine implements ConversionEngine {
     const checks: ArtifactValidation["checks"] = [];
 
     // File exists
-    const exists = fs.existsSync(outputPath);
+    const exists = fs.existsSync(/* turbopackIgnore: true */ outputPath);
     checks.push({ name: "file-exists", passed: exists });
     if (!exists) return { valid: false, checks };
 
     // Size > 0
-    const stat = fs.statSync(outputPath);
+    const stat = fs.statSync(/* turbopackIgnore: true */ outputPath);
     checks.push({ name: "size-nonzero", passed: stat.size > 0, detail: `${stat.size} bytes` });
 
     // For text output, verify it has actual content (not just whitespace)
@@ -537,7 +537,7 @@ export class TesseractEngine implements ConversionEngine {
         // Read a sample to check for non-whitespace content
         const sampleSize = Math.min(stat.size, 4096);
         const buf = Buffer.alloc(sampleSize);
-        const fd = fs.openSync(outputPath, "r");
+        const fd = fs.openSync(/* turbopackIgnore: true */ outputPath, "r");
         fs.readSync(fd, buf, 0, sampleSize, 0);
         fs.closeSync(fd);
         const sample = buf.toString("utf8");
@@ -552,7 +552,7 @@ export class TesseractEngine implements ConversionEngine {
     if (plan.outputFormat === "pdf") {
       try {
         const buf = Buffer.alloc(5);
-        const fd = fs.openSync(outputPath, "r");
+        const fd = fs.openSync(/* turbopackIgnore: true */ outputPath, "r");
         fs.readSync(fd, buf, 0, 5, 0);
         fs.closeSync(fd);
         const isPdf = buf.toString("ascii") === "%PDF-";

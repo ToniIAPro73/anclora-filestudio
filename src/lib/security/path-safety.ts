@@ -10,8 +10,10 @@ import { CONFIG } from "../config";
  */
 export function ensurePathSafety(targetPath: string, allowedRoot?: string): string {
   const root = allowedRoot ?? getDefaultTempDir();
-  const resolvedTarget = path.resolve(targetPath);
-  const resolvedRoot = path.resolve(root);
+  // turbopackIgnore: targets are runtime job paths resolved against cwd by
+  // design; they are runtime state, not bundle inputs for the NFT tracer.
+  const resolvedTarget = path.resolve(/* turbopackIgnore: true */ targetPath);
+  const resolvedRoot = path.resolve(/* turbopackIgnore: true */ root);
 
   const relative = path.relative(resolvedRoot, resolvedTarget);
 
@@ -30,8 +32,8 @@ export function ensurePathSafety(targetPath: string, allowedRoot?: string): stri
  */
 export function resolveArtifactPath(relativePath: string, allowedRoot?: string): string {
   const root = allowedRoot ?? getDefaultTempDir();
-  const resolvedRoot = path.resolve(root);
-  const candidate = path.resolve(resolvedRoot, relativePath);
+  const resolvedRoot = path.resolve(/* turbopackIgnore: true */ root);
+  const candidate = path.resolve(/* turbopackIgnore: true */ resolvedRoot, relativePath);
   return ensurePathSafety(candidate, resolvedRoot);
 }
 
