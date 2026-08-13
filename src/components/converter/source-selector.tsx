@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import { Loader2, Link2, Upload, AlertTriangle } from "lucide-react";
-import { INPUT_ACCEPT_ATTR } from "@/lib/domain/format-catalog";
+import { getFormatByCanonicalId, INPUT_ACCEPT_ATTR } from "@/lib/domain/format-catalog";
 import type { VideoFormat } from "@/lib/media/metadata";
 
 interface SourceSelectorProps {
@@ -11,6 +11,8 @@ interface SourceSelectorProps {
   isLoading: boolean;
   setLoading: (v: boolean) => void;
   acquisitionModes?: AcquisitionMode[];
+  requiredSourceFormat?: string | null;
+  requiredSourceLabel?: string | null;
 }
 
 export type AcquisitionMode = "local-file" | "direct-url" | "web-url" | "video-url" | "google-drive" | "onedrive";
@@ -87,7 +89,15 @@ export interface SubtitleStreamLite {
 
 type DragState = "idle" | "drag-valid" | "drag-invalid";
 
-export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLoading, acquisitionModes = ["local-file"] }: SourceSelectorProps) {
+export function SourceSelector({
+  onUrlAnalyzed,
+  onFileAnalyzed,
+  isLoading,
+  setLoading,
+  acquisitionModes = ["local-file"],
+  requiredSourceFormat,
+  requiredSourceLabel,
+}: SourceSelectorProps) {
   const canUseUrl = acquisitionModes.includes("video-url") || acquisitionModes.includes("direct-url") || acquisitionModes.includes("web-url");
   const canUseFile = acquisitionModes.includes("local-file");
   const [tab, setTab] = useState<"url" | "file">(canUseFile ? "file" : "url");
@@ -95,6 +105,13 @@ export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLo
   const [error, setError] = useState<string | null>(null);
   const [dragState, setDragState] = useState<DragState>("idle");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const requiredFormat = requiredSourceFormat ? getFormatByCanonicalId(requiredSourceFormat) : null;
+  const acceptedExtensions = useMemo(() => requiredFormat?.inputExtensions ?? [], [requiredFormat]);
+  const acceptAttr = acceptedExtensions.length > 0
+    ? acceptedExtensions.map((ext) => `.${ext}`).join(",")
+    : INPUT_ACCEPT_ATTR;
+  const acceptedLabel = requiredSourceLabel
+    ?? (requiredFormat ? requiredFormat.outputExtension.toUpperCase() : "audio, vídeo, imágenes, documentos, datos y más");
 
   const handleUrlSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,10 +193,11 @@ export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLo
 
   const isFileValid = useCallback((file: File): boolean => {
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+    if (acceptedExtensions.length > 0) return acceptedExtensions.includes(ext);
     // Check against the accept attribute extensions
     const acceptExts = INPUT_ACCEPT_ATTR.split(",").map((s) => s.trim().replace(/^\./, ""));
     return acceptExts.includes(ext) || file.type.startsWith("audio/") || file.type.startsWith("video/") || file.type.startsWith("image/");
-  }, []);
+  }, [acceptedExtensions]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -306,7 +324,7 @@ export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLo
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
             role="button"
-            aria-label="Arrastra un archivo o haz clic para seleccionar audio, vídeo, imágenes, documentos, datos y más"
+            aria-label={`Arrastra un archivo o haz clic para seleccionar ${acceptedLabel}`}
             tabIndex={0}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click(); }}
             className={`relative cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-all focus:outline-none focus:ring-2 focus:ring-teal-300/50 motion-reduce:transition-none ${dragBorderClass} ${
@@ -329,7 +347,9 @@ export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLo
                         ? "Formato no soportado"
                         : "Arrastra un archivo aquí"}
                   </p>
-                  <p className="mt-0.5 text-xs text-stone-400">Elegir archivo</p>
+                  <p className="mt-0.5 text-xs text-stone-400">
+                    {requiredFormat ? `Elegir archivo ${acceptedLabel}` : "Elegir archivo"}
+                  </p>
                   <p className="text-[10px] text-stone-500">Tamaño máximo: 2 GB</p>
                 </div>
               </div>
@@ -338,7 +358,7 @@ export function SourceSelector({ onUrlAnalyzed, onFileAnalyzed, isLoading, setLo
               ref={fileInputRef}
               type="file"
               className="sr-only"
-              accept={INPUT_ACCEPT_ATTR}
+              accept={acceptAttr}
               onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
               aria-label="Seleccionar archivo local"
             />

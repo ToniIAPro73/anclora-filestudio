@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Toaster, toast } from "sonner";
 import {
   ArrowLeftRight,
@@ -13,6 +15,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { SourceSelector, type AnalysisResult, type UniversalAnalysisResult, type RemoteAnalysisResult } from "@/components/converter/source-selector";
+import { RuntimePackRequirementCard } from "@/components/converter/runtime-pack-requirement-card";
 import { InputAnalysisCard } from "@/components/converter/input-analysis-card";
 import { ConversionRouteSummary } from "@/components/converter/conversion-route-summary";
 import { TechnicalDetails } from "@/components/converter/technical-details";
@@ -35,11 +38,11 @@ import type { VideoFormat } from "@/lib/media/metadata";
 import { VideoQualitySelectionSchema, type QualityProfile } from "@/lib/quality/quality-contract";
 import { DESKTOP_PRO_GROUPS, type DesktopProGroupId } from "@/lib/capabilities/desktop-capabilities";
 import { FILESTUDIO_BRAND } from "@/lib/filestudio-brand";
-import { normalizeFormatId } from "@/lib/domain/format-catalog";
+import { getFormatByCanonicalId, normalizeFormatId } from "@/lib/domain/format-catalog";
 import type { UxConversionCategoryId, UxConversionModel } from "@/lib/ux-v3/conversion-ux-model";
 import { t } from "@/i18n";
 
-type DesktopTab = "home" | "convert" | "tools" | "history" | "diagnostics";
+export type DesktopTab = "home" | "convert" | "tools" | "history" | "diagnostics";
 type ToolWorkspaceId = "pdf" | "images" | "structured" | "ocr" | null;
 type FlowStep = "source" | "analysis" | "format" | "progress" | "result";
 
@@ -54,6 +57,34 @@ const UX_CATEGORY_TO_LEGACY_GROUP: Partial<Record<UxConversionCategoryId, Deskto
 };
 
 const mediaUrlTargets = new Set(["mp4", "webm", "mkv", "mp3", "m4a", "wav", "ogg"]);
+
+function getFormatLabel(formatId: string): string {
+  const canonical = normalizeFormatId(formatId) ?? formatId;
+  const format = getFormatByCanonicalId(canonical);
+  if (!format) return canonical.toUpperCase();
+  if (format.outputExtension === "jpg") return "JPEG";
+  if (format.outputExtension === "md") return "Markdown";
+  if (format.outputExtension === "tex") return "LaTeX";
+  return format.outputExtension.toUpperCase();
+}
+
+function getDetectedSourceFormat(result: AnalysisResult): string | null {
+  if (result.kind === "universal-file") {
+    const descriptor = (result as UniversalAnalysisResult).universalDescriptor as {
+      extension?: string | null;
+      detectedFormat?: string | null;
+    } | null;
+    return normalizeFormatId(result.detectedFormat)
+      ?? normalizeFormatId(descriptor?.detectedFormat)
+      ?? normalizeFormatId(descriptor?.extension);
+  }
+
+  if (result.kind === "local-media") {
+    return normalizeFormatId(result.originalName.split(".").pop());
+  }
+
+  return normalizeFormatId(result.descriptor.container);
+}
 
 interface JobStatusData {
   jobId: string;
@@ -87,12 +118,29 @@ const TAB_ICONS: Record<DesktopTab, React.ReactNode> = {
   diagnostics: <Stethoscope className="h-4 w-4" />,
 };
 
-export function DesktopProShell() {
-  const [activeTab, setActiveTab] = useState<DesktopTab>("home");
+const TAB_ROUTES: Partial<Record<DesktopTab, string>> = {
+  home: "/",
+  convert: "/convert",
+  history: "/history",
+  diagnostics: "/diagnostics",
+};
+
+function tabFromPathname(pathname: string | null): DesktopTab | null {
+  if (pathname === "/") return "home";
+  if (pathname === "/convert") return "convert";
+  if (pathname === "/history") return "history";
+  if (pathname === "/diagnostics") return "diagnostics";
+  return null;
+}
+
+export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopTab }) {
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState<DesktopTab>(tabFromPathname(pathname) ?? initialTab);
   const [activeTool, setActiveTool] = useState<ToolWorkspaceId>(null);
   const [uxModel, setUxModel] = useState<UxConversionModel | null>(null);
   const [uxModelError, setUxModelError] = useState<string | null>(null);
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
+  const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [initialConversionCategory, setInitialConversionCategory] = useState<UxConversionCategoryId | undefined>(undefined);
   const [routeValidationMessage, setRouteValidationMessage] = useState<string | null>(null);
   const [flowStep, setFlowStep] = useState<FlowStep>("source");
@@ -100,6 +148,7 @@ export function DesktopProShell() {
   const [isLoading, setIsLoading] = useState(false);
   const [capabilities, setCapabilities] = useState<CapabilitiesData | null>(null);
   const [selectedCap, setSelectedCap] = useState<CapabilityInfo | null>(null);
+  const [capabilityRefreshNonce, setCapabilityRefreshNonce] = useState(0);
   const [jobId, setJobId] = useState<string | null>(null);
   const [jobStatus, setJobStatus] = useState<JobStatusData | null>(null);
   const [isConverting, setIsConverting] = useState(false);
@@ -169,8 +218,13 @@ export function DesktopProShell() {
         setCapabilities(capData);
         const canonicalTarget = normalizeFormatId(selectedTarget);
         if (canonicalTarget) {
-          const targetCapability = capData.capabilities.find(
+          const matchingTargetCapabilities = capData.capabilities.filter(
+            (cap) => normalizeFormatId(cap.outputFormat) === canonicalTarget
+          );
+          const targetCapability = matchingTargetCapabilities.find(
             (cap) => normalizeFormatId(cap.outputFormat) === canonicalTarget && cap.state === "available"
+          ) ?? matchingTargetCapabilities.find(
+            (cap) => normalizeFormatId(cap.outputFormat) === canonicalTarget && cap.state === "installable"
           ) ?? null;
           setSelectedCap(targetCapability);
           if (targetCapability && ["mp3", "m4a", "wav", "flac", "ogg"].includes(targetCapability.outputFormat)) {
@@ -187,7 +241,7 @@ export function DesktopProShell() {
       }
     };
     void loadCaps();
-  }, [analysisResult, selectedTarget]);
+  }, [analysisResult, selectedTarget, capabilityRefreshNonce]);
 
   useEffect(() => {
     if (flowStep === "analysis" && capabilities) {
@@ -261,16 +315,25 @@ export function DesktopProShell() {
     resetFlow();
   }, [resetFlow]);
 
+  useEffect(() => {
+    const routeTab = tabFromPathname(pathname);
+    if (!routeTab || routeTab === activeTab) return;
+    const timer = window.setTimeout(() => handleTabChange(routeTab), 0);
+    return () => window.clearTimeout(timer);
+  }, [activeTab, handleTabChange, pathname]);
+
   const handleOpenConvert = useCallback((_categoryId?: UxConversionCategoryId) => {
     setActiveTab("convert");
     setActiveTool(null);
     setInitialConversionCategory(_categoryId);
     setSelectedTarget(null);
+    setSelectedSource(null);
     resetFlow();
   }, [resetFlow]);
 
-  const handleSelectTarget = useCallback((target: string) => {
+  const handleSelectTarget = useCallback((target: string, source?: string) => {
     setSelectedTarget(target);
+    setSelectedSource(source ? normalizeFormatId(source) : null);
     setActiveTab("convert");
     setActiveTool(null);
     resetFlow();
@@ -283,6 +346,19 @@ export function DesktopProShell() {
   }, [resetFlow]);
 
   const handleAnalysisResult = useCallback((result: AnalysisResult) => {
+    if (selectedSource) {
+      const detectedSource = getDetectedSourceFormat(result);
+      if (detectedSource !== selectedSource) {
+        const expectedLabel = getFormatLabel(selectedSource);
+        const detectedLabel = detectedSource ? getFormatLabel(detectedSource) : "un formato distinto";
+        setRouteValidationMessage(`Has seleccionado un archivo ${detectedLabel}, pero esta conversión requiere ${expectedLabel}.`);
+        setAnalysisResult(null);
+        setCapabilities(null);
+        setSelectedCap(null);
+        setFlowStep("source");
+        return;
+      }
+    }
     setAnalysisResult(result);
     if (result.kind === "remote-url") {
       const formats = (result as RemoteAnalysisResult).videoFormats;
@@ -290,7 +366,7 @@ export function DesktopProShell() {
     } else {
       setVideoFormats([]);
     }
-  }, []);
+  }, [selectedSource]);
 
   const handleStartConversion = async () => {
     if (!analysisResult || !selectedCap) return;
@@ -396,11 +472,11 @@ export function DesktopProShell() {
         </header>
 
         <nav className="mb-5 grid grid-cols-2 gap-2 rounded-lg border border-white/8 bg-[#13161b]/90 p-2 shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:grid-cols-5" aria-label="Navegación principal FileStudio">
-          <DesktopTabButton id="home" active={activeTab === "home"} onClick={() => handleTabChange("home")} label="Inicio" />
-          <DesktopTabButton id="convert" active={activeTab === "convert"} onClick={() => handleTabChange("convert")} label={t("nav.convert")} />
+          <DesktopTabButton id="home" href={TAB_ROUTES.home} active={activeTab === "home"} onClick={() => handleTabChange("home")} label="Inicio" />
+          <DesktopTabButton id="convert" href={TAB_ROUTES.convert} active={activeTab === "convert"} onClick={() => handleTabChange("convert")} label={t("nav.convert")} />
           <DesktopTabButton id="tools" active={activeTab === "tools"} onClick={() => handleTabChange("tools")} label="Herramientas" />
-          <DesktopTabButton id="history" active={activeTab === "history"} onClick={() => handleTabChange("history")} label="Historial" />
-          <DesktopTabButton id="diagnostics" active={activeTab === "diagnostics"} onClick={() => handleTabChange("diagnostics")} label="Diagnóstico" />
+          <DesktopTabButton id="history" href={TAB_ROUTES.history} active={activeTab === "history"} onClick={() => handleTabChange("history")} label="Historial" />
+          <DesktopTabButton id="diagnostics" href={TAB_ROUTES.diagnostics} active={activeTab === "diagnostics"} onClick={() => handleTabChange("diagnostics")} label="Diagnóstico" />
         </nav>
 
         {uxModelError && (
@@ -431,6 +507,7 @@ export function DesktopProShell() {
           <NativeConversionWorkspace
             activeGroup={selectedTargetGroup}
             selectedTarget={selectedTarget}
+            selectedSource={selectedSource}
             flowStep={flowStep}
             steps={steps}
             currentStepIndex={currentStepIndex}
@@ -457,8 +534,10 @@ export function DesktopProShell() {
             onCancel={handleCancel}
             onConvertAnother={handleConvertAnotherFormat}
             onViewHistory={() => handleTabChange("history")}
+            onRuntimePackInstalled={() => setCapabilityRefreshNonce((value) => value + 1)}
             onBackToHub={() => {
               setSelectedTarget(null);
+              setSelectedSource(null);
               resetFlow();
             }}
           />
@@ -490,19 +569,26 @@ export function DesktopProShell() {
   );
 }
 
-function DesktopTabButton({ id, label, active, onClick }: { id: DesktopTab; label: string; active: boolean; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={active}
-      onClick={onClick}
-      className={`flex min-h-11 items-center justify-center gap-2 rounded-md px-2 py-2 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/70 motion-reduce:transition-none ${
-        active ? "bg-teal-300 text-[#071112]" : "border border-white/8 text-stone-300 hover:bg-white/6"
-      }`}
-    >
+function DesktopTabButton({ id, label, active, href, onClick }: { id: DesktopTab; label: string; active: boolean; href?: string; onClick: () => void }) {
+  const className = `flex min-h-11 items-center justify-center gap-2 rounded-md px-2 py-2 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/70 motion-reduce:transition-none ${
+    active ? "bg-teal-300 text-[#071112]" : "border border-white/8 text-stone-300 hover:bg-white/6"
+  }`;
+  const contents = (
+    <>
       {TAB_ICONS[id]}
       <span>{label}</span>
+    </>
+  );
+  if (href) {
+    return (
+      <Link href={href} role="tab" aria-selected={active} onClick={onClick} className={className}>
+        {contents}
+      </Link>
+    );
+  }
+  return (
+    <button type="button" role="tab" aria-selected={active} onClick={onClick} className={className}>
+      {contents}
     </button>
   );
 }
@@ -510,6 +596,7 @@ function DesktopTabButton({ id, label, active, onClick }: { id: DesktopTab; labe
 function NativeConversionWorkspace(props: {
   activeGroup: typeof DESKTOP_PRO_GROUPS[number] | undefined;
   selectedTarget: string;
+  selectedSource: string | null;
   flowStep: FlowStep;
   steps: Array<{ key: FlowStep; label: string; num: number }>;
   currentStepIndex: number;
@@ -543,11 +630,13 @@ function NativeConversionWorkspace(props: {
   onCancel: () => void;
   onConvertAnother: () => void;
   onViewHistory: () => void;
+  onRuntimePackInstalled: () => void;
   onBackToHub: () => void;
 }) {
   const {
     activeGroup,
     selectedTarget,
+    selectedSource,
     flowStep,
     steps,
     currentStepIndex,
@@ -574,8 +663,13 @@ function NativeConversionWorkspace(props: {
     onCancel,
     onConvertAnother,
     onViewHistory,
+    onRuntimePackInstalled,
     onBackToHub,
   } = props;
+  const requiresRuntimeInstall = Boolean(
+    selectedCap?.state === "installable" ||
+    selectedCap?.runtimeState === "installable"
+  ) && Boolean(selectedCap?.requiredRuntimePacks?.length);
 
   return (
     <Panel>
@@ -617,6 +711,8 @@ function NativeConversionWorkspace(props: {
               onFileAnalyzed={onFileAnalyzed}
               isLoading={isLoading}
               setLoading={setLoading}
+              requiredSourceFormat={selectedSource}
+              requiredSourceLabel={selectedSource ? getFormatLabel(selectedSource) : null}
               acquisitionModes={mediaUrlTargets.has(selectedTarget) ? ["local-file", "video-url"] : ["local-file"]}
             />
           </div>
@@ -640,6 +736,13 @@ function NativeConversionWorkspace(props: {
               <div role="status" aria-live="polite" className="rounded-lg border border-amber-300/20 bg-amber-300/8 p-4 text-sm font-semibold text-amber-100">
                 {routeValidationMessage}
               </div>
+            )}
+            {flowStep === "format" && selectedCap && requiresRuntimeInstall && (
+              <RuntimePackRequirementCard
+                packIds={selectedCap.requiredRuntimePacks ?? []}
+                onInstalled={onRuntimePackInstalled}
+                onCancel={onBackToHub}
+              />
             )}
             {flowStep === "format" && selectedCap && (
               <TechnicalDetails cap={selectedCap} />
@@ -691,7 +794,7 @@ function NativeConversionWorkspace(props: {
                 availableHeights={[]}
               />
             )}
-            {flowStep === "format" && selectedCap && (
+            {flowStep === "format" && selectedCap && !requiresRuntimeInstall && (
               <button
                 type="button"
                 onClick={() => void onStartConversion()}

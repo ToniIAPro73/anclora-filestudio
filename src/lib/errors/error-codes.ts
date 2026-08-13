@@ -28,6 +28,7 @@ export type ErrorCode =
   | "CONCURRENCY_LIMIT"
   | "DEPENDENCY_MISSING"
   | "QUALITY_NOT_DELIVERED"
+  | "SCANNED_CONTENT_REQUIRES_OCR"
   | "RUNTIME_PACK_REQUIRED"
   | "RUNTIME_PACK_DOWNLOAD_FAILED"
   | "RUNTIME_PACK_HASH_MISMATCH"
@@ -112,6 +113,7 @@ export const ERROR_MESSAGES: Readonly<Record<ErrorCode, string>> = {
   CONCURRENCY_LIMIT: "Se ha alcanzado el límite de conversiones simultáneas.",
   DEPENDENCY_MISSING: "No se han encontrado las dependencias necesarias (ffprobe/ffmpeg/yt-dlp). Verifica la instalación.",
   QUALITY_NOT_DELIVERED: "La resolución entregada es inferior a la solicitada. El vídeo puede no tener ese formato disponible.",
+  SCANNED_CONTENT_REQUIRES_OCR: "Este PDF parece estar escaneado y no contiene texto editable suficiente. Para convertirlo a un documento editable necesitas usar OCR.",
   RUNTIME_PACK_REQUIRED: "Esta conversión requiere instalar un componente opcional.",
   RUNTIME_PACK_DOWNLOAD_FAILED: "No se pudo descargar el componente opcional.",
   RUNTIME_PACK_HASH_MISMATCH: "La verificación del componente opcional falló.",

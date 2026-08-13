@@ -13,7 +13,7 @@ import { normalizeFormatId } from "@/lib/domain/format-catalog";
 interface FileStudioHomeProps {
   model: UxConversionModel | null;
   onOpenConvert: (categoryId?: UxConversionCategoryId) => void;
-  onSelectTarget?: (formatId: string) => void;
+  onSelectTarget?: (formatId: string, sourceFormatId?: string) => void;
   onOpenTool?: (toolId: string) => void;
   onOpenTools?: () => void;
 }
@@ -69,7 +69,7 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
 
   const handleContinue = () => {
     if (target) {
-      onSelectTarget?.(target);
+      onSelectTarget?.(target, source || undefined);
       return;
     }
     if (source) {
@@ -134,7 +134,7 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
               direction="target"
               onPick={(format) => {
                 setTarget(format);
-                onSelectTarget?.(format);
+                onSelectTarget?.(format, source);
               }}
             />
           )}

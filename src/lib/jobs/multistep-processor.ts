@@ -560,6 +560,7 @@ async function executeRouteAttempt(params: {
       });
 
       if (!result.success) {
+        const normalizedErrorCode = mapAppErrorCode("ENGINE_EXECUTE_FAILED", result.error ?? "");
         return failAttempt({
           params,
           attempt,
@@ -567,7 +568,9 @@ async function executeRouteAttempt(params: {
           stepMeta,
           stepStartedAtMs,
           attemptStartedAtMs,
-          appErrorCode: "ENGINE_EXECUTE_FAILED",
+          appErrorCode: normalizedErrorCode === "SCANNED_CONTENT_REQUIRES_OCR"
+            ? "SCANNED_CONTENT_REQUIRES_OCR"
+            : "ENGINE_EXECUTE_FAILED",
           engineId: step.engineId,
           message: result.error ?? "Engine execution failed",
           technicalDetail: result.error,

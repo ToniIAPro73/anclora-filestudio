@@ -346,6 +346,9 @@ describe("processMultistepJob", () => {
     const execution = JSON.parse(String(job.toolchain_snapshot_json)).execution;
     expect(execution.fallbackUsed).toBe(false);
     expect(execution.attempts[0].failure.code).toBe("SCANNED_CONTENT_REQUIRES_OCR");
+    expect(job.error_code).toBe("SCANNED_CONTENT_REQUIRES_OCR");
+    expect(job.error_message).toContain("necesitas usar OCR");
+    expect(job.error_message).not.toContain("Error durante la ejecución del motor");
   });
 
   it("OBS-001..004/011 records deterministic events, route ids, engine ids and step timings", async () => {
