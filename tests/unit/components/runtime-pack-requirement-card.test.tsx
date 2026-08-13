@@ -105,7 +105,11 @@ describe("RuntimePackRequirementCard", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Instalar" }));
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith("/api/runtime-packs/chromium-runtime", { method: "POST" }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith("/api/runtime-packs/chromium-runtime", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ consent: true }),
+    }));
     expect(await screen.findByText("Descargando... 12%")).toBeTruthy();
   });
 

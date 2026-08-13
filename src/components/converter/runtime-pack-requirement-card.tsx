@@ -99,7 +99,11 @@ export function RuntimePackRequirementCard({
     setLoading(true);
     setLocalError(null);
     try {
-      const response = await fetch(`/api/runtime-packs/${packId}`, { method: "POST" });
+      const response = await fetch(`/api/runtime-packs/${packId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ consent: true }),
+      });
       if (!response.ok) throw new Error("No se pudo iniciar la instalación.");
       setStatus(await response.json() as RuntimePackStatus);
     } catch {

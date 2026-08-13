@@ -16,8 +16,20 @@ export async function GET(_request: NextRequest, context: RouteContext) {
   return NextResponse.json(await getRuntimePackStatus(packId));
 }
 
-export async function POST(_request: NextRequest, context: RouteContext) {
+export async function POST(request: NextRequest, context: RouteContext) {
   const { packId } = await context.params;
+  let body: unknown = null;
+  try {
+    body = await request.json();
+  } catch {
+    body = null;
+  }
+  if (!body || typeof body !== "object" || (body as { consent?: unknown }).consent !== true) {
+    return NextResponse.json(
+      { error: "Explicit consent is required to download and install this runtime pack.", code: "RUNTIME_PACK_CONSENT_REQUIRED" },
+      { status: 403 }
+    );
+  }
   return NextResponse.json(await startRuntimePackInstall(packId), { status: 202 });
 }
 

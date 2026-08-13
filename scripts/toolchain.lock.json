@@ -44,6 +44,37 @@
       "note": "sha256 will be computed on first download"
     }
   },
+  "runtimePacks": {
+    "chromium-runtime": {
+      "displayName": "Chromium Renderer Runtime",
+      "version": "151.0.7922.34",
+      "revision": "1654411",
+      "playwrightRevision": "1234",
+      "provider": "Chrome for Testing",
+      "trustedOrigin": "https://storage.googleapis.com",
+      "license": "Chrome for Testing / Chromium third-party notices",
+      "requiredFor": [
+        "html-to-png",
+        "html-to-tiff"
+      ],
+      "versions": {
+        "linux-x64": {
+          "sourceUrl": "https://storage.googleapis.com/chrome-for-testing-public/151.0.7922.34/linux64/chrome-linux64.zip",
+          "sha256": "ae8736ac28bc69278551500f219fc749575648263c43ec5990749eff43b9fcf8",
+          "compressedSize": 193282658,
+          "installedSize": 406847046,
+          "executablePath": "chrome-linux64/chrome"
+        },
+        "win-x64": {
+          "sourceUrl": "https://storage.googleapis.com/chrome-for-testing-public/151.0.7922.34/win64/chrome-win64.zip",
+          "sha256": "045621e45a9dd27002c7fc1d8e10fe9f5f71f4cadbf44ec6f397f56f0179725c",
+          "compressedSize": 201068834,
+          "installedSize": 447417940,
+          "executablePath": "chrome-win64/chrome.exe"
+        }
+      }
+    }
+  },
   "tools": [
     {
       "id": "node",
