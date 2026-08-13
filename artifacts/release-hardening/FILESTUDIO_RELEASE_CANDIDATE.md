@@ -1,56 +1,38 @@
 # FileStudio Release Candidate
 
 VERSION: 0.2.0
-FINAL GIT SHA: 880f1d4f264c8e8eac67e7fc4c9d87771fd21d82
 DATE: 2026-08-13
 
-## GIT
+The previous Windows native QA candidate is invalidated.
 
-main: 880f1d4f264c8e8eac67e7fc4c9d87771fd21d82
-development: 880f1d4f264c8e8eac67e7fc4c9d87771fd21d82
-staging: 880f1d4f264c8e8eac67e7fc4c9d87771fd21d82
-production: 880f1d4f264c8e8eac67e7fc4c9d87771fd21d82
+Observed audited candidate:
 
-## BASELINE
+- embedded SHA: 375701c
+- expected later candidate source: 0a01bb4 before this remediation
+- result: WINDOWS NATIVE QA FAIL
+- recommendation: NOT READY
 
-lint: PASS, 0 warnings
-typecheck: PASS
-tests: PASS, 1115 passed / 1 skipped
-build: PASS, 0 NFT/Turbopack warnings
+This remediation updates UI navigation, capability selectors, image route
+ranking, runtime pack consent/provenance, portable state exclusion, JSON BOM
+handling, diagnostics status, small-file sizing and portable verification gates.
 
-## LINUX
+Final rebuilt artifact hashes are intentionally not recorded here before the
+candidate is rebuilt from a committed source state. The final handoff must
+report:
 
-artifact: dist/linux/Anclora-FileStudio-Linux-x64.tar.zst
-size: 50544041 bytes
-sha256: d16bd436df99bb1e2a9f72aff411367e9a531d69cf81e12e56a0aeb820573acb
-verify: PASS, 56/56
-smoke: PASS
+- NEW_RC_SHA
+- NEW_WINDOWS_SHA256
+- NEW_LINUX_SHA256
 
-## WINDOWS
+## BASELINE REQUIREMENTS
 
-artifact: dist/windows/Anclora-FileStudio-Windows-x64-Core.zip
-size: 251351738 bytes
-sha256: 88503587896e6d75fce9512290ea2288dc59989071e0997e06dbb48714115a69
-static verify: PASS, 98/98
-native QA: PENDING
-
-## P0
-
-None known.
-
-## P1
-
-None known.
-
-## KNOWN WARNINGS
-
-none
-
-## DEFERRED
-
-PDF to EPUB remains prototype/deferred if still the only historical exception.
+- lint: PASS, 0 warnings
+- typecheck: PASS
+- tests: PASS
+- build: PASS, 0 NFT/Turbopack warnings
+- linux portable build/verify/smoke: PASS
+- windows portable build/verify: PASS
 
 ## RELEASE STATUS
 
-PENDING WINDOWS NATIVE QA
-
+PENDING WINDOWS NATIVE RETEST

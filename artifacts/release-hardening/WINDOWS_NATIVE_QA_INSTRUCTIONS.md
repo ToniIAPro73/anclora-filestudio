@@ -1,9 +1,12 @@
 # FileStudio Windows Native QA Instructions
 
 VERSION: 0.2.0
-FINAL GIT SHA: 880f1d4f264c8e8eac67e7fc4c9d87771fd21d82
+FINAL GIT SHA: TO_BE_RECORDED_FROM_REBUILT_RC
 ARTIFACT: dist/windows/Anclora-FileStudio-Windows-x64-Core.zip
-SHA256: 88503587896e6d75fce9512290ea2288dc59989071e0997e06dbb48714115a69
+SHA256: TO_BE_RECORDED_FROM_REBUILT_RC
+
+The previous Windows native QA candidate is invalidated. Do not reuse the
+earlier SHA256 or embedded commit from the failed audit.
 
 Run this QA on a real Windows x64 machine. Do not run from WSL, Wine, a Linux-side unzip, or from inside the repository.
 
@@ -107,5 +110,4 @@ Use a standard non-admin Windows user unless a step explicitly says otherwise. R
 
 ## RESULT
 
-WINDOWS NATIVE QA: PENDING
-
+WINDOWS NATIVE QA: PENDING WINDOWS NATIVE RETEST
