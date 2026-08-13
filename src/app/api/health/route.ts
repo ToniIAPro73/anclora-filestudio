@@ -60,9 +60,12 @@ export async function GET() {
     // non-fatal
   }
 
+  const healthStatus = allOk ? "ready" : criticalOk ? "degraded" : "unavailable";
+
   return NextResponse.json({
     ok: criticalOk,
-    status: allOk ? "ready" : criticalOk ? "degraded" : "unavailable",
+    status: healthStatus,
+    readiness: healthStatus === "ready" ? "READY" : healthStatus === "degraded" ? "DEGRADED" : "BLOCKED",
     app: {
       name: "Anclora FileStudio",
       version: process.env.ANCLORA_FILESTUDIO_VERSION ?? process.env.npm_package_version ?? "unknown",

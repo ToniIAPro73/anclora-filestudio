@@ -139,6 +139,29 @@ describe("DataEngine — execute roundtrips", () => {
     expect(result).toEqual(data);
   });
 
+  it("accepts a UTF-8 BOM only at the start of JSON input", async () => {
+    const engine = new DataEngine();
+    const jsonIn = path.join(tmpDir, "bom.json");
+    const yamlOut = path.join(tmpDir, "bom.yaml");
+
+    fs.writeFileSync(jsonIn, `\uFEFF${JSON.stringify({ ok: true, value: "España" })}`, "utf-8");
+
+    const result = await engine.execute(makePlan(jsonIn, yamlOut, "yaml", "json"));
+    expect(result.success).toBe(true);
+    expect(fs.readFileSync(yamlOut, "utf-8")).toContain("España");
+  });
+
+  it("still rejects corrupt JSON after BOM handling", async () => {
+    const engine = new DataEngine();
+    const jsonIn = path.join(tmpDir, "bad.json");
+    const yamlOut = path.join(tmpDir, "bad.yaml");
+
+    fs.writeFileSync(jsonIn, "\uFEFF{", "utf-8");
+
+    const result = await engine.execute(makePlan(jsonIn, yamlOut, "yaml", "json"));
+    expect(result.success).toBe(false);
+  });
+
   it("converts CSV → TSV", async () => {
     const engine = new DataEngine();
     const csvIn = path.join(tmpDir, "in.csv");

@@ -82,30 +82,31 @@ function buildCapability(
 // ── Converters ───────────────────────────────────────────────────────────────
 
 async function parseInput(text: string, fmt: DataFormat): Promise<unknown> {
+  const input = text.charCodeAt(0) === 0xFEFF ? text.slice(1) : text;
   switch (fmt) {
     case "json":
-      return JSON.parse(text);
+      return JSON.parse(input);
     case "yaml": {
       const yaml = await import("yaml");
-      return yaml.parse(text);
+      return yaml.parse(input);
     }
     case "toml": {
       const { parse } = await import("smol-toml");
-      return parse(text);
+      return parse(input);
     }
     case "xml": {
       const { XMLParser } = await import("fast-xml-parser");
       // Disable external entity expansion to prevent XXE
       const parser = new XMLParser({ ignoreAttributes: false, allowBooleanAttributes: true, processEntities: false });
-      return parser.parse(text);
+      return parser.parse(input);
     }
     case "csv": {
       const { parse } = await import("csv-parse/sync");
-      return parse(text, { columns: true, skip_empty_lines: true, trim: true });
+      return parse(input, { columns: true, skip_empty_lines: true, trim: true, bom: true });
     }
     case "tsv": {
       const { parse } = await import("csv-parse/sync");
-      return parse(text, { columns: true, delimiter: "\t", skip_empty_lines: true, trim: true });
+      return parse(input, { columns: true, delimiter: "\t", skip_empty_lines: true, trim: true, bom: true });
     }
   }
 }

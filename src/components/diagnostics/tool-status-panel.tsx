@@ -18,7 +18,7 @@ interface HealthDependency {
 interface HealthData {
   ok: boolean;
   app: string;
-  status: string;
+  status: "ready" | "degraded" | "unavailable" | string;
   dependencies: HealthDependency[];
   summary: {
     total: number;
@@ -26,6 +26,12 @@ interface HealthData {
     missing: number;
     optionalMissing?: number;
   };
+}
+
+function readinessLabel(data: HealthData): string {
+  if (data.status === "ready") return "READY — Sistema listo para convertir";
+  if (data.status === "degraded") return "DEGRADED — Funcionalidad limitada";
+  return "BLOCKED — Revisa dependencias requeridas";
 }
 
 function ToolRow({ dep }: { dep: HealthDependency }) {
@@ -138,11 +144,7 @@ export function ToolStatusPanel() {
               }`}
             >
               {data.ok ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
-              {data.ok
-                ? "Sistema listo para convertir"
-                : data.status === "degraded"
-                  ? "Funcionalidad limitada — algunos motores no están disponibles"
-                  : "Algunas dependencias no están disponibles"}
+              {readinessLabel(data)}
             </div>
 
             {/* Summary */}
