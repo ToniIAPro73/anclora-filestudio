@@ -575,6 +575,22 @@ const DOCUMENT_OPERATIONS: OperationDefinition[] = [
     supportsBatch: false,
     optionsSchema: { type: "object", properties: {} },
   },
+  {
+    id: "office:pdf-to-odt",
+    category: "document",
+    labelKey: "op.office.pdf-to-odt",
+    descriptionKey: "op.office.pdf-to-odt.desc",
+    inputFormats: ["pdf"],
+    outputFormats: ["odt"],
+    engineId: "libreoffice",
+    // pdftotext (Poppler runtime) powers the scanned-PDF guard before import.
+    dependencies: ["libreoffice", "pdftotext"],
+    lossProfile: "structural-risk",
+    mobilePortability: "desktop-only",
+    resourceProfile: "medium",
+    supportsBatch: false,
+    optionsSchema: { type: "object", properties: {} },
+  },
 ];
 
 const STRUCTURED_DATA_OPERATIONS: OperationDefinition[] = [

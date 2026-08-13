@@ -23,6 +23,9 @@ const ENGINE_ID: EngineId = "libreoffice";
 export const SCANNED_PDF_DOCX_ERROR =
   "Este PDF parece estar compuesto principalmente por imágenes escaneadas. " +
   "PDF → DOCX editable requiere OCR. Usa Conversión con OCR.";
+export const SCANNED_PDF_ODT_ERROR =
+  "Este PDF parece estar compuesto principalmente por imágenes escaneadas. " +
+  "PDF → ODT editable requiere OCR. Usa Conversión con OCR.";
 
 // LibreOffice must use an isolated profile dir per run to avoid single-instance lockfile contention
 let _runner: ProcessRunner | null = null;
@@ -161,7 +164,7 @@ export class LibreOfficeEngine implements ConversionEngine {
       available: result.available,
       version: result.version,
       binaryPath: result.binaryPath,
-      capabilities: result.available ? [...Object.keys(INPUT_FORMATS), "pdf-to-docx"] : [],
+      capabilities: result.available ? [...Object.keys(INPUT_FORMATS), "pdf-to-docx", "pdf-to-odt"] : [],
       error: result.available ? undefined : "LibreOffice no encontrado. Instálalo desde libreoffice.org o usa el ZIP portable.",
     };
     return this._probeResult;
@@ -193,6 +196,32 @@ export class LibreOfficeEngine implements ConversionEngine {
     };
   }
 
+  private buildPdfToOdtCapability(
+    descriptor: UniversalFileDescriptor,
+    available: boolean,
+  ): ConversionCapability {
+    return {
+      id: `libreoffice-${descriptor.id}-pdf-odt`,
+      operation: "convert-pdf-to-odt",
+      outputFormat: "odt",
+      outputMime: "application/vnd.oasis.opendocument.text",
+      label: "Convertir a ODT",
+      description: "PDF → ODT editable vía importador Writer de LibreOffice",
+      lossProfile: "structure-risk",
+      state: available ? "available" : "unavailable-tool",
+      unavailableReason: available ? undefined : "LibreOffice no está instalado. Disponible en el ZIP portable de Windows.",
+      recommended: true,
+      presets: [{ id: "lo-pdf-odt", label: "Estándar", quality: "0", description: "Importador PDF de LibreOffice Writer", isRecommended: true }],
+      warnings: [
+        "Las tablas pueden preservarse como texto posicionado o frames, no siempre como tablas ODT editables",
+        "Los estilos semánticos del PDF se reconstruyen parcialmente",
+        "Los PDF escaneados sin capa de texto requieren OCR",
+      ],
+      engineId: ENGINE_ID,
+      mobilePortability: "desktop-only",
+    };
+  }
+
   getCapabilities(
     descriptor: UniversalFileDescriptor,
     probeResult: EngineProbeResult
@@ -204,7 +233,10 @@ export class LibreOfficeEngine implements ConversionEngine {
     if (cat === "pdf") {
       const ext = (descriptor.extension ?? "").toLowerCase();
       if (ext !== "pdf") return [];
-      return [this.buildPdfToDocxCapability(descriptor, probeResult.available)];
+      return [
+        this.buildPdfToDocxCapability(descriptor, probeResult.available),
+        this.buildPdfToOdtCapability(descriptor, probeResult.available),
+      ];
     }
 
     if (cat !== "document" && cat !== "spreadsheet" && cat !== "presentation") return [];
@@ -234,11 +266,13 @@ export class LibreOfficeEngine implements ConversionEngine {
     }
 
     const isPdfToDocx = plan.operation === "convert-pdf-to-docx";
+    const isPdfToOdt = plan.operation === "convert-pdf-to-odt";
+    const isPdfImport = isPdfToDocx || isPdfToOdt;
 
     // Scanned guard (§36): ground-truth text check via pdftotext (same Poppler
     // runtime as the pdf engines — no second resolver). A PDF without a text
-    // layer must not produce an empty image-only DOCX as "success" (§37).
-    if (isPdfToDocx) {
+    // layer must not produce an empty image-only editable document as "success".
+    if (isPdfImport) {
       const probe = await new ProcessRunner(resolvePopplerTool("pdftotext"), 120_000).run({
         args: ["-enc", "UTF-8", plan.inputPath, "-"],
         timeoutMs: plan.timeoutMs,
@@ -251,7 +285,7 @@ export class LibreOfficeEngine implements ConversionEngine {
           durationMs: Date.now() - start,
           logs: [probe.stderr].filter(Boolean),
           warnings: [],
-          error: SCANNED_PDF_DOCX_ERROR,
+          error: isPdfToOdt ? SCANNED_PDF_ODT_ERROR : SCANNED_PDF_DOCX_ERROR,
         };
       }
     }
@@ -270,7 +304,7 @@ export class LibreOfficeEngine implements ConversionEngine {
         "--headless",
         "--norestore",
         "--convert-to", outExt,
-        ...(isPdfToDocx ? ["--infilter=writer_pdf_import"] : []),
+        ...(isPdfImport ? ["--infilter=writer_pdf_import"] : []),
         "--outdir", outDir,
         plan.inputPath,
       ];
@@ -377,6 +411,47 @@ export class LibreOfficeEngine implements ConversionEngine {
           }
         } catch {
           checks.push({ name: "docx-document-xml", passed: false, detail: "zip parse failed" });
+        }
+      }
+    }
+
+    if (plan.outputFormat === "odt") {
+      const buf = Buffer.alloc(4);
+      const fd = fs.openSync(outputPath, "r");
+      fs.readSync(fd, buf, 0, 4, 0);
+      fs.closeSync(fd);
+      const isZip = buf[0] === 0x50 && buf[1] === 0x4b;
+      checks.push({ name: "odt-zip-signature", passed: isZip, detail: buf.toString("hex") });
+      if (isZip) {
+        try {
+          const zip = await JSZip.loadAsync(fs.readFileSync(outputPath));
+          const mimetype = zip.file("mimetype");
+          const contentXml = zip.file("content.xml");
+          const stylesXml = zip.file("styles.xml");
+          const manifestXml = zip.file("META-INF/manifest.xml");
+          checks.push({ name: "odt-mimetype-entry", passed: mimetype !== null });
+          if (mimetype) {
+            const mime = await mimetype.async("string");
+            checks.push({
+              name: "odt-mimetype",
+              passed: mime.trim() === "application/vnd.oasis.opendocument.text",
+              detail: mime.trim(),
+            });
+          }
+          checks.push({ name: "odt-content-xml", passed: contentXml !== null });
+          checks.push({ name: "odt-styles-xml", passed: stylesXml !== null });
+          checks.push({ name: "odt-manifest-xml", passed: manifestXml !== null });
+          if (contentXml) {
+            const xml = await contentXml.async("string");
+            const textNodes = (xml.match(/<text:[^>]+>/g) ?? []).length;
+            checks.push({
+              name: "odt-nonempty-content",
+              passed: textNodes > 0 && /office:text/.test(xml),
+              detail: `${textNodes} text nodes`,
+            });
+          }
+        } catch {
+          checks.push({ name: "odt-zip-parse", passed: false, detail: "zip parse failed" });
         }
       }
     }

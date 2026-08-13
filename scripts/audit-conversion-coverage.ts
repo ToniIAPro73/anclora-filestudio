@@ -165,7 +165,8 @@ function routeKind(source: string, target: string, platform: Platform) {
 }
 
 function blockerFor(source: string, target: string): string {
-  if (source === "pdf" && ["docx", "md", "html", "odt", "epub"].includes(target)) return "No structured PDF extraction/reflow adapter is implemented.";
+  if (source === "pdf" && target === "odt") return "LibreOffice PDF import ODT edge/runtime is not available for this platform engine set.";
+  if (source === "pdf" && ["docx", "md", "html", "epub"].includes(target)) return "No structured PDF extraction/reflow adapter is implemented.";
   if (source === "pdf" && target === "txt") return "Current PDF OCR edge exists only in OCR mode and is excluded from standard discovery; text-PDF extraction via pdftotext is not implemented.";
   if (target === "pdf" && ["html", "md", "txt"].includes(source)) return "Pandoc/LibreOffice path exists for some documents, but the needed direct edge is not certified for this source.";
   if (target === "epub" && ["md", "txt"].includes(source)) return "Could route through HTML/Calibre or Pandoc, but no certified edge exists yet.";
@@ -213,6 +214,18 @@ function engineGapFor(source: string, target: string) {
     complexity: "MEDIUM",
     portableImpact: "LOW to MEDIUM",
     recommendation: "ADOPT Poppler text extraction first; INVESTIGATE MarkItDown for richer Markdown.",
+  };
+  if (source === "pdf" && target === "odt") return {
+    currentPipeline: "LibreOffice writer_pdf_import -> ODT",
+    currentBlocker: "LibreOffice PDF import ODT edge/runtime is not available for this platform engine set.",
+    existingEngineCanHandle: "YES",
+    existingEngineCandidates: ["LibreOffice writer_pdf_import"],
+    newRequired: false,
+    candidates: [],
+    expectedQuality: "MEDIUM for text PDFs; LOW for scanned PDFs without OCR",
+    complexity: "LOW",
+    portableImpact: "LOW",
+    recommendation: "ADOPTED on Desktop with controlled scanned-PDF rejection and ODT structure validation.",
   };
   if (target === "pdf" && ["html", "md", "txt"].includes(source)) return {
     currentPipeline: "Partial document toolchain",
