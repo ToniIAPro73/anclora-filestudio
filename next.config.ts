@@ -10,9 +10,6 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  experimental: {
-    serverComponentsHmrCache: false,
-  },
   serverExternalPackages: isVercelWebBuild ? [] : ["better-sqlite3"],
   // Dynamic filesystem operations (portable-configurable data/temp/log dirs,
   // engine binary probing) make Turbopack's output file tracer fall back to
@@ -43,7 +40,7 @@ const nextConfig: NextConfig = {
       "./next.config.ts",
       "./tsconfig.json",
       "./tsconfig.tsbuildinfo",
-      "./vitest.config.ts",
+      "./vitest.config.mts",
       "./vitest.*.config.ts",
       "./playwright.config.ts",
       "./eslint.config.mjs",

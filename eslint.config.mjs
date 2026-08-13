@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
     ".vercel/**",
     "out/**",
     "build/**",
+    ".tmp/**",
     "scripts/.cache/**",
     "scripts/.staging/**",
     "artifacts/acceptance/**",
