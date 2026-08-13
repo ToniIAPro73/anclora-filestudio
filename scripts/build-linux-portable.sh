@@ -276,7 +276,8 @@ if [[ -n "${BS3_NODE:-}" ]] && [[ -f "$BS3_NODE" ]]; then
     [[ -n "$PREBUILD_INSTALL_BIN" ]] || die "prebuild-install not found; cannot install better-sqlite3 for bundled Node.js ABI ${NODE_ABI}"
     (
       cd "$BS3_PACKAGE_DIR"
-      node "$PREBUILD_INSTALL_BIN" -r node -t "$NODE_LINUX_VERSION" --platform linux --arch x64
+      NODE_OPTIONS="${NODE_OPTIONS:+$NODE_OPTIONS }--no-deprecation" \
+        node "$PREBUILD_INSTALL_BIN" -r node -t "$NODE_LINUX_VERSION" --platform linux --arch x64
     ) || die "Failed to install better-sqlite3 native module for Node.js ${NODE_LINUX_VERSION} ABI ${NODE_ABI}"
     BS3_NODE="$BS3_PACKAGE_DIR/build/Release/better_sqlite3.node"
     [[ -f "$BS3_NODE" ]] || die "better_sqlite3.node missing after ABI-targeted install"
@@ -712,6 +713,7 @@ import json, os
 
 tools_json = json.load(open("$TOOLS_JSON_FILE"))
 caps = json.loads('$CAPABILITIES')
+tree_clean = "$SOURCE_TREE_CLEAN" == "true"
 
 bs3_node = "$BS3_NODE"
 sharp_node = "$SHARP_NODE"
@@ -726,7 +728,7 @@ manifest = {
   "source": {
     "commit": "$GIT_COMMIT",
     "shortCommit": "$BUILD_ID",
-    "treeCleanExcludingKnownArtifacts": $SOURCE_TREE_CLEAN,
+    "treeCleanExcludingKnownArtifacts": tree_clean,
     "knownExcludedDirtyPaths": ["artifacts/route-ranking/benchmark-results.json"]
   },
   "platform": "linux",
