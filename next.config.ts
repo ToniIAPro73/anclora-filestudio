@@ -6,7 +6,9 @@ const isVercelWebBuild =
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  allowedDevOrigins: ["127.0.0.1"],
+  allowedDevOrigins: process.env.NODE_ENV === "development"
+    ? ["127.0.0.1", "filestudio.dev.anclora.com"]
+    : undefined,
   images: {
     unoptimized: true,
   },
