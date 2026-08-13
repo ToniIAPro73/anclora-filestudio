@@ -49,9 +49,9 @@ describe("RuntimePackRequirementCard", () => {
       />
     );
 
-    expect(await screen.findByText("Se necesita un componente adicional")).toBeTruthy();
+    expect(screen.getByText("Se necesita un componente adicional")).toBeTruthy();
     expect(screen.getByText("Componente de renderizado web")).toBeTruthy();
-    expect(screen.getByText("~193 MB")).toBeTruthy();
+    expect(await screen.findByText("~193 MB")).toBeTruthy();
     expect(screen.getByText("Solo se instala una vez.")).toBeTruthy();
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith("/api/runtime-packs/chromium-runtime");
