@@ -1,5 +1,7 @@
 import type { EngineId } from "../domain/engines";
 import type { LossProfile } from "../domain/operations";
+import type { EdgeQualityInput } from "../conversion-routing/quality";
+import type { EdgeContentRequirements } from "../conversion-routing/types";
 
 export type ConversionEnvironment = "windows" | "linux" | "web";
 
@@ -58,6 +60,8 @@ export interface CanonicalConversionEdge {
   costModel?: CostModel;
   outputCardinality: "single" | "multiple";
   supportsAsIntermediate: boolean;
+  quality?: EdgeQualityInput;
+  contentRequirements?: EdgeContentRequirements;
   notes?: string;
 }
 

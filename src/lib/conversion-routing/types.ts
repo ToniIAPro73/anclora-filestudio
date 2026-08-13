@@ -1,6 +1,12 @@
 // Conversion routing types — bounded multistep conversion-route engine.
 
 import type { LossProfile, ResourceProfile } from "../domain/operations";
+import type { EdgeQualityProfile } from "./quality";
+
+/** Content constraints an edge needs from the source file (§29/§30). */
+export interface EdgeContentRequirements {
+  requiresTextLayer?: boolean;
+}
 
 export interface ConversionStep {
   source: string;
@@ -9,6 +15,8 @@ export interface ConversionStep {
   engineId: string;
   lossProfile: LossProfile;
   resourceProfile: ResourceProfile;
+  quality?: EdgeQualityProfile;
+  contentRequirements?: EdgeContentRequirements;
 }
 
 export type RouteClassification = "direct" | "multistep" | "lossy";
@@ -37,6 +45,8 @@ export interface ConversionEdge {
   experimental: boolean;
   outputCardinality: "single" | "multiple";
   supportsAsIntermediate: boolean;
+  quality?: EdgeQualityProfile;
+  contentRequirements?: EdgeContentRequirements;
 }
 
 /**
