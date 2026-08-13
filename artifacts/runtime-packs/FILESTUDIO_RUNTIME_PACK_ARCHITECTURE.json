@@ -1,0 +1,51 @@
+{
+  "selectedProductModel": "OPTIONAL_OFFICIAL_RUNTIME_PACK",
+  "genericRuntimePackArchitecture": true,
+  "runtimePackStates": [
+    "NOT_REQUIRED",
+    "NOT_INSTALLED",
+    "DOWNLOADING",
+    "VERIFYING",
+    "INSTALLING",
+    "AVAILABLE",
+    "UPDATE_AVAILABLE",
+    "BROKEN",
+    "INCOMPATIBLE"
+  ],
+  "capabilityStates": ["available", "installable", "unavailable-tool", "unsupported"],
+  "installLocations": {
+    "windows": "%LOCALAPPDATA%/Anclora/FileStudio/runtime-packs/",
+    "linux": "~/.local/share/anclora-filestudio/runtime-packs/",
+    "darwin": "~/Library/Application Support/Anclora/FileStudio/runtime-packs/"
+  },
+  "chromiumRuntime": {
+    "id": "chromium-runtime",
+    "version": "151.0.7922.34",
+    "playwrightRevision": "1234",
+    "chromeForTestingRevision": "1654411",
+    "linux": {
+      "url": "https://storage.googleapis.com/chrome-for-testing-public/151.0.7922.34/linux64/chrome-linux64.zip",
+      "sha256": "ae8736ac28bc69278551500f219fc749575648263c43ec5990749eff43b9fcf8",
+      "compressedSize": 193282658,
+      "installedSize": 406847046,
+      "entryExecutable": "chrome-linux64/chrome"
+    },
+    "windows": {
+      "url": "https://storage.googleapis.com/chrome-for-testing-public/151.0.7922.34/win64/chrome-win64.zip",
+      "sha256": "045621e45a9dd27002c7fc1d8e10fe9f5f71f4cadbf44ec6f397f56f0179725c",
+      "compressedSize": 201068834,
+      "installedSize": 447417940,
+      "entryExecutable": "chrome-win64/chrome.exe"
+    }
+  },
+  "download": {
+    "implemented": true,
+    "httpsEnforced": true,
+    "sha256Verification": true,
+    "atomicInstall": true,
+    "zipSlipProtection": true,
+    "cancel": true,
+    "retryPolicy": "caller-controlled retry, no infinite loop",
+    "progress": ["bytesDownloaded", "totalBytes", "percent"]
+  }
+}
