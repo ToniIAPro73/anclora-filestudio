@@ -5,9 +5,10 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ConversionHub } from "../../../src/components/ux-v3/conversion-hub";
 import { SourceSelector } from "../../../src/components/converter/source-selector";
-import { FileStudioHome } from "../../../src/components/ux-v3/file-studio-home";
+import { FileStudioHome, getVisibleTargetRoutes } from "../../../src/components/ux-v3/file-studio-home";
 import { ToolHub } from "../../../src/components/ux-v3/tool-hub";
 import { buildConversionUxModel } from "../../../src/lib/ux-v3/conversion-ux-model";
+import { FORMAT_CATALOG, normalizeFormatId } from "../../../src/lib/domain/format-catalog";
 
 const engines = new Set([
   "libreoffice",
@@ -66,10 +67,59 @@ describe("UX V3 components", () => {
 
     fireEvent.change(screen.getByLabelText("De"), { target: { value: "docx" } });
     const destination = screen.getByLabelText("A") as HTMLSelectElement;
-    const values = Array.from(destination.options).map((option) => option.value);
+    const values = Array.from(destination.options).map((option) => option.value).filter(Boolean);
 
     expect(values).toContain("pdf");
     expect(values).toContain("png");
+    expect(values).not.toContain("tex");
+    expect(values).not.toContain("rst");
+    expect(values).not.toContain("jpg");
+    expect(values).not.toContain("azw3");
+    expect(values).not.toContain("epub");
+    expect(values).not.toContain("mobi");
+    expect(values.sort()).toEqual(["html", "md", "odt", "pdf", "png", "rtf", "tiff", "txt"].sort());
+  });
+
+  it("QUICK-001c keeps the real DOCX chips and destination dropdown identical", () => {
+    render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
+
+    fireEvent.change(screen.getByLabelText("De"), { target: { value: "docx" } });
+
+    const chipValues = Array.from(screen.getByTestId("suggestion-row-target").querySelectorAll("button"))
+      .map((button) => button.getAttribute("data-format"))
+      .filter(Boolean)
+      .sort();
+    const dropdownValues = Array.from((screen.getByLabelText("A") as HTMLSelectElement).options)
+      .map((option) => option.value)
+      .filter(Boolean)
+      .sort();
+
+    expect(dropdownValues).toEqual(chipValues);
+    expect(dropdownValues).toEqual(["html", "md", "odt", "pdf", "png", "rtf", "tiff", "txt"].sort());
+  });
+
+  it("QUICK-001d keeps real chips and dropdown identical for the first 50 canonical formats", () => {
+    const canonicalFormats = Array.from(new Set(FORMAT_CATALOG.map((format) => normalizeFormatId(format.outputExtension)).filter(Boolean))).slice(0, 50);
+
+    for (const source of canonicalFormats) {
+      cleanup();
+      render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
+      const expectedTargets = getVisibleTargetRoutes(source!, model.routes).map((route) => route.target).sort();
+      if (expectedTargets.length === 0) continue;
+
+      fireEvent.change(screen.getByLabelText("De"), { target: { value: source } });
+      const chipValues = Array.from(screen.getByTestId("suggestion-row-target").querySelectorAll("button"))
+        .map((button) => button.getAttribute("data-format"))
+        .filter(Boolean)
+        .sort();
+      const dropdownValues = Array.from((screen.getByLabelText("A") as HTMLSelectElement).options)
+        .map((option) => option.value)
+        .filter(Boolean)
+        .sort();
+
+      expect(dropdownValues, `${source} dropdown`).toEqual(expectedTargets);
+      expect(chipValues, `${source} chips`).toEqual(expectedTargets);
+    }
   });
 
   it("QUICK-001b preserves source when continuing with a complete pair", () => {

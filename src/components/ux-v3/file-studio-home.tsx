@@ -47,19 +47,21 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
     return formats.filter((format) => validSources.has(format.id));
   }, [formats, routes, target]);
 
+  const targetRoutes = useMemo(() => source ? getVisibleTargetRoutes(source, routes) : EMPTY_ROUTES, [routes, source]);
+
   const targetOptions = useMemo(() => {
     if (!source) return formats.filter((format) => format.sourcesCount > 0);
-    const validTargets = new Set(routes.filter((route) => route.source === source).map((route) => route.target));
+    const validTargets = new Set(targetRoutes.map((route) => route.target));
     return formats.filter((format) => validTargets.has(format.id));
-  }, [formats, routes, source]);
+  }, [formats, source, targetRoutes]);
 
   const quickRoute = useMemo(() => {
     if (!source || !target) return null;
-    return routes.find((route) => route.source === source && route.target === target) ?? null;
-  }, [routes, source, target]);
+    return targetRoutes.find((route) => route.source === source && route.target === target) ?? null;
+  }, [source, target, targetRoutes]);
 
   const suggestedTargets = source && !target
-    ? routes.filter((route) => route.source === source).slice(0, 8)
+    ? targetRoutes
     : [];
   const suggestedSources = target && !source
     ? routes.filter((route) => route.target === target).slice(0, 8)
@@ -90,7 +92,7 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
             onQueryChange={setSourceQuery}
             onChange={(value) => {
               setSource(value);
-              if (target && value && !routes.some((route) => route.source === value && route.target === target)) {
+              if (target && value && !getVisibleTargetRoutes(value, routes).some((route) => route.target === target)) {
                 setTarget("");
               }
             }}
@@ -195,6 +197,11 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
   );
 }
 
+export function getVisibleTargetRoutes(source: string, routes: readonly UxRouteSummary[]): UxRouteSummary[] {
+  const canonicalSource = normalizeFormatId(source) ?? source;
+  return routes.filter((route) => route.source === canonicalSource).slice(0, 8);
+}
+
 function FormatCombobox(props: {
   label: string;
   value: string;
@@ -226,6 +233,7 @@ function FormatCombobox(props: {
           onChange={(event) => props.onChange(event.target.value)}
           className="min-h-11 w-full rounded-md border border-white/10 bg-[#0b0d10] px-3 pl-9 text-sm font-semibold text-stone-100 outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60"
           aria-label={props.label}
+          data-testid={props.label === "De" ? "home-source-select" : "home-target-select"}
         >
           <option value="">{props.placeholder}</option>
           {groupFormats(filtered).map((group) => (
@@ -300,7 +308,7 @@ function SuggestionRow(props: {
   onPick: (format: string) => void;
 }) {
   return (
-    <div className="rounded-md border border-white/10 bg-white/3 p-3">
+    <div className="rounded-md border border-white/10 bg-white/3 p-3" data-testid={`suggestion-row-${props.direction}`}>
       <p className="text-xs font-semibold text-stone-400">{props.title}</p>
       <div className="mt-2 flex flex-wrap gap-2">
         {props.routes.map((route) => {
@@ -310,6 +318,7 @@ function SuggestionRow(props: {
               key={`${route.source}-${route.target}`}
               type="button"
               onClick={() => props.onPick(format)}
+              data-format={format}
               className="min-h-9 rounded-md border border-white/10 bg-[#0b0d10] px-3 text-xs font-bold uppercase text-stone-100 hover:bg-white/6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60"
             >
               {format}
