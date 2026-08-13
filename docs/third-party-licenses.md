@@ -21,6 +21,7 @@ This document lists all third-party dependencies used by Anclora FileStudio, the
 | `lucide-react` | 1.18.0 | ISC | Icon library for React |
 | `next` | 16.2.9 | MIT | React framework (App Router) |
 | `next-themes` | 0.4.6 | MIT | Dark/light mode for Next.js |
+| `playwright-core` | 1.62.1 | Apache-2.0 | Browser control library for Desktop HTML rendering; does not download browsers during package install |
 | `react` | 19.2.4 | MIT | React UI library |
 | `react-dom` | 19.2.4 | MIT | React DOM rendering |
 | `shadcn` | 4.11.0 | MIT | UI component scaffolding CLI |
@@ -73,6 +74,7 @@ These are system-level tools that Anclora FileStudio optionally uses for convers
 | **Calibre** (ebook-convert) | GPL-3.0 | Ebooks | No |
 | **Tesseract** | Apache-2.0 | OCR | No |
 | **Poppler** (pdftoppm) | GPL-2.0 | PDF → image for OCR | No |
+| **Chromium / Chrome for Testing** | BSD-style Chromium licenses and bundled third-party notices | HTML → image rendering | No |
 | **Node.js** | MIT (with OpenSSL, ICU, etc.) | Runtime | Yes |
 
 ### FFmpeg License Notes
@@ -117,6 +119,10 @@ Anclora FileStudio **does not link against or bundle** GPL-licensed code. All GP
 ### Sharp / libvips
 
 Sharp includes a pre-built binary of libvips, which is licensed under the **LGPL-2.1+**. Sharp itself is Apache-2.0. The libvips binary is dynamically linked, maintaining LGPL compliance.
+
+### Playwright Core / Chromium Runtime
+
+`playwright-core` is Apache-2.0 and is used as a browser control library only. Browser binaries are resolved explicitly at runtime and are not downloaded by the package install. Any future portable bundle that includes Chromium or Chrome for Testing must record the exact browser version, archive SHA256, executable SHA256, source URL, SBOM entry and bundled notices.
 
 ### better-sqlite3
 

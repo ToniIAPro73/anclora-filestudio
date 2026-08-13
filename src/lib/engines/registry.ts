@@ -16,6 +16,7 @@ import { ffmpegEngine } from "./media/ffmpeg-engine";
 import { calibreEngine } from "./ebook/calibre-engine";
 import { tesseractEngine } from "./ocr/tesseract-engine";
 import { backgroundRemovalEngine } from "./background/background-removal-engine";
+import { htmlRendererEngine } from "./html/html-renderer-engine";
 
 // ── Registration ─────────────────────────────────────────────────────────────
 
@@ -84,6 +85,12 @@ const REGISTERED_ENGINES: EngineRegistration[] = [
     engine: backgroundRemovalEngine,
     categories: ["image"],
     requiredTools: ["sharp"],
+    enabled: true,
+  },
+  {
+    engine: htmlRendererEngine,
+    categories: ["plain-text", "document"],
+    requiredTools: ["chromium"],
     enabled: true,
   },
 ];

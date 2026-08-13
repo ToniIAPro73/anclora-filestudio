@@ -15,6 +15,7 @@ export type EngineId =
   | "calibre"
   | "tesseract"
   | "browser"
+  | "html-renderer"
   | "background-removal";
 
 export type CapabilityState =
