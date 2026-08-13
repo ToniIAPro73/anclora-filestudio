@@ -16,9 +16,11 @@ import {
   extractOutputFormatFromCapabilityId,
 } from "@/lib/jobs/capability-routing";
 import {
-  getAvailableDestinations,
+  buildConversionGraph,
+  findConversionRoutes,
   parseRouteCapabilityId,
   qualityBand,
+  rankRoutes,
 } from "@/lib/conversion-routing";
 import { normalizeFormatId } from "@/lib/domain/format-catalog";
 import { getAvailableEngineIds } from "@/lib/conversion-routing/server";
@@ -374,12 +376,14 @@ async function handleMultistepJob(
     );
   }
 
-  // Recompute the best route with current engine availability
+  // Recompute ranked routes with current engine availability. The client only
+  // names source/target; steps and fallback candidates are server-side truth.
   const availableEngineIds = await getAvailableEngineIds();
   const environment = process.platform === "win32" ? "windows" : "linux";
-  const routes = getAvailableDestinations(resolvedInputFormat, availableEngineIds, { environment });
   const routeDestination = normalizeFormatId(routeRef.destination) ?? routeRef.destination;
-  const route = routes.find((r) => r.destination === routeDestination);
+  const graph = buildConversionGraph(availableEngineIds, { environment });
+  const rankedRoutes = rankRoutes(findConversionRoutes(graph, resolvedInputFormat, routeDestination));
+  const route = rankedRoutes.find((r) => !r.rejected);
 
   if (!route || qualityBand(route.score) === "not-recommended") {
     return NextResponse.json(
@@ -406,16 +410,10 @@ async function handleMultistepJob(
     );
   }
 
-  const multistepRoute: MultistepRouteSpec = {
-    destination: route.destination,
-    steps: route.steps.map((step) => ({
-      source: step.source,
-      target: step.target,
-      operationId: step.operationId,
-      engineId: step.engineId,
-      lossProfile: step.lossProfile,
-    })),
-  };
+  const candidateRoutes = rankedRoutes
+    .filter((candidate) => !candidate.rejected && qualityBand(candidate.score) !== "not-recommended")
+    .map(routeToMultistepSpec);
+  const multistepRoute: MultistepRouteSpec = routeToMultistepSpec(route);
 
   console.log(
     `[jobs-route] Multistep job: originalName=${inputInfo.originalName}` +
@@ -437,12 +435,29 @@ async function handleMultistepJob(
     category: descriptor.category,
     inputMimeType: descriptor.detectedMimeType ?? "application/octet-stream",
     inputFormat: resolvedInputFormat,
-    options: { ...(options ?? {}), multistepRoute },
+    options: { ...(options ?? {}), multistepRoute, rankedRoutes: candidateRoutes },
   });
 
   processMultistepJob(job.id).catch(console.error);
 
   return NextResponse.json({ jobId: job.id, status: job.status });
+}
+
+function routeToMultistepSpec(route: ReturnType<typeof rankRoutes>[number]): MultistepRouteSpec {
+  return {
+    destination: route.destination,
+    routeId: route.routeId,
+    routeScore: route.score,
+    qualityBand: qualityBand(route.score),
+    routeReasons: route.reasons,
+    steps: route.steps.map((step) => ({
+      source: step.source,
+      target: step.target,
+      operationId: step.operationId,
+      engineId: step.engineId,
+      lossProfile: step.lossProfile,
+    })),
+  };
 }
 
 // ── Legacy media job handler ──────────────────────────────────────────────────

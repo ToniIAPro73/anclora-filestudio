@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jobManager } from "@/lib/jobs/job-manager";
 import { ERROR_CODES, ERROR_MESSAGES } from "@/lib/errors";
 import { updateJob } from "@/lib/infrastructure/db/job-repository";
+import { publicExecutionSummary } from "@/lib/jobs/execution-summary";
 
 export async function GET(
   _req: NextRequest,
@@ -43,6 +44,7 @@ export async function GET(
           : undefined,
       // Token is NOT returned here — must be fetched separately or embedded
       downloadAvailable: job.status === "completed" && !!job.download_token_hash,
+      execution: publicExecutionSummary(job),
     };
 
     return NextResponse.json(publicJob);

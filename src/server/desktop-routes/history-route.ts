@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { listJobs } from "@/lib/infrastructure/db/job-repository";
+import { publicExecutionSummary } from "@/lib/jobs/execution-summary";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,7 @@ export async function GET() {
       engineId: j.engine_id,
       lossProfile: j.loss_profile,
       conversionId: j.conversion_id,
+      execution: publicExecutionSummary(j),
     }));
 
     return NextResponse.json({ jobs: publicJobs });
