@@ -175,8 +175,9 @@ export function getSourcesForTarget(
   }
 
   return routes.sort((a, b) => {
-    if (a.steps.length !== b.steps.length) return a.steps.length - b.steps.length;
+    // Quality-aware ordering: fidelity first, steps only as tiebreaker.
     if (b.score !== a.score) return b.score - a.score;
+    if (a.steps.length !== b.steps.length) return a.steps.length - b.steps.length;
     return a.source.localeCompare(b.source);
   });
 }
@@ -199,6 +200,8 @@ export function getBestRoute(
   const normalizedTarget = normalizeFormatId(target);
   if (!normalizedSource || !normalizedTarget) return null;
   const graph = buildConversionGraph(availableEngineIds, options);
+  // Quality-aware selection (fidelity > irreversible loss > certification >
+  // steps > runtime cost > stable id). Not direct-first, not shortest-first.
   return selectBestConversionRoute(
     findConversionRoutes(graph, normalizedSource, normalizedTarget)
   );

@@ -3,6 +3,7 @@
 import { normalizeFormatId } from "../domain/format-catalog";
 import { getAvailableEdges, runtimeCapabilitiesFromEngineIds } from "../conversion-matrix";
 import type { ConversionEnvironment } from "../conversion-matrix";
+import { resolveEdgeQuality } from "./quality";
 import type { ConversionEdge } from "./types";
 
 /**
@@ -33,6 +34,8 @@ export function buildConversionGraph(
       experimental: false,
       outputCardinality: canonicalEdge.outputCardinality,
       supportsAsIntermediate: canonicalEdge.supportsAsIntermediate,
+      quality: resolveEdgeQuality(canonicalEdge.lossProfile, canonicalEdge.quality),
+      contentRequirements: canonicalEdge.contentRequirements,
     };
     const list = graph.get(source) ?? [];
     list.push(edge);

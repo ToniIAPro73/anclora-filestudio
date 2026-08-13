@@ -7,7 +7,7 @@ import type { ConversionCapability, EngineId } from "@/lib/domain/engines";
 import type { LossProfile } from "@/lib/domain/operations";
 import { normalizeFormatId } from "@/lib/domain/format-catalog";
 import {
-  EDGE_QUALITY_WEIGHTS,
+  LOSS_PROFILE_SEVERITY,
   getAllEffectiveTargets,
   getRecommendedDestinations,
   qualityBand,
@@ -198,7 +198,7 @@ const ROUTE_LOSS_TO_CAPABILITY: Record<LossProfile, CapabilityLossProfile> = {
 function worstStepLossProfile(route: ConversionRoute): LossProfile {
   return route.steps.reduce<LossProfile>(
     (worst, step) =>
-      EDGE_QUALITY_WEIGHTS[step.lossProfile] < EDGE_QUALITY_WEIGHTS[worst]
+      LOSS_PROFILE_SEVERITY[step.lossProfile] > LOSS_PROFILE_SEVERITY[worst]
         ? step.lossProfile
         : worst,
     route.steps[0]?.lossProfile ?? "lossy"

@@ -1,6 +1,8 @@
 // Route search — bounded BFS over the conversion graph.
 
-import { classifyRoute, routeRisk, scoreConversionRoute } from "./scoring";
+import { classifyRoute, routeRisk } from "./scoring";
+import { bestRankedRoute } from "./ranking";
+import { composeRouteQuality, familyWeightsFor, routeFamily } from "./quality";
 import type { ConversionEdge, ConversionRoute, ConversionStep } from "./types";
 
 /** Hard bound on intermediate formats per route. */
@@ -18,13 +20,20 @@ function buildRoute(
     engineId: edge.engineId,
     lossProfile: edge.lossProfile,
     resourceProfile: edge.resourceProfile,
+    quality: edge.quality,
+    contentRequirements: edge.contentRequirements,
   }));
+  const quality = composeRouteQuality(
+    edges,
+    routeFamily(source, destination),
+    familyWeightsFor(source, destination)
+  );
   const partial: ConversionRoute = {
     source,
     destination,
     steps,
     intermediateFormats: edges.slice(0, -1).map((edge) => edge.target),
-    score: scoreConversionRoute(edges),
+    score: quality.score,
     classification: "direct",
     risk: "low",
   };
@@ -67,17 +76,12 @@ export function findConversionRoutes(
 }
 
 /**
- * Deterministic best-route selection: score desc, then steps asc,
- * then first operationId asc. Returns null on an empty route set.
+ * Quality-aware best-route selection: delegates to the ranking model
+ * (fidelity first, steps and runtime cost as tiebreakers only).
+ * Returns null on an empty route set.
  */
 export function selectBestConversionRoute(
   routes: ConversionRoute[]
 ): ConversionRoute | null {
-  if (routes.length === 0) return null;
-  const sorted = [...routes].sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    if (a.steps.length !== b.steps.length) return a.steps.length - b.steps.length;
-    return (a.steps[0]?.operationId ?? "").localeCompare(b.steps[0]?.operationId ?? "");
-  });
-  return sorted[0];
+  return bestRankedRoute(routes);
 }

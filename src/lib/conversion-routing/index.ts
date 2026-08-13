@@ -3,15 +3,55 @@ export type {
   ConversionRoute,
   ConversionRouteSummary,
   ConversionStep,
+  EdgeContentRequirements,
   QualityBand,
   RouteClassification,
   RouteRisk,
 } from "./types";
 export { buildConversionGraph } from "./graph";
 export {
-  EDGE_QUALITY_WEIGHTS,
+  CERTIFICATION_FACTOR,
+  CERTIFICATION_RANK,
   EXPERIMENTAL_EDGE_FACTOR,
-  STEP_PENALTIES,
+  FAMILY_WEIGHTS,
+  IRREVERSIBLE_LOSS_CAP,
+  LOSS_PROFILE_SEVERITY,
+  QUALITY_DIMENSIONS,
+  REENCODE_PENALTY,
+  RUNTIME_COST_RANK,
+  TARGET_WEIGHT_OVERRIDES,
+  composeRouteQuality,
+  defaultEdgeQuality,
+  explainRouteChoice,
+  familyWeightsFor,
+  resolveEdgeQuality,
+  routeFamily,
+  routeId,
+  scoreRouteQuality,
+} from "./quality";
+export type {
+  EdgeQualityInput,
+  EdgeQualityProfile,
+  PipelineMode,
+  QualityCertification,
+  QualityDimension,
+  RouteFamily,
+  RouteQualityReport,
+  RouteReasonCode,
+  RouteRejectionCode,
+  RuntimeCost,
+} from "./quality";
+export {
+  bestRankedRoute,
+  compareRankedRoutes,
+  rankRoutes,
+} from "./ranking";
+export type {
+  RankRoutesOptions,
+  RankedRoute,
+  RouteSourceAnalysis,
+} from "./ranking";
+export {
   classifyRoute,
   qualityBand,
   routeRisk,

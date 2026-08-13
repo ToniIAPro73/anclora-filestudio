@@ -1,6 +1,7 @@
-// Route scoring — quality weights, step penalties, classification and risk.
+// Route scoring — classification, risk and quality bands.
+// Numeric scoring lives in quality.ts (per-dimension bottleneck model);
+// scoreConversionRoute remains as a compatibility shim over it.
 
-import type { LossProfile } from "../domain/operations";
 import type {
   ConversionEdge,
   ConversionRoute,
@@ -8,37 +9,19 @@ import type {
   RouteClassification,
   RouteRisk,
 } from "./types";
+import { composeRouteQuality, familyWeightsFor, routeFamily } from "./quality";
 
-/** Quality weight per edge, keyed by loss profile. Tunable. */
-export const EDGE_QUALITY_WEIGHTS: Record<LossProfile, number> = {
-  lossless: 1.0,
-  "lossy-controlled": 0.9,
-  lossy: 0.75,
-  "structural-risk": 0.6,
-};
-
-/** Multiplier applied to edges whose target format is experimental. */
-export const EXPERIMENTAL_EDGE_FACTOR = 0.85;
-
-/** Penalty per number of intermediate formats (0 = direct). Tunable. */
-export const STEP_PENALTIES: Record<number, number> = {
-  0: 1.0,
-  1: 0.9,
-  2: 0.8,
-};
-
-/** Route score: product of edge weights × step penalty for the path length. */
+/**
+ * Route score via the quality model: family-aware weighted bottleneck over
+ * per-dimension preservation, with re-encode, certification, experimental
+ * and irreversible-loss adjustments. Step count is NOT a factor — it is a
+ * ranking tiebreaker, not a quality signal.
+ */
 export function scoreConversionRoute(edges: ConversionEdge[]): number {
   if (edges.length === 0) return 0;
-  const edgeProduct = edges.reduce(
-    (acc, edge) =>
-      acc *
-      EDGE_QUALITY_WEIGHTS[edge.lossProfile] *
-      (edge.experimental ? EXPERIMENTAL_EDGE_FACTOR : 1),
-    1
-  );
-  const intermediates = edges.length - 1;
-  return edgeProduct * (STEP_PENALTIES[intermediates] ?? 0);
+  const source = edges[0].source;
+  const target = edges[edges.length - 1].target;
+  return composeRouteQuality(edges, routeFamily(source, target), familyWeightsFor(source, target)).score;
 }
 
 /**
