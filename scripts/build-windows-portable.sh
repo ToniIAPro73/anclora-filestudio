@@ -151,7 +151,7 @@ done
 ok "System tools OK"
 
 info "Installing dependencies (frozen-lockfile)..."
-pnpm install --frozen-lockfile
+NO_UPDATE_NOTIFIER=1 pnpm install --frozen-lockfile
 ok "Dependencies installed"
 
 info "Running lint..."
@@ -507,22 +507,23 @@ python3 "$SCRIPT_DIR/next-runtime-refs.py" fix "$APP_DIR" "$REPO_ROOT"
 ok "Next.js runtime externals complete"
 
 # ── Fix truncated JS dependency stubs ────────────────────────────────────────
-# Next.js standalone traces its own bundled semver (next/dist/compiled/semver) and
-# leaves semver@7.8.1 as a stub in the pnpm flat namespace — only package.json,
-# no index.js. Sharp@0.35.1 requires semver@^7.8.4 (full package). We replace the
-# stub with the full semver@7.8.4 from the repo pnpm store before removing .pnpm.
+# Next.js standalone can leave semver as a stub in the pnpm flat namespace —
+# only package.json, no index.js. Sharp@0.35.1 requires semver@^7.8.4 as a full
+# package. Resolve the full package from the lockfile-installed repo deps before
+# removing .pnpm.
 info "Fixing truncated semver stub..."
 SEMVER_IN_PKG="$APP_DIR/node_modules/semver"
-SEMVER_FULL_SRC="$REPO_ROOT/node_modules/.pnpm/semver@7.8.4/node_modules/semver"
+SEMVER_FULL_SRC="$(node -e "const path=require('path'); process.stdout.write(path.dirname(require.resolve('semver/package.json')));")"
 
 if [[ ! -f "$SEMVER_IN_PKG/index.js" ]]; then
   if [[ ! -d "$SEMVER_FULL_SRC" ]] || [[ ! -f "$SEMVER_FULL_SRC/index.js" ]]; then
-    die "Full semver@7.8.4 not found in pnpm store: $SEMVER_FULL_SRC"
+    die "Full semver package not found in pnpm store: $SEMVER_FULL_SRC"
   fi
-  info "  Replacing semver stub (7.8.1 stub → 7.8.4 full)..."
+  SEMVER_FULL_VER="$(python3 -c "import json; print(json.load(open('$SEMVER_FULL_SRC/package.json')).get('version','?'))" 2>/dev/null || echo "?")"
+  info "  Replacing semver stub with full semver@${SEMVER_FULL_VER}..."
   rm -rf "$SEMVER_IN_PKG"
   cp -r "$SEMVER_FULL_SRC" "$SEMVER_IN_PKG"
-  ok "semver stub replaced with full semver@7.8.4"
+  ok "semver stub replaced with full semver@${SEMVER_FULL_VER}"
 else
   SEMVER_VER="$(python3 -c "import json; print(json.load(open('$SEMVER_IN_PKG/package.json')).get('version','?'))" 2>/dev/null || echo "?")"
   ok "semver/index.js already present (v${SEMVER_VER}) — no stub fix needed"

@@ -98,11 +98,17 @@ if [[ -n "$SEVENZIP" ]]; then
   if [[ -f "$PKG/app/node_modules/semver/package.json" ]]; then
     SEMVER_VER="$(python3 -c "import json; print(json.load(open('$PKG/app/node_modules/semver/package.json')).get('version','?'))" 2>/dev/null || echo '?')"
     echo "[INFO] semver version in package: $SEMVER_VER"
-    if [[ "$SEMVER_VER" == "7.8.4" ]]; then
-      echo "[PASS] semver@7.8.4 (Sharp compatible)"
+    if python3 - "$SEMVER_VER" <<'PY' >/dev/null 2>&1
+import sys
+parts = tuple(int(p) for p in sys.argv[1].split(".")[:3])
+raise SystemExit(0 if parts >= (7, 8, 4) and parts < (8, 0, 0) else 1)
+PY
+    then
+      echo "[PASS] semver@$SEMVER_VER (Sharp compatible)"
       PASS=$((PASS+1))
     else
-      echo "[WARN] semver@$SEMVER_VER (expected 7.8.4)"
+      echo "[FAIL] semver@$SEMVER_VER (expected >=7.8.4 <8)"
+      FAIL=$((FAIL+1))
     fi
   fi
 
