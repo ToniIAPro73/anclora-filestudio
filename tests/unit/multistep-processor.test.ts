@@ -63,9 +63,24 @@ import type { ConversionPlan, ExecutionResult } from "../../src/lib/domain/engin
 
 const ROUTE: MultistepRouteSpec = {
   destination: "epub",
+  routeId: "primary-md-html-epub",
+  routeScore: 0.78,
+  qualityBand: "good",
+  routeReasons: ["HIGHER_FIDELITY"],
   steps: [
     { source: "md", target: "html", operationId: "doc:convert", engineId: "engine-a", lossProfile: "structural-risk" },
     { source: "html", target: "epub", operationId: "ebook:convert", engineId: "engine-b", lossProfile: "lossy" },
+  ],
+};
+
+const FALLBACK_ROUTE: MultistepRouteSpec = {
+  destination: "epub",
+  routeId: "fallback-md-epub",
+  routeScore: 0.68,
+  qualityBand: "format-loss",
+  routeReasons: [],
+  steps: [
+    { source: "md", target: "epub", operationId: "doc:convert", engineId: "engine-c", lossProfile: "lossy" },
   ],
 };
 
@@ -104,6 +119,7 @@ function makeEngine(engineId: string, executeImpl?: (plan: ConversionPlan) => Pr
 
 let engineA: ReturnType<typeof makeEngine>;
 let engineB: ReturnType<typeof makeEngine>;
+let engineC: ReturnType<typeof makeEngine>;
 
 beforeEach(() => {
   tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "multistep-test-"));
@@ -122,7 +138,7 @@ beforeEach(() => {
     input_format: "md",
     input_mime_type: "text/markdown",
     operation: "multistep-convert",
-    options_json: JSON.stringify({ multistepRoute: ROUTE }),
+    options_json: JSON.stringify({ multistepRoute: ROUTE, rankedRoutes: [ROUTE, FALLBACK_ROUTE] }),
   };
   updateCalls = [];
 
@@ -135,9 +151,11 @@ beforeEach(() => {
 
   engineA = makeEngine("engine-a");
   engineB = makeEngine("engine-b");
+  engineC = makeEngine("engine-c");
   vi.mocked(getEngine).mockImplementation((id: string) => {
     if (id === "engine-a") return engineA as never;
     if (id === "engine-b") return engineB as never;
+    if (id === "engine-c") return engineC as never;
     return null;
   });
   vi.mocked(getCapabilities).mockImplementation(async () => [
@@ -153,6 +171,13 @@ beforeEach(() => {
       operation: "convert",
       outputFormat: "epub",
       engineId: "engine-b",
+      state: "available",
+    },
+    {
+      id: "engine-c-cap",
+      operation: "convert",
+      outputFormat: "epub",
+      engineId: "engine-c",
       state: "available",
     },
   ] as never);
@@ -184,6 +209,7 @@ describe("processMultistepJob", () => {
   });
 
   it("an intermediate failure stops the chain and fails the job with a controlled error", async () => {
+    job.options_json = JSON.stringify({ multistepRoute: ROUTE, rankedRoutes: [ROUTE] });
     engineA.execute = vi.fn(async () => ({
       success: false,
       error: "boom",
@@ -234,6 +260,147 @@ describe("processMultistepJob", () => {
     expect(job.status).toBe("failed");
     expect(job.error_code).toBe("MISSING_CONVERSION_ID");
     expect(engineA.execute).not.toHaveBeenCalled();
+  });
+
+  it("FALLBACK-001 / OBS-005 records primary success with no fallback", async () => {
+    await processMultistepJob("job-1");
+    const snapshot = JSON.parse(String(job.toolchain_snapshot_json));
+    const execution = snapshot.execution;
+    expect(execution.fallbackUsed).toBe(false);
+    expect(execution.attemptCount).toBe(1);
+    expect(execution.finalRouteId).toBe("primary-md-html-epub");
+    expect(execution.events.filter((event: { event: string }) => event.event === "conversion.completed")).toHaveLength(1);
+  });
+
+  it("FALLBACK-010 / OBS-006 records primary timeout failure and fallback success", async () => {
+    engineA.execute = vi.fn(async () => ({
+      success: false,
+      error: "engine timeout after 120000ms",
+      outputPath: "",
+      outputSizeBytes: 0,
+      durationMs: 120_000,
+      logs: ["timeout"],
+      warnings: [],
+    })) as never;
+
+    await processMultistepJob("job-1");
+
+    expect(engineB.execute).not.toHaveBeenCalled();
+    expect(engineC.execute).toHaveBeenCalledTimes(1);
+    expect(job.status).toBe("completed");
+    expect(job.output_relative_path).toBe(path.join("job-1", "output.epub"));
+    const execution = JSON.parse(String(job.toolchain_snapshot_json)).execution;
+    expect(execution.fallbackUsed).toBe(true);
+    expect(execution.attemptCount).toBe(2);
+    expect(execution.attempts[0].failure.code).toBe("ENGINE_TIMEOUT");
+    expect(execution.attempts[0].routeId).toBe("primary-md-html-epub");
+    expect(execution.attempts[1].routeId).toBe("fallback-md-epub");
+    expect(execution.finalRouteId).toBe("fallback-md-epub");
+  });
+
+  it("FALLBACK-011 retains both failures when fallback also fails", async () => {
+    engineA.execute = vi.fn(async () => ({
+      success: false,
+      error: "engine timeout",
+      outputPath: "",
+      outputSizeBytes: 0,
+      durationMs: 1,
+      logs: [],
+      warnings: [],
+    })) as never;
+    engineC.execute = vi.fn(async () => ({
+      success: false,
+      error: "process exited with code 1",
+      outputPath: "",
+      outputSizeBytes: 0,
+      durationMs: 1,
+      logs: ["exit code 1"],
+      warnings: [],
+    })) as never;
+
+    await processMultistepJob("job-1");
+
+    expect(job.status).toBe("failed");
+    const execution = JSON.parse(String(job.toolchain_snapshot_json)).execution;
+    expect(execution.attempts).toHaveLength(2);
+    expect(execution.attempts[0].failure.code).toBe("ENGINE_TIMEOUT");
+    expect(execution.attempts[1].failure.code).toBe("PROCESS_EXIT_NONZERO");
+    expect(execution.finalStatus).toBe("failed");
+  });
+
+  it("FALLBACK-006 does not fallback for scanned-content OCR guard", async () => {
+    engineA.execute = vi.fn(async () => ({
+      success: false,
+      error: "PDF → ODT editable requiere OCR. Usa Conversión con OCR.",
+      outputPath: "",
+      outputSizeBytes: 0,
+      durationMs: 1,
+      logs: [],
+      warnings: [],
+    })) as never;
+
+    await processMultistepJob("job-1");
+
+    expect(engineC.execute).not.toHaveBeenCalled();
+    expect(job.status).toBe("failed");
+    const execution = JSON.parse(String(job.toolchain_snapshot_json)).execution;
+    expect(execution.fallbackUsed).toBe(false);
+    expect(execution.attempts[0].failure.code).toBe("SCANNED_CONTENT_REQUIRES_OCR");
+  });
+
+  it("OBS-001..004/011 records deterministic events, route ids, engine ids and step timings", async () => {
+    await processMultistepJob("job-1");
+    const execution = JSON.parse(String(job.toolchain_snapshot_json)).execution;
+    expect(execution.events.map((event: { event: string }) => event.event)).toEqual([
+      "conversion.started",
+      "conversion.route.selected",
+      "conversion.attempt.started",
+      "conversion.step.started",
+      "conversion.step.completed",
+      "conversion.step.started",
+      "conversion.step.completed",
+      "conversion.completed",
+    ]);
+    expect(execution.selectedRouteId).toBe("primary-md-html-epub");
+    expect(execution.attempts[0].engines).toEqual(["engine-a", "engine-b"]);
+    expect(execution.attempts[0].steps[0].durationMs).toEqual(expect.any(Number));
+    expect(execution.attempts[0].steps[1].engineId).toBe("engine-b");
+  });
+
+  it("OBS-007/009/010 retains redacted primary failure and truncates stderr", async () => {
+    engineA.execute = vi.fn(async () => ({
+      success: false,
+      error: "engine timeout at /home/toni/private/input.md",
+      outputPath: "",
+      outputSizeBytes: 0,
+      durationMs: 1,
+      logs: [`${"x".repeat(5000)}/home/toni/private/input.md`],
+      warnings: [],
+    })) as never;
+
+    await processMultistepJob("job-1");
+    const failure = JSON.parse(String(job.toolchain_snapshot_json)).execution.attempts[0].failure;
+    expect(failure.messageSafe).not.toContain("/home/toni/private");
+    expect(failure.stderrTail.length).toBeLessThanOrEqual(4000);
+  });
+
+  it("cleans partial output from failed primary before fallback", async () => {
+    engineA.execute = vi.fn(async (plan: ConversionPlan) => {
+      fs.writeFileSync(plan.outputPath, "partial primary output");
+      return {
+        success: false,
+        error: "engine timeout",
+        outputPath: plan.outputPath,
+        outputSizeBytes: 22,
+        durationMs: 1,
+        logs: [],
+        warnings: [],
+      };
+    }) as never;
+
+    await processMultistepJob("job-1");
+    expect(job.status).toBe("completed");
+    expect(fs.readFileSync(path.join(tempDir, "job-1", "output.epub"), "utf8")).toBe("converted by engine-c");
   });
 });
 
