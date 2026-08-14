@@ -23,6 +23,20 @@ SHA_PATH="$REPO_ROOT/dist/windows/Anclora-FileStudio-Windows-x64-Core.zip.sha256
 VERIFY_STAGING="$REPO_ROOT/scripts/.staging/.verify_tmp_windows"
 FAILURES=0
 PASS=0
+UNHANDLED_ERROR_REPORTED=0
+
+report_unhandled_error() {
+  local status=$?
+  local line="${BASH_LINENO[0]:-$LINENO}"
+  local command="${BASH_COMMAND:-unknown command}"
+  command="${command//$'\n'/ }"
+  if [[ "$UNHANDLED_ERROR_REPORTED" -eq 0 ]]; then
+    UNHANDLED_ERROR_REPORTED=1
+    fail "Comando sin reporte falló en línea ${line} (exit ${status}): ${command:0:240}"
+  fi
+  exit "$status"
+}
+trap report_unhandled_error ERR
 
 echo ""
 echo -e "${CYAN}══════════════════════════════════════════════════════${NC}"
@@ -294,7 +308,7 @@ if [[ -f "$REQUIRED_SERVER_FILES" ]]; then
     fail "  required-server-files.json no es JSON válido"
   fi
 
-  REQUIRED_SERVER_FILES_CHECK="$(python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF' 2>&1
+  if REQUIRED_SERVER_FILES_CHECK="$(python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF' 2>&1
 import json
 import pathlib
 import sys
@@ -319,12 +333,11 @@ files = data.get("files")
 if not isinstance(files, list) or ".next/routes-manifest.json" not in files:
     raise SystemExit("runtime files list is missing required Next.js manifests")
 PYEOF
-)"
-  if [[ -z "$REQUIRED_SERVER_FILES_CHECK" ]]; then
+)"; then
     ok "  required-server-files.json conserva metadata runtime sin rutas del workspace"
     PASS=$((PASS+1))
   else
-    fail "  required-server-files.json inválido: $REQUIRED_SERVER_FILES_CHECK"
+    fail "  required-server-files.json inválido: ${REQUIRED_SERVER_FILES_CHECK:-python validation failed without output}"
   fi
 else
   fail "  required-server-files.json no encontrado"
@@ -577,4 +590,9 @@ if [[ -z "$STAGING_ARG" ]] && [[ -d "$VERIFY_STAGING" ]]; then
   rm -rf "$VERIFY_STAGING"
 fi
 
-[[ $FAILURES -eq 0 ]]
+trap - ERR
+if [[ $FAILURES -eq 0 ]]; then
+  ok "Verificación Windows portable completada"
+  exit 0
+fi
+exit 1
