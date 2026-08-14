@@ -657,6 +657,10 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
               setSelectedTarget(null);
               setSelectedSource(null);
               resetFlow();
+              // Clear ?source=&target= too — otherwise the URL→state sync
+              // effect below re-derives them from the still-present query
+              // string on the next tick and silently undoes this reset.
+              router.push(TAB_ROUTES.convert!);
             }}
           />
         )}
