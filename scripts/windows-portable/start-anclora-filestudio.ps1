@@ -359,6 +359,27 @@ if (-not $ready) {
 
 Write-Ok "Servidor listo en http://127.0.0.1:$selectedPort"
 
+# - Crear acceso directo en el Escritorio (solo si no existe ya) ----------
+try {
+    $DesktopDir = [Environment]::GetFolderPath('Desktop')
+    $ShortcutPath = Join-Path $DesktopDir 'Anclora FileStudio.lnk'
+    if ($DesktopDir -and (Test-Path $DesktopDir) -and -not (Test-Path $ShortcutPath)) {
+        $LauncherBat = Join-Path $BaseDir 'INICIAR_ANCLORA_FILESTUDIO.bat'
+        $IconPath = Join-Path $AppDir 'public\favicon.ico'
+        $WshShell = New-Object -ComObject WScript.Shell
+        $Shortcut = $WshShell.CreateShortcut($ShortcutPath)
+        $Shortcut.TargetPath = $LauncherBat
+        $Shortcut.WorkingDirectory = $BaseDir
+        $Shortcut.Description = 'Anclora FileStudio'
+        if (Test-Path $IconPath) { $Shortcut.IconLocation = $IconPath }
+        $Shortcut.Save()
+        Write-Ok "Acceso directo creado en el Escritorio"
+    }
+} catch {
+    # No critico: si el Escritorio esta redirigido o no es escribible, seguimos sin acceso directo.
+    Write-Warn "No se pudo crear el acceso directo en el Escritorio"
+}
+
 # - Abrir navegador -----------------------------
 if (-not $SkipBrowser) {
     Write-Step "Abriendo navegador..."

@@ -44,7 +44,7 @@ export function CookiesUploadPanel() {
       formData.append("file", file);
       const res = await fetch("/api/settings/cookies", {
         method: "POST",
-        headers: status?.requiresToken ? { "x-cookies-upload-token": token } : undefined,
+        headers: status?.requiresToken ? { "x-anclora-admin-token": token } : undefined,
         body: formData,
       });
       const data = await res.json();
@@ -68,7 +68,7 @@ export function CookiesUploadPanel() {
     try {
       const res = await fetch("/api/settings/cookies", {
         method: "DELETE",
-        headers: status?.requiresToken ? { "x-cookies-upload-token": token } : undefined,
+        headers: status?.requiresToken ? { "x-anclora-admin-token": token } : undefined,
       });
       if (!res.ok) {
         const data = await res.json();

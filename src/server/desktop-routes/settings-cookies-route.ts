@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import crypto from "crypto";
 import { CONFIG } from "@/lib/config";
-import { isLoopbackOnlyRuntime } from "@/lib/deployment-target";
+import { isAdminAuthorized, adminAuthStatus } from "@/lib/security/admin-token";
 
 const MAX_COOKIES_FILE_BYTES = 256 * 1024; // generous for a few sites, rejects a full browser export
 const MAX_DISTINCT_DOMAINS = 20; // catches "exported everything" by mistake
@@ -14,28 +13,9 @@ function cookiesFilePath(): string {
   return path.join(CONFIG.media.dataDir, COOKIES_FILE_NAME);
 }
 
-function tokenHeader(req: NextRequest): string {
-  return req.headers.get("x-cookies-upload-token") ?? "";
-}
-
-/** Constant-time token comparison — avoids leaking length/prefix via timing. */
-function tokensMatch(provided: string, expected: string): boolean {
-  const a = Buffer.from(provided);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length) return false;
-  return crypto.timingSafeEqual(a, b);
-}
-
-function isAuthorized(req: NextRequest): boolean {
-  if (isLoopbackOnlyRuntime()) return true;
-  const token = CONFIG.security.cookiesUploadToken;
-  if (!token) return false; // fail closed — no token configured, no non-loopback access
-  return tokensMatch(tokenHeader(req), token);
-}
-
 function unauthorizedResponse(): NextResponse {
   return NextResponse.json(
-    { error: "No autorizado. Token de subida de cookies requerido o incorrecto.", code: "UNAUTHORIZED" },
+    { error: "No autorizado. Token de administrador requerido o incorrecto.", code: "UNAUTHORIZED" },
     { status: 401 }
   );
 }
@@ -59,13 +39,12 @@ export async function GET() {
   const present = fs.existsSync(cookiesFilePath());
   return NextResponse.json({
     present,
-    requiresToken: !isLoopbackOnlyRuntime(),
-    tokenConfigured: Boolean(CONFIG.security.cookiesUploadToken),
+    ...adminAuthStatus(),
   });
 }
 
 export async function POST(req: NextRequest) {
-  if (!isAuthorized(req)) return unauthorizedResponse();
+  if (!isAdminAuthorized(req)) return unauthorizedResponse();
 
   const contentType = req.headers.get("content-type") ?? "";
   if (!contentType.includes("multipart/form-data")) {
@@ -119,7 +98,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  if (!isAuthorized(req)) return unauthorizedResponse();
+  if (!isAdminAuthorized(req)) return unauthorizedResponse();
   const targetPath = cookiesFilePath();
   if (fs.existsSync(targetPath)) {
     fs.rmSync(targetPath);

@@ -26,6 +26,7 @@ import { JobHistory } from "@/components/history/job-history";
 import { ToolStatusPanel } from "@/components/diagnostics/tool-status-panel";
 import { SystemResourceGauge } from "@/components/diagnostics/system-resource-gauge";
 import { CookiesUploadPanel } from "@/components/diagnostics/cookies-upload-panel";
+import { CloseAppButton } from "@/components/desktop-pro/close-app-button";
 import { PresetSelector, type ConversionPreset } from "@/components/presets/preset-manager";
 import { BatchActionToolbar } from "@/components/converter/batch-action-toolbar";
 import { ImageTool } from "@/components/web-tools/images/image-tool";
@@ -556,6 +557,7 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
   return (
     <div lang="es" className="min-h-screen overflow-hidden bg-[#0d0f12] text-[#f4f1ea]">
       <Toaster position="top-center" richColors />
+      <CloseAppButton />
       <Background />
 
       <div className="relative mx-auto max-w-6xl px-4 pb-10 sm:px-6">

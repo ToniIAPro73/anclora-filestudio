@@ -682,6 +682,8 @@ INICIO:
 
 PARADA:
   ./stop-anclora-filestudio.sh
+  (o el botón "Cerrar aplicación" en la esquina superior derecha de la
+  propia app en el navegador — libera el puerto igual)
 
 DIAGNÓSTICO:
   ./diagnose-anclora-filestudio.sh

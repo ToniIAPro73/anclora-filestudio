@@ -806,9 +806,15 @@ CÓMO EMPEZAR
 4. Espera a que se abra el navegador automáticamente.
 5. Selecciona un archivo local o pega un enlace de YouTube.
 
+La primera vez que inicias la app se crea automáticamente un acceso
+directo "Anclora FileStudio" en tu Escritorio — la próxima vez puedes
+usar ese acceso directo en vez de entrar a la carpeta.
+
 CÓMO CERRAR
 ───────────
-Haz doble clic en CERRAR_ANCLORA_FILESTUDIO.bat
+Haz doble clic en CERRAR_ANCLORA_FILESTUDIO.bat, o usa el botón
+"Cerrar aplicación" que aparece en la esquina superior derecha de la
+propia app en el navegador — libera el puerto igual en ambos casos.
 
 REQUISITOS
 ──────────

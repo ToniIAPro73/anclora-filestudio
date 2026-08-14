@@ -44,7 +44,7 @@ function makeUploadRequest(fileContent: string, opts: { token?: string; filename
   const formData = new FormData();
   formData.append("file", new File([fileContent], opts.filename ?? "cookies.txt", { type: "text/plain" }));
   const headers: Record<string, string> = {};
-  if (opts.token !== undefined) headers["x-cookies-upload-token"] = opts.token;
+  if (opts.token !== undefined) headers["x-anclora-admin-token"] = opts.token;
   return new NextRequest("http://localhost/api/settings/cookies", {
     method: "POST",
     headers,
@@ -54,7 +54,7 @@ function makeUploadRequest(fileContent: string, opts: { token?: string; filename
 
 function makeDeleteRequest(token?: string) {
   const headers: Record<string, string> = {};
-  if (token !== undefined) headers["x-cookies-upload-token"] = token;
+  if (token !== undefined) headers["x-anclora-admin-token"] = token;
   return new NextRequest("http://localhost/api/settings/cookies", { method: "DELETE", headers });
 }
 

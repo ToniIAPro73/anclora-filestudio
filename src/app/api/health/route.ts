@@ -5,6 +5,7 @@ import {
   areServerConversionsEnabled,
   getDeploymentTarget,
   getPublicFileStudioMode,
+  isLoopbackOnlyRuntime,
   isVercelWeb,
 } from "@/lib/deployment-target";
 import { getAncloraRuntimePlatform } from "@/lib/runtime-platform";
@@ -77,6 +78,7 @@ export async function GET() {
       effectivePlatform: getAncloraRuntimePlatform(),
       arch: process.arch,
       nodeVersion: process.version,
+      loopbackOnly: isLoopbackOnlyRuntime(),
     },
     timestamp: new Date().toISOString(),
     dependencies,
