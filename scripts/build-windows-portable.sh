@@ -16,9 +16,9 @@ warn()  { echo -e "${YELLOW}[WARN]${NC}  $*"; }
 die()   { echo -e "${RED}[ERROR]${NC} $*" >&2; exit 1; }
 
 # ── Paths ────────────────────────────────────────────────────────────────────
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-LOCKFILE="$SCRIPT_DIR/toolchain.lock.json"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+TOOLCHAIN_LOCK="$SCRIPT_DIR/toolchain.lock.json"
 CACHE_DIR="$SCRIPT_DIR/.cache/windows-portable"
 STAGING_BASE="$SCRIPT_DIR/.staging"
 STAGING_DIR="$STAGING_BASE/Anclora-FileStudio-Windows-x64-Core"
@@ -32,7 +32,8 @@ PUBLIC_DIR="$REPO_ROOT/public"
 BUILD_DATE_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 APP_VERSION="$(node -p "require('$REPO_ROOT/package.json').version" 2>/dev/null || echo "0.2.0")"
 
-[[ -f "$LOCKFILE" ]] || die "toolchain.lock.json not found: $LOCKFILE"
+info "Toolchain lock: $TOOLCHAIN_LOCK"
+[[ -f "$TOOLCHAIN_LOCK" ]] || die "toolchain.lock.json not found: $TOOLCHAIN_LOCK"
 [[ -f "$REPO_ROOT/package.json" ]] || die "Run from the repository root"
 cd "$REPO_ROOT"
 
@@ -41,7 +42,15 @@ info "Reading toolchain.lock.json..."
 
 read_lock() {
   # read_lock <python_expression> — evaluates against the loaded JSON
-  python3 -c "import json; d=json.load(open('$LOCKFILE')); print($1)"
+  python3 - "$TOOLCHAIN_LOCK" "$1" <<'PYEOF'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    d = json.load(handle)
+
+print(eval(sys.argv[2], {"__builtins__": {}, "d": d, "next": next}, {}))
+PYEOF
 }
 
 NODE_WIN_VERSION="$(read_lock "d['runtimes']['win-x64']['version']")"
