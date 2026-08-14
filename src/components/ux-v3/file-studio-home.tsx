@@ -40,17 +40,25 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
   const formats = model?.formats ?? EMPTY_FORMATS;
   const routes = model?.routes ?? EMPTY_ROUTES;
 
-  const sourceOptions = useMemo(() => {
-    return formats.filter((format) => format.targetsCount > 0);
-  }, [formats]);
+  // Full-catalog fallback for each side — shown until the *other* side
+  // narrows it. Symmetric: picking either source or target first works.
+  const sourceOptionsAll = useMemo(() => formats.filter((format) => format.targetsCount > 0), [formats]);
+  const targetOptionsAll = useMemo(() => formats.filter((format) => format.sourcesCount > 0), [formats]);
 
   const targetRoutes = useMemo(() => source ? getVisibleTargetRoutes(source, routes) : EMPTY_ROUTES, [routes, source]);
+  const sourceRoutes = useMemo(() => target ? getVisibleSourceRoutes(target, routes) : EMPTY_ROUTES, [routes, target]);
 
   const targetOptions = useMemo(() => {
-    if (!source) return EMPTY_FORMATS;
+    if (!source) return targetOptionsAll;
     const validTargets = new Set(targetRoutes.map((route) => route.target));
     return formats.filter((format) => validTargets.has(format.id));
-  }, [formats, source, targetRoutes]);
+  }, [formats, source, targetRoutes, targetOptionsAll]);
+
+  const sourceOptions = useMemo(() => {
+    if (!target) return sourceOptionsAll;
+    const validSources = new Set(sourceRoutes.map((route) => route.source));
+    return formats.filter((format) => validSources.has(format.id));
+  }, [formats, target, sourceRoutes, sourceOptionsAll]);
 
   const quickRoute = useMemo(() => {
     if (!source || !target) return null;
@@ -61,7 +69,7 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
     ? targetRoutes
     : [];
   const suggestedSources = target && !source
-    ? routes.filter((route) => route.target === target).slice(0, 8)
+    ? sourceRoutes
     : [];
 
   const continueDisabled = !source || !target || !quickRoute;
@@ -112,7 +120,6 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
             options={targetOptions}
             placeholder="Seleccionar formato"
             mode="target"
-            emptyMessage="Selecciona primero un formato de origen"
             testId="home-target-select"
           />
           <button
@@ -198,6 +205,11 @@ export function FileStudioHome({ model, onOpenConvert, onSelectTarget, onOpenToo
 export function getVisibleTargetRoutes(source: string, routes: readonly UxRouteSummary[]): UxRouteSummary[] {
   const canonicalSource = normalizeFormatId(source) ?? source;
   return routes.filter((route) => route.source === canonicalSource).slice(0, 8);
+}
+
+export function getVisibleSourceRoutes(target: string, routes: readonly UxRouteSummary[]): UxRouteSummary[] {
+  const canonicalTarget = normalizeFormatId(target) ?? target;
+  return routes.filter((route) => route.target === canonicalTarget).slice(0, 8);
 }
 
 function FormatCombobox(props: {

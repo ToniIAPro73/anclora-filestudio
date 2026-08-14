@@ -5,7 +5,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ConversionHub } from "../../../src/components/ux-v3/conversion-hub";
 import { SourceSelector } from "../../../src/components/converter/source-selector";
-import { FileStudioHome, getVisibleTargetRoutes } from "../../../src/components/ux-v3/file-studio-home";
+import { FileStudioHome, getVisibleTargetRoutes, getVisibleSourceRoutes } from "../../../src/components/ux-v3/file-studio-home";
 import { groupAllowedFormats } from "../../../src/components/ux-v3/premium-format-picker";
 import { ToolHub } from "../../../src/components/ux-v3/tool-hub";
 import { buildConversionUxModel } from "../../../src/lib/ux-v3/conversion-ux-model";
@@ -122,11 +122,33 @@ describe("UX V3 components", () => {
     expect(onSelectTarget).toHaveBeenCalledWith("png", "docx");
   });
 
-  it("QUICK-002 keeps target picker disabled until a source exists", () => {
+  it("QUICK-002 lets the target be picked before any source (symmetric with source-first)", () => {
     render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
 
-    expect(screen.getByTestId("home-target-select").hasAttribute("disabled")).toBe(true);
-    expect(screen.getByText("Selecciona primero un formato de origen")).toBeTruthy();
+    // Neither picker is disabled up front — either side can be picked first.
+    expect(screen.getByTestId("home-source-select").hasAttribute("disabled")).toBe(false);
+    expect(screen.getByTestId("home-target-select").hasAttribute("disabled")).toBe(false);
+    expect(screen.queryByText("Selecciona primero un formato de origen")).toBeNull();
+
+    selectFormat("home-target-select", "pdf");
+    const values = getSuggestionFormats("source");
+
+    expect(values).toContain("docx");
+    expect(values.length).toBeGreaterThan(0);
+  });
+
+  it("QUICK-003 filters source options when a target is selected first (reverse of QUICK-001)", () => {
+    render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
+
+    selectFormat("home-target-select", "png");
+    const chipValues = getSuggestionFormats("source").sort();
+    const pickerValues = getPickerUnion("home-source-select").sort();
+    const expectedSources = getVisibleSourceRoutes("png", model.routes).map((route) => route.source).sort();
+
+    expect(chipValues).toEqual(expectedSources);
+    expect(pickerValues).toEqual(expectedSources);
+    expect(chipValues).toContain("docx");
+    expect(chipValues).toContain("jpg");
   });
 
   it("PICKER-001 opens source picker on the first valid category and only shows that category", () => {
@@ -176,7 +198,7 @@ describe("UX V3 components", () => {
     expect(activeCategory("home-target-select")).toBe("documents");
   });
 
-  it("PICKER-004 resets target categories when source changes", () => {
+  it("PICKER-004 keeps a still-compatible target when source changes, and always reopens on the first category", () => {
     render(<FileStudioHome model={model} onOpenConvert={() => {}} onSelectTarget={() => {}} onOpenTools={() => {}} />);
 
     selectFormat("home-source-select", "docx");
@@ -185,8 +207,12 @@ describe("UX V3 components", () => {
     fireEvent.click(optionButton("home-target-select", "png"));
     expect(screen.getByTestId("home-target-select").textContent).toContain("PNG");
 
-    selectFormat("home-source-select", "png");
-    expect(screen.getByTestId("home-target-select").textContent).toContain("Seleccionar formato");
+    // jpg is also a valid source for png. With symmetric source/target
+    // filtering, the source picker itself only ever offers sources
+    // compatible with the current target — so a still-valid target is
+    // correctly preserved, not reset, when the source changes.
+    selectFormat("home-source-select", "jpg");
+    expect(screen.getByTestId("home-target-select").textContent).toContain("PNG");
     fireEvent.click(screen.getByTestId("home-target-select"));
     expect(activeCategory("home-target-select")).toBe(categoryIds("home-target-select")[0]);
   });
