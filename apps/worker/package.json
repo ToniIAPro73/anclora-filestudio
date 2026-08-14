@@ -6,7 +6,7 @@
   "main": "./src/worker.ts",
   "scripts": {
     "dev": "tsx watch src/worker.ts",
-    "build": "corepack pnpm@10.33.2 --filter @anclora/filestudio-core build && tsc -p tsconfig.build.json",
+    "build": "pnpm --filter @anclora/filestudio-core build && tsc -p tsconfig.build.json",
     "start": "node dist/worker.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
