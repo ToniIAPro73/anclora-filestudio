@@ -200,11 +200,14 @@ export async function processJob(jobId: string) {
     });
   } catch (error: unknown) {
     const appError = error as AppError;
+    const isClassifiedAppError = error instanceof Error && error.name === "AppError";
     const code: ErrorCode = appError?.code ?? "ENGINE_EXECUTE_FAILED";
-    // Prefer the error's own message when it's a real AppError (has a code) —
-    // createAppError() always sets a specific, classified reason there. Only
-    // fall back to the generic per-code catalog for unclassified throws.
-    const message = appError?.code && appError?.message
+    // Prefer the error's own message when it's a real, classified AppError —
+    // createAppError() always sets a specific, user-safe reason there. Any
+    // other thrown value (e.g. a raw Node ENOENT, which also happens to have
+    // a `.code`) falls back to the generic per-code catalog instead of
+    // leaking its technical message (which can contain local file paths).
+    const message = isClassifiedAppError && appError?.message
       ? appError.message
       : (ERROR_MESSAGES[code] ?? "Error interno del procesador.");
     const technicalDetail =
@@ -268,6 +271,7 @@ async function processRemoteUrl(
   });
 
   await runProcess(CONFIG.media.binaries.ytdlp, args, jobId);
+  await ensureOutputAtPath(outputPath, CONFIG.media.binaries.ffmpeg);
 
   // Probe output for quality verification (video jobs only)
   const isVideoOutputFormat = ["mp4", "webm", "mkv"].includes(outputFormat);
@@ -487,6 +491,67 @@ function runProcess(
           cause: err,
         }));
       }
+    });
+  });
+}
+
+/**
+ * yt-dlp can rewrite the requested extension when a merge/extraction lands
+ * in a different container than the literal outputPath implied — e.g. the
+ * "source-max" video quality profile always merges into mkv, which yt-dlp
+ * then uses as the REAL file extension even though outputPath ends in
+ * .mp4. Left unhandled, the later fs.statSync(outputPath) throws a raw
+ * ENOENT with a full local path. Detect that case and remux (stream copy,
+ * no re-encode) into the exact path the rest of the pipeline expects.
+ */
+async function ensureOutputAtPath(outputPath: string, ffmpegBinary: string): Promise<void> {
+  if (fs.existsSync(outputPath)) return;
+
+  const jobDir = path.dirname(outputPath);
+  const expectedName = path.basename(outputPath);
+  const baseName = path.basename(outputPath, path.extname(outputPath));
+  const siblings = fs
+    .readdirSync(jobDir)
+    .filter((f) => f !== expectedName && f.startsWith(baseName));
+
+  if (siblings.length !== 1) {
+    throw createAppError(
+      "ENGINE_EXECUTE_FAILED",
+      "La conversión no generó el archivo esperado. Prueba con el perfil de calidad 'MP4 compatible'.",
+      {
+        stage: "verify-output",
+        technicalDetail: `expected ${expectedName} in ${jobDir}, found: ${siblings.join(", ") || "nothing"}`,
+      }
+    );
+  }
+
+  await remuxToPath(path.join(jobDir, siblings[0]), outputPath, ffmpegBinary);
+}
+
+function remuxToPath(fromPath: string, toPath: string, ffmpegBinary: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const proc = spawn(ffmpegBinary, ["-y", "-i", fromPath, "-c", "copy", toPath], {
+      shell: false,
+      windowsHide: true,
+    });
+
+    proc.on("close", (code: number | null) => {
+      fs.rmSync(fromPath, { force: true });
+      if (code !== 0 || !fs.existsSync(toPath)) {
+        reject(
+          createAppError(
+            "ENGINE_EXECUTE_FAILED",
+            "El vídeo se descargó pero no se pudo empaquetar en el formato solicitado (códec no compatible). Prueba con el perfil de calidad 'MP4 compatible'.",
+            { stage: "remux" }
+          )
+        );
+        return;
+      }
+      resolve();
+    });
+
+    proc.on("error", () => {
+      reject(createAppError("TOOL_NOT_AVAILABLE", "No se pudo ejecutar ffmpeg para finalizar la conversión.", { stage: "remux" }));
     });
   });
 }

@@ -261,11 +261,14 @@ describe("Windows portable — --no-check-certificates injected by getYtdlpCommo
     delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
   });
 
-  it("getYtdlpCommonArgs returns empty array in non-Windows mode", async () => {
+  it("getYtdlpCommonArgs never includes --no-check-certificates in non-Windows mode", async () => {
+    // Not asserting total length here: cookies-related flags are opt-in and
+    // depend on ambient CONFIG (env var or a data/cookies.txt drop-in file),
+    // which is legitimately environment-dependent — this test only cares
+    // about the Windows-only certificate flag never appearing elsewhere.
     delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
     const { getYtdlpCommonArgs } = await import("@/lib/media/command-builder");
     expect(getYtdlpCommonArgs()).not.toContain("--no-check-certificates");
-    expect(getYtdlpCommonArgs()).toHaveLength(0);
   });
 
   it("YouTube URL goes through getVideoMetadata (never analyzeRemoteMedia) — no fetch() precheck", async () => {
