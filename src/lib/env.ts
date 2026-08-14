@@ -14,6 +14,10 @@ const envSchema = z.object({
   // exported from a secondary/throwaway account). Never set by default,
   // never committed. When empty, yt-dlp runs unauthenticated as before.
   ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH: z.string().default(""),
+  // Required to authorize the in-app cookies upload endpoint on any
+  // non-loopback deployment (VPS/service). Portables never need it — they
+  // are loopback-only (HOSTNAME=127.0.0.1, set by the launcher scripts).
+  ANCLORA_FILESTUDIO_COOKIES_UPLOAD_TOKEN: z.string().default(""),
   ANCLORA_FILESTUDIO_QPDF_PATH: z.string().default(""),
   ANCLORA_FILESTUDIO_7ZIP_PATH: z.string().default(""),
   ANCLORA_FILESTUDIO_PANDOC_PATH: z.string().default(""),

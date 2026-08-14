@@ -698,6 +698,19 @@ DATOS:
   Los datos se guardan en ./data/ — no borres esta carpeta al actualizar.
   Los logs se escriben en ./logs/
 
+VÍDEOS QUE PIDEN INICIAR SESIÓN (opcional, bajo tu responsabilidad):
+  Algunos vídeos de YouTube (y de X/Twitter o Instagram) exigen una
+  cuenta autenticada para poder analizarlos. Si te ocurre:
+    1. Exporta las cookies de esa cuenta desde tu navegador (extensión
+       tipo "Get cookies.txt LOCALLY"), solo del sitio en cuestión —
+       NO exportes "todas las cookies" del navegador.
+    2. Copia ese archivo a ./data/cookies.txt
+    3. Reinicia Anclora FileStudio.
+  Usa preferiblemente una cuenta secundaria, no tu cuenta personal —
+  el proveedor puede limitar la cuenta si detecta patrones
+  automatizados. Nunca compartas ni subas ese archivo a ningún sitio;
+  contiene tu sesión real. Elimínalo de ./data/ si dejas de necesitarlo.
+
 PUERTOS:
   La aplicación escucha solo en 127.0.0.1 (loopback).
   Puerto por defecto: 3847 (configurable con ANCLORA_FILESTUDIO_PORT).

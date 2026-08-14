@@ -13,6 +13,7 @@ const desktopRouteImporters = isVercelBuild
       "metadata-route": () => import("@/server/desktop-routes/metadata-route"),
       "download-route": () => import("@/server/desktop-routes/download-route"),
       "inputs-analyze-route": () => import("@/server/desktop-routes/inputs-analyze-route"),
+      "settings-cookies-route": () => import("@/server/desktop-routes/settings-cookies-route"),
     };
 
 const desktopModuleImporters = isVercelBuild

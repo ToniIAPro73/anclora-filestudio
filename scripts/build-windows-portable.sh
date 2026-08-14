@@ -820,6 +820,23 @@ PROBLEMAS FRECUENTES
 · SmartScreen muestra advertencia: "Más información" → "Ejecutar de todas formas".
 · El navegador no se abre: abre manualmente http://127.0.0.1:3847
 
+VÍDEOS QUE PIDEN INICIAR SESIÓN (opcional, bajo tu responsabilidad)
+─────────────────────────────────────────────────────────────────
+Algunos vídeos de YouTube (y de X/Twitter o Instagram) exigen una
+cuenta autenticada para poder analizarlos. Si te ocurre, puedes:
+
+1. Exportar las cookies de esa cuenta desde tu navegador (extensión
+   tipo "Get cookies.txt LOCALLY"), solo del sitio en cuestión — NO
+   exportes "todas las cookies" del navegador.
+2. Copiar ese archivo a la carpeta data\ de esta aplicación, con el
+   nombre exacto: cookies.txt
+3. Reiniciar Anclora FileStudio.
+
+Aviso: usa preferiblemente una cuenta secundaria, no tu cuenta
+personal — el proveedor puede limitar la cuenta si detecta patrones
+automatizados. Nunca compartas ni subas ese archivo a ningún sitio;
+contiene tu sesión real. Elimínalo de data\ si dejas de necesitarlo.
+
 ═══════════════════════════════════════════════════════════════
 Solo para contenido propio o con autorización del titular.
 Respeta siempre los derechos de autor y las licencias aplicables.

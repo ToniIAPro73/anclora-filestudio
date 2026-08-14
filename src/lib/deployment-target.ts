@@ -76,3 +76,14 @@ export function areServerConversionsEnabled(): boolean {
 export function areCloudUploadsEnabled(): boolean {
   return process.env.ANCLORA_FILESTUDIO_ENABLE_CLOUD_UPLOADS === "true";
 }
+
+/**
+ * True only for the Windows/Linux portable launchers, which explicitly set
+ * HOSTNAME=127.0.0.1 before starting the server (and bind the socket there —
+ * a real OS-level guarantee, not just a config flag). Any other deployment,
+ * including this same codebase running on a VPS with `next dev -H 0.0.0.0`,
+ * reports false here since HOSTNAME won't match.
+ */
+export function isLoopbackOnlyRuntime(): boolean {
+  return process.env.HOSTNAME === "127.0.0.1";
+}

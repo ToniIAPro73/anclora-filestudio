@@ -25,6 +25,7 @@ import { ArtifactResultCard } from "@/components/converter/artifact-result-card"
 import { JobHistory } from "@/components/history/job-history";
 import { ToolStatusPanel } from "@/components/diagnostics/tool-status-panel";
 import { SystemResourceGauge } from "@/components/diagnostics/system-resource-gauge";
+import { CookiesUploadPanel } from "@/components/diagnostics/cookies-upload-panel";
 import { PresetSelector, type ConversionPreset } from "@/components/presets/preset-manager";
 import { BatchActionToolbar } from "@/components/converter/batch-action-toolbar";
 import { ImageTool } from "@/components/web-tools/images/image-tool";
@@ -680,7 +681,14 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
           </Panel>
         )}
         {activeTab === "history" && <Panel><JobHistory /></Panel>}
-        {activeTab === "diagnostics" && <Panel><ToolStatusPanel /></Panel>}
+        {activeTab === "diagnostics" && (
+          <Panel>
+            <ToolStatusPanel />
+            <div className="mt-4">
+              <CookiesUploadPanel />
+            </div>
+          </Panel>
+        )}
       </div>
     </div>
   );

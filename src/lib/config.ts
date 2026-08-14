@@ -1,6 +1,26 @@
+import fs from "fs";
 import path from "path";
 import { env, resolveToolPath } from "./env";
 import { isAncloraWindowsRuntime } from "./runtime-platform";
+
+function resolveDataDir(): string {
+  return env.ANCLORA_FILESTUDIO_DATA_DIR
+    ? path.resolve(/* turbopackIgnore: true */ env.ANCLORA_FILESTUDIO_DATA_DIR)
+    : path.resolve(process.cwd(), "data");
+}
+
+// Optional, user-provided cookies file for authenticated yt-dlp requests
+// (YouTube/X/Instagram login-gated content). The explicit env var wins;
+// otherwise auto-detect a `cookies.txt` the user dropped into the data
+// directory themselves — same convention in dev/VPS and both portables.
+// Never bundled, never a default, entirely opt-in and at the user's own risk.
+function resolveYtdlpCookiesPath(): string {
+  if (env.ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH) {
+    return env.ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH;
+  }
+  const dropInPath = path.join(resolveDataDir(), "cookies.txt");
+  return fs.existsSync(dropInPath) ? dropInPath : "";
+}
 
 export const CONFIG = {
   app: {
@@ -18,9 +38,7 @@ export const CONFIG = {
     tempDir: env.ANCLORA_FILESTUDIO_TEMP_DIR
       ? path.resolve(/* turbopackIgnore: true */ env.ANCLORA_FILESTUDIO_TEMP_DIR)
       : path.resolve(/* turbopackIgnore: true */ process.cwd(), env.MEDIA_TEMP_DIR),
-    dataDir: env.ANCLORA_FILESTUDIO_DATA_DIR
-      ? path.resolve(/* turbopackIgnore: true */ env.ANCLORA_FILESTUDIO_DATA_DIR)
-      : path.resolve(process.cwd(), "data"),
+    dataDir: resolveDataDir(),
     logsDir: env.ANCLORA_FILESTUDIO_LOGS_DIR
       ? path.resolve(/* turbopackIgnore: true */ env.ANCLORA_FILESTUDIO_LOGS_DIR)
       : env.ANCLORA_FILESTUDIO_DATA_DIR
@@ -42,7 +60,7 @@ export const CONFIG = {
       tesseract: resolveToolPath(env.ANCLORA_FILESTUDIO_TESSERACT_PATH, "tesseract"),
       tessdataPrefix: env.ANCLORA_FILESTUDIO_TESSDATA_PREFIX || "",
       poppler: env.ANCLORA_FILESTUDIO_POPPLER_PATH || "",
-      ytdlpCookiesPath: env.ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH || "",
+      ytdlpCookiesPath: resolveYtdlpCookiesPath(),
     },
     limits: {
       maxDurationSeconds: env.MAX_VIDEO_DURATION_SECONDS,
@@ -60,5 +78,6 @@ export const CONFIG = {
       maxMetadataRequests: env.RATE_LIMIT_MAX_METADATA_REQUESTS,
       maxJobRequests: env.RATE_LIMIT_MAX_JOB_REQUESTS,
     },
+    cookiesUploadToken: env.ANCLORA_FILESTUDIO_COOKIES_UPLOAD_TOKEN || "",
   },
 } as const;
