@@ -59,6 +59,9 @@ next-env.d.ts
 /data/*.sqlite-shm
 /data/*.sqlite-wal
 
+# User-uploaded cookies.txt (real session cookies — never committed)
+/data/cookies.txt
+
 # Windows portable distribution — build cache, staging, and output artifacts
 scripts/.cache/
 scripts/.staging/
