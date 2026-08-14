@@ -12,6 +12,7 @@ import { getVideoMetadata } from "./metadata";
 import { AudioOutputFormat, VideoOutputFormat } from "../jobs/job-types";
 import { createAppError, ERROR_MESSAGES, type AppError, type ErrorCode } from "../errors/error-codes";
 import { checkDiskSpace } from "../jobs/disk-space-check";
+import { classifyYtdlpFailure, sanitizeStderr, appendYtdlpErrorLog } from "./ytdlp-stderr-classifier";
 import crypto from "crypto";
 
 const AUDIO_FORMATS: AudioOutputFormat[] = ["mp3", "m4a", "wav", "flac", "ogg"];
@@ -200,7 +201,12 @@ export async function processJob(jobId: string) {
   } catch (error: unknown) {
     const appError = error as AppError;
     const code: ErrorCode = appError?.code ?? "ENGINE_EXECUTE_FAILED";
-    const message = ERROR_MESSAGES[code] ?? "Error interno del procesador.";
+    // Prefer the error's own message when it's a real AppError (has a code) —
+    // createAppError() always sets a specific, classified reason there. Only
+    // fall back to the generic per-code catalog for unclassified throws.
+    const message = appError?.code && appError?.message
+      ? appError.message
+      : (ERROR_MESSAGES[code] ?? "Error interno del procesador.");
     const technicalDetail =
       appError?.technicalDetail ??
       (error instanceof Error ? error.message : String(error));
@@ -406,12 +412,16 @@ function runProcess(
   args: string[],
   jobId: string
 ): Promise<void> {
+  const isYtdlp = binary === CONFIG.media.binaries.ytdlp;
+
   return new Promise((resolve, reject) => {
     const proc = spawn(binary, args, {
       shell: false,
       windowsHide: true,
       timeout: CONFIG.media.limits.conversionTimeoutSeconds * 1000,
     });
+
+    let stderrBuffer = "";
 
     proc.stdout.on("data", (data: Buffer) => {
       const line = data.toString();
@@ -421,9 +431,12 @@ function runProcess(
       }
     });
 
-    // ffmpeg outputs to stderr
+    // ffmpeg outputs to stderr; yt-dlp also emits errors there — capture the
+    // full text so a failure can be classified instead of just logging an
+    // opaque exit code.
     proc.stderr.on("data", (data: Buffer) => {
       const line = data.toString();
+      stderrBuffer += line;
       const progress = parseProgress(line);
       if (progress !== null) {
         jobManager.updateJob(jobId, { progress: Math.min(progress, 90) });
@@ -432,8 +445,30 @@ function runProcess(
 
     proc.on("close", (code: number | null) => {
       if (code !== 0) {
+        const sanitized = sanitizeStderr(stderrBuffer);
+        console.error(
+          `[processor] ${path.basename(binary)} exited (code=${code ?? "killed"}) job=${jobId}`,
+          sanitized
+        );
+
+        if (isYtdlp) {
+          const category = classifyYtdlpFailure(stderrBuffer, code);
+          appendYtdlpErrorLog({
+            ts: new Date().toISOString(),
+            cmd: `${path.basename(binary)} ${args.join(" ")}`,
+            exitCode: code,
+            stderr: sanitized,
+          });
+          reject(createAppError("ENGINE_EXECUTE_FAILED", category.message, {
+            stage: "execution",
+            technicalDetail: sanitized,
+          }));
+          return;
+        }
+
         const err = createAppError("ENGINE_EXECUTE_FAILED", `Proceso finalizado con código ${code}`, {
           stage: "execution",
+          technicalDetail: sanitized,
         });
         reject(err);
         return;
