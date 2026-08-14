@@ -6,6 +6,7 @@ import { AppError, ERROR_CODES, ERROR_MESSAGES } from "../errors";
 import { MetadataResponse } from "../youtube/schemas";
 import { getYtdlpCommonArgs } from "./command-builder";
 import { classifyYtdlpFailure, sanitizeStderr, appendYtdlpErrorLog } from "./ytdlp-stderr-classifier";
+import { withCookiesFallback, cookiesFileHasDomainFor } from "./ytdlp-cookies-retry";
 
 export interface VideoFormat {
   formatId: string;
@@ -85,7 +86,40 @@ function validateBinaryPath(binPath: string): void {
 // Public API
 // ---------------------------------------------------------------------------
 
+/**
+ * Tries anonymous first, falls back to cookies only on failure (see
+ * ytdlp-cookies-retry.ts — a stale cookie can break videos that would
+ * otherwise work fine without it). When the anonymous attempt fails with a
+ * bot-check-shaped error and no cookies are configured at all, appends a
+ * hint that uploading cookies (Diagnostics panel) may unblock it.
+ */
 export async function getVideoMetadata(url: string): Promise<MetadataResponse> {
+  const cookiesPath = CONFIG.media.binaries.ytdlpCookiesPath;
+  const cookiesConfigured = Boolean(cookiesPath) && cookiesFileHasDomainFor(cookiesPath, url);
+  try {
+    const { result } = await withCookiesFallback(
+      (useCookies) => attemptGetVideoMetadata(url, useCookies),
+      cookiesConfigured
+    );
+    return result;
+  } catch (err) {
+    if (
+      !cookiesConfigured &&
+      err instanceof AppError &&
+      err.code === "YOUTUBE_BOT_VERIFICATION"
+    ) {
+      throw new AppError(
+        err.code,
+        `${err.message} Puedes subir un archivo de cookies (panel Diagnóstico) y volver a intentarlo.`,
+        err.status,
+        err.technicalDetail
+      );
+    }
+    throw err;
+  }
+}
+
+function attemptGetVideoMetadata(url: string, useCookies: boolean): Promise<MetadataResponse> {
   const ytdlpBin = CONFIG.media.binaries.ytdlp;
 
   // Early validation — catch missing binary before spawning
@@ -93,7 +127,7 @@ export async function getVideoMetadata(url: string): Promise<MetadataResponse> {
 
   return new Promise((resolve, reject) => {
     const args = [
-      ...getYtdlpCommonArgs(),
+      ...getYtdlpCommonArgs(useCookies),
       "--dump-single-json",
       "--skip-download",
       "--no-playlist",

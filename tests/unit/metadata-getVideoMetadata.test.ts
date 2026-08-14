@@ -30,6 +30,15 @@ vi.mock("fs", async (importOriginal) => {
   return { ...mocked, default: mocked };
 });
 
+// ── Disable the cookies fallback for these tests ──────────────────────────────
+// The mocked fs.existsSync above makes CONFIG resolve a cookies drop-in path
+// unconditionally; without this, a failed attempt would trigger a real
+// second spawn() call these tests never account for.
+vi.mock("@/lib/media/ytdlp-cookies-retry", async (importOriginal) => {
+  const original = await importOriginal<typeof import("@/lib/media/ytdlp-cookies-retry")>();
+  return { ...original, cookiesFileHasDomainFor: () => false };
+});
+
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
 interface FakeProcess extends EventEmitter {

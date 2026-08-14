@@ -13,6 +13,7 @@ import { AudioOutputFormat, VideoOutputFormat } from "../jobs/job-types";
 import { createAppError, ERROR_MESSAGES, type AppError, type ErrorCode } from "../errors/error-codes";
 import { checkDiskSpace } from "../jobs/disk-space-check";
 import { classifyYtdlpFailure, sanitizeStderr, appendYtdlpErrorLog } from "./ytdlp-stderr-classifier";
+import { withCookiesFallback, cookiesFileHasDomainFor } from "./ytdlp-cookies-retry";
 import crypto from "crypto";
 
 const AUDIO_FORMATS: AudioOutputFormat[] = ["mp3", "m4a", "wav", "flac", "ogg"];
@@ -262,16 +263,58 @@ async function processRemoteUrl(
 
   const resolvedQuality = resolveQuality(quality);
 
-  const args = buildYtdlpArgs({
-    url,
-    format: outputFormat as AudioOutputFormat | VideoOutputFormat,
-    quality: resolvedQuality,
-    outputPath,
-    ffmpegLocation: path.dirname(CONFIG.media.binaries.ffmpeg),
-  });
+  // Only pass --ffmpeg-location when we have a real absolute path (portable
+  // distributions set ANCLORA_FILESTUDIO_FFMPEG_PATH). When ffmpeg resolves
+  // to a bare PATH-relative command (dev/VPS, Linux portable), path.dirname()
+  // on it would yield "." — yt-dlp then can't find ffmpeg there, concludes
+  // it "isn't installed", skips merging entirely, and falls back to a
+  // single-file format that often 404s/403s for high resolutions. Omitting
+  // the flag lets yt-dlp do its own PATH-based ffmpeg lookup instead.
+  const ffmpegBin = CONFIG.media.binaries.ffmpeg;
+  const cookiesPath = CONFIG.media.binaries.ytdlpCookiesPath;
+  const cookiesConfigured = Boolean(cookiesPath) && cookiesFileHasDomainFor(cookiesPath, url);
+  const jobDir = path.dirname(outputPath);
 
-  await runProcess(CONFIG.media.binaries.ytdlp, args, jobId);
-  await ensureOutputAtPath(outputPath, CONFIG.media.binaries.ffmpeg);
+  const attemptDownload = async (useCookies: boolean): Promise<void> => {
+    // Clean up any partial output left by a prior failed attempt so
+    // ensureOutputAtPath doesn't mistake it for this attempt's real output.
+    // jobDir may not exist yet on the very first attempt — that's normal.
+    if (fs.existsSync(jobDir)) {
+      const outputBaseName = path.basename(outputPath, path.extname(outputPath));
+      for (const f of fs.readdirSync(jobDir)) {
+        if (f.startsWith(outputBaseName)) fs.rmSync(path.join(jobDir, f), { force: true });
+      }
+    }
+
+    const args = buildYtdlpArgs({
+      url,
+      format: outputFormat as AudioOutputFormat | VideoOutputFormat,
+      quality: resolvedQuality,
+      outputPath,
+      ffmpegLocation: path.isAbsolute(ffmpegBin) ? path.dirname(ffmpegBin) : undefined,
+      useCookies,
+    });
+    await runProcess(CONFIG.media.binaries.ytdlp, args, jobId);
+    await ensureOutputAtPath(outputPath, CONFIG.media.binaries.ffmpeg);
+  };
+
+  try {
+    await withCookiesFallback(attemptDownload, cookiesConfigured);
+  } catch (err) {
+    if (
+      !cookiesConfigured &&
+      err instanceof Error &&
+      err.name === "AppError" &&
+      err.message.includes("verificación anti-bot")
+    ) {
+      throw createAppError(
+        (err as AppError).code,
+        `${err.message} Puedes subir un archivo de cookies (panel Diagnóstico) y volver a intentarlo.`,
+        { stage: (err as AppError).stage, technicalDetail: (err as AppError).technicalDetail }
+      );
+    }
+    throw err;
+  }
 
   // Probe output for quality verification (video jobs only)
   const isVideoOutputFormat = ["mp4", "webm", "mkv"].includes(outputFormat);

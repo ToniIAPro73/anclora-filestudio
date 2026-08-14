@@ -14,24 +14,28 @@ import { isAncloraWindowsRuntime } from "../runtime-platform";
  * for portable distributions running in arbitrary Windows corporate environments.
  * It is NOT added in dev/Linux mode where TLS verification works as expected.
  *
- * --cookies is added only when ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH is set
- * locally (never by default, never in portables). Applied to both metadata
- * and download so a video that analyzes successfully also downloads.
+ * Cookies are opt-in per call, not automatic: an authenticated session helps
+ * bypass a bot-check, but a stale/rotated cookie can also make YouTube
+ * revoke a signed segment URL mid-download for videos that would otherwise
+ * work fine anonymously. Callers try WITHOUT cookies first and only pass
+ * useCookies=true as a fallback retry after that attempt fails — see
+ * ytdlp-cookies-retry.ts. --cookies itself is only ever added when
+ * ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH is set or a data/cookies.txt
+ * drop-in exists (never by default, never in portables).
  *
- * An authenticated request still needs signature/n-challenge solving (EJS)
+ * An authenticated request also needs signature/n-challenge solving (EJS)
  * to get real format URLs — without it yt-dlp only returns images. That
  * needs a JS runtime (--js-runtimes, using the same Node running this
  * server) plus the official yt-dlp EJS solver component, fetched once from
  * yt-dlp's own GitHub releases and cached locally. Both are gated behind
- * the same cookies opt-in so portables (which never set that var) are
- * untouched.
+ * the same useCookies flag.
  */
-export function getYtdlpCommonArgs(): string[] {
+export function getYtdlpCommonArgs(useCookies: boolean = false): string[] {
   const args: string[] = [];
   if (isAncloraWindowsRuntime()) {
     args.push("--no-check-certificates");
   }
-  if (CONFIG.media.binaries.ytdlpCookiesPath) {
+  if (useCookies && CONFIG.media.binaries.ytdlpCookiesPath) {
     args.push("--cookies", CONFIG.media.binaries.ytdlpCookiesPath);
     args.push("--js-runtimes", `node:${process.execPath}`);
     args.push("--remote-components", "ejs:github");
@@ -70,13 +74,15 @@ export interface YtdlpConversionOptions {
   quality: string | VideoQualitySelection;
   outputPath: string;
   ffmpegLocation?: string;
+  /** Fallback retry only — see ytdlp-cookies-retry.ts. Defaults to false (try anonymous first). */
+  useCookies?: boolean;
 }
 
 export function buildYtdlpArgs(options: YtdlpConversionOptions): string[] {
-  const { url, format, quality, outputPath, ffmpegLocation } = options;
+  const { url, format, quality, outputPath, ffmpegLocation, useCookies } = options;
 
   const baseArgs = [
-    ...getYtdlpCommonArgs(),
+    ...getYtdlpCommonArgs(useCookies),
     "--no-playlist",
     "--newline",
     ...(ffmpegLocation ? ["--ffmpeg-location", ffmpegLocation] : []),

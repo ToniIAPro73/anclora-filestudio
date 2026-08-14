@@ -21,8 +21,17 @@ vi.mock("fs", async (importOriginal) => {
     existsSync: vi.fn().mockReturnValue(true),
     mkdirSync: vi.fn(),
     appendFileSync: vi.fn(),
+    readdirSync: vi.fn().mockReturnValue([]),
+    rmSync: vi.fn(),
   };
   return { ...mocked, default: mocked };
+});
+
+// Disable the cookies fallback — this test is only about the classified
+// message reaching the UI, not the anonymous/cookies retry strategy.
+vi.mock("@/lib/media/ytdlp-cookies-retry", async (importOriginal) => {
+  const original = await importOriginal<typeof import("@/lib/media/ytdlp-cookies-retry")>();
+  return { ...original, cookiesFileHasDomainFor: () => false };
 });
 
 vi.mock("@/lib/media/metadata", () => ({

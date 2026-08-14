@@ -17,6 +17,14 @@ vi.mock("child_process", async (importOriginal) => {
   return { ...original, spawn: vi.fn() };
 });
 
+// Disable the cookies fallback — these tests use real fs and don't want a
+// real data/cookies.txt on the test machine to trigger a second, unmocked
+// spawn attempt.
+vi.mock("@/lib/media/ytdlp-cookies-retry", async (importOriginal) => {
+  const original = await importOriginal<typeof import("@/lib/media/ytdlp-cookies-retry")>();
+  return { ...original, cookiesFileHasDomainFor: () => false };
+});
+
 vi.mock("@/lib/media/metadata", () => ({
   getVideoMetadata: vi.fn().mockResolvedValue({
     videoId: "88fD-UtG_yo",
