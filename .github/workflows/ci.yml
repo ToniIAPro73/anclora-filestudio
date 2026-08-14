@@ -5,6 +5,10 @@ on:
     branches: [main, "feat/**"]
   pull_request:
 
+env:
+  PNPM_VERSION: "10.33.2"
+  NODE_VERSION: "22.13.1"
+
 jobs:
   ci-core:
     runs-on: ubuntu-24.04
@@ -12,18 +16,17 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.33.2
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.13.1
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
+      - run: pnpm --version
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
-      - name: Install real engine binaries
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg poppler-utils qpdf pandoc tesseract-ocr p7zip-full yt-dlp
+      - name: Install Linux integration test toolchain
+        run: bash scripts/ci/setup-linux-test-toolchain.sh
       - run: pnpm test
 
   ci-service:
@@ -32,11 +35,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.33.2
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.13.1
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
+      - run: pnpm --version
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @anclora/filestudio-api typecheck
       - run: pnpm --filter @anclora/filestudio-api test
@@ -48,11 +52,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.33.2
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.13.1
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
+      - run: pnpm --version
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:local-agent
       - run: pnpm build:local-agent
@@ -63,11 +68,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.33.2
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.13.1
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
+      - run: pnpm --version
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:routing
       - run: pnpm test:nexus-contract
@@ -78,11 +84,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.33.2
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.13.1
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
+      - run: pnpm --version
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:security
       - run: pnpm audit --prod
@@ -95,11 +102,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.33.2
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.13.1
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
+      - run: pnpm --version
       - run: pnpm install --frozen-lockfile
       - run: docker compose -f deploy/vps/compose.yml config
       - run: docker compose -f deploy/vps/compose.yml build --no-cache
