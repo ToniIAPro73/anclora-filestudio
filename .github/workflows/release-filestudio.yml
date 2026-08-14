@@ -1,0 +1,350 @@
+name: release-filestudio
+
+# Builds the Windows/Linux portables and the Windows installer FROM THE
+# TAGGED COMMIT (never re-uses local/VPS-built artifacts), verifies them,
+# and publishes a GitHub Release only if every gate below passes.
+#
+# Trigger:
+#   - push a tag matching v* → full pipeline, publish=true
+#   - workflow_dispatch      → full pipeline, publish=<input> (default false,
+#                               i.e. a dry run: build + verify + smoke +
+#                               upload workflow artifacts, no public Release)
+#
+# This workflow never talks to the Anclora VPS, Caddy, or
+# filestudio.dev.anclora.com — every artifact it publishes is built fresh on
+# GitHub-hosted runners from this repository's own source.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Create a GitHub Release (unchecked = dry run: build + verify + smoke, artifacts uploaded to the workflow run only)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  PNPM_VERSION: "10.33.2"
+  NODE_VERSION: "22.13.1"
+
+jobs:
+  # ── Gate 1: same checks as ci.yml's ci-core ──────────────────────────────
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - name: Install real engine binaries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg poppler-utils qpdf pandoc tesseract-ocr p7zip-full yt-dlp
+      - run: pnpm test
+      - run: pnpm build
+
+  # ── Gate 2a: Linux portable, built + verified + smoke-tested from this tag ──
+  build-linux-portable:
+    needs: validate
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install packaging + engine binaries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zstd ffmpeg poppler-utils qpdf pandoc tesseract-ocr p7zip-full yt-dlp
+      - run: pnpm build:portable:linux
+      - run: bash scripts/verify-linux-portable.sh
+      - run: bash scripts/smoke-linux-portable.sh
+      - name: Verify provenance matches this commit
+        run: |
+          set -euo pipefail
+          MANIFEST_COMMIT="$(tar --use-compress-program=zstd -xOf dist/linux/Anclora-FileStudio-Linux-x64.tar.zst Anclora-FileStudio-Linux-x64/manifest.json | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).commitFull))")"
+          echo "Manifest commit: $MANIFEST_COMMIT"
+          echo "Workflow commit: $GITHUB_SHA"
+          [[ "$MANIFEST_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::Linux portable manifest commit does not match GITHUB_SHA"; exit 1; }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-portable
+          path: |
+            dist/linux/Anclora-FileStudio-Linux-x64.tar.zst
+            dist/linux/Anclora-FileStudio-Linux-x64.tar.zst.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  # ── Gate 2b: Windows portable, built + verified + smoke-tested from this tag ──
+  build-windows-portable:
+    needs: validate
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build Windows portable
+        shell: bash
+        run: bash scripts/build-windows-portable.sh
+      - name: Verify Windows portable
+        shell: bash
+        run: bash scripts/verify-windows-portable-v2.sh
+      - name: Smoke test Windows portable
+        shell: bash
+        run: bash scripts/smoke-windows-portable.sh
+      - name: Verify provenance matches this commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          MANIFEST_COMMIT="$(python3 -c "import zipfile,json; print(json.loads(zipfile.ZipFile('dist/windows/Anclora-FileStudio-Windows-x64-Core.zip').read('Anclora-FileStudio-Windows-x64-Core/manifest.json'))['commitFull'])")"
+          echo "Manifest commit: $MANIFEST_COMMIT"
+          echo "Workflow commit: $GITHUB_SHA"
+          [[ "$MANIFEST_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::Windows portable manifest commit does not match GITHUB_SHA"; exit 1; }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-portable
+          path: |
+            dist/windows/Anclora-FileStudio-Windows-x64-Core.zip
+            dist/windows/Anclora-FileStudio-Windows-x64-Core.zip.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  # ── Gate 3: Windows installer, compiled on a real Windows runner from the
+  #    Windows portable this workflow just built (never a VPS/local artifact) ──
+  build-windows-setup:
+    needs: build-windows-portable
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-portable
+          path: dist/windows
+      - name: Stage installer payload from the portable ZIP
+        shell: bash
+        run: bash scripts/build-windows-installer-staging.sh
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          $isccPath = Get-ChildItem -Path "C:\Program Files (x86)\Inno Setup 6" -Filter ISCC.exe -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $isccPath) { throw "ISCC.exe not found after installing Inno Setup" }
+          echo "ISCC=$($isccPath.FullName)" >> $env:GITHUB_ENV
+
+      - name: Resolve version/commit for installer metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="$(node -p "require('./package.json').version")"
+          fi
+          echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "BUILD_COMMIT=$GITHUB_SHA" >> "$GITHUB_ENV"
+          echo "BUILD_COMMIT_SHORT=${GITHUB_SHA:0:7}" >> "$GITHUB_ENV"
+
+      - name: Compile installer (Inno Setup)
+        shell: pwsh
+        run: |
+          & "$env:ISCC" `
+            /DAppVersion="$env:APP_VERSION" `
+            /DBuildCommit="$env:BUILD_COMMIT" `
+            /DBuildCommitShort="$env:BUILD_COMMIT_SHORT" `
+            installer\windows\filestudio.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC compile failed with exit code $LASTEXITCODE" }
+
+      - name: Verify Setup.exe was produced
+        shell: bash
+        run: |
+          set -euo pipefail
+          F="dist/release/Anclora-FileStudio-Setup-Windows-x64.exe"
+          [[ -f "$F" ]] || { echo "::error::Setup.exe not found: $F"; exit 1; }
+          SIZE=$(stat -c%s "$F" 2>/dev/null || stat -f%z "$F")
+          [[ "$SIZE" -gt 0 ]] || { echo "::error::Setup.exe is empty"; exit 1; }
+          sha256sum "$F"
+          echo "Setup.exe size: $SIZE bytes"
+
+      - name: Installer smoke test (silent install → health → silent uninstall)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $Setup = "dist\release\Anclora-FileStudio-Setup-Windows-x64.exe"
+          $InstallDir = "$env:LOCALAPPDATA\Anclora\FileStudio"
+
+          Write-Host "== INSTALL =="
+          $p = Start-Process -FilePath $Setup -ArgumentList "/VERYSILENT","/NORESTART","/SUPPRESSMSGBOXES" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Installer exited with code $($p.ExitCode)" }
+          if (-not (Test-Path "$InstallDir\INICIAR_ANCLORA_FILESTUDIO.bat")) { throw "Launcher not found after install" }
+          Write-Host "[PASS] INSTALL"
+
+          Write-Host "== LAUNCHER =="
+          if (-not (Test-Path "$InstallDir\manifest.json")) { throw "manifest.json not found after install" }
+          Write-Host "[PASS] LAUNCHER"
+
+          Write-Host "== SHORTCUT TARGET =="
+          $desktopLnk = Join-Path ([Environment]::GetFolderPath('Desktop')) "Anclora FileStudio.lnk"
+          if (-not (Test-Path $desktopLnk)) { throw "Desktop shortcut not found" }
+          $wsh = New-Object -ComObject WScript.Shell
+          $sc = $wsh.CreateShortcut($desktopLnk)
+          if ($sc.TargetPath -notlike "*INICIAR_ANCLORA_FILESTUDIO.bat") { throw "Desktop shortcut target unexpected: $($sc.TargetPath)" }
+          Write-Host "[PASS] SHORTCUT TARGET"
+
+          Write-Host "== APP START =="
+          Push-Location $InstallDir
+          & ".\internal\start-anclora-filestudio.ps1" -BaseDir $InstallDir -SkipBrowser
+          Pop-Location
+          Write-Host "[PASS] APP START"
+
+          Write-Host "== HEALTH =="
+          $portFile = Join-Path $InstallDir "data\anclora-filestudio.port"
+          $port = (Get-Content $portFile -Raw).Trim()
+          $health = Invoke-WebRequest -Uri "http://127.0.0.1:$port/api/health" -UseBasicParsing -TimeoutSec 10
+          if ($health.StatusCode -ne 200) { throw "Health endpoint returned $($health.StatusCode)" }
+          Write-Host "[PASS] HEALTH"
+
+          Write-Host "== STOP =="
+          & "$InstallDir\internal\stop-anclora-filestudio.ps1" -BaseDir $InstallDir
+          Write-Host "[PASS] STOP"
+
+          Write-Host "== UNINSTALL =="
+          $uninstallEntry = Get-ChildItem "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall" |
+            Get-ItemProperty | Where-Object { $_.DisplayName -eq "Anclora FileStudio" } | Select-Object -First 1
+          if (-not $uninstallEntry) { throw "Uninstall registry entry not found" }
+          $uninstExe = $uninstallEntry.UninstallString -replace '"',''
+          $p = Start-Process -FilePath $uninstExe -ArgumentList "/VERYSILENT","/NORESTART","/SUPPRESSMSGBOXES" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Uninstaller exited with code $($p.ExitCode)" }
+          if (Test-Path "$InstallDir\INICIAR_ANCLORA_FILESTUDIO.bat") { throw "Launcher still present after uninstall" }
+          Write-Host "[PASS] UNINSTALL"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-setup
+          path: dist/release/Anclora-FileStudio-Setup-Windows-x64.exe
+          if-no-files-found: error
+          retention-days: 14
+
+  # ── Gate 4: assemble checksums/manifest, verify cross-artifact provenance,
+  #    publish a GitHub Release only if every prior gate passed AND publish=true ──
+  package:
+    needs: [validate, build-linux-portable, build-windows-portable, build-windows-setup]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-portable
+          path: dist/linux
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-portable
+          path: dist/windows
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-setup
+          path: dist/release
+
+      - name: Resolve version/tag/publish
+        id: meta
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            TAG="${GITHUB_REF#refs/tags/}"
+            IS_TAG=true
+          else
+            VERSION="$(node -p "require('./package.json').version")"
+            TAG=""
+            IS_TAG=false
+          fi
+          PUBLISH="${{ github.event.inputs.publish }}"
+          if [[ "$IS_TAG" == "true" ]]; then PUBLISH=true; fi
+          if [[ -z "$PUBLISH" ]]; then PUBLISH=false; fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "publish=$PUBLISH" >> "$GITHUB_OUTPUT"
+          echo "Version: $VERSION | Tag: ${TAG:-<none>} | Publish: $PUBLISH"
+
+      - name: Verify cross-artifact provenance
+        run: |
+          set -euo pipefail
+          LINUX_COMMIT="$(tar --use-compress-program=zstd -xOf dist/linux/Anclora-FileStudio-Linux-x64.tar.zst Anclora-FileStudio-Linux-x64/manifest.json | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).commitFull))")"
+          WINDOWS_COMMIT="$(python3 -c "import zipfile,json; print(json.loads(zipfile.ZipFile('dist/windows/Anclora-FileStudio-Windows-x64-Core.zip').read('Anclora-FileStudio-Windows-x64-Core/manifest.json'))['commitFull'])")"
+          echo "Linux portable commit:   $LINUX_COMMIT"
+          echo "Windows portable commit: $WINDOWS_COMMIT"
+          echo "Workflow commit:         $GITHUB_SHA"
+          [[ "$LINUX_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::Linux portable provenance mismatch"; exit 1; }
+          [[ "$WINDOWS_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::Windows portable provenance mismatch"; exit 1; }
+
+      - name: Generate release manifest + checksums
+        run: |
+          node scripts/generate-release-manifest.mjs \
+            --dir dist/release \
+            --version "${{ steps.meta.outputs.version }}" \
+            --commit "$GITHUB_SHA" \
+            --windows-zip dist/windows/Anclora-FileStudio-Windows-x64-Core.zip \
+            --linux-tar dist/linux/Anclora-FileStudio-Linux-x64.tar.zst \
+            --windows-setup dist/release/Anclora-FileStudio-Setup-Windows-x64.exe
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-bundle
+          path: |
+            dist/windows/Anclora-FileStudio-Windows-x64-Core.zip
+            dist/linux/Anclora-FileStudio-Linux-x64.tar.zst
+            dist/release/Anclora-FileStudio-Setup-Windows-x64.exe
+            dist/release/SHA256SUMS.txt
+            dist/release/release-manifest.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Create GitHub Release
+        if: steps.meta.outputs.publish == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${{ steps.meta.outputs.tag }}" ]]; then
+            echo "::error::publish=true but no tag was pushed — refusing to create an untagged Release"
+            exit 1
+          fi
+          gh release create "${{ steps.meta.outputs.tag }}" \
+            --title "Anclora FileStudio ${{ steps.meta.outputs.tag }}" \
+            --notes "Commit: $GITHUB_SHA
+          Windows installer: unsigned (SmartScreen will warn — see docs/RELEASE_WINDOWS_INSTALLER.md)
+          Checksums: see SHA256SUMS.txt / release-manifest.json" \
+            dist/windows/Anclora-FileStudio-Windows-x64-Core.zip \
+            dist/linux/Anclora-FileStudio-Linux-x64.tar.zst \
+            dist/release/Anclora-FileStudio-Setup-Windows-x64.exe \
+            dist/release/SHA256SUMS.txt \
+            dist/release/release-manifest.json
