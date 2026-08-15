@@ -26,6 +26,16 @@ STAGING_DIR="$STAGING_BASE/$PACKAGE_NAME"
 
 [[ -f "$SOURCE_ZIP" ]] || die "Portable ZIP not found: $SOURCE_ZIP (build it first — this script does NOT rebuild it)"
 
+# Windows Git Bash bundles a Windows-native python3 that cannot resolve
+# MSYS-style /d/a/... paths — convert when cygpath is available.
+to_python_path() {
+  if command -v cygpath >/dev/null 2>&1; then
+    cygpath -w "$1"
+  else
+    printf '%s' "$1"
+  fi
+}
+
 info "Source ZIP: $SOURCE_ZIP"
 info "Staging dir: $STAGING_DIR"
 
@@ -42,7 +52,7 @@ if command -v unzip >/dev/null 2>&1; then
   unzip -q "$SOURCE_ZIP" -d "$STAGING_BASE"
 else
   # Windows Git Bash / PowerShell fallback path
-  python3 -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])" "$SOURCE_ZIP" "$STAGING_BASE"
+  python3 -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])" "$(to_python_path "$SOURCE_ZIP")" "$(to_python_path "$STAGING_BASE")"
 fi
 [[ -d "$STAGING_DIR" ]] || die "Extraction did not produce expected folder: $STAGING_DIR"
 ok "Extracted"
@@ -86,7 +96,7 @@ if find "$STAGING_DIR" -type d \( -path "*/dist/windows" -o -path "*/dist/linux"
 fi
 ok "No nested .git or repo-dist artifacts"
 
-MANIFEST_COMMIT="$(python3 -c "import json; print(json.load(open('$STAGING_DIR/manifest.json'))['commitFull'])")"
+MANIFEST_COMMIT="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['commitFull'])" "$(to_python_path "$STAGING_DIR/manifest.json")")"
 info "Staged manifest commitFull: $MANIFEST_COMMIT"
 
 echo "$STAGING_DIR"
