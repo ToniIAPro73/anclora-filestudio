@@ -260,7 +260,8 @@ jobs:
           # does. Must end with exactly ONE server instance; browser windows
           # are not validated (not reliable on CI runners).
           $portFile = Join-Path $InstallDir "data\anclora-filestudio.port"
-          $wsh.Run($desktopLnk) | Out-Null
+          $quotedShortcut = '"' + $desktopLnk + '"'
+          $wsh.Run($quotedShortcut, 1, $false) | Out-Null
           $serverReady = $false
           for ($attempt = 1; $attempt -le 60; $attempt++) {
               if (Test-Path $portFile) {
