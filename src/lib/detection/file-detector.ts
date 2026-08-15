@@ -879,7 +879,13 @@ async function buildImageAttributes(
 ): Promise<ImageAttributes> {
   try {
     const sharp = (await import("sharp")).default;
-    const metadata = await sharp(filePath, { failOn: "error", animated: true }).metadata();
+    // libvips keeps an open file handle cached on Windows (sharp#2005), which
+    // later makes cleanup/unlink fail with EBUSY. Feed a Buffer on win32 so no
+    // file descriptor is held after the metadata read.
+    const input = process.platform === "win32"
+      ? await fs.promises.readFile(filePath)
+      : filePath;
+    const metadata = await sharp(input, { failOn: "error", animated: true }).metadata();
     const width = metadata.width;
     const height = metadata.height;
 
