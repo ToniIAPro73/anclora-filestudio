@@ -89,12 +89,14 @@ Name: "{autoprograms}\Desinstalar {#AppName}"; Filename: "{uninstallexe}"
 Filename: "{app}\{#AppExeLauncher}"; Description: "Iniciar {#AppName} ahora"; Flags: postinstall skipifsilent nowait
 
 [Code]
-{ Optional, explicit, opt-in data wipe on uninstall — never the default path.
-  data\, logs\, temp\, and runtime-packs\ are never in [Files]: they hold
-  content the app creates/downloads at runtime (SQLite DB, uploaded cookies,
-  downloaded runtime packs). Inno's uninstaller only ever removes files it
-  installed, and only removes {app} itself if it ends up empty — so by
-  default this content, and {app}, survive uninstall untouched. }
+// Optional, explicit, opt-in data wipe on uninstall — never the default path.
+// data\, logs\, temp\, and runtime-packs\ are never in [Files]: they hold
+// content the app creates/downloads at runtime (SQLite DB, uploaded cookies,
+// downloaded runtime packs). Inno's uninstaller only ever removes files it
+// installed, and only removes {app} itself if it ends up empty — so by
+// default this content, and {app}, survive uninstall untouched.
+// NOTE: keep this as //-style comments — a brace-style { } comment would be
+// closed early by the "{app}" constants mentioned above and break ISCC.
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
   Msg: String;
