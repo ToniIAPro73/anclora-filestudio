@@ -24,6 +24,25 @@ echo ""
 FAIL=0
 PASS=0
 
+read_json_field() {
+  local file="$1"
+  local field="$2"
+
+  python3 - "$file" "$field" <<'PY'
+import json
+import sys
+
+file, field = sys.argv[1:]
+with open(file, encoding="utf-8") as handle:
+    value = json.load(handle)
+for part in field.split("."):
+    value = value[part]
+if not isinstance(value, str):
+    raise TypeError(f"{field} is not a string")
+print(value)
+PY
+}
+
 # ── Checksum ──────────────────────────────────────────────────────────────────
 SHA_FILE="$ZIP.sha256"
 if [[ -f "$SHA_FILE" ]]; then
@@ -95,21 +114,30 @@ if [[ -n "$SEVENZIP" ]]; then
   done
 
   # semver version check
-  if [[ -f "$PKG/app/node_modules/semver/package.json" ]]; then
-    SEMVER_VER="$(python3 -c "import json; print(json.load(open('$PKG/app/node_modules/semver/package.json')).get('version','?'))" 2>/dev/null || echo '?')"
+  SEMVER_PACKAGE="$PKG/app/node_modules/semver/package.json"
+  if [[ ! -f "$SEMVER_PACKAGE" ]]; then
+    echo "[FAIL] semver package.json missing: $SEMVER_PACKAGE"
+    FAIL=$((FAIL+1))
+  elif SEMVER_VER="$(read_json_field "$SEMVER_PACKAGE" version 2>&1)"; then
     echo "[INFO] semver version in package: $SEMVER_VER"
     if python3 - "$SEMVER_VER" <<'PY' >/dev/null 2>&1
 import sys
-parts = tuple(int(p) for p in sys.argv[1].split(".")[:3])
+try:
+    parts = tuple(int(p) for p in sys.argv[1].split(".")[:3])
+except (ValueError, IndexError):
+    raise SystemExit(1)
 raise SystemExit(0 if parts >= (7, 8, 4) and parts < (8, 0, 0) else 1)
 PY
     then
-      echo "[PASS] semver@$SEMVER_VER (Sharp compatible)"
+      echo "[PASS] semver@$SEMVER_VER satisfies >=7.8.4 <8"
       PASS=$((PASS+1))
     else
       echo "[FAIL] semver@$SEMVER_VER (expected >=7.8.4 <8)"
       FAIL=$((FAIL+1))
     fi
+  else
+    echo "[FAIL] semver package.json parser failure: $SEMVER_VER"
+    FAIL=$((FAIL+1))
   fi
 
   STATE_FILES="$(find "$PKG" \( -name '*.sqlite' -o -name '*.sqlite-wal' -o -name '*.sqlite-shm' \) -type f 2>/dev/null | head -20 || true)"
@@ -146,12 +174,20 @@ PY
   fi
 
   # platform=windows check
-  PLATFORM="$(python3 -c "import json; print(json.load(open('$PKG/manifest.json'))['platform'])" 2>/dev/null || echo '')"
-  if [[ "$PLATFORM" == "windows" ]]; then
-    echo "[PASS] manifest.platform=windows"
-    PASS=$((PASS+1))
+  MANIFEST="$PKG/manifest.json"
+  if [[ ! -f "$MANIFEST" ]]; then
+    echo "[FAIL] manifest.json missing: $MANIFEST"
+    FAIL=$((FAIL+1))
+  elif PLATFORM="$(read_json_field "$MANIFEST" platform 2>&1)"; then
+    if [[ "$PLATFORM" == "windows" ]]; then
+      echo "[PASS] manifest.platform = windows"
+      PASS=$((PASS+1))
+    else
+      echo "[FAIL] manifest.platform != windows (got: '$PLATFORM')"
+      FAIL=$((FAIL+1))
+    fi
   else
-    echo "[FAIL] manifest.platform != windows (got: '$PLATFORM')"
+    echo "[FAIL] manifest.json parser failure: $PLATFORM"
     FAIL=$((FAIL+1))
   fi
 
