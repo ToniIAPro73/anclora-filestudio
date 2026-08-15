@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 function commandExists(command: string): boolean {
@@ -15,8 +16,9 @@ function commandExists(command: string): boolean {
   }
 }
 
-function toWindowsPath(path: string): string {
-  return execFileSync("wslpath", ["-w", path], { encoding: "utf8" }).trim();
+function toWindowsPath(value: string): string {
+  if (process.platform === "win32") return path.win32.resolve(value);
+  return execFileSync("cygpath", ["-w", value], { encoding: "utf8" }).trim();
 }
 
 const runIfPowerShell = commandExists("powershell.exe") ? it : it.skip;

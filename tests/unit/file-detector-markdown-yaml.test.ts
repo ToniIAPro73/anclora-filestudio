@@ -8,6 +8,7 @@ import { CONFIG } from "../../src/lib/config";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
+import { removeWithRetry } from "../helpers/remove-with-retry";
 
 const testDir = path.join(
   CONFIG.media.tempDir,
@@ -17,7 +18,7 @@ const testDir = path.join(
 fs.mkdirSync(testDir, { recursive: true });
 
 afterAll(() => {
-  fs.rmSync(testDir, { recursive: true, force: true });
+  removeWithRetry(testDir);
 });
 
 function writeTempFile(name: string, content: string): string {

@@ -9,6 +9,7 @@ import fs from "fs";
 import path from "path";
 import os from "os";
 import { spawn, execSync } from "child_process";
+import { removeWithRetry } from "../helpers/remove-with-retry";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -20,7 +21,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  fs.rmSync(tmpDir, { recursive: true, force: true });
+  removeWithRetry(tmpDir);
 });
 
 function run(bin: string, args: string[]): Promise<{ code: number | null; stdout: string; stderr: string }> {

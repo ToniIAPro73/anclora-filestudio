@@ -19,6 +19,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:windows-portable": "vitest run tests/unit/windows-tool-resolution.test.ts tests/unit/toolchain-probe-windows.test.ts tests/unit/toolchain-probe-portable.test.ts tests/unit/command-builder-quality.test.ts tests/unit/inputs-analyze-youtube-route.test.ts tests/unit/metadata-getVideoMetadata.test.ts tests/unit/runtime-packs/runtime-pack-manager.test.ts tests/unit/runtime-packs/chromium-lock-contract.test.ts tests/unit/path-safety.test.ts tests/unit/database-path.test.ts tests/unit/deployment-target.test.ts tests/unit/file-detector-markdown-yaml.test.ts",
     "test:watch": "vitest",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:engines": "vitest run --config vitest.engines.config.ts",
