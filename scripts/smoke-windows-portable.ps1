@@ -276,22 +276,26 @@ try {
     # ── 5b. App Route evaluation (native QA P0 regression) ──────────────────
     # The packaged server must actually evaluate an App Route: the missing
     # next-server runtime module only surfaces when a route chunk is loaded.
-    Write-Host "[INFO] Requesting / (App Page)..."
-    $rootResp = Invoke-WebRequest -Uri ("http://127.0.0.1:" + $serverPort + "/") -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
-    if ($rootResp.StatusCode -ne 200) {
-        throw ("GET / status is not 200: " + $rootResp.StatusCode)
-    }
-    Write-Host "[PASS] GET / returned 200"
+    # Every page's RSC flight payload embeds the app's not-found boundary as
+    # escaped JSON (e.g. \"children\":\"404: This page could not be found.\")
+    # for client-side prefetching, so a naive substring match for "404" false
+    # -positives on every route. Next's built-in not-found/error page instead
+    # renders that text unescaped inside a "next-error-h1" element — match on
+    # that concrete marker, which only appears in an actual rendered 404 page.
+    $notFoundMarker = 'class="next-error-h1"'
 
-    Write-Host "[INFO] Requesting /tools..."
-    $toolsResp = Invoke-WebRequest -Uri ("http://127.0.0.1:" + $serverPort + "/tools") -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
-    if ($toolsResp.StatusCode -ne 200) {
-        throw ("GET /tools status is not 200: " + $toolsResp.StatusCode)
+    $staticRoutes = @("/", "/tools", "/convert", "/diagnostics", "/history")
+    foreach ($route in $staticRoutes) {
+        Write-Host ("[INFO] Requesting " + $route + "...")
+        $routeResp = Invoke-WebRequest -Uri ("http://127.0.0.1:" + $serverPort + $route) -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
+        if ($routeResp.StatusCode -ne 200) {
+            throw ("GET " + $route + " status is not 200: " + $routeResp.StatusCode)
+        }
+        if ($routeResp.Content -match [regex]::Escape($notFoundMarker)) {
+            throw ("GET " + $route + " returned a 404 page body")
+        }
+        Write-Host ("[PASS] GET " + $route + " returned 200")
     }
-    if ($toolsResp.Content -match "404|This page could not be found") {
-        throw "GET /tools returned a 404 page body"
-    }
-    Write-Host "[PASS] GET /tools returned 200 and no 404 body"
 
     Write-Host "[INFO] Requesting /api/batch (App Route module evaluation)..."
     $batchStatus = $null
