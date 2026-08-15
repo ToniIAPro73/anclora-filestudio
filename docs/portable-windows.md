@@ -103,6 +103,7 @@ yt-dlp se actualiza frecuentemente. Actualizar mensualmente o cuando YouTube fal
 ```text
 Anclora-FileStudio/
 ├── INICIAR_ANCLORA_FILESTUDIO.bat
+├── INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs  # usado por los accesos directos (wscript.exe)
 ├── CERRAR_ANCLORA_FILESTUDIO.bat
 ├── DIAGNOSTICO_ANCLORA_FILESTUDIO.bat
 ├── ACTUALIZAR_YTDLP.bat

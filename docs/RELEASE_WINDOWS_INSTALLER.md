@@ -47,8 +47,15 @@ subdirectory.
 - Desktop: `Anclora FileStudio.lnk`
 - Start Menu: `Anclora FileStudio` (with an uninstall shortcut alongside it)
 
-Both point at `INICIAR_ANCLORA_FILESTUDIO.bat` inside the install directory —
-the same real launcher the portable ships, not a new one.
+Both shortcuts target `wscript.exe` with `INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs`
+as its argument — a silent launcher that runs the real
+`INICIAR_ANCLORA_FILESTUDIO.bat` with its console window hidden. The
+shortcuts deliberately do **not** point at the `.bat` directly: launched
+from a `.lnk`, Windows Explorer can execute a `.bat` twice (two browser
+windows), and a console window would always appear. The `.vbs` ships inside
+the install directory next to the `.bat`, uses only built-in Windows
+components (`wscript.exe`, `WScript.Shell`, `Scripting.FileSystemObject`),
+and the `.bat` remains available for manual/diagnostic use.
 
 ## Persistence across upgrades
 

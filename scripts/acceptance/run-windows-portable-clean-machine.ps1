@@ -150,6 +150,7 @@ $RequiredFiles = @(
     "tools\ffmpeg\ffprobe.exe",
     "app\node_modules\better-sqlite3\build\Release\better_sqlite3.node",
     "INICIAR_ANCLORA_FILESTUDIO.bat",
+    "INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs",
     "CERRAR_ANCLORA_FILESTUDIO.bat",
     "internal\start-anclora-filestudio.ps1",
     "internal\stop-anclora-filestudio.ps1",

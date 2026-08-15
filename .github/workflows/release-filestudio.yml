@@ -241,17 +241,49 @@ jobs:
           if (-not (Test-Path $desktopLnk)) { throw "Desktop shortcut not found" }
           $wsh = New-Object -ComObject WScript.Shell
           $sc = $wsh.CreateShortcut($desktopLnk)
-          if ($sc.TargetPath -notlike "*INICIAR_ANCLORA_FILESTUDIO.bat") { throw "Desktop shortcut target unexpected: $($sc.TargetPath)" }
-          Write-Host "[PASS] SHORTCUT TARGET"
+          if ($sc.TargetPath -like "*INICIAR_ANCLORA_FILESTUDIO.bat") { throw "Shortcut still points directly at the .bat: $($sc.TargetPath)" }
+          $expectedHost = Join-Path $env:SystemRoot "System32\wscript.exe"
+          if (-not $sc.TargetPath.Equals($expectedHost, [System.StringComparison]::OrdinalIgnoreCase)) { throw "Shortcut target is not wscript.exe: $($sc.TargetPath)" }
+          $silentVbs = Join-Path $InstallDir "INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs"
+          if ($sc.Arguments -notlike "*INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs*") { throw "Shortcut arguments do not reference the silent launcher: $($sc.Arguments)" }
+          Write-Host "[PASS] SHORTCUT TARGET (wscript.exe + silent VBS)"
 
-          Write-Host "== APP START =="
+          Write-Host "== SILENT LAUNCHER =="
+          if (-not (Test-Path $silentVbs)) { throw "Silent launcher VBS not found after install" }
+          $vbsText = Get-Content $silentVbs -Raw
+          if ($vbsText -notmatch "INICIAR_ANCLORA_FILESTUDIO\.bat") { throw "Silent launcher VBS does not reference the .bat" }
+          if ($vbsText -notmatch "WScript\.Shell") { throw "Silent launcher VBS does not use WScript.Shell" }
+          Write-Host "[PASS] SILENT LAUNCHER (VBS references the .bat)"
+
+          Write-Host "== SHORTCUT LAUNCH (real shortcut, single-instance check) =="
+          # Launch the actual desktop shortcut the way a user double-click
+          # does. Must end with exactly ONE server instance; browser windows
+          # are not validated (not reliable on CI runners).
+          $portFile = Join-Path $InstallDir "data\anclora-filestudio.port"
+          $wsh.Run($desktopLnk) | Out-Null
+          $serverReady = $false
+          for ($attempt = 1; $attempt -le 60; $attempt++) {
+              if (Test-Path $portFile) {
+                  try {
+                      $port = (Get-Content $portFile -Raw).Trim()
+                      $health = Invoke-WebRequest -Uri "http://127.0.0.1:$port/api/health" -UseBasicParsing -TimeoutSec 3 -ErrorAction Stop
+                      if ($health.StatusCode -eq 200) { $serverReady = $true; break }
+                  } catch { }
+              }
+              Start-Sleep -Seconds 2
+          }
+          if (-not $serverReady) { throw "Server did not become healthy after launching the desktop shortcut" }
+          $serverInstances = @(Get-Process -Name node -ErrorAction SilentlyContinue | Where-Object { $_.Path -and $_.Path -ieq "$InstallDir\runtime\node.exe" })
+          if ($serverInstances.Count -ne 1) { throw "Expected exactly 1 server instance after shortcut launch, found $($serverInstances.Count)" }
+          Write-Host "[PASS] SHORTCUT LAUNCH: single server instance (PID $($serverInstances[0].Id))"
+
+          Write-Host "== APP START (direct launcher: existing-instance path) =="
           Push-Location $InstallDir
           & ".\internal\start-anclora-filestudio.ps1" -BaseDir $InstallDir -SkipBrowser
           Pop-Location
           Write-Host "[PASS] APP START"
 
           Write-Host "== HEALTH =="
-          $portFile = Join-Path $InstallDir "data\anclora-filestudio.port"
           $port = (Get-Content $portFile -Raw).Trim()
           $health = Invoke-WebRequest -Uri "http://127.0.0.1:$port/api/health" -UseBasicParsing -TimeoutSec 10
           if ($health.StatusCode -ne 200) { throw "Health endpoint returned $($health.StatusCode)" }

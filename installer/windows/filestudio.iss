@@ -36,6 +36,12 @@
 #define AppName "Anclora FileStudio"
 #define AppPublisher "Anclora"
 #define AppExeLauncher "INICIAR_ANCLORA_FILESTUDIO.bat"
+; Shortcuts and the post-install launch go through wscript.exe + the silent
+; VBS launcher, NOT through the .bat directly: a .lnk that targets the .bat
+; can be executed twice by Explorer (two browser windows) and always shows a
+; black console. The .bat stays in the install for manual/diagnostic use.
+#define AppSilentLauncher "INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs"
+#define AppSilentLauncherHost "wscript.exe"
 #define AppIconRel "app\public\favicon.ico"
 
 ; Stable AppId — DO NOT regenerate on future builds. Inno Setup uses this to
@@ -81,12 +87,14 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "{#StagingDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExeLauncher}"; WorkingDir: "{app}"; IconFilename: "{app}\{#AppIconRel}"; Comment: "{#AppName}"
-Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExeLauncher}"; WorkingDir: "{app}"; IconFilename: "{app}\{#AppIconRel}"; Comment: "{#AppName}"
+; Shortcuts target wscript.exe with the silent VBS launcher as argument:
+; no black console, exactly one launcher execution, exactly one browser window.
+Name: "{autodesktop}\{#AppName}"; Filename: "{sys}\{#AppSilentLauncherHost}"; Parameters: """{app}\{#AppSilentLauncher}"""; WorkingDir: "{app}"; IconFilename: "{app}\{#AppIconRel}"; Comment: "{#AppName}"
+Name: "{autoprograms}\{#AppName}"; Filename: "{sys}\{#AppSilentLauncherHost}"; Parameters: """{app}\{#AppSilentLauncher}"""; WorkingDir: "{app}"; IconFilename: "{app}\{#AppIconRel}"; Comment: "{#AppName}"
 Name: "{autoprograms}\Desinstalar {#AppName}"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\{#AppExeLauncher}"; Description: "Iniciar {#AppName} ahora"; Flags: postinstall skipifsilent nowait
+Filename: "{sys}\{#AppSilentLauncherHost}"; Parameters: """{app}\{#AppSilentLauncher}"""; Description: "Iniciar {#AppName} ahora"; Flags: postinstall skipifsilent nowait
 
 [Code]
 // Optional, explicit, opt-in data wipe on uninstall — never the default path.

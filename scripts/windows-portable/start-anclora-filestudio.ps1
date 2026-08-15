@@ -360,20 +360,29 @@ if (-not $ready) {
 Write-Ok "Servidor listo en http://127.0.0.1:$selectedPort"
 
 # - Crear acceso directo en el Escritorio (solo si no existe ya) ----------
+# El acceso directo NO apunta directamente al .bat: lanzado desde un .lnk de
+# Explorer, el .bat puede ejecutarse dos veces (dos ventanas del navegador) y
+# muestra consola negra. Se usa wscript.exe + el lanzador silencioso VBS.
 try {
     $DesktopDir = [Environment]::GetFolderPath('Desktop')
     $ShortcutPath = Join-Path $DesktopDir 'Anclora FileStudio.lnk'
     if ($DesktopDir -and (Test-Path $DesktopDir) -and -not (Test-Path $ShortcutPath)) {
-        $LauncherBat = Join-Path $BaseDir 'INICIAR_ANCLORA_FILESTUDIO.bat'
+        $LauncherVbs = Join-Path $BaseDir 'INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs'
+        $WScriptHost = Join-Path $env:SystemRoot 'System32\wscript.exe'
         $IconPath = Join-Path $AppDir 'public\favicon.ico'
-        $WshShell = New-Object -ComObject WScript.Shell
-        $Shortcut = $WshShell.CreateShortcut($ShortcutPath)
-        $Shortcut.TargetPath = $LauncherBat
-        $Shortcut.WorkingDirectory = $BaseDir
-        $Shortcut.Description = 'Anclora FileStudio'
-        if (Test-Path $IconPath) { $Shortcut.IconLocation = $IconPath }
-        $Shortcut.Save()
-        Write-Ok "Acceso directo creado en el Escritorio"
+        if ((Test-Path $LauncherVbs) -and (Test-Path $WScriptHost)) {
+            $WshShell = New-Object -ComObject WScript.Shell
+            $Shortcut = $WshShell.CreateShortcut($ShortcutPath)
+            $Shortcut.TargetPath = $WScriptHost
+            $Shortcut.Arguments = '"' + $LauncherVbs + '"'
+            $Shortcut.WorkingDirectory = $BaseDir
+            $Shortcut.Description = 'Anclora FileStudio'
+            if (Test-Path $IconPath) { $Shortcut.IconLocation = $IconPath }
+            $Shortcut.Save()
+            Write-Ok "Acceso directo creado en el Escritorio (wscript.exe + lanzador silencioso)"
+        } else {
+            Write-Warn "No se pudo crear el acceso directo: falta el lanzador silencioso VBS o wscript.exe"
+        }
     }
 } catch {
     # No critico: si el Escritorio esta redirigido o no es escribible, seguimos sin acceso directo.

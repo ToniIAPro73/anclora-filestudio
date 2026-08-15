@@ -141,6 +141,7 @@ info "Verificando archivos obligatorios..."
 
 REQUIRED_FILES=(
   "INICIAR_ANCLORA_FILESTUDIO.bat"
+  "INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs"
   "CERRAR_ANCLORA_FILESTUDIO.bat"
   "ACTUALIZAR_YTDLP.bat"
   "DIAGNOSTICO_ANCLORA_FILESTUDIO.bat"
@@ -499,6 +500,80 @@ if [[ -f "$START_PS1" ]]; then
   done
 else
   fail "  start-anclora-filestudio.ps1 no encontrado"
+fi
+
+# ── 14b. Silent VBS launcher + shortcut wiring ──────────────────────────────
+# Regression guard for the Windows shortcut bug: shortcuts must go through
+# wscript.exe + INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs, never point at the
+# .bat directly (Explorer can launch the .bat twice through a .lnk, opening
+# two browser windows) and must not show a black console.
+info "Verificando lanzador silencioso VBS y wiring de accesos directos..."
+
+VBS_LAUNCHER="$EXTRACTED/INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs"
+if [[ -f "$VBS_LAUNCHER" ]]; then
+  if grep -q "INICIAR_ANCLORA_FILESTUDIO.bat" "$VBS_LAUNCHER" 2>/dev/null; then
+    ok "  VBS referencia INICIAR_ANCLORA_FILESTUDIO.bat"
+    PASS=$((PASS+1))
+  else
+    fail "  VBS no referencia INICIAR_ANCLORA_FILESTUDIO.bat"
+  fi
+  if grep -q "WScript.Shell" "$VBS_LAUNCHER" 2>/dev/null; then
+    ok "  VBS usa WScript.Shell"
+    PASS=$((PASS+1))
+  else
+    fail "  VBS no usa WScript.Shell"
+  fi
+  if grep -qE '\.Run[[:space:]]+[^,]+,[[:space:]]*0[[:space:]]*,[[:space:]]*False' "$VBS_LAUNCHER" 2>/dev/null; then
+    ok "  VBS ejecuta el .bat con ventana oculta sin esperar"
+    PASS=$((PASS+1))
+  else
+    fail "  VBS no ejecuta el .bat con ventana oculta sin espera"
+  fi
+else
+  fail "  INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs no encontrado"
+fi
+
+if [[ -f "$START_PS1" ]]; then
+  if grep -q "wscript.exe" "$START_PS1" 2>/dev/null; then
+    ok "  start PS1 usa wscript.exe para el acceso directo"
+    PASS=$((PASS+1))
+  else
+    fail "  start PS1 no menciona wscript.exe para el acceso directo"
+  fi
+  if grep -q "INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs" "$START_PS1" 2>/dev/null; then
+    ok "  start PS1 referencia el lanzador silencioso VBS"
+    PASS=$((PASS+1))
+  else
+    fail "  start PS1 no referencia INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs"
+  fi
+  if grep -q "TargetPath.*INICIAR_ANCLORA_FILESTUDIO.bat" "$START_PS1" 2>/dev/null; then
+    fail "  start PS1 apunta el acceso directo directamente al .bat (doble navegador)"
+  else
+    ok "  start PS1 no apunta el acceso directo al .bat"
+    PASS=$((PASS+1))
+  fi
+fi
+
+ISS_FILE="$REPO_ROOT/installer/windows/filestudio.iss"
+if [[ -f "$ISS_FILE" ]]; then
+  if grep -q "INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs" "$ISS_FILE" 2>/dev/null; then
+    ok "  filestudio.iss referencia el lanzador silencioso VBS"
+    PASS=$((PASS+1))
+  else
+    fail "  filestudio.iss no referencia INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs"
+  fi
+  if grep -q "wscript.exe" "$ISS_FILE" 2>/dev/null; then
+    ok "  filestudio.iss usa wscript.exe"
+    PASS=$((PASS+1))
+  else
+    fail "  filestudio.iss no usa wscript.exe"
+  fi
+  if grep -q 'Filename: "{app}\\{#AppExeLauncher}"' "$ISS_FILE" 2>/dev/null; then
+    fail "  filestudio.iss apunta algun icono directamente al .bat"
+  else
+    ok "  filestudio.iss no apunta iconos directamente al .bat"
+    PASS=$((PASS+1))
+  fi
 fi
 
 TOOL_RESOLUTION_PS1="$EXTRACTED/internal/tool-resolution.ps1"

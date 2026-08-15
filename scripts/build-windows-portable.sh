@@ -670,6 +670,34 @@ for bat in INICIAR_ANCLORA_FILESTUDIO.bat CERRAR_ANCLORA_FILESTUDIO.bat \
   fi
 done
 
+# Silent launcher used by shortcuts (wscript.exe + this .vbs): the desktop
+# and Start Menu shortcuts must NOT point at the .bat directly — launched
+# from a .lnk, Explorer can execute the .bat twice (two browser windows)
+# and always shows a black console.
+if [[ -f "$SCRIPT_DIR/INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs" ]]; then
+  cp "$SCRIPT_DIR/INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs" "$STAGING_DIR/"
+else
+  warn "Not found: $SCRIPT_DIR/INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs"
+fi
+
+# Generate a minimal silent launcher if the original is not present
+if [[ ! -f "$STAGING_DIR/INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs" ]]; then
+  warn "Generating fallback INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs"
+cat > "$STAGING_DIR/INICIAR_ANCLORA_FILESTUDIO_SILENCIOSO.vbs" << 'VBSEOF'
+Option Explicit
+Dim fso, shell, appDir, batPath, cmdLine
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set shell = CreateObject("WScript.Shell")
+appDir = fso.GetParentFolderName(WScript.ScriptFullName)
+batPath = fso.BuildPath(appDir, "INICIAR_ANCLORA_FILESTUDIO.bat")
+If Not fso.FileExists(batPath) Then
+    WScript.Quit 1
+End If
+cmdLine = "cmd.exe /c """ & batPath & """"
+shell.Run cmdLine, 0, False
+VBSEOF
+fi
+
 # Generate minimal bat launchers if originals not present
 if [[ ! -f "$STAGING_DIR/INICIAR_ANCLORA_FILESTUDIO.bat" ]]; then
 cat > "$STAGING_DIR/INICIAR_ANCLORA_FILESTUDIO.bat" << 'BATEOF'
