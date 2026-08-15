@@ -265,6 +265,7 @@ try {
     }
     Write-Host ("[PASS] /api/health OK via " + $healthUrl)
 
+    $Phase = "CAPABILITIES"
     $capabilitiesUrl = "http://127.0.0.1:" + $serverPort + "/api/capabilities"
     $capabilitiesResp = Invoke-WebRequest -Uri $capabilitiesUrl -UseBasicParsing -TimeoutSec 10 -ErrorAction Stop
     if ($capabilitiesResp.StatusCode -ne 200) {
@@ -305,7 +306,7 @@ try {
     # Any non-5xx HTTP status proves the App Route module was evaluated.
     # 5xx here means the route module failed to load (e.g. MODULE_NOT_FOUND).
     if ($batchStatus -ge 500) {
-        throw ("GET /api/batch returned " + $batchStatus + " — App Route evaluation failed")
+        throw ("GET /api/batch returned " + $batchStatus + " - App Route evaluation failed")
     }
     Write-Host ("[PASS] GET /api/batch evaluated App Route (HTTP " + $batchStatus + ")")
 
@@ -340,7 +341,7 @@ try {
     }
     Write-Host "[PASS] error.log has no MODULE_NOT_FOUND"
 
-    $Phase = "STOP"
+    $Phase = "SHUTDOWN"
     & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass `
         -File $StopScript -BaseDir $PkgDir | Out-Null
     Start-Sleep -Seconds 2

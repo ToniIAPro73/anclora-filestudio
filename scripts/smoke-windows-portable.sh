@@ -127,6 +127,32 @@ fi
 echo "[PASS] Windows path conversion"
 WIN_ZIP="$(cygpath -w "$ZIP")"
 WIN_PS1="$(cygpath -w "$PS1")"
+echo "[CHECK] Validating native smoke PowerShell syntax..."
+if powershell.exe -NoProfile -NonInteractive -Command '& {
+  $scriptPath = $args[0]
+  $tokens = $null
+  $errors = $null
+  [System.Management.Automation.Language.Parser]::ParseFile(
+    $scriptPath,
+    [ref]$tokens,
+    [ref]$errors
+  ) | Out-Null
+  if ($errors.Count -gt 0) {
+    foreach ($errorRecord in $errors) {
+      Write-Host ("line=" + $errorRecord.Extent.StartLineNumber + " column=" + $errorRecord.Extent.StartColumnNumber + " message=" + $errorRecord.Message)
+    }
+    exit 1
+  }
+}' "$WIN_PS1"; then
+  echo "[PASS] PowerShell smoke syntax valid"
+else
+  status=$?
+  echo "[FAIL] PowerShell smoke syntax invalid"
+  echo "PHASE: POWERSHELL_PARSE"
+  echo "EXIT CODE: $status"
+  MAIN_STATUS=1
+  exit 1
+fi
 echo "[CHECK] Running native acceptance test..."
 if powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass \
     -File "$WIN_PS1" -ZipPath "$WIN_ZIP" >"$LOG" 2>&1; then
@@ -136,7 +162,9 @@ else
   status=$?
   cat "$LOG"
   echo "[FAIL] Windows portable runtime smoke failed"
-  echo "PHASE: STARTUP / HEALTH / STOP"
+  phase="$(sed -n 's/^PHASE: //p' "$LOG" | tail -1)"
+  if [[ -z "$phase" ]]; then phase="UNKNOWN"; fi
+  echo "PHASE: $phase"
   echo "PORTABLE ROOT: extracted by native acceptance script"
   echo "PID: reported by native acceptance script"
   echo "URL: reported by native acceptance script"
