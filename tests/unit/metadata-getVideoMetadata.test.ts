@@ -191,7 +191,9 @@ describe("getVideoMetadata — success path", () => {
   });
 
   it("does NOT include --no-check-certificates in non-Windows mode", async () => {
-    delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
+    // Explicit override: deleting the env var is not enough on a Windows host,
+    // where process.platform alone already selects the Windows behavior.
+    process.env.ANCLORA_FILESTUDIO_PLATFORM = "linux";
     const spawnMock = vi.mocked(child_process.spawn);
     let capturedArgs: string[] = [];
     const proc = makeFakeProcess();
@@ -211,6 +213,7 @@ describe("getVideoMetadata — success path", () => {
     expect(capturedArgs).toContain("--dump-single-json");
     expect(capturedArgs).toContain("--skip-download");
     expect(capturedArgs).toContain("--no-playlist");
+    delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
   });
 
   it("includes --no-check-certificates in Windows portable mode", async () => {

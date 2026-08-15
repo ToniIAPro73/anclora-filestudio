@@ -10,7 +10,10 @@ export function removeWithRetry(target: string, attempts = 8): void {
       if (process.platform !== "win32" || !["EBUSY", "EPERM"].includes(code ?? "") || attempt === attempts - 1) {
         throw error;
       }
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 25);
+      // Exponential backoff: AV scanners and Sharp can hold the handle well
+      // beyond a fixed 25ms on loaded Windows CI runners.
+      const delayMs = Math.min(25 * 2 ** attempt, 400);
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, delayMs);
     }
   }
 }

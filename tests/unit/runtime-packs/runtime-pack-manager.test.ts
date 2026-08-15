@@ -101,11 +101,11 @@ describe("RuntimePackManager", () => {
   it("PACK-001 parses trusted static manifests", () => {
     const def = definition({ sha256: "a".repeat(64) });
     const registry = new StaticRuntimePackRegistry([def]);
-    expect(registry.find("fake-runtime", "linux", "x64")).toEqual(def);
+    expect(registry.find("fake-runtime", fixturePlatform, "x64")).toEqual(def);
   });
 
   it("PACK-002/PACK-003 selects by platform and architecture", () => {
-    const linux = definition({ sha256: "a".repeat(64) });
+    const linux = definition({ platform: "linux", sha256: "a".repeat(64) });
     const windows = definition({ platform: "windows", sha256: "b".repeat(64) });
     const registry = new StaticRuntimePackRegistry([linux, windows]);
     expect(registry.find("fake-runtime", "linux", "x64")?.platform).toBe("linux");

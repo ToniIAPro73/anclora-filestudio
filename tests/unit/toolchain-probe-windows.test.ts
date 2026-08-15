@@ -210,7 +210,8 @@ describe("recommendedAction platform awareness", () => {
   });
 
   it("Linux message for LibreOffice uses apt", () => {
-    delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
+    // Explicit override: deleting the env var is not enough on a Windows host.
+    process.env.ANCLORA_FILESTUDIO_PLATFORM = "linux";
     const linuxMsg = getRecommendedAction(
       "sudo apt install libreoffice",
       "Instala LibreOffice desde libreoffice.org"
@@ -258,23 +259,16 @@ describe("Poppler absent state", () => {
 
 describe("probeDiagnosticBinary", () => {
   it("marks code 0 LibreOffice output as available and keeps four-part version", async () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "anclora-probe-"));
-    const scriptPath = path.join(tempDir, "fake-soffice");
-    try {
-      fs.writeFileSync(scriptPath, "#!/usr/bin/env sh\necho 'LibreOffice 26.2.4.2'\nexit 0\n");
-      fs.chmodSync(scriptPath, 0o755);
+    // Use the current Node binary as a cross-platform fake: a POSIX sh script
+    // fixture cannot be spawned on a Windows host.
+    const result = await probeDiagnosticBinary(
+      process.execPath,
+      ["-e", "console.log('LibreOffice 26.2.4.2')"],
+      "LibreOffice (\\d+\\.\\d+\\.\\d+(?:\\.\\d+)?)"
+    );
 
-      const result = await probeDiagnosticBinary(
-        scriptPath,
-        ["--headless", "--version"],
-        "LibreOffice (\\d+\\.\\d+\\.\\d+(?:\\.\\d+)?)"
-      );
-
-      expect(result.available).toBe(true);
-      expect(result.status).toBe("available");
-      expect(result.version).toBe("26.2.4.2");
-    } finally {
-      fs.rmSync(tempDir, { recursive: true, force: true });
-    }
+    expect(result.available).toBe(true);
+    expect(result.status).toBe("available");
+    expect(result.version).toBe("26.2.4.2");
   });
 });

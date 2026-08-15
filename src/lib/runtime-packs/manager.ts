@@ -109,7 +109,16 @@ async function runExecutableProbe(
   return new Promise((resolve) => {
     let output = "";
     let done = false;
-    const child = spawn(/* turbopackIgnore: true */ binary, args, { shell: false, windowsHide: true });
+    let child: ReturnType<typeof spawn>;
+    try {
+      child = spawn(/* turbopackIgnore: true */ binary, args, { shell: false, windowsHide: true });
+    } catch (err) {
+      // Windows can throw synchronously for binaries that exist but are not
+      // valid executables (e.g. a corrupted pack). That means broken, not
+      // a generic install failure.
+      resolve({ ok: false, version: null, error: err instanceof Error ? err.message : String(err) });
+      return;
+    }
     const finish = (ok: boolean, error: string | null) => {
       if (done) return;
       done = true;

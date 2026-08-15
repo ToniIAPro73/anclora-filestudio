@@ -13,7 +13,8 @@ const DUMMY_OUTPUT = '/tmp/output.mp4';
 
 describe('buildYtdlpArgs — source-max profile', () => {
   it('source-max + max → does NOT contain --no-check-certificates in non-Windows mode', () => {
-    delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
+    // Explicit override: deleting the env var is not enough on a Windows host.
+    process.env.ANCLORA_FILESTUDIO_PLATFORM = 'linux';
     const args = buildYtdlpArgs({
       url: DUMMY_URL,
       format: 'mp4',
@@ -21,6 +22,7 @@ describe('buildYtdlpArgs — source-max profile', () => {
       outputPath: DUMMY_OUTPUT,
     });
     expect(args).not.toContain('--no-check-certificates');
+    delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
   });
 
   it('source-max + max → contains --no-check-certificates in Windows portable mode', () => {
@@ -84,6 +86,8 @@ describe('buildYtdlpArgs — mp4-compatible profile', () => {
 
 describe('buildYtdlpArgs — audio format (mp3)', () => {
   it('format mp3 + quality 320 → result contains --extract-audio and does NOT contain --no-check-certificates', () => {
+    // Explicit override: deleting the env var is not enough on a Windows host.
+    process.env.ANCLORA_FILESTUDIO_PLATFORM = 'linux';
     const args = buildYtdlpArgs({
       url: DUMMY_URL,
       format: 'mp3',
@@ -92,6 +96,7 @@ describe('buildYtdlpArgs — audio format (mp3)', () => {
     });
     expect(args).toContain('--extract-audio');
     expect(args).not.toContain('--no-check-certificates');
+    delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
   });
 
   it("format mp3 + quality best → uses highest encoder quality, not low VBR 7", () => {
