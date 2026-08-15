@@ -179,14 +179,14 @@ fi
 # ── 11. Verificación Windows (si cmd.exe está disponible) ────────────────────
 echo ""
 info "Verificaciones Windows..."
-if command -v cmd.exe >/dev/null 2>&1; then
+if command -v cmd.exe >/dev/null 2>&1 && command -v cygpath >/dev/null 2>&1; then
   WIN_EXTRACT="$(cmd.exe /c "echo %TEMP%" 2>/dev/null | tr -d '\r' | tail -n 1)"
   WIN_EXTRACT="$(printf '%s' "$WIN_EXTRACT" | tr -d '\n')"
   if [[ -z "$WIN_EXTRACT" ]]; then
     WIN_TEMP_WSL="$(printf '%s' "$PATH" | tr ':' '\n' | sed -n 's#^\(/mnt/c/Users/[^/]\+/AppData/Local\)/.*#\1/Temp#p' | head -1)"
     if [[ -n "$WIN_TEMP_WSL" ]]; then
       mkdir -p "$WIN_TEMP_WSL"
-      WIN_EXTRACT="$(wslpath -w "$WIN_TEMP_WSL")"
+      WIN_EXTRACT="$(cygpath -w "$WIN_TEMP_WSL")"
     fi
   fi
   if [[ -z "$WIN_EXTRACT" ]]; then
@@ -201,7 +201,7 @@ if command -v cmd.exe >/dev/null 2>&1; then
   # Extraer en ruta Windows usando PowerShell
   WIN_DEST="$WIN_TEST_DIR"
   WIN_ZIP_LOCAL="${WIN_EXTRACT}\\Anclora FileStudio-Windows-x64-$$.zip"
-  WIN_ZIP_LOCAL_WSL="$(wslpath -u "$WIN_ZIP_LOCAL")"
+  WIN_ZIP_LOCAL_WSL="$(cygpath -u "$WIN_ZIP_LOCAL")"
   cp "$ZIP_PATH" "$WIN_ZIP_LOCAL_WSL"
 
   powershell.exe -NoProfile -NonInteractive -Command "
