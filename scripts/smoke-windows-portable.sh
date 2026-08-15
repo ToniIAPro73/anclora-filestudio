@@ -192,7 +192,7 @@ PY
   fi
 
   REQUIRED_SERVER_FILES="$PKG/app/.next/required-server-files.json"
-  REQUIRED_SERVER_FILES_CHECK="$(python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF' 2>&1
+  if REQUIRED_SERVER_FILES_CHECK="$(python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF' 2>&1
 import json
 import pathlib
 import sys
@@ -210,12 +210,16 @@ files = data.get("files")
 if not isinstance(files, list) or ".next/routes-manifest.json" not in files:
     raise SystemExit("missing routes-manifest runtime entry")
 PYEOF
-)"
-  if [[ -z "$REQUIRED_SERVER_FILES_CHECK" ]]; then
-    echo "[PASS] required-server-files.json valid and portable"
-    PASS=$((PASS+1))
+)"; then
+    if [[ -z "$REQUIRED_SERVER_FILES_CHECK" ]]; then
+      echo "[PASS] required-server-files.json valid and portable"
+      PASS=$((PASS+1))
+    else
+      echo "[FAIL] required-server-files.json invalid: $REQUIRED_SERVER_FILES_CHECK"
+      FAIL=$((FAIL+1))
+    fi
   else
-    echo "[FAIL] required-server-files.json invalid: $REQUIRED_SERVER_FILES_CHECK"
+    echo "[FAIL] required-server-files.json check command failed: $REQUIRED_SERVER_FILES_CHECK"
     FAIL=$((FAIL+1))
   fi
 
