@@ -367,7 +367,10 @@ try {
     $ExitCode = 0
 }
 catch {
-    Write-Error $_.Exception.Message
+    # Diagnostics MUST print before Write-Error: with $ErrorActionPreference =
+    # "Stop" (set above), Write-Error itself becomes a terminating error and
+    # aborts the rest of this catch block, silently swallowing PHASE/PORTABLE
+    # ROOT/PID/LOG TAIL. Print everything first, raise last, non-terminating.
     Write-Host ("PHASE: " + $Phase)
     Write-Host ("PORTABLE ROOT: " + $(if ($null -eq $PkgDir) { "<not extracted>" } else { $PkgDir }))
     Write-Host ("PID: " + $(if ($null -eq $serverPid) { "<none>" } else { $serverPid }))
@@ -386,6 +389,7 @@ catch {
     Write-Host ""
     Write-Host "=== NATIVE_ACCEPTANCE_WINDOWS_FAIL ==="
     $ExitCode = 1
+    Write-Error $_.Exception.Message -ErrorAction Continue
 }
 finally {
     if ($null -ne $PkgDir) {
