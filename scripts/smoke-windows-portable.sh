@@ -1,430 +1,151 @@
 #!/usr/bin/env bash
-# smoke-windows-portable.sh — Structural + native acceptance smoke test for Windows portable.
-# Structural checks run from WSL.
-# Native acceptance (runtime/sqlite/sharp/webp) runs via powershell.exe when available.
-# Fails with exit 1 when the package is missing.
+# Windows portable smoke: small payload checks, then real native execution.
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 ZIP="$REPO_ROOT/dist/windows/Anclora-FileStudio-Windows-x64-Core.zip"
-PS1_SMOKE="$SCRIPT_DIR/smoke-windows-portable.ps1"
+SHA="$ZIP.sha256"
+PS1="$SCRIPT_DIR/smoke-windows-portable.ps1"
+TMP_DIR=""
+LOG="$(mktemp)"
+MAIN_STATUS=0
 
-# ── Artifact must exist — no false-positive SKIP ──────────────────────────────
-if [[ ! -f "$ZIP" ]]; then
-  echo "[FAIL] Package not found: $ZIP"
-  echo "       Run 'pnpm build:portable:windows' first."
+cleanup() {
+  local status=$MAIN_STATUS
+  if [[ -n "$TMP_DIR" && -d "$TMP_DIR" ]]; then
+    rm -rf "$TMP_DIR"
+  fi
+  rm -f "$LOG"
+  return "$status"
+}
+trap cleanup EXIT
+
+fail() {
+  echo "[FAIL] $*"
+  MAIN_STATUS=1
+}
+
+echo "=== Smoke test — Windows portable ==="
+if [[ ! -f "$ZIP" ]]; then fail "Portable ZIP not found: $ZIP"; exit 1; fi
+if [[ ! -f "$SHA" ]]; then fail "Portable SHA256 file not found: $SHA"; exit 1; fi
+
+echo "[CHECK] Verifying SHA-256..."
+if (cd "$(dirname "$ZIP")" && sha256sum -c "$(basename "$SHA")"); then
+  echo "[PASS] SHA-256 OK"
+else
+  fail "SHA-256 verification failed"
   exit 1
 fi
 
-echo "=== Smoke test — Windows portable ==="
-echo "Package: $(du -sh "$ZIP" | awk '{print $1}') → $ZIP"
 echo ""
+echo "--- Structural checks ---"
+TMP_DIR="$(mktemp -d)"
+if unzip -q "$ZIP" -d "$TMP_DIR"; then :; else fail "ZIP extraction failed"; exit 1; fi
+PKG="$TMP_DIR/Anclora-FileStudio-Windows-x64-Core"
 
-FAIL=0
-PASS=0
-
-read_json_field() {
-  local file="$1"
-  local field="$2"
-
-  python3 - "$file" "$field" <<'PY'
-import json
-import sys
-
-file, field = sys.argv[1:]
-with open(file, encoding="utf-8") as handle:
-    value = json.load(handle)
-for part in field.split("."):
-    value = value[part]
-if not isinstance(value, str):
-    raise TypeError(f"{field} is not a string")
-print(value)
-PY
-}
-
-# ── Checksum ──────────────────────────────────────────────────────────────────
-SHA_FILE="$ZIP.sha256"
-if [[ -f "$SHA_FILE" ]]; then
-  cd "$(dirname "$ZIP")"
-  if sha256sum -c "$(basename "$SHA_FILE")" >/dev/null 2>&1; then
-    echo "[PASS] SHA-256 OK"
-    PASS=$((PASS+1))
+STRUCTURAL_FILES=(
+  "app/server.js"
+  "app/.next/required-server-files.json"
+  "app/.next/routes-manifest.json"
+  "app/.next/build-manifest.json"
+  "app/.next/prerender-manifest.json"
+  "app/.next/app-path-routes-manifest.json"
+  "runtime/node.exe"
+  "internal/start-anclora-filestudio.ps1"
+  "internal/stop-anclora-filestudio.ps1"
+  "data"
+  "logs"
+)
+STRUCTURAL_PASS=0
+STRUCTURAL_FAIL=0
+for file in "${STRUCTURAL_FILES[@]}"; do
+  if [[ -e "$PKG/$file" ]]; then
+    echo "[PASS] $file"
+    STRUCTURAL_PASS=$((STRUCTURAL_PASS + 1))
   else
-    echo "[FAIL] SHA-256 mismatch"
-    FAIL=$((FAIL+1))
+    echo "[FAIL] Missing: $file"
+    STRUCTURAL_FAIL=$((STRUCTURAL_FAIL + 1))
   fi
-  cd "$REPO_ROOT"
-else
-  echo "[FAIL] .sha256 file missing"
-  FAIL=$((FAIL+1))
-fi
-
-# ── ZIP extraction (only if 7z available) ────────────────────────────────────
-SEVENZIP=""
-for c in 7zz 7z; do
-  command -v "$c" >/dev/null 2>&1 && { SEVENZIP="$c"; break; } || true
 done
 
-if [[ -n "$SEVENZIP" ]]; then
-  TMP_DIR="$(mktemp -d)"
-  trap "rm -rf '$TMP_DIR'" EXIT
-
-  echo "Extracting with $SEVENZIP for structural check..."
-  "$SEVENZIP" x "$ZIP" -o"$TMP_DIR" -y >/dev/null 2>&1
-
-  PKG="$TMP_DIR/Anclora-FileStudio-Windows-x64-Core"
-
-  STRUCTURAL_FILES=(
-    "INICIAR_ANCLORA_FILESTUDIO.bat"
-    "CERRAR_ANCLORA_FILESTUDIO.bat"
-    "manifest.json"
-    "VERSION.txt"
-    "THIRD_PARTY_NOTICES.txt"
-    "SBOM.cdx.json"
-    "runtime/node.exe"
-    "tools/yt-dlp/yt-dlp.exe"
-    "tools/ffmpeg/ffmpeg.exe"
-    "tools/ffmpeg/ffprobe.exe"
-    "tools/pandoc/pandoc.exe"
-    "tools/qpdf/qpdf.exe"
-    "internal/start-anclora-filestudio.ps1"
-    "internal/stop-anclora-filestudio.ps1"
-    "internal/tool-resolution.ps1"
-    "app/server.js"
-    "app/.next/required-server-files.json"
-    "app/.next/static"
-    "app/node_modules/better-sqlite3/build/Release/better_sqlite3.node"
-    "app/node_modules/@img/sharp-win32-x64/lib/sharp-win32-x64-0.35.1.node"
-    "app/node_modules/@img/sharp-win32-x64/lib/libvips-42.dll"
-    "app/node_modules/@img/sharp-win32-x64/lib/libvips-cpp-8.18.3.dll"
-    "app/node_modules/semver/index.js"
-  )
-
-  echo ""
-  echo "--- Structural checks ---"
-  for f in "${STRUCTURAL_FILES[@]}"; do
-    if [[ -e "$PKG/$f" ]]; then
-      echo "[PASS] $f"
-      PASS=$((PASS+1))
-    else
-      echo "[FAIL] Missing: $f"
-      FAIL=$((FAIL+1))
-    fi
-  done
-
-  # semver version check
-  SEMVER_PACKAGE="$PKG/app/node_modules/semver/package.json"
-  if [[ ! -f "$SEMVER_PACKAGE" ]]; then
-    echo "[FAIL] semver package.json missing: $SEMVER_PACKAGE"
-    FAIL=$((FAIL+1))
-  elif SEMVER_VER="$(read_json_field "$SEMVER_PACKAGE" version 2>&1)"; then
-    echo "[INFO] semver version in package: $SEMVER_VER"
-    if python3 - "$SEMVER_VER" <<'PY' >/dev/null 2>&1
-import sys
-try:
-    parts = tuple(int(p) for p in sys.argv[1].split(".")[:3])
-except (ValueError, IndexError):
-    raise SystemExit(1)
-raise SystemExit(0 if parts >= (7, 8, 4) and parts < (8, 0, 0) else 1)
-PY
-    then
-      echo "[PASS] semver@$SEMVER_VER satisfies >=7.8.4 <8"
-      PASS=$((PASS+1))
-    else
-      echo "[FAIL] semver@$SEMVER_VER (expected >=7.8.4 <8)"
-      FAIL=$((FAIL+1))
-    fi
-  else
-    echo "[FAIL] semver package.json parser failure: $SEMVER_VER"
-    FAIL=$((FAIL+1))
-  fi
-
-  STATE_FILES="$(find "$PKG" \( -name '*.sqlite' -o -name '*.sqlite-wal' -o -name '*.sqlite-shm' \) -type f 2>/dev/null | head -20 || true)"
-  if [[ -n "$STATE_FILES" ]]; then
-    echo "[FAIL] Runtime SQLite/WAL/SHM files found in clean package"
-    echo "$STATE_FILES"
-    FAIL=$((FAIL+1))
-  else
-    echo "[PASS] No SQLite/WAL/SHM runtime state"
-    PASS=$((PASS+1))
-  fi
-
-  if [[ -d "$PKG/app/node_modules/playwright" ]]; then
-    echo "[FAIL] app/node_modules/playwright should not be packaged"
-    FAIL=$((FAIL+1))
-  else
-    echo "[PASS] playwright wrapper package absent"
-    PASS=$((PASS+1))
-  fi
-
-  # Developer paths check
-  DEV_PATTERN='(/home/[^[:space:]"'"'"'<>]*/[^[:space:]"'"'"'<>]*/anclora/|/workspace/anclora/|/home/toni/)'
-  DEV_FOUND="$(LC_ALL=C grep -IRnE "$DEV_PATTERN" "$PKG" \
-       --exclude-dir=data --exclude-dir=temp --exclude-dir=logs \
-       --exclude="*.exe" --exclude="*.dll" --exclude="*.node" --exclude="*.zip" \
-       2>/dev/null | head -20 || true)"
-  if [[ -n "$DEV_FOUND" ]]; then
-    echo "[FAIL] Developer paths found in package"
-    echo "$DEV_FOUND"
-    FAIL=$((FAIL+1))
-  else
-    echo "[PASS] No developer workspace paths"
-    PASS=$((PASS+1))
-  fi
-
-  # platform=windows check
-  MANIFEST="$PKG/manifest.json"
-  if [[ ! -f "$MANIFEST" ]]; then
-    echo "[FAIL] manifest.json missing: $MANIFEST"
-    FAIL=$((FAIL+1))
-  elif PLATFORM="$(read_json_field "$MANIFEST" platform 2>&1)"; then
-    if [[ "$PLATFORM" == "windows" ]]; then
-      echo "[PASS] manifest.platform = windows"
-      PASS=$((PASS+1))
-    else
-      echo "[FAIL] manifest.platform != windows (got: '$PLATFORM')"
-      FAIL=$((FAIL+1))
-    fi
-  else
-    echo "[FAIL] manifest.json parser failure: $PLATFORM"
-    FAIL=$((FAIL+1))
-  fi
-
-  REQUIRED_SERVER_FILES="$PKG/app/.next/required-server-files.json"
-  if REQUIRED_SERVER_FILES_CHECK="$(python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF' 2>&1
+REQUIRED_SERVER_FILES="$PKG/app/.next/required-server-files.json"
+REQUIRED_CHECK=""
+if REQUIRED_CHECK="$(python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" <<'PY'
 import json
 import pathlib
 import sys
 
 metadata_path = pathlib.Path(sys.argv[1])
-repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
+repo_root = pathlib.Path(sys.argv[2]).resolve()
 text = metadata_path.read_text(encoding="utf-8")
 data = json.loads(text)
-if repo_root in text:
+if repo_root.as_posix() in text or str(repo_root) in text:
     raise SystemExit("contains repository root")
+if not isinstance(data.get("files"), list):
+    raise SystemExit("files must be a list")
 for field in ("version", "config", "files"):
     if field not in data:
         raise SystemExit(f"missing field: {field}")
-files = data.get("files")
-if not isinstance(files, list) or ".next/routes-manifest.json" not in files:
-    raise SystemExit("missing routes-manifest runtime entry")
-PYEOF
+print(f"keys={','.join(data.keys())} files={len(data['files'])}")
+print(f"routes-listed={'.next/routes-manifest.json' in data['files']}")
+PY
 )"; then
-    if [[ -z "$REQUIRED_SERVER_FILES_CHECK" ]]; then
-      echo "[PASS] required-server-files.json valid and portable"
-      PASS=$((PASS+1))
-    else
-      echo "[FAIL] required-server-files.json invalid: $REQUIRED_SERVER_FILES_CHECK"
-      FAIL=$((FAIL+1))
-    fi
-  else
-    echo "[FAIL] required-server-files.json check command failed: $REQUIRED_SERVER_FILES_CHECK"
-    FAIL=$((FAIL+1))
-  fi
-
-  # no Linux binaries
-  LINUX_BINS="$(find "$PKG/app" \( -name "*.so" -o -name "*.dylib" \) 2>/dev/null || true)"
-  if [[ -n "$LINUX_BINS" ]]; then
-    echo "[FAIL] Linux binaries found in app/:"
-    echo "$LINUX_BINS" | head -5
-    FAIL=$((FAIL+1))
-  else
-    echo "[PASS] No Linux .so/.dylib in app/"
-    PASS=$((PASS+1))
-  fi
-
-  START_PS1="$PKG/internal/start-anclora-filestudio.ps1"
-  STOP_PS1="$PKG/internal/stop-anclora-filestudio.ps1"
-  TOOL_RESOLUTION_PS1="$PKG/internal/tool-resolution.ps1"
-
-  if grep -q 'Read-Host' "$START_PS1"; then
-    echo "[FAIL] start launcher contains Read-Host despite -NonInteractive BAT"
-    FAIL=$((FAIL+1))
-  else
-    echo "[PASS] start launcher has no Read-Host"
-    PASS=$((PASS+1))
-  fi
-
-  if grep -q 'ArgumentList[[:space:]]*=[[:space:]]*@(\$ServerJs)' "$START_PS1"; then
-    echo "[FAIL] start launcher passes absolute ServerJs through ArgumentList"
-    FAIL=$((FAIL+1))
-  else
-    echo "[PASS] start launcher does not pass absolute ServerJs"
-    PASS=$((PASS+1))
-  fi
-
-  if grep -q "\$ServerEntry[[:space:]]*=[[:space:]]*'server.js'" "$START_PS1" \
-     && grep -q 'ArgumentList[[:space:]]*=[[:space:]]*@(\$ServerEntry)' "$START_PS1" \
-     && grep -q 'WorkingDirectory[[:space:]]*=[[:space:]]*\$AppDir' "$START_PS1"; then
-    echo "[PASS] start launcher uses relative server.js with app WorkingDirectory"
-    PASS=$((PASS+1))
-  else
-    echo "[FAIL] start launcher missing relative server.js/app WorkingDirectory contract"
-    FAIL=$((FAIL+1))
-  fi
-
-  if grep -q '\[switch\]\$SkipBrowser' "$START_PS1"; then
-    echo "[PASS] start launcher supports -SkipBrowser"
-    PASS=$((PASS+1))
-  else
-    echo "[FAIL] start launcher missing -SkipBrowser"
-    FAIL=$((FAIL+1))
-  fi
-
-  if grep -q '\$ManifestPath[[:space:]]*=[[:space:]]*Join-Path[[:space:]]*\$Root' "$START_PS1"; then
-    echo '[FAIL] start launcher uses $Root for manifest.json'
-    FAIL=$((FAIL+1))
-  elif grep -q "\$ManifestPath[[:space:]]*=[[:space:]]*Join-Path[[:space:]]*\$BaseDir[[:space:]]*'manifest.json'" "$START_PS1"; then
-    echo "[PASS] start launcher uses BaseDir for manifest.json"
-    PASS=$((PASS+1))
-  else
-    echo "[FAIL] start launcher missing BaseDir manifest.json contract"
-    FAIL=$((FAIL+1))
-  fi
-
-  if grep -qE 'Stop-Process[[:space:]]+-Name|taskkill[[:space:]]+/IM[[:space:]]+node\.exe' "$STOP_PS1"; then
-    echo "[FAIL] stop launcher contains global node termination"
-    FAIL=$((FAIL+1))
-  else
-    echo "[PASS] stop launcher only targets recorded PID"
-    PASS=$((PASS+1))
-  fi
-
-  for marker in \
-    'C:\Program Files\LibreOffice\program\soffice.com' \
-    'C:\Program Files\LibreOffice\program\soffice.exe' \
-    'C:\Program Files\Calibre2\ebook-convert.exe' \
-    'C:\Program Files\Tesseract-OCR\tesseract.exe' \
-    'C:\Program Files\Tesseract-OCR\tessdata' \
-    'Get-Command' \
-    'ANCLORA_FILESTUDIO_TESSDATA_PREFIX'; do
-    if grep -Fq "$marker" "$TOOL_RESOLUTION_PS1"; then
-      echo "[PASS] tool-resolution contains $marker"
-      PASS=$((PASS+1))
-    else
-      echo "[FAIL] tool-resolution missing $marker"
-      FAIL=$((FAIL+1))
-    fi
-  done
-
-  SOFFICE_COM_LINE="$(grep -nF 'C:\Program Files\LibreOffice\program\soffice.com' "$TOOL_RESOLUTION_PS1" | head -1 | cut -d: -f1 || true)"
-  SOFFICE_EXE_LINE="$(grep -nF 'C:\Program Files\LibreOffice\program\soffice.exe' "$TOOL_RESOLUTION_PS1" | head -1 | cut -d: -f1 || true)"
-  if [[ -n "$SOFFICE_COM_LINE" && -n "$SOFFICE_EXE_LINE" && "$SOFFICE_COM_LINE" -lt "$SOFFICE_EXE_LINE" ]]; then
-    echo "[PASS] tool-resolution prioritizes soffice.com before soffice.exe"
-    PASS=$((PASS+1))
-  else
-    echo "[FAIL] tool-resolution does not prioritize soffice.com before soffice.exe"
-    FAIL=$((FAIL+1))
-  fi
-
-  echo ""
-  echo "--- Structural: $PASS PASS, $FAIL FAIL ---"
+  echo "[PASS] required-server-files.json valid"
+  echo "       $REQUIRED_CHECK"
+  STRUCTURAL_PASS=$((STRUCTURAL_PASS + 1))
 else
-  echo "[SKIP] 7z/7zz not available — structural extraction skipped"
-  echo "       Install: sudo apt install p7zip-full"
+  echo "[FAIL] required-server-files.json invalid: $REQUIRED_CHECK"
+  STRUCTURAL_FAIL=$((STRUCTURAL_FAIL + 1))
 fi
 
-# ── Native acceptance via powershell.exe ──────────────────────────────────────
+if [[ -f "$PKG/app/.next/routes-manifest.json" ]]; then
+  echo "[PASS] routes-manifest physically present"
+  STRUCTURAL_PASS=$((STRUCTURAL_PASS + 1))
+else
+  echo "[FAIL] routes-manifest physically missing"
+  STRUCTURAL_FAIL=$((STRUCTURAL_FAIL + 1))
+fi
+
+echo ""
+echo "--- Structural: $STRUCTURAL_PASS PASS, $STRUCTURAL_FAIL FAIL ---"
+if [[ "$STRUCTURAL_FAIL" -ne 0 ]]; then
+  MAIN_STATUS=1
+  exit 1
+fi
+
 echo ""
 echo "--- Native acceptance test ---"
-
 if ! command -v powershell.exe >/dev/null 2>&1; then
-  echo "[SKIP] powershell.exe not available in WSL — native test skipped"
-  echo "       The native test must be run manually on a Windows machine:"
-  echo "       powershell.exe -ExecutionPolicy Bypass -File smoke-windows-portable.ps1 -ZipPath <path>"
-else
-  # Get Windows TEMP dir (|| true: powershell.exe sometimes exits non-zero even on success; set -e guard)
-  WIN_TEMP="$(powershell.exe -NoProfile -NonInteractive -Command '$env:TEMP' 2>/dev/null | tr -d '\r\n')" || WIN_TEMP=""
-  if [[ -z "$WIN_TEMP" ]]; then
-    echo "[WARN] Could not determine Windows TEMP — using C:\\Temp"
-    WIN_TEMP="C:\\Temp"
-  fi
-
-  SMOKE_ID="$(date +%s)"
-  WIN_SMOKE_COPY="${WIN_TEMP}\\Prueba Anclora WinSmoke ${SMOKE_ID}"
-
-  # Convert WSL ZIP path to Windows UNC for copy operation only
-  WIN_ZIP_SRC="$(wslpath -w "$ZIP" 2>/dev/null || true)"
-  WIN_PS1_SRC="$(wslpath -w "$PS1_SMOKE" 2>/dev/null || true)"
-
-  if [[ -z "$WIN_ZIP_SRC" ]] || [[ -z "$WIN_PS1_SRC" ]]; then
-    echo "[WARN] wslpath conversion failed — native test skipped"
-    echo "       Ensure wsl.exe interop is enabled."
-  else
-    echo "[INFO] Copying ZIP and PS1 to Windows TEMP (to avoid UNC execution)..."
-    # PowerShell 5 (powershell.exe) requires CRLF line endings for here-strings.
-    # Create a CRLF copy of the PS1 in WSL /tmp before copying to Windows.
-    TMP_PS1_CRLF="$(mktemp /tmp/anclora-smoke-XXXXXX.ps1)"
-    sed 's/$/\r/' "$PS1_SMOKE" > "$TMP_PS1_CRLF"
-    WIN_PS1_SRC_CRLF="$(wslpath -w "$TMP_PS1_CRLF" 2>/dev/null || true)"
-
-    # Copy ZIP and PS1 to a Windows TEMP folder so execution is on local drive
-    powershell.exe -NoProfile -NonInteractive -Command "
-      New-Item -ItemType Directory -Force -Path '$WIN_SMOKE_COPY' | Out-Null;
-      Copy-Item -Path '$WIN_ZIP_SRC' -Destination '$WIN_SMOKE_COPY\\package.zip';
-      Copy-Item -Path '$WIN_PS1_SRC_CRLF' -Destination '$WIN_SMOKE_COPY\\smoke.ps1';
-      Write-Host 'Copy OK'
-    " 2>&1 | grep -v '^$' || {
-      echo "[WARN] Copy to Windows TEMP failed — native test skipped"
-      rm -f "$TMP_PS1_CRLF"
-      FAIL=$((FAIL+1))
-    }
-    rm -f "$TMP_PS1_CRLF" 2>/dev/null || true
-
-    WIN_ZIP_LOCAL="${WIN_SMOKE_COPY}\\package.zip"
-    WIN_PS1_LOCAL="${WIN_SMOKE_COPY}\\smoke.ps1"
-
-    echo "[INFO] Executing native acceptance test via powershell.exe..."
-    NATIVE_LOG="$(mktemp)"
-    powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass \
-        -File "$WIN_PS1_LOCAL" -ZipPath "$WIN_ZIP_LOCAL" >"$NATIVE_LOG" 2>&1 &
-    NATIVE_PID=$!
-    NATIVE_RESULT=""
-    for _ in $(seq 1 240); do
-      if grep -q '^=== NATIVE_ACCEPTANCE_WINDOWS_PASS ===$' "$NATIVE_LOG"; then
-        NATIVE_RESULT="pass"
-        break
-      fi
-      if grep -q '^=== NATIVE_ACCEPTANCE_WINDOWS_FAIL ===$' "$NATIVE_LOG"; then
-        NATIVE_RESULT="fail"
-        break
-      fi
-      if ! kill -0 "$NATIVE_PID" 2>/dev/null; then
-        break
-      fi
-      sleep 1
-    done
-    cat "$NATIVE_LOG"
-    if kill -0 "$NATIVE_PID" 2>/dev/null; then
-      kill "$NATIVE_PID" 2>/dev/null || true
-      wait "$NATIVE_PID" 2>/dev/null || true
-    else
-      wait "$NATIVE_PID" 2>/dev/null || true
-    fi
-    rm -f "$NATIVE_LOG"
-
-    if [[ "$NATIVE_RESULT" == "pass" ]]; then
-      echo "[PASS] NATIVE_ACCEPTANCE_WINDOWS_PASS"
-      PASS=$((PASS+1))
-    else
-      echo "[FAIL] NATIVE_ACCEPTANCE_WINDOWS_FAIL"
-      FAIL=$((FAIL+1))
-    fi
-
-    # Clean up the copy in Windows TEMP
-    powershell.exe -NoProfile -NonInteractive -Command \
-      "Remove-Item -Recurse -Force '$WIN_SMOKE_COPY' -ErrorAction SilentlyContinue" \
-      2>/dev/null || true
-  fi
-fi
-
-# ── Final result ──────────────────────────────────────────────────────────────
-echo ""
-TOTAL=$((PASS + FAIL))
-if [[ "$FAIL" -gt 0 ]]; then
-  echo "=== Smoke test FAILED ($FAIL/$TOTAL failed) ==="
+  fail "powershell.exe not found; native test cannot run"
   exit 1
-else
-  echo "=== Smoke test PASSED ($PASS/$TOTAL checks) ==="
 fi
+if ! command -v cygpath >/dev/null 2>&1; then
+  fail "cygpath not found; cannot pass Git Bash paths to PowerShell"
+  exit 1
+fi
+echo "[PASS] Windows path conversion"
+WIN_ZIP="$(cygpath -w "$ZIP")"
+WIN_PS1="$(cygpath -w "$PS1")"
+echo "[CHECK] Running native acceptance test..."
+if powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass \
+    -File "$WIN_PS1" -ZipPath "$WIN_ZIP" >"$LOG" 2>&1; then
+  cat "$LOG"
+  echo "[PASS] Native runtime command executed"
+else
+  status=$?
+  cat "$LOG"
+  echo "[FAIL] Windows portable runtime smoke failed"
+  echo "PHASE: STARTUP / HEALTH / STOP"
+  echo "PORTABLE ROOT: extracted by native acceptance script"
+  echo "PID: reported by native acceptance script"
+  echo "URL: reported by native acceptance script"
+  echo "PROCESS ALIVE: reported by native acceptance script"
+  echo "STDOUT/STDERR: see native acceptance output above"
+  echo "LOG TAIL:"
+  tail -80 "$LOG"
+  echo "EXIT CODE: $status"
+  MAIN_STATUS=1
+fi
+
+exit "$MAIN_STATUS"

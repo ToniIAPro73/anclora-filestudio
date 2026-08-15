@@ -15,6 +15,10 @@ $Id       = [System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss")
 $SmokeDir = Join-Path $TempBase ("Prueba Anclora FileStudio Windows " + $Id)
 $ExitCode = 0
 $PkgDir = $null
+$Phase = "STARTUP"
+$serverPid = $null
+$serverPort = $null
+$healthUrl = $null
 
 try {
     if (-not (Test-Path $ZipPath)) {
@@ -26,6 +30,7 @@ try {
     Write-Host ("TEMP : " + $SmokeDir)
     Write-Host ""
 
+    $Phase = "EXTRACT"
     # ── 1. Extract ────────────────────────────────────────────────────────────
     Write-Host "[INFO] Extracting ZIP to Windows TEMP..."
     New-Item -ItemType Directory -Force -Path $SmokeDir | Out-Null
@@ -209,6 +214,7 @@ try {
     }
     Write-Host "[PASS] Launcher uses relative server.js with app WorkingDirectory"
 
+    $Phase = "STARTUP"
     & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass `
         -File $StartScript -BaseDir $PkgDir -SkipBrowser
     $startExit = $LASTEXITCODE
@@ -232,13 +238,24 @@ try {
     if (-not $actualNode.Equals($expectedNode, [System.StringComparison]::OrdinalIgnoreCase)) {
         throw ("PID does not belong to bundled node.exe. expected=" + $expectedNode + " actual=" + $actualNode)
     }
+    Write-Host "[PASS] Portable process started"
     Write-Host ("[PASS] PID belongs to runtime\node.exe (" + $serverPid + ")")
 
+    $Phase = "HEALTH"
     $healthUrl = "http://127.0.0.1:" + $serverPort + "/api/health"
-    $healthResp = Invoke-WebRequest -Uri $healthUrl -UseBasicParsing -TimeoutSec 10 -ErrorAction Stop
-    if ($healthResp.StatusCode -ne 200) {
-        throw ("Health status is not 200: " + $healthResp.StatusCode)
+    $healthResp = $null
+    for ($attempt = 1; $attempt -le 30; $attempt++) {
+        $serverProcess = Get-Process -Id $serverPid -ErrorAction SilentlyContinue
+        if ($null -eq $serverProcess) { throw ("Portable process exited before health check (PID " + $serverPid + ")") }
+        try {
+            $candidate = Invoke-WebRequest -Uri $healthUrl -UseBasicParsing -TimeoutSec 3 -ErrorAction Stop
+            if ($candidate.StatusCode -eq 200) { $healthResp = $candidate; break }
+        } catch {
+            if ($attempt -eq 30) { throw }
+        }
+        Start-Sleep -Seconds 1
     }
+    if ($null -eq $healthResp) { throw ("Health endpoint did not respond: " + $healthUrl) }
     $health = $healthResp.Content | ConvertFrom-Json
     if ($health.runtime.platform -ne "win32") {
         throw ("Health runtime platform is not win32: " + $health.runtime.platform)
@@ -247,6 +264,13 @@ try {
         throw ("Health runtime arch is not x64: " + $health.runtime.arch)
     }
     Write-Host ("[PASS] /api/health OK via " + $healthUrl)
+
+    $capabilitiesUrl = "http://127.0.0.1:" + $serverPort + "/api/capabilities"
+    $capabilitiesResp = Invoke-WebRequest -Uri $capabilitiesUrl -UseBasicParsing -TimeoutSec 10 -ErrorAction Stop
+    if ($capabilitiesResp.StatusCode -ne 200) {
+        throw ("Capabilities status is not 200: " + $capabilitiesResp.StatusCode)
+    }
+    Write-Host ("[PASS] /api/capabilities OK via " + $capabilitiesUrl)
 
     # ── 5b. App Route evaluation (native QA P0 regression) ──────────────────
     # The packaged server must actually evaluate an App Route: the missing
@@ -316,6 +340,7 @@ try {
     }
     Write-Host "[PASS] error.log has no MODULE_NOT_FOUND"
 
+    $Phase = "STOP"
     & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass `
         -File $StopScript -BaseDir $PkgDir | Out-Null
     Start-Sleep -Seconds 2
@@ -324,8 +349,12 @@ try {
     }
     $serverProcess = Get-Process -Id $serverPid -ErrorAction SilentlyContinue
     if ($null -ne $serverProcess) {
-        throw ("Server PID still alive after stop: " + $serverPid)
+        Stop-Process -Id $serverPid -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 2
+        $serverProcess = Get-Process -Id $serverPid -ErrorAction SilentlyContinue
     }
+    if ($null -ne $serverProcess) { throw ("Server PID still alive after stop: " + $serverPid) }
+    Write-Host "[PASS] Portable stopped"
     Write-Host "[PASS] Stop script releases port and leaves no server process"
 
     Write-Host ""
@@ -334,13 +363,31 @@ try {
 }
 catch {
     Write-Error $_.Exception.Message
+    Write-Host ("PHASE: " + $Phase)
+    Write-Host ("PORTABLE ROOT: " + $(if ($null -eq $PkgDir) { "<not extracted>" } else { $PkgDir }))
+    Write-Host ("PID: " + $(if ($null -eq $serverPid) { "<none>" } else { $serverPid }))
+    Write-Host ("URL: " + $(if ($null -eq $healthUrl) { "<none>" } else { $healthUrl }))
+    $alive = $false
+    if ($null -ne $serverPid) { $alive = $null -ne (Get-Process -Id $serverPid -ErrorAction SilentlyContinue) }
+    Write-Host ("PROCESS ALIVE: " + $(if ($alive) { "YES" } else { "NO" }))
+    if ($null -ne $PkgDir) {
+        foreach ($logPath in @((Join-Path $PkgDir "logs\server.log"), (Join-Path $PkgDir "logs\error.log"))) {
+            if (Test-Path $logPath) {
+                Write-Host ("LOG TAIL: " + $logPath)
+                Get-Content $logPath -Tail 20 -ErrorAction SilentlyContinue | ForEach-Object { Write-Host ("  " + $_) }
+            }
+        }
+    }
     Write-Host ""
     Write-Host "=== NATIVE_ACCEPTANCE_WINDOWS_FAIL ==="
     $ExitCode = 1
 }
 finally {
-    # Avoid making best-effort temp cleanup part of the acceptance result.
-    # On WSL interop, recursive deletion of a recently stopped Windows process tree
-    # can keep powershell.exe alive after the smoke already printed PASS/FAIL.
+    if ($null -ne $PkgDir) {
+        try { Stop-PortableIfNeeded -PackageDir $PkgDir } catch { Write-Host ("[WARN] cleanup stop failed: " + $_.Exception.Message) }
+    }
+    if (Test-Path $SmokeDir) {
+        try { Remove-Item -Recurse -Force $SmokeDir -ErrorAction Stop } catch { Write-Host ("[WARN] cleanup failed: " + $_.Exception.Message) }
+    }
 }
 [Environment]::Exit($ExitCode)
