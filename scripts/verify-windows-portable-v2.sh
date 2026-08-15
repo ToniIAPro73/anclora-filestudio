@@ -314,24 +314,70 @@ import pathlib
 import sys
 
 metadata_path = pathlib.Path(sys.argv[1])
-repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
+repo_root = pathlib.Path(sys.argv[2]).resolve()
 text = metadata_path.read_text(encoding="utf-8")
 data = json.loads(text)
 
-if repo_root in text:
+if repo_root.as_posix() in text or str(repo_root) in text:
     raise SystemExit("contains repository root")
 
-for field in ("version", "config", "files"):
+for field in ("version", "config", "appDir", "relativeAppDir", "files", "ignore"):
     if field not in data:
         raise SystemExit(f"missing field: {field}")
+
+if not isinstance(data["config"], dict):
+    raise SystemExit("config must be an object")
+if not isinstance(data["files"], list) or not all(isinstance(value, str) for value in data["files"]):
+    raise SystemExit("files must be a list of paths")
+if not isinstance(data["ignore"], list) or not all(isinstance(value, str) for value in data["ignore"]):
+    raise SystemExit("ignore must be a list of paths")
 
 for value in (data.get("appDir"), data.get("config", {}).get("outputFileTracingRoot"), data.get("config", {}).get("turbopack", {}).get("root")):
     if isinstance(value, str) and value.startswith("/"):
         raise SystemExit(f"absolute workspace-style metadata field: {value}")
 
-files = data.get("files")
-if not isinstance(files, list) or ".next/routes-manifest.json" not in files:
-    raise SystemExit("runtime files list is missing required Next.js manifests")
+def normalize_relative_path(value):
+    normalized = value.replace("\\", "/")
+    if not normalized or normalized.startswith("/") or (len(normalized) >= 2 and normalized[1] == ":"):
+        raise SystemExit(f"non-relative runtime path: {value}")
+    return normalized
+
+app_root = metadata_path.parent.parent.resolve()
+for value in data["files"]:
+    normalized = normalize_relative_path(value)
+    candidate = (app_root / pathlib.PurePosixPath(normalized)).resolve()
+    try:
+        candidate.relative_to(app_root)
+    except ValueError:
+        raise SystemExit(f"runtime path escapes portable app: {value}")
+    if not candidate.is_file():
+        raise SystemExit(f"runtime file listed by Next is missing: {normalized}")
+
+# Next 16 does not promise that every runtime manifest is listed in `files`.
+# Check the standalone payload itself instead of treating that list as a
+# manifest index. `images-manifest.json` is intentionally absent for this
+# App Router build, so it is not part of this set.
+required_manifests = (
+    ".next/required-server-files.json",
+    ".next/routes-manifest.json",
+    ".next/build-manifest.json",
+    ".next/prerender-manifest.json",
+    ".next/app-path-routes-manifest.json",
+    ".next/server/pages-manifest.json",
+    ".next/server/middleware-manifest.json",
+    ".next/server/server-reference-manifest.json",
+)
+missing_manifests = []
+for value in required_manifests:
+    candidate = (app_root / pathlib.PurePosixPath(normalize_relative_path(value))).resolve()
+    try:
+        candidate.relative_to(app_root)
+    except ValueError:
+        raise SystemExit(f"runtime manifest path escapes portable app: {value}")
+    if not candidate.is_file():
+        missing_manifests.append(value)
+if missing_manifests:
+    raise SystemExit("missing runtime manifests: " + ", ".join(missing_manifests))
 PYEOF
 )"; then
     ok "  required-server-files.json conserva metadata runtime sin rutas del workspace"
