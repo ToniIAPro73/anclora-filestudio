@@ -20,7 +20,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 SOURCE_ZIP="${1:-$REPO_ROOT/dist/windows/Anclora-FileStudio-Windows-x64-Core.zip}"
-STAGING_BASE="$REPO_ROOT/dist/installer-staging/windows"
+# Staging path must stay SHORT on Windows: ISCC opens source files by their
+# literal (unresolved) path, and deep .next/node_modules payloads otherwise
+# exceed MAX_PATH (260). CI overrides this with %RUNNER_TEMP%-based paths.
+STAGING_BASE="${ANCLORA_INSTALLER_STAGING_BASE:-$REPO_ROOT/dist/installer-staging/windows}"
 PACKAGE_NAME="Anclora-FileStudio-Windows-x64-Core"
 STAGING_DIR="$STAGING_BASE/$PACKAGE_NAME"
 
