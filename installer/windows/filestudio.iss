@@ -103,6 +103,11 @@ var
 begin
   if CurUninstallStep = usPostUninstall then
   begin
+    // A custom MsgBox is NOT suppressed by /VERYSILENT or /SUPPRESSMSGBOXES —
+    // it would pop an invisible dialog on headless CI and hang forever.
+    // Silent uninstall therefore always keeps user data (the safe default).
+    if UninstallSilent then
+      exit;
     Msg := 'Se han desinstalado los archivos de la aplicacion.' + #13#10 + #13#10 +
       'Deseas eliminar TAMBIEN tus datos guardados (historial, base de datos, ' +
       'cookies subidas y componentes descargados)?' + #13#10 + #13#10 +
