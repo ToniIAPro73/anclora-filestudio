@@ -164,14 +164,16 @@ NO_UPDATE_NOTIFIER=1 pnpm install --frozen-lockfile
 ok "Dependencies installed"
 
 info "Running lint..."
-pnpm lint || warn "Lint reported warnings (non-blocking)"
+pnpm lint
+ok "Lint OK"
 
 info "Running typecheck..."
 pnpm typecheck || die "Typecheck failed"
 ok "Typecheck OK"
 
-info "Running tests..."
-pnpm test || warn "Tests not available or failed — manual review required"
+info "Running Windows portable test gate..."
+pnpm test:windows-portable
+ok "Windows portable tests OK"
 
 info "Building Next.js standalone..."
 ANCLORA_FILESTUDIO_DEPLOYMENT_TARGET=desktop \
@@ -582,6 +584,48 @@ ok "Dev-only Playwright wrapper removed; playwright-core retained for renderer r
 info "Removing .pnpm store (prevents deep paths on Windows)..."
 rm -rf "$APP_DIR/node_modules/.pnpm"
 ok ".pnpm store removed"
+
+# ── Verify better-sqlite3 native binary survived symlink materialization ─────
+# Turbopack externalizes better-sqlite3 into a content-hashed stub folder
+# under .next/node_modules/better-sqlite3-<hash>/ that only gets its real
+# content via the symlink-materialization step above. If that stub ends up
+# without its .node binary, the app boots and serves static routes fine (they
+# never touch it) but any route that imports it — batch/history/jobs — 500s
+# at first request. That failure only ever surfaced on the Windows runner,
+# ~10 minutes into the pipeline. Verify — and self-heal from the known-good
+# flat node_modules copy — here on Linux, before zipping.
+info "Verifying native binary stub (better-sqlite3)..."
+
+verify_native_stub() {
+  local flat_node="$1" pkg_glob="$2" rel_path="$3" label="$4"
+  [[ -f "$flat_node" ]] || die "$label: flat copy missing at $flat_node — cannot verify or repair"
+  local flat_magic
+  flat_magic="$(head -c2 "$flat_node")"
+  [[ "$flat_magic" == "MZ" ]] || die "$label: flat copy is not a Windows PE binary: $flat_node"
+
+  local found=0
+  while IFS= read -r -d '' stub_dir; do
+    found=1
+    local stub_node="$stub_dir/$rel_path"
+    if [[ ! -f "$stub_node" ]]; then
+      warn "$label: missing at $stub_node — repairing from flat copy"
+      mkdir -p "$(dirname "$stub_node")"
+      cp "$flat_node" "$stub_node"
+    fi
+    local stub_magic
+    stub_magic="$(head -c2 "$stub_node")"
+    [[ "$stub_magic" == "MZ" ]] || die "$label: $stub_node is not a Windows PE binary after repair"
+    ok "$label: verified $stub_node"
+  done < <(find "$APP_DIR/.next/node_modules" -maxdepth 1 -type d -name "$pkg_glob" -print0 2>/dev/null)
+
+  [[ "$found" -eq 1 ]] || die "$label: no Turbopack stub folder matching $pkg_glob under .next/node_modules"
+}
+
+verify_native_stub \
+  "$APP_DIR/node_modules/better-sqlite3/build/Release/better_sqlite3.node" \
+  "better-sqlite3-*" \
+  "build/Release/better_sqlite3.node" \
+  "better-sqlite3"
 
 info "Checking internal path lengths..."
 export _STAGING_DIR="$STAGING_DIR"
