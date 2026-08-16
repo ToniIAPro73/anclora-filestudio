@@ -56,8 +56,8 @@ src/
 For governance or adoption work, read:
 
 - [`.anclora/AOS_ADOPTION.md`](.anclora/AOS_ADOPTION.md)
-- [`../anclora-knowledge/standards/AOS_ADOPTION_STANDARD.md`](../anclora-knowledge/standards/AOS_ADOPTION_STANDARD.md)
-- [`../anclora-knowledge/knowledge/SOURCE_OF_TRUTH_REGISTRY.md`](../anclora-knowledge/knowledge/SOURCE_OF_TRUTH_REGISTRY.md)
+- [`../anclora-governance/standards/AOS_ADOPTION_STANDARD.md`](../anclora-governance/standards/AOS_ADOPTION_STANDARD.md)
+- [`../anclora-governance/knowledge/SOURCE_OF_TRUTH_REGISTRY.md`](../anclora-governance/knowledge/SOURCE_OF_TRUTH_REGISTRY.md)
 
 Use the AOS model:
 

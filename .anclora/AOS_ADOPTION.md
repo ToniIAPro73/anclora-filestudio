@@ -22,13 +22,13 @@ El repositorio esta en migracion incremental hacia una arquitectura distribuida.
 
 Enlaza las fuentes oficiales AOS que gobiernan este repositorio:
 
-- Constitution: [`../../anclora-knowledge/constitution/README.md`](../../anclora-knowledge/constitution/README.md)
-- MASTER_DECISIONS: [`../../anclora-knowledge/knowledge/MASTER_DECISIONS.md`](../../anclora-knowledge/knowledge/MASTER_DECISIONS.md)
-- CURRENT_STATE: [`../../anclora-knowledge/knowledge/CURRENT_STATE.md`](../../anclora-knowledge/knowledge/CURRENT_STATE.md)
-- SOURCE_OF_TRUTH_REGISTRY: [`../../anclora-knowledge/knowledge/SOURCE_OF_TRUTH_REGISTRY.md`](../../anclora-knowledge/knowledge/SOURCE_OF_TRUTH_REGISTRY.md)
-- Standards: [`../../anclora-knowledge/standards/README.md`](../../anclora-knowledge/standards/README.md)
-- Playbooks: [`../../anclora-knowledge/playbooks/README.md`](../../anclora-knowledge/playbooks/README.md)
-- Templates: [`../../anclora-knowledge/templates/README.md`](../../anclora-knowledge/templates/README.md)
+- Constitution: [`../../anclora-governance/constitution/README.md`](../../anclora-governance/constitution/README.md)
+- MASTER_DECISIONS: [`../../anclora-governance/knowledge/MASTER_DECISIONS.md`](../../anclora-governance/knowledge/MASTER_DECISIONS.md)
+- CURRENT_STATE: [`../../anclora-governance/knowledge/CURRENT_STATE.md`](../../anclora-governance/knowledge/CURRENT_STATE.md)
+- SOURCE_OF_TRUTH_REGISTRY: [`../../anclora-governance/knowledge/SOURCE_OF_TRUTH_REGISTRY.md`](../../anclora-governance/knowledge/SOURCE_OF_TRUTH_REGISTRY.md)
+- Standards: [`../../anclora-governance/standards/README.md`](../../anclora-governance/standards/README.md)
+- Playbooks: [`../../anclora-governance/playbooks/README.md`](../../anclora-governance/playbooks/README.md)
+- Templates: [`../../anclora-governance/templates/README.md`](../../anclora-governance/templates/README.md)
 
 Autoridad delegada relevante:
 
@@ -60,7 +60,7 @@ Autoridad delegada relevante:
 
 ## Politica de decisiones locales
 
-Las decisiones de FileStudio se clasifican conforme a [`../../anclora-knowledge/knowledge/decisions/D-2026-0008.md`](../../anclora-knowledge/knowledge/decisions/D-2026-0008.md):
+Las decisiones de FileStudio se clasifican conforme a [`../../anclora-governance/knowledge/decisions/D-2026-0008.md`](../../anclora-governance/knowledge/decisions/D-2026-0008.md):
 
 - **ED** (ecosistema): fuente canonica en AOS, `MASTER_DECISIONS.md`.
 - **OD** (operacional/registry): fuente canonica en el mecanismo CHG de Boveda-Anclora.
