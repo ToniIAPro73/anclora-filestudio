@@ -47,24 +47,29 @@ export function buildYtdlpFormatSelector(selection: VideoQualitySelection): Form
     };
   }
 
-  // mp4-compatible profile
+  // mp4-compatible profile. The SELECTOR must be strictly compatible with
+  // the candidate it feeds (single-shot: yt-dlp writes this straight into
+  // the output .mp4). NO internal fallback to bare `bestvideo*+bestaudio` or
+  // `bestvideo*`: that would let yt-dlp silently land on a VP9/AV1+Opus
+  // source DURING the first attempt and merge it into an MP4 container
+  // (VP9-in-MP4 is not conventional MP4, no transcode runs, and the pipeline
+  // never learns which representation was used). Codec fallback is the
+  // DownloadStrategy's job via its alternate candidates, driven by a
+  // recoverable per-format 403 — never the yt-dlp selector's.
   if (resolutionLimit === 'max') {
     return {
-      formatArg:
-        'bestvideo*[ext=mp4]+bestaudio[ext=m4a]/bestvideo*[ext=mp4]+bestaudio/bestvideo*+bestaudio/bestvideo*',
+      formatArg: 'bestvideo*[ext=mp4]+bestaudio[ext=m4a]',
       mergeFormat: 'mp4',
       willRecode: false,
     };
   }
 
-  // mp4-compatible + numeric resolution limit
+  // mp4-compatible + numeric resolution limit (H.264/MP4 video + AAC/M4A
+  // audio only; progressive `best` allowed as an extra strict alternative).
   return {
     formatArg: [
       `bestvideo*[height=${resolutionLimit}][ext=mp4]+bestaudio[ext=m4a]`,
-      `bestvideo*[height=${resolutionLimit}][ext=mp4]+bestaudio`,
-      `bestvideo*[height=${resolutionLimit}]+bestaudio`,
-      `bestvideo*[height=${resolutionLimit}]`,
-      `best[height=${resolutionLimit}]`,
+      `best[height=${resolutionLimit}][ext=mp4]`,
     ].join('/'),
     mergeFormat: 'mp4',
     willRecode: false,

@@ -542,6 +542,7 @@ export ANCLORA_FILESTUDIO_DATA_DIR="$DIR/data"
 export ANCLORA_FILESTUDIO_TEMP_DIR="$DIR/temp"
 export ANCLORA_FILESTUDIO_LOG_DIR="$DIR/logs"
 export ANCLORA_FILESTUDIO_TOOLS_DIR="$DIR/tools"
+export ANCLORA_FILESTUDIO_NODE_PATH="$NODE"
 export NODE_ENV="production"
 
 # Port selection: use env or find a free port in range 3847-3857

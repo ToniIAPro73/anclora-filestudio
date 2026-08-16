@@ -233,6 +233,7 @@ if (Test-Path $ManifestPath) {
 }
 
 # ANCLORA_FILESTUDIO_* environment variables
+$env:ANCLORA_FILESTUDIO_NODE_PATH          = $NodeExe
 $env:ANCLORA_FILESTUDIO_FFMPEG_PATH        = $FfmpegExe
 $env:ANCLORA_FILESTUDIO_FFPROBE_PATH       = $FfprobeExe
 $env:ANCLORA_FILESTUDIO_YTDLP_PATH         = $YtdlpExe

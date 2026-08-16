@@ -34,13 +34,31 @@ export type ErrorCode =
   | "RUNTIME_PACK_HASH_MISMATCH"
   | "RUNTIME_PACK_INSTALL_FAILED"
   | "RUNTIME_PACK_BROKEN"
-  | "RUNTIME_PACK_INCOMPATIBLE";
+  | "RUNTIME_PACK_INCOMPATIBLE"
+  | "VIDEO_UNAVAILABLE"
+  | "CONTENT_RESTRICTED"
+  | "PROVIDER_VERIFICATION"
+  | "YOUTUBE_BOT_VERIFICATION"
+  | "YOUTUBE_LOGIN_REQUIRED"
+  | "YOUTUBE_FORMAT_DELIVERY_403"
+  | "YOUTUBE_GENERIC_ACCESS_DENIED"
+  | "PROVIDER_ACCESS_DENIED"
+  | "CONVERSION_TIMEOUT"
+  | "INTERNAL_ERROR";
 
 export interface AppError extends Error {
   code: ErrorCode;
   stage: string;
   engineId?: string;
   retryable: boolean;
+  /**
+   * True when the failure is a per-format CDN delivery error (e.g. a
+   * YouTube HTTP 403 on one specific representation) and a DIFFERENT
+   * source representation may still download fine. Drives the
+   * deterministic candidate fallback in the media processor. Never true
+   * for login/geo/age/private/content errors.
+   */
+  recoverable?: boolean;
   technicalDetail?: string; // redacted for logs only
 }
 
@@ -68,6 +86,7 @@ export function createAppError(
     stage?: string;
     engineId?: string;
     retryable?: boolean;
+    recoverable?: boolean;
     technicalDetail?: string;
     cause?: Error;
   } = {}
@@ -78,6 +97,7 @@ export function createAppError(
   err.stage = options.stage ?? "unknown";
   err.engineId = options.engineId;
   err.retryable = options.retryable ?? isRetryable(code);
+  err.recoverable = options.recoverable;
   err.technicalDetail = options.technicalDetail;
   if (options.cause) {
     err.cause = options.cause;
@@ -120,4 +140,20 @@ export const ERROR_MESSAGES: Readonly<Record<ErrorCode, string>> = {
   RUNTIME_PACK_INSTALL_FAILED: "No se pudo instalar el componente opcional.",
   RUNTIME_PACK_BROKEN: "El componente opcional instalado está dañado.",
   RUNTIME_PACK_INCOMPATIBLE: "El componente opcional no es compatible con esta plataforma.",
+  VIDEO_UNAVAILABLE: "El vídeo no está disponible, ha sido eliminado o la URL no existe.",
+  CONTENT_RESTRICTED: "El contenido tiene restricciones de edad o región.",
+  PROVIDER_VERIFICATION:
+    "El proveedor exige verificación de seguridad (Cloudflare o captcha) para acceder automáticamente. Este sitio puede no ser compatible.",
+  YOUTUBE_BOT_VERIFICATION:
+    "YouTube ha rechazado el análisis automático de este vídeo (verificación anti-bot). El vídeo puede seguir funcionando desde el portable local o en otra red.",
+  YOUTUBE_LOGIN_REQUIRED:
+    "El vídeo requiere iniciar sesión en YouTube para verse (contenido privado, restringido por edad o con acceso limitado). No se puede descargar sin una cuenta autorizada.",
+  YOUTUBE_FORMAT_DELIVERY_403:
+    "YouTube ha denegado la entrega de una representación concreta del vídeo (HTTP 403 en el CDN). Se reintenta automáticamente con una representación alternativa.",
+  YOUTUBE_GENERIC_ACCESS_DENIED:
+    "YouTube ha denegado el acceso (HTTP 403). Puede ser temporal o requerir configuración adicional.",
+  PROVIDER_ACCESS_DENIED:
+    "El proveedor ha denegado el acceso (HTTP 403). Puede ser temporal o requerir configuración adicional.",
+  CONVERSION_TIMEOUT: "La conversión ha tardado demasiado tiempo.",
+  INTERNAL_ERROR: "Ocurrió un error interno en el servidor.",
 };

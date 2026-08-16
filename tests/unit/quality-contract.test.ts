@@ -91,6 +91,42 @@ describe('buildYtdlpFormatSelector — mp4-compatible profile', () => {
     expect(result.formatArg).toContain('[ext=mp4]');
     expect(result.mergeFormat).toBe('mp4');
   });
+
+  // ── v1.0.1 Punto A: the mp4-compatible selector is STRICTLY MP4. No
+  // internal "/bestvideo*+bestaudio" or bare "bestvideo*" fallback: yt-dlp
+  // must never silently downgrade to VP9/Opus inside the first attempt and
+  // merge it into an MP4 without transcode. Codec fallback belongs to the
+  // DownloadStrategy candidates (driven by a recoverable 403), not here.
+  it('mp4-compatible + max → NO internal fallback to bare bestvideo* (strict H.264/AAC-MP4 only)', () => {
+    const result = buildYtdlpFormatSelector({
+      profile: 'mp4-compatible',
+      resolutionLimit: 'max',
+      fallbackPolicy: 'reject',
+    });
+    expect(result.formatArg).toBe('bestvideo*[ext=mp4]+bestaudio[ext=m4a]');
+    expect(result.formatArg).not.toMatch(/bestvideo\*\+bestaudio(?:\/|$)/);
+    expect(result.formatArg).not.toMatch(/\/bestvideo\*$/);
+  });
+
+  it('mp4-compatible + 1080 → every slash-alternative stays strictly MP4 (ext=mp4; no bare bestvideo*)', () => {
+    const result = buildYtdlpFormatSelector({
+      profile: 'mp4-compatible',
+      resolutionLimit: 1080,
+      fallbackPolicy: 'reject',
+    });
+    // Separate streams (H.264/MP4 + AAC/M4A) with progressive muxed MP4 as
+    // the secondary strict alternative — both are conventional MP4.
+    expect(result.formatArg).toBe(
+      'bestvideo*[height=1080][ext=mp4]+bestaudio[ext=m4a]/best[height=1080][ext=mp4]'
+    );
+    const alternatives = result.formatArg.split('/');
+    for (const alt of alternatives) {
+      expect(alt).toMatch(/\[ext=mp4\]/);
+      expect(alt).not.toMatch(/bestvideo\*\+bestaudio/);
+    }
+    // The separated-streams alternative must carry AAC/M4A audio.
+    expect(alternatives[0]).toMatch(/\[ext=m4a\]/);
+  });
 });
 
 // ---------------------------------------------------------------------------

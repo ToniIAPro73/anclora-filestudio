@@ -49,7 +49,7 @@ pnpm smoke:portable:windows
 | Node.js | v22.22.1 (ABI 127) |
 | pnpm | 10.33.2 |
 | ffmpeg | 4.4.2 |
-| yt-dlp | 2026.06.09 |
+| yt-dlp | 2026.07.04 |
 | qpdf | 10.6.3 |
 | 7zz | 26.01 |
 | zstd | 1.5.6 (compilado, en ~/.local/bin) |

@@ -1,6 +1,6 @@
 {
   "$schema": "https://anclora.dev/schemas/toolchain-lock/v1",
-  "lockedAt": "2026-06-16",
+  "lockedAt": "2026-08-16",
   "lockedBy": "anclora-filestudio",
   "runtimes": {
     "linux-x64": {
@@ -135,14 +135,14 @@
       "redistribution": "bundled",
       "versions": {
         "linux": {
-          "version": "2026.06.09",
-          "sourceUrl": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.06.09/yt-dlp",
-          "sha256": "e5d57466682cfa9d61e9cf7c8a4f09b00f4a62af37d3bbdc4bcffdf63615feac"
+          "version": "2026.07.04",
+          "sourceUrl": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp",
+          "sha256": "495be29ff4d9d4e9be7eabdfef225221e5d5282e77f2f505abc6dca80349f3fd"
         },
         "win-x64": {
-          "version": "2026.06.09",
-          "sourceUrl": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.06.09/yt-dlp.exe",
-          "sha256": "3a48cb955d55c8821b60ccbdbbc6f61bc958f2f3d3b7ad5eaf3d83a543293a27"
+          "version": "2026.07.04",
+          "sourceUrl": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp.exe",
+          "sha256": "52fe3c26dcf71fbdc85b528589020bb0b8e383155cfa81b64dd447bbe35e24b8"
         }
       }
     },

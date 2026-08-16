@@ -13,7 +13,7 @@
       "publicationStatus": "not-published",
       "essentialTools": ["yt-dlp", "ffmpeg", "ffprobe"],
       "tools": {
-        "ytDlp": "2026.06.09",
+        "ytDlp": "2026.07.04",
         "ffmpeg": "GPL-2.0 / git-master-2026-06-09",
         "ffprobe": "GPL-2.0 / git-master-2026-06-09",
         "node": "24.16.0",

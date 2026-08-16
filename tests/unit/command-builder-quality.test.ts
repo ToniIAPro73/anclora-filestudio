@@ -1,7 +1,7 @@
 // Unit tests for buildYtdlpArgs in command-builder.ts
 // Covers: VideoQualitySelection typed input, legacy string adapter, audio formats
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { buildFfmpegVideoArgs, buildYtdlpArgs } from '../../src/lib/media/command-builder';
 
 const DUMMY_URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
@@ -141,6 +141,52 @@ describe('buildYtdlpArgs — legacy string quality adapter', () => {
     }).not.toThrow();
     // 'best' maps to source-max so no [ext=mp4]
     expect(args.some((a) => a.includes('[ext=mp4]'))).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Node/EJS capability vs cookies authentication — decoupled (Fase 2)
+// ---------------------------------------------------------------------------
+
+describe('buildYtdlpArgs — Node/EJS capability is NOT gated behind cookies', () => {
+  it('anonymous args include --js-runtimes node:<runtime> and never --cookies/--remote-components', () => {
+    process.env.ANCLORA_FILESTUDIO_PLATFORM = 'linux';
+    const args = buildYtdlpArgs({
+      url: DUMMY_URL,
+      format: 'mp4',
+      quality: { profile: 'source-max', resolutionLimit: 'max', fallbackPolicy: 'reject' },
+      outputPath: DUMMY_OUTPUT,
+    });
+    expect(args).toContain('--js-runtimes');
+    expect(args.some((a) => a.startsWith('node:'))).toBe(true);
+    expect(args).not.toContain('--cookies');
+    expect(args).not.toContain('--remote-components');
+    delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
+  });
+
+  it('useCookies=true with a configured cookies file adds --cookies ON TOP of --js-runtimes but NEVER --remote-components (official executables embed EJS)', async () => {
+    process.env.ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH = '/tmp/fs-test-cookies.txt';
+    process.env.ANCLORA_FILESTUDIO_PLATFORM = 'linux';
+    vi.resetModules();
+    const fresh = await import('../../src/lib/media/command-builder');
+    const args = fresh.buildYtdlpArgs({
+      url: DUMMY_URL,
+      format: 'mp4',
+      quality: { profile: 'source-max', resolutionLimit: 'max', fallbackPolicy: 'reject' },
+      outputPath: DUMMY_OUTPUT,
+      useCookies: true,
+    });
+    expect(args).toContain('--cookies');
+    expect(args).toContain('/tmp/fs-test-cookies.txt');
+    expect(args).toContain('--js-runtimes'); // always, anonymous or not
+    // v1.0.1: the official yt-dlp executables embed the EJS component
+    // (yt_dlp_ejs-0.8.0). --remote-components would only PERMIT fetching
+    // from GitHub at runtime — never needed, so never passed.
+    expect(args).not.toContain('--remote-components');
+    expect(args.some((a) => a.startsWith('ejs:'))).toBe(false);
+    delete process.env.ANCLORA_FILESTUDIO_YTDLP_COOKIES_PATH;
+    delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
+    vi.resetModules();
   });
 });
 

@@ -175,7 +175,10 @@ function attemptGetVideoMetadata(url: string, useCookies: boolean): Promise<Meta
     proc.on("close", (code) => {
       if (code !== 0) {
         const sanitized = sanitizeStderr(stderr);
-        const category = classifyYtdlpFailure(stderr, code);
+        // Metadata phase: a YouTube 403 here is a refused webpage/API hop —
+        // no formats were ever listed, so it must NOT be treated as a
+        // recoverable per-format delivery failure.
+        const category = classifyYtdlpFailure(stderr, code, "metadata");
 
         // Always log yt-dlp failures with command info and sanitized stderr
         console.error(

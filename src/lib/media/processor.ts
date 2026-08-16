@@ -3,11 +3,17 @@ import path from "path";
 import fs from "fs";
 import { CONFIG } from "../config";
 import { jobManager } from "../jobs/job-manager";
-import { buildYtdlpArgs, buildFfmpegAudioArgs, buildFfmpegVideoArgs } from "./command-builder";
+import {
+  buildYtdlpArgs,
+  buildYtdlpSourceDownloadArgs,
+  buildFfmpegAudioArgs,
+  buildFfmpegVideoArgs,
+} from "./command-builder";
 import { parseProgress } from "./progress-parser";
 import { probeFile, verifyMediaOutput, probeOutputFile, type MediaDescriptor } from "./probe";
 import { sanitizeFilename } from "../security/sanitize-filename";
 import { parseLegacyQualityString, VideoQualitySelection, VideoQualitySelectionSchema } from "../quality/quality-contract";
+import { buildDownloadCandidates, DownloadCandidate } from "./download-strategy";
 import { getVideoMetadata } from "./metadata";
 import { AudioOutputFormat, VideoOutputFormat } from "../jobs/job-types";
 import { createAppError, ERROR_MESSAGES, type AppError, type ErrorCode } from "../errors/error-codes";
@@ -233,6 +239,340 @@ function redactMediaError(message: string): string {
   }).slice(0, 500);
 }
 
+// Name template for two-stage intermediate source files: downloaded by
+// yt-dlp as source.<ext>, located, probed and finalized (remux/transcode)
+// into the requested output.
+const YTDLP_SOURCE_TEMPLATE = "source.%(ext)s";
+
+/**
+ * True only for per-format CDN delivery failures (recoverable) — a
+ * different source representation may still download. login/geo/age/private
+ * and generic denial errors are NOT recoverable and abort the candidate
+ * chain immediately.
+ */
+function isRecoverableDownloadError(err: unknown): boolean {
+  return (
+    err instanceof Error &&
+    err.name === "AppError" &&
+    (err as AppError).recoverable === true
+  );
+}
+
+function resolveVideoSelection(
+  resolvedQuality: string | VideoQualitySelection,
+  format: string
+): VideoQualitySelection | null {
+  try {
+    if (typeof resolvedQuality !== "string") return resolvedQuality;
+    return parseLegacyQualityString(resolvedQuality, format);
+  } catch {
+    return null;
+  }
+}
+
+/** Remove intermediate `source.*` files from the job dir (fresh attempt). */
+function cleanupSourceFiles(jobDir: string): void {
+  if (!fs.existsSync(jobDir)) return;
+  for (const f of fs.readdirSync(jobDir)) {
+    if (f.startsWith("source.")) fs.rmSync(path.join(jobDir, f), { force: true });
+  }
+}
+
+/** Remove any leftover output.* files so a retry can't mistake them for its own result. */
+function cleanupOutputBase(jobDir: string, outputPath: string): void {
+  if (!fs.existsSync(jobDir)) return;
+  const outputBaseName = path.basename(outputPath, path.extname(outputPath));
+  for (const f of fs.readdirSync(jobDir)) {
+    if (f.startsWith(outputBaseName)) fs.rmSync(path.join(jobDir, f), { force: true });
+  }
+}
+
+/** Locate the intermediate source file downloaded by the two-stage path. */
+function findSourceFile(jobDir: string): string | null {
+  if (!fs.existsSync(jobDir)) return null;
+  const entries = fs
+    .readdirSync(jobDir)
+    .filter((f) => f.startsWith("source.") && !f.endsWith(".part"));
+  if (entries.length === 0) return null;
+  // Prefer the largest — when a merge happened, intermediate fragments are
+  // removed by yt-dlp, but this guard keeps the merged file winning.
+  entries.sort((a, b) => {
+    try {
+      return fs.statSync(path.join(jobDir, b)).size - fs.statSync(path.join(jobDir, a)).size;
+    } catch {
+      return 0;
+    }
+  });
+  return path.join(jobDir, entries[0]);
+}
+
+async function downloadSourceForCandidate(
+  opts: {
+    jobId: string;
+    url: string;
+    jobDir: string;
+    ffmpegLocation?: string;
+    useCookies: boolean;
+  },
+  candidate: DownloadCandidate
+): Promise<void> {
+  cleanupSourceFiles(opts.jobDir);
+  const args = buildYtdlpSourceDownloadArgs({
+    url: opts.url,
+    formatSelector: candidate.formatSelector,
+    outputTemplate: path.join(opts.jobDir, YTDLP_SOURCE_TEMPLATE),
+    ffmpegLocation: opts.ffmpegLocation,
+    useCookies: opts.useCookies,
+    mergeFormat: candidate.mergeFormat,
+  });
+  await runProcess(CONFIG.media.binaries.ytdlp, args, opts.jobId);
+}
+
+/**
+ * AUDIO pipeline (two-stage): the SOURCE representation is chosen for
+ * deliverability, the OUTPUT format is produced afterwards by FFmpeg.
+ *
+ *   video → bestaudio (Opus/WebM where that's what delivers) → FFmpeg → MP3/M4A/WAV/FLAC/OGG
+ *
+ * On a recoverable per-format 403 the next candidate forces an Opus/WebM
+ * source. Deterministic and bounded (max 2 candidates, plus the outer
+ * anonymous→cookies fallback).
+ */
+async function downloadRemoteAudio(opts: {
+  jobId: string;
+  url: string;
+  format: AudioOutputFormat;
+  quality: string;
+  outputPath: string;
+  jobDir: string;
+  ffmpegLocation?: string;
+  useCookies: boolean;
+  metadata: { title?: string; channel?: string; videoId?: string };
+}): Promise<void> {
+  const candidates = buildDownloadCandidates(opts.format);
+  let lastError: unknown = null;
+
+  for (const candidate of candidates) {
+    try {
+      await downloadSourceForCandidate(opts, candidate);
+      const sourcePath = findSourceFile(opts.jobDir);
+      if (!sourcePath) {
+        throw createAppError(
+          "ENGINE_EXECUTE_FAILED",
+          "No se pudo localizar el audio descargado.",
+          { stage: "download", technicalDetail: `candidate=${candidate.id}` }
+        );
+      }
+      await convertAudioSourceToOutput(sourcePath, opts.format, opts.quality, opts.outputPath, opts.jobId, opts.metadata);
+      // Success: remove the intermediate source file (transcode path leaves it).
+      cleanupSourceFiles(opts.jobDir);
+      return;
+    } catch (err) {
+      cleanupSourceFiles(opts.jobDir);
+      if (!isRecoverableDownloadError(err)) throw err;
+      lastError = err;
+    }
+  }
+
+  throw lastError ?? createAppError("ENGINE_EXECUTE_FAILED", "No se pudo descargar el audio.", { stage: "download" });
+}
+
+/**
+ * Convert a downloaded audio SOURCE into the requested OUTPUT format.
+ * m4a from an AAC source is remuxed (stream copy); everything else is
+ * transcoded with FFmpeg. Title/artist tags recovered from metadata are
+ * applied when available.
+ */
+async function convertAudioSourceToOutput(
+  sourcePath: string,
+  format: AudioOutputFormat,
+  quality: string,
+  outputPath: string,
+  jobId: string,
+  metadata: { title?: string; channel?: string; videoId?: string }
+): Promise<void> {
+  const probe = await probeFile(sourcePath);
+  const sourceCodec = (probe?.audioStreams[0]?.codec ?? "").toLowerCase();
+  const canRemuxM4a =
+    format === "m4a" &&
+    probe !== null &&
+    probe.audioStreams.length > 0 &&
+    (sourceCodec === "aac" || sourceCodec === "mp4a" || sourceCodec === "alac");
+
+  if (canRemuxM4a) {
+    await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg);
+    return;
+  }
+
+  const args = buildFfmpegAudioArgs({
+    inputPath: sourcePath,
+    outputPath,
+    format,
+    quality,
+    metadata: {
+      ...(metadata.title ? { title: metadata.title } : {}),
+      ...(metadata.channel ? { artist: metadata.channel } : {}),
+      ...(metadata.videoId ? { comment: `https://www.youtube.com/watch?v=${metadata.videoId}` } : {}),
+    },
+  });
+  await runProcess(CONFIG.media.binaries.ffmpeg, args, jobId);
+}
+
+function isH264Compatible(vcodec: string): boolean {
+  return vcodec.startsWith("h264") || vcodec.startsWith("avc") || vcodec === "avc1";
+}
+
+function isAacCompatible(acodec: string): boolean {
+  return acodec === "aac" || acodec.startsWith("mp4a");
+}
+
+function isWebmVideoCodec(vcodec: string): boolean {
+  return (
+    vcodec.startsWith("vp9") ||
+    vcodec.startsWith("vp8") ||
+    vcodec.startsWith("av01") ||
+    vcodec === "av1" ||
+    vcodec === "vp9"
+  );
+}
+
+function isWebmAudioCodec(acodec: string): boolean {
+  return acodec === "opus" || acodec === "vorbis";
+}
+
+/**
+ * Finalize an alternate-codec video SOURCE into the requested OUTPUT:
+ * remux (stream copy) when the codecs already match the container,
+ * transcode otherwise. Never upscales: the target height is used as a
+ * `min(limit, sourceHeight)` cap (see normalizeVideoHeight in
+ * command-builder).
+ */
+async function finalizeVideoSource(
+  sourcePath: string,
+  outputPath: string,
+  format: VideoOutputFormat,
+  selection: VideoQualitySelection,
+  jobId: string
+): Promise<void> {
+  const probe = await probeFile(sourcePath);
+  if (!probe || probe.videoStreams.length === 0) {
+    throw createAppError(
+      "ENGINE_EXECUTE_FAILED",
+      "No se pudo inspeccionar el vídeo descargado.",
+      { stage: "probe", technicalDetail: `source=${path.basename(sourcePath)}` }
+    );
+  }
+  const vcodec = (probe.videoStreams[0]?.codec ?? "").toLowerCase();
+  const acodec = (probe.audioStreams[0]?.codec ?? "").toLowerCase();
+  // "0" → no height cap (preserve source resolution); numeric → cap.
+  const qualityStr = typeof selection.resolutionLimit === "number" ? String(selection.resolutionLimit) : "0";
+
+  switch (format) {
+    case "mp4": {
+      if (isH264Compatible(vcodec) && isAacCompatible(acodec)) {
+        await remuxToPathFaststart(sourcePath, outputPath);
+      } else {
+        await runProcess(
+          CONFIG.media.binaries.ffmpeg,
+          buildFfmpegVideoArgs({ inputPath: sourcePath, outputPath, format: "mp4", quality: qualityStr }),
+          jobId
+        );
+      }
+      break;
+    }
+    case "webm": {
+      if (isWebmVideoCodec(vcodec) && isWebmAudioCodec(acodec)) {
+        await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg);
+      } else {
+        await runProcess(
+          CONFIG.media.binaries.ffmpeg,
+          buildFfmpegVideoArgs({ inputPath: sourcePath, outputPath, format: "webm", quality: qualityStr }),
+          jobId
+        );
+      }
+      break;
+    }
+    case "mkv":
+      await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg);
+      break;
+    default:
+      await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg);
+  }
+}
+
+/**
+ * VIDEO pipeline with deterministic, bounded candidate fallback:
+ *
+ *   attempt 1 — preferred compatible source (single shot, fast path)
+ *   attempt 2 — alternate codec source (no ext constraint) merged to mkv,
+ *               then remuxed/transcoded to the requested output
+ *   attempt 3 — explicit VP9/AV1 + WebM source, transcoded afterwards (MP4 only)
+ *
+ * A recoverable per-format 403 advances to the next candidate. Nothing
+ * else does (LOGIN_REQUIRED, age/geo/private, bot-check... abort at once).
+ * Metadata is fetched once and reused — no repeat format listing.
+ */
+async function downloadRemoteVideo(opts: {
+  jobId: string;
+  url: string;
+  format: VideoOutputFormat;
+  selection: VideoQualitySelection;
+  outputPath: string;
+  jobDir: string;
+  ffmpegLocation?: string;
+  useCookies: boolean;
+}): Promise<void> {
+  const candidates = buildDownloadCandidates(opts.format, opts.selection);
+  let lastError: unknown = null;
+
+  for (const candidate of candidates) {
+    try {
+      if (candidate.singleShot) {
+        cleanupOutputBase(opts.jobDir, opts.outputPath);
+        // Single-shot = download/merge the PREFERRED SOURCE straight into
+        // the output path. The selector and merge container come from the
+        // candidate (source compat with the output), not from a fixed
+        // profile selector — e.g. WEBM output uses the ext=webm source.
+        await runProcess(
+          CONFIG.media.binaries.ytdlp,
+          buildYtdlpSourceDownloadArgs({
+            url: opts.url,
+            formatSelector: candidate.formatSelector,
+            outputTemplate: opts.outputPath,
+            ffmpegLocation: opts.ffmpegLocation,
+            useCookies: opts.useCookies,
+            mergeFormat: candidate.mergeFormat,
+            embedMetadata: true,
+          }),
+          opts.jobId
+        );
+        await ensureOutputAtPath(opts.outputPath, CONFIG.media.binaries.ffmpeg);
+      } else {
+        await downloadSourceForCandidate(opts, candidate);
+        const sourcePath = findSourceFile(opts.jobDir);
+        if (!sourcePath) {
+          throw createAppError(
+            "ENGINE_EXECUTE_FAILED",
+            "No se pudo localizar el vídeo descargado.",
+            { stage: "download", technicalDetail: `candidate=${candidate.id}` }
+          );
+        }
+        await finalizeVideoSource(sourcePath, opts.outputPath, opts.format, opts.selection, opts.jobId);
+      }
+      // Success: no intermediate source files may remain in the job dir.
+      cleanupSourceFiles(opts.jobDir);
+      return;
+    } catch (err) {
+      cleanupSourceFiles(opts.jobDir);
+      cleanupOutputBase(opts.jobDir, opts.outputPath);
+      if (!isRecoverableDownloadError(err)) throw err;
+      lastError = err;
+    }
+  }
+
+  throw lastError ?? createAppError("ENGINE_EXECUTE_FAILED", "No se pudo descargar el vídeo.", { stage: "download" });
+}
+
 async function processRemoteUrl(
   jobId: string,
   inputReference: string,
@@ -262,44 +602,69 @@ async function processRemoteUrl(
   }
 
   const resolvedQuality = resolveQuality(quality);
+  const isAudio = AUDIO_FORMATS.includes(outputFormat as AudioOutputFormat);
+  const isVideo = VIDEO_FORMATS.includes(outputFormat as VideoOutputFormat);
 
-  // Only pass --ffmpeg-location when we have a real absolute path (portable
-  // distributions set ANCLORA_FILESTUDIO_FFMPEG_PATH). When ffmpeg resolves
-  // to a bare PATH-relative command (dev/VPS, Linux portable), path.dirname()
-  // on it would yield "." — yt-dlp then can't find ffmpeg there, concludes
-  // it "isn't installed", skips merging entirely, and falls back to a
-  // single-file format that often 404s/403s for high resolutions. Omitting
-  // the flag lets yt-dlp do its own PATH-based ffmpeg lookup instead.
   const ffmpegBin = CONFIG.media.binaries.ffmpeg;
+  const ffmpegLocation = path.isAbsolute(ffmpegBin) ? path.dirname(ffmpegBin) : undefined;
   const cookiesPath = CONFIG.media.binaries.ytdlpCookiesPath;
   const cookiesConfigured = Boolean(cookiesPath) && cookiesFileHasDomainFor(cookiesPath, url);
   const jobDir = path.dirname(outputPath);
 
-  const attemptDownload = async (useCookies: boolean): Promise<void> => {
-    // Clean up any partial output left by a prior failed attempt so
-    // ensureOutputAtPath doesn't mistake it for this attempt's real output.
-    // jobDir may not exist yet on the very first attempt — that's normal.
-    if (fs.existsSync(jobDir)) {
-      const outputBaseName = path.basename(outputPath, path.extname(outputPath));
-      for (const f of fs.readdirSync(jobDir)) {
-        if (f.startsWith(outputBaseName)) fs.rmSync(path.join(jobDir, f), { force: true });
-      }
-    }
-
-    const args = buildYtdlpArgs({
-      url,
-      format: outputFormat as AudioOutputFormat | VideoOutputFormat,
-      quality: resolvedQuality,
-      outputPath,
-      ffmpegLocation: path.isAbsolute(ffmpegBin) ? path.dirname(ffmpegBin) : undefined,
-      useCookies,
-    });
-    await runProcess(CONFIG.media.binaries.ytdlp, args, jobId);
-    await ensureOutputAtPath(outputPath, CONFIG.media.binaries.ffmpeg);
-  };
-
   try {
-    await withCookiesFallback(attemptDownload, cookiesConfigured);
+    await withCookiesFallback(
+      async (useCookies) => {
+        if (isAudio) {
+          await downloadRemoteAudio({
+            jobId,
+            url,
+            format: outputFormat as AudioOutputFormat,
+            quality,
+            outputPath,
+            jobDir,
+            ffmpegLocation,
+            useCookies,
+            metadata,
+          });
+        } else if (isVideo) {
+          const selection = resolveVideoSelection(resolvedQuality, outputFormat);
+          if (!selection) {
+            throw createAppError(
+              "INPUT_UNSUPPORTED",
+              `No se pudo interpretar la calidad solicitada para el formato ${outputFormat}.`,
+              { stage: "pre-processing" }
+            );
+          }
+          await downloadRemoteVideo({
+            jobId,
+            url,
+            format: outputFormat as VideoOutputFormat,
+            selection,
+            outputPath,
+            jobDir,
+            ffmpegLocation,
+            useCookies,
+          });
+        } else {
+          // Image outputs from remote URLs keep the legacy single-shot path.
+          cleanupOutputBase(jobDir, outputPath);
+          await runProcess(
+            CONFIG.media.binaries.ytdlp,
+            buildYtdlpArgs({
+              url,
+              format: outputFormat as AudioOutputFormat | VideoOutputFormat,
+              quality: resolvedQuality,
+              outputPath,
+              ffmpegLocation,
+              useCookies,
+            }),
+            jobId
+          );
+          await ensureOutputAtPath(outputPath, CONFIG.media.binaries.ffmpeg);
+        }
+      },
+      cookiesConfigured
+    );
   } catch (err) {
     if (
       !cookiesConfigured &&
@@ -317,8 +682,7 @@ async function processRemoteUrl(
   }
 
   // Probe output for quality verification (video jobs only)
-  const isVideoOutputFormat = ["mp4", "webm", "mkv"].includes(outputFormat);
-  if (isVideoOutputFormat) {
+  if (isVideo) {
     try {
       const probe = await probeOutputFile(outputPath, CONFIG.media.binaries.ffprobe);
 
@@ -460,6 +824,7 @@ function runProcess(
   jobId: string
 ): Promise<void> {
   const isYtdlp = binary === CONFIG.media.binaries.ytdlp;
+  const isFfmpeg = binary === CONFIG.media.binaries.ffmpeg;
 
   return new Promise((resolve, reject) => {
     const proc = spawn(binary, args, {
@@ -506,8 +871,20 @@ function runProcess(
             exitCode: code,
             stderr: sanitized,
           });
-          reject(createAppError("ENGINE_EXECUTE_FAILED", category.message, {
+          // Surface the classified code (not a generic ENGINE_EXECUTE_FAILED)
+          // and mark per-format CDN delivery 403s as recoverable so the
+          // candidate fallback in downloadRemoteAudio/Video can advance.
+          reject(createAppError(category.code as ErrorCode, category.message, {
             stage: "execution",
+            recoverable: category.recoverable,
+            technicalDetail: sanitized,
+          }));
+          return;
+        }
+
+        if (isFfmpeg) {
+          reject(createAppError("ENGINE_EXECUTE_FAILED", "Error de FFmpeg durante la conversión. El archivo puede estar dañado o el códec no ser compatible.", {
+            stage: "ffmpeg-conversion",
             technicalDetail: sanitized,
           }));
           return;
@@ -585,6 +962,37 @@ function remuxToPath(fromPath: string, toPath: string, ffmpegBinary: string): Pr
           createAppError(
             "ENGINE_EXECUTE_FAILED",
             "El vídeo se descargó pero no se pudo empaquetar en el formato solicitado (códec no compatible). Prueba con el perfil de calidad 'MP4 compatible'.",
+            { stage: "remux" }
+          )
+        );
+        return;
+      }
+      resolve();
+    });
+
+    proc.on("error", () => {
+      reject(createAppError("TOOL_NOT_AVAILABLE", "No se pudo ejecutar ffmpeg para finalizar la conversión.", { stage: "remux" }));
+    });
+  });
+}
+
+/** MP4-compatible remux: stream-copy + faststart (moov atom moved to the front). */
+function remuxToPathFaststart(fromPath: string, toPath: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const ffmpegBinary = CONFIG.media.binaries.ffmpeg;
+    const proc = spawn(
+      ffmpegBinary,
+      ["-y", "-i", fromPath, "-c", "copy", "-movflags", "+faststart", toPath],
+      { shell: false, windowsHide: true }
+    );
+
+    proc.on("close", (code: number | null) => {
+      fs.rmSync(fromPath, { force: true });
+      if (code !== 0 || !fs.existsSync(toPath)) {
+        reject(
+          createAppError(
+            "ENGINE_EXECUTE_FAILED",
+            "El vídeo se descargó pero no se pudo empaquetar como MP4 reproducible.",
             { stage: "remux" }
           )
         );

@@ -258,6 +258,33 @@ describe("getVideoMetadata — success path", () => {
     expect(capturedOptions.shell).toBe(false);
   });
 
+  it("enables Node/EJS (--js-runtimes) ANONYMOUSLY — JS capability is not gated behind cookies", async () => {
+    // Explicit override: deleting the env var is not enough on a Windows host.
+    process.env.ANCLORA_FILESTUDIO_PLATFORM = "linux";
+    const spawnMock = vi.mocked(child_process.spawn);
+    let capturedArgs: string[] = [];
+    const proc = makeFakeProcess();
+    spawnMock.mockImplementation((_bin, args) => {
+      capturedArgs = args as string[];
+      return proc as unknown as ReturnType<typeof child_process.spawn>;
+    });
+
+    const { getVideoMetadata } = await import("../../src/lib/media/metadata");
+    const promise = getVideoMetadata("https://www.youtube.com/watch?v=88fD-UtG_yo");
+
+    proc.stdout.emit("data", VALID_METADATA_JSON);
+    proc.emit("close", 0);
+
+    await promise;
+    // Anonymous metadata must carry the JS runtime…
+    expect(capturedArgs).toContain("--js-runtimes");
+    expect(capturedArgs.some((a) => a.startsWith("node:"))).toBe(true);
+    // …but NOT cookies or the remote EJS component.
+    expect(capturedArgs).not.toContain("--cookies");
+    expect(capturedArgs).not.toContain("--remote-components");
+    delete process.env.ANCLORA_FILESTUDIO_PLATFORM;
+  });
+
   it("preserves HLS variants when yt-dlp omits vcodec/acodec fields", async () => {
     const spawnMock = vi.mocked(child_process.spawn);
     const proc = makeFakeProcess();
@@ -400,7 +427,7 @@ describe("getVideoMetadata — yt-dlp failure paths", () => {
     });
   });
 
-  it("rejects with CONTENT_RESTRICTED when stderr contains age restriction", async () => {
+  it("rejects with YOUTUBE_LOGIN_REQUIRED when stderr contains age restriction (login-gated)", async () => {
     const spawnMock = vi.mocked(child_process.spawn);
     const proc = makeFakeProcess();
     spawnMock.mockReturnValue(proc as unknown as ReturnType<typeof child_process.spawn>);
@@ -414,8 +441,11 @@ describe("getVideoMetadata — yt-dlp failure paths", () => {
     );
     proc.emit("close", 1);
 
+    // Age-gated content requires an authorized session: distinct from the
+    // generic restriction bucket and never treated as a recoverable
+    // format-delivery 403 (no alternative representation would help).
     await expect(promise).rejects.toMatchObject({
-      code: "CONTENT_RESTRICTED",
+      code: "YOUTUBE_LOGIN_REQUIRED",
     });
   });
 
