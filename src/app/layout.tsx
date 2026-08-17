@@ -1,17 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { FILESTUDIO_BRAND } from "@/lib/filestudio-brand";
 import { iconManifestHash, versionedPublicAsset } from "@/lib/branding/icon-metadata";
 
 // ANCLORA_BRANDING_TYPOGRAPHY: las apps internas usan Inter como --font-sans.
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-inter",
-  display: "swap",
-});
+// Loaded via the system/web-safe fallback chain in globals.css (--font-sans),
+// not next/font/google — that loader fetches font files from Google's CDN at
+// build time, which made production builds fail whenever the build sandbox
+// couldn't reach fonts.gstatic.com. Browsers with Inter installed or synced
+// via OS/webfont still render it; everyone else gets ui-sans-serif/system-ui.
 
 export const viewport: Viewport = {
   themeColor: FILESTUDIO_BRAND.themeColor,
@@ -67,7 +65,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${inter.variable} h-full antialiased`}
+      className="h-full antialiased"
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
