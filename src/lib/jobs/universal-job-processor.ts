@@ -447,6 +447,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
       stage: "Completado",
       progress: 100,
       file_size_bytes: result.outputSizeBytes,
+      output_format: actualOutputFormat,
       mime_type: outputMime,
       download_token_hash: tokenHash,
       output_file_name: finalFileName,

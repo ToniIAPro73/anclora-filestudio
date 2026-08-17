@@ -358,6 +358,7 @@ export async function processMultistepJob(jobId: string): Promise<void> {
       stage: "Completado",
       progress: 100,
       file_size_bytes: fs.statSync(finalOutputPath).size,
+      output_format: finalOutputFormat,
       mime_type: outputMime,
       download_token_hash: tokenHash,
       output_file_name: finalFileName,

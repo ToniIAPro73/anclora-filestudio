@@ -109,6 +109,7 @@ export function updateJob(
       | "progress"
       | "error_code"
       | "error_message"
+      | "output_format"
       | "output_file_name"
       | "output_relative_path"
       | "file_size_bytes"
