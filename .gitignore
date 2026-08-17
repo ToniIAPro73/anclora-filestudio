@@ -75,3 +75,5 @@ SBOM.cdx.json
 MEMORY.md
 
 *.log
+# Route ranking benchmark output — generated at test time, not canonical
+artifacts/route-ranking/benchmark-results.json
