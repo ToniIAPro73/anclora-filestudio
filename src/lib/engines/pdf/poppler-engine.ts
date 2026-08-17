@@ -381,12 +381,22 @@ export class PopplerEngine implements ConversionEngine {
       return failure(plan, start, "pdftohtml no generó el documento HTML", [result.stdout, result.stderr]);
     }
     const htmlPath = path.join(workDir, htmlEntry);
-    const assets = fs.readdirSync(workDir)
-      .filter((entry) => entry !== htmlEntry)
+    const htmlSource = fs.readFileSync(htmlPath, "utf8");
+
+    // pdftohtml can leave more files in workDir than the HTML actually
+    // references (e.g. redundant per-image extractions alongside the
+    // full-page background render it links to). Only files the HTML
+    // actually links to are final artifacts; anything else is pdftohtml
+    // scratch output and must not be packaged.
+    const referencedAssets = new Set(referencedAssetNames(htmlSource));
+    const workDirEntries = fs.readdirSync(workDir).filter((entry) => entry !== htmlEntry);
+    const assets = workDirEntries
+      .filter((entry) => referencedAssets.has(entry))
       .map((entry) => path.join(workDir, entry));
+    const orphanedAssets = workDirEntries.filter((entry) => !referencedAssets.has(entry));
 
     // Scanned guard: no extractable text and no page images means empty result.
-    const textContent = fs.readFileSync(htmlPath, "utf8").replace(/<[^>]*>/g, "").trim();
+    const textContent = htmlSource.replace(/<[^>]*>/g, "").trim();
     if (!textContent && assets.length === 0) {
       fs.rmSync(workDir, { recursive: true, force: true });
       return failure(plan, start, SCANNED_PDF_ERROR, [result.stdout, result.stderr]);
@@ -409,12 +419,15 @@ export class PopplerEngine implements ConversionEngine {
     fs.rmSync(workDir, { recursive: true, force: true });
     const stat = fs.statSync(finalOutputPath);
     onProgress?.(100, "Completado");
+    const accounting =
+      `Conversion artifacts: generated=${workDirEntries.length + 1} final=${assets.length + 1} ` +
+      `discarded=${orphanedAssets.length}`;
     return {
       success: true,
       outputPath: finalOutputPath,
       outputSizeBytes: stat.size,
       durationMs: Date.now() - start,
-      logs: [result.stdout, result.stderr].filter(Boolean),
+      logs: [result.stdout, result.stderr, accounting].filter(Boolean),
       warnings: assets.length > 0
         ? [`HTML y ${assets.length} assets empaquetados en ZIP`]
         : [],
@@ -585,6 +598,22 @@ function listGeneratedPages(
     })
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
     .map((entry) => path.join(workDir, entry));
+}
+
+// Extracts basenames referenced via src="..." / href="..." (single or double
+// quoted) in pdftohtml output. pdftohtml only ever emits relative sibling
+// filenames for its own generated assets, so a basename match is sufficient
+// and avoids depending on undocumented internal naming conventions.
+export function referencedAssetNames(html: string): string[] {
+  const names: string[] = [];
+  const re = /(?:src|href)\s*=\s*["']([^"'#]+)["']/gi;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(html)) !== null) {
+    const value = match[1].trim();
+    if (!value || /^[a-z][a-z0-9+.-]*:/i.test(value)) continue; // skip absolute/protocol URLs
+    names.push(path.basename(value));
+  }
+  return names;
 }
 
 function zipOutputPath(outputPath: string, inputBase: string, outputFormat: RasterOutputFormat): string {

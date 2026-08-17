@@ -4,7 +4,7 @@ import path from "path";
 import crypto from "crypto";
 import JSZip from "jszip";
 import { PDFDocument } from "pdf-lib";
-import { PopplerEngine } from "../../src/lib/engines/pdf/poppler-engine";
+import { PopplerEngine, referencedAssetNames } from "../../src/lib/engines/pdf/poppler-engine";
 import { CONFIG } from "../../src/lib/config";
 import type { ConversionPlan } from "../../src/lib/domain/engines";
 
@@ -131,5 +131,82 @@ describe("PopplerEngine", () => {
     }
     const magic = fs.readFileSync(outputPath).subarray(0, 4).toString("hex");
     expect(["49492a00", "4d4d002a"]).toContain(magic);
+  });
+
+  it("packages only HTML-referenced assets into the ZIP, not every scratch file pdftohtml leaves behind", async () => {
+    const engine = new PopplerEngine();
+    const probe = await engine.probe();
+    if (!probe.available || !probe.capabilities.includes("pdftohtml")) {
+      console.warn("SKIP: pdftohtml not available");
+      return;
+    }
+
+    const inputPath = path.join(testDir, "html asset input.pdf");
+    const outputPath = path.join(testDir, "html asset output.html");
+    const pdf = await PDFDocument.create();
+    const page = pdf.addPage([200, 200]);
+    // 1x1 red PNG, embedded so the page has no extractable text (mirrors a
+    // scanned page) and pdftohtml must render it as an image.
+    const redPixelPng = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+      "base64",
+    );
+    const image = await pdf.embedPng(redPixelPng);
+    page.drawImage(image, { x: 0, y: 0, width: 200, height: 200 });
+    fs.writeFileSync(inputPath, await pdf.save());
+
+    const htmlPlan: ConversionPlan = {
+      jobId: crypto.randomUUID(),
+      engineId: "poppler",
+      operation: "extract-html",
+      inputPath,
+      outputPath,
+      outputFormat: "html",
+      options: {},
+      args: [],
+      env: {},
+      timeoutMs: 30_000,
+      estimatedSizeBytes: null,
+    };
+
+    const result = await engine.execute(htmlPlan);
+    if (!result.success) {
+      console.warn(`SKIP: pdftohtml produced no usable output: ${result.error}`);
+      return;
+    }
+
+    expect(path.extname(result.outputPath).toLowerCase()).toBe(".zip");
+    const zip = await JSZip.loadAsync(fs.readFileSync(result.outputPath));
+    const entries = Object.keys(zip.files);
+    const htmlEntry = entries.find((e) => e.toLowerCase().endsWith(".html"));
+    expect(htmlEntry).toBeTruthy();
+
+    const htmlSource = await zip.files[htmlEntry!].async("string");
+    const referenced = new Set(referencedAssetNames(htmlSource));
+
+    // Every packaged non-HTML entry must be something the HTML actually links to.
+    for (const entry of entries) {
+      if (entry === htmlEntry) continue;
+      expect(referenced.has(entry)).toBe(true);
+    }
+  });
+});
+
+describe("referencedAssetNames", () => {
+  it("extracts src/href basenames and ignores absolute URLs and fragments", () => {
+    const html = `
+      <img src="donacion001.png"/>
+      <img src='sub/donacion002.png'/>
+      <a href="https://example.com/external.png">x</a>
+      <a href="#section">y</a>
+      <link href="style.css"/>
+    `;
+    expect(referencedAssetNames(html).sort()).toEqual(
+      ["donacion001.png", "donacion002.png", "style.css"].sort(),
+    );
+  });
+
+  it("returns no assets for HTML with no references", () => {
+    expect(referencedAssetNames("<html><body>plain text</body></html>")).toEqual([]);
   });
 });
