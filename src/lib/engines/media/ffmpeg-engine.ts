@@ -7,6 +7,7 @@
 
 import fs from "fs";
 import path from "path";
+import JSZip from "jszip";
 import type { ConversionEngine, EngineId, EngineProbeResult, ConversionCapability, ConversionPlan, ExecutionResult, ArtifactValidation } from "../../domain/engines";
 import type { UniversalFileDescriptor, MediaAttributes, LossProfile } from "../../domain/descriptors";
 import { ProcessRunner } from "../../infrastructure/processes/process-runner";
@@ -328,7 +329,7 @@ function buildExtractFramesCapability(
       { id: "frames-1fps", label: "1 fps", quality: "1", description: "1 frame por segundo", isRecommended: true },
       { id: "frames-5fps", label: "5 fps", quality: "5", description: "5 frames por segundo" },
     ],
-    warnings: [],
+    warnings: ["Los vídeos generan varios frames agrupados en ZIP"],
     engineId: ENGINE_ID,
     mobilePortability: "desktop-only",
   };
@@ -548,20 +549,6 @@ function buildTrimArgs(inputPath: string, outputPath: string, options: Record<st
   return args;
 }
 
-function buildExtractFramesArgs(inputPath: string, outputPath: string, quality: string, options: Record<string, unknown>): string[] {
-  const fps = quality || "1";
-  const args: string[] = ["-y", "-i", inputPath];
-
-  if (options.trimStart !== undefined) args.push("-ss", String(options.trimStart));
-  if (options.trimEnd !== undefined) args.push("-to", String(options.trimEnd));
-
-  args.push("-vf", `fps=${fps}`);
-  // Use a pattern for output to get multiple frames
-  const outputPattern = outputPath.replace(/\.\w+$/, "_%04d.jpg");
-  args.push(outputPattern);
-  return args;
-}
-
 function mapMp3Quality(quality: string): string {
   const bitrate = parseInt(quality, 10);
   if (bitrate >= 320) return "0";
@@ -752,6 +739,10 @@ export class FFmpegEngine implements ConversionEngine {
       return { success: false, outputPath: plan.outputPath, outputSizeBytes: 0, durationMs: 0, logs: [], warnings: [], error: String(err) };
     }
 
+    if (plan.operation === "extract-frames") {
+      return this.executeExtractFrames(plan, start, onProgress);
+    }
+
     const operation = plan.operation;
     const opts = plan.options;
     let args: string[];
@@ -798,11 +789,6 @@ export class FFmpegEngine implements ConversionEngine {
       }
       case "extract-thumbnail": {
         args = buildThumbnailArgs(plan.inputPath, plan.outputPath, opts);
-        break;
-      }
-      case "extract-frames": {
-        const quality = (opts.quality as string) ?? "1";
-        args = buildExtractFramesArgs(plan.inputPath, plan.outputPath, quality, opts);
         break;
       }
       case "extract-subtitles": {
@@ -854,6 +840,80 @@ export class FFmpegEngine implements ConversionEngine {
       logs: [result.stdout, result.stderr].filter(Boolean),
       warnings: [],
       error: success ? undefined : `ffmpeg exit ${result.exitCode}: ${result.stderr.slice(0, 300)}`,
+    };
+  }
+
+  // extract-frames writes multiple numbered files (frame_0001.jpg, frame_0002.jpg, ...),
+  // so success can't be "plan.outputPath exists" like every other single-file operation —
+  // that literal path is never created. Success means: FFmpeg exited 0 AND at least one
+  // numbered frame was actually discovered in the dedicated work dir; discovered frames
+  // are then packaged into a ZIP, mirroring PopplerEngine's multi-page raster output.
+  private async executeExtractFrames(
+    plan: ConversionPlan,
+    start: number,
+    onProgress?: (progress: number, stage: string) => void,
+  ): Promise<ExecutionResult> {
+    const opts = plan.options;
+    const fps = (opts.quality as string) || "1";
+    const outputDir = path.dirname(plan.outputPath);
+    const workDir = path.join(outputDir, `.ffmpeg-frames-${plan.jobId}`);
+    fs.mkdirSync(workDir, { recursive: true });
+
+    const framePrefix = "frame";
+    const framePattern = path.join(workDir, `${framePrefix}_%04d.jpg`);
+    const args = ["-y", "-i", plan.inputPath];
+    if (opts.trimStart !== undefined) args.push("-ss", String(opts.trimStart));
+    if (opts.trimEnd !== undefined) args.push("-to", String(opts.trimEnd));
+    args.push("-vf", `fps=${fps}`, framePattern);
+
+    onProgress?.(30, "Procesando con FFmpeg");
+    const result = await this.getFfmpegRunner().run({
+      args,
+      timeoutMs: plan.timeoutMs,
+      onProgress: (line, stream) => {
+        if (stream === "stderr") {
+          const progress = parseFfmpegProgress(line, opts.durationSeconds as number | undefined);
+          if (progress !== null) onProgress?.(30 + Math.round(progress * 0.6), "Convirtiendo");
+        }
+      },
+    });
+
+    const frames = listGeneratedFrames(workDir, framePrefix, "jpg");
+    const diagnostics =
+      `FFmpeg extract-frames: exitCode=${result.exitCode} pattern=${framePrefix}_%04d.jpg generatedFrames=${frames.length}`;
+
+    if (result.exitCode !== 0 || frames.length === 0) {
+      // Partial output on a non-zero exit, or a clean exit with zero frames, are both
+      // functional failures — never hand back partial frames as a successful result.
+      fs.rmSync(workDir, { recursive: true, force: true });
+      onProgress?.(100, "Error");
+      return {
+        success: false,
+        outputPath: plan.outputPath,
+        outputSizeBytes: 0,
+        durationMs: Date.now() - start,
+        logs: [result.stdout, result.stderr, diagnostics].filter(Boolean),
+        warnings: [],
+        error: result.exitCode !== 0
+          ? `ffmpeg exit ${result.exitCode}: ${result.stderr.slice(0, 300)}`
+          : "FFmpeg no generó ningún frame",
+      };
+    }
+
+    onProgress?.(80, "Empaquetando frames");
+    const finalOutputPath = frameZipOutputPath(plan.outputPath);
+    await writeFramesZip(finalOutputPath, frames);
+    fs.rmSync(workDir, { recursive: true, force: true });
+    const stat = fs.statSync(finalOutputPath);
+    onProgress?.(100, "Completado");
+
+    return {
+      success: true,
+      outputPath: finalOutputPath,
+      outputSizeBytes: stat.size,
+      durationMs: Date.now() - start,
+      logs: [result.stdout, result.stderr, diagnostics].filter(Boolean),
+      warnings: [`${frames.length} frames exportados en ZIP`],
     };
   }
 
@@ -928,6 +988,35 @@ function parseFfmpegProgress(line: string, totalDurationSeconds?: number): numbe
 
   // Without duration, return null (indeterminate)
   return null;
+}
+
+// ── extract-frames output discovery ──────────────────────────────────────────
+// Mirrors PopplerEngine's listGeneratedPages()/writePagesZip() pattern: explicit
+// known-prefix + numbered-sequence + known-extension selection from Node's
+// readdirSync, never a blind "everything in the dir" read. Kept local rather
+// than imported since it's a small, engine-specific helper — not worth a
+// cross-domain (pdf ↔ media) dependency for ~10 lines.
+
+function listGeneratedFrames(workDir: string, prefix: string, ext: string): string[] {
+  return fs.readdirSync(workDir)
+    .filter((entry) => entry.startsWith(`${prefix}_`) && entry.endsWith(`.${ext}`))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+    .map((entry) => path.join(workDir, entry));
+}
+
+function frameZipOutputPath(outputPath: string): string {
+  if (path.extname(outputPath).toLowerCase() === ".zip") return outputPath;
+  const base = path.basename(outputPath, path.extname(outputPath));
+  return path.join(path.dirname(outputPath), `${base}-frames.zip`);
+}
+
+async function writeFramesZip(outputPath: string, frames: string[]): Promise<void> {
+  const zip = new JSZip();
+  frames.forEach((framePath, index) => {
+    zip.file(`frame-${String(index + 1).padStart(4, "0")}.jpg`, fs.readFileSync(framePath));
+  });
+  const buffer = await zip.generateAsync({ type: "nodebuffer" });
+  fs.writeFileSync(outputPath, buffer);
 }
 
 export const ffmpegEngine = new FFmpegEngine();
