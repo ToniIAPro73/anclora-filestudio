@@ -36,7 +36,7 @@ FileStudio centralizes file format conversion workflows for the Anclora ecosyste
 | Category | Internal |
 | Brand accent | `#4FB3BF` |
 | Typography | Inter |
-| Canonical repository | `anclora-fileStudio` |
+| Canonical repository | `anclora-filestudio` |
 
 ## Key features
 
