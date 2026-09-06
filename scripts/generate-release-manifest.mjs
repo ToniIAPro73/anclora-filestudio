@@ -45,7 +45,7 @@ function sha256File(filePath) {
   });
 }
 
-async function describeArtifact(filePath) {
+async function describeArtifact(filePath, extra = {}) {
   if (!existsSync(filePath)) {
     throw new Error(`Artifact not found: ${filePath}`);
   }
@@ -55,6 +55,7 @@ async function describeArtifact(filePath) {
     file: path.basename(filePath),
     sizeBytes: stat.size,
     sha256,
+    ...extra,
   };
 }
 
@@ -68,13 +69,21 @@ async function main() {
   const outDir = args.dir;
   mkdirSync(outDir, { recursive: true });
 
-  const windowsPortable = await describeArtifact(args["windows-zip"]);
-  const linuxPortable = await describeArtifact(args["linux-tar"]);
+  const platformMeta = {
+    version: args.version,
+    commit: args.commit,
+  };
+
+  const windowsPortable = await describeArtifact(args["windows-zip"], { platform: "windows", arch: "x64", ...platformMeta });
+  const linuxPortable = await describeArtifact(args["linux-tar"], { platform: "linux", arch: "x64", ...platformMeta });
   const macosPortable = args["macos-zip"] && existsSync(args["macos-zip"])
-    ? await describeArtifact(args["macos-zip"])
+    ? await describeArtifact(args["macos-zip"], { platform: "darwin", arch: "arm64", ...platformMeta })
+    : null;
+  const macosDmg = args["macos-dmg"] && existsSync(args["macos-dmg"])
+    ? await describeArtifact(args["macos-dmg"], { platform: "darwin", arch: "arm64", ...platformMeta })
     : null;
   const windowsSetup = args["windows-setup"] && existsSync(args["windows-setup"])
-    ? await describeArtifact(args["windows-setup"])
+    ? await describeArtifact(args["windows-setup"], { platform: "windows", arch: "x64", ...platformMeta })
     : null;
 
   const manifest = {
@@ -85,6 +94,7 @@ async function main() {
     windowsPortable,
     linuxPortable,
     ...(macosPortable ? { macosPortable } : {}),
+    ...(macosDmg ? { macosDmg } : {}),
     ...(windowsSetup ? { windowsSetup } : {}),
   };
 
@@ -98,6 +108,9 @@ async function main() {
   ];
   if (macosPortable) {
     sumsLines.push(`${macosPortable.sha256}  ${macosPortable.file}`);
+  }
+  if (macosDmg) {
+    sumsLines.push(`${macosDmg.sha256}  ${macosDmg.file}`);
   }
   if (windowsSetup) {
     sumsLines.push(`${windowsSetup.sha256}  ${windowsSetup.file}`);

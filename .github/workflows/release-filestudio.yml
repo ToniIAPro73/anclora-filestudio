@@ -151,7 +151,43 @@ jobs:
       - name: Smoke test macOS portable
         run: bash scripts/smoke-macos-portable.sh
 
-  # ── Gate 2e: Windows portable build ────────────────────────────────────────
+  # ── Gate 2e: macOS .app bundle & DMG, wrapping the already-verified portable ──
+  build-macos-app:
+    needs: smoke-macos-portable
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-portable
+          path: dist/macos
+      - name: Build .app bundle
+        run: bash scripts/build-macos-app.sh
+      - name: Verify .app bundle
+        run: bash scripts/verify-macos-app.sh
+      - name: Verify provenance matches this commit
+        run: |
+          set -euo pipefail
+          COMMIT="$(python3 -c "import json; print(json.load(open('dist/macos/app-staging/Anclora FileStudio.app/Contents/Resources/app-build-info.json'))['commitFull'])")"
+          echo "app-build-info commit: $COMMIT"
+          echo "Workflow commit:       $GITHUB_SHA"
+          [[ "$COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::macOS .app build commit does not match GITHUB_SHA"; exit 1; }
+      - name: Build DMG
+        run: bash scripts/build-macos-dmg.sh
+      - name: Verify DMG
+        run: bash scripts/verify-macos-dmg.sh
+      - name: Smoke test .app (real 'open' launch, health, single-instance, shutdown)
+        run: bash scripts/smoke-macos-app.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-dmg
+          path: |
+            dist/release/Anclora-FileStudio-macOS-arm64.dmg
+            dist/release/Anclora-FileStudio-macOS-arm64.dmg.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  # ── Gate 2f: Windows portable build ────────────────────────────────────────
   build-windows-portable:
     needs: validate
     runs-on: windows-latest
@@ -177,7 +213,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  # ── Gate 2c: Windows portable structure and provenance ────────────────────
+  # ── Gate 2g: Windows portable structure and provenance ────────────────────
   verify-windows-portable:
     needs: build-windows-portable
     runs-on: windows-latest
@@ -199,7 +235,7 @@ jobs:
           echo "Workflow commit: $GITHUB_SHA"
           [[ "$MANIFEST_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::Windows portable manifest commit does not match GITHUB_SHA"; exit 1; }
 
-  # ── Gate 2d: real Windows process startup and shutdown ─────────────────────
+  # ── Gate 2h: real Windows process startup and shutdown ─────────────────────
   smoke-windows-portable:
     needs: verify-windows-portable
     runs-on: windows-latest
@@ -375,7 +411,7 @@ jobs:
   # ── Gate 4: assemble checksums/manifest, verify cross-artifact provenance,
   #    publish a GitHub Release only if every prior gate passed AND publish=true ──
   package:
-    needs: [validate, build-linux-portable, smoke-macos-portable, smoke-windows-portable, build-windows-setup]
+    needs: [validate, build-linux-portable, smoke-macos-portable, build-macos-app, smoke-windows-portable, build-windows-setup]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -393,6 +429,10 @@ jobs:
         with:
           name: macos-portable
           path: dist/macos
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-dmg
+          path: dist/release
       - uses: actions/download-artifact@v4
         with:
           name: windows-portable
@@ -436,6 +476,13 @@ jobs:
           [[ "$LINUX_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::Linux portable provenance mismatch"; exit 1; }
           [[ "$MACOS_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::macOS portable provenance mismatch"; exit 1; }
           [[ "$WINDOWS_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::Windows portable provenance mismatch"; exit 1; }
+          [[ -f dist/release/Anclora-FileStudio-macOS-arm64.dmg ]] || { echo "::error::macOS DMG artifact missing"; exit 1; }
+          [[ -f dist/release/Anclora-FileStudio-macOS-arm64.dmg.sha256 ]] || { echo "::error::macOS DMG checksum missing"; exit 1; }
+          command -v 7z >/dev/null 2>&1 || sudo apt-get install -y p7zip-full
+          DMG_COMMIT="$(7z e -so dist/release/Anclora-FileStudio-macOS-arm64.dmg "Anclora FileStudio/Anclora FileStudio.app/Contents/Resources/app-build-info.json" 2>/dev/null | python3 -c "import json,sys; print(json.load(sys.stdin).get('commitFull', ''))" || true)"
+          echo "macOS DMG commit:        $DMG_COMMIT"
+          [[ -n "$DMG_COMMIT" ]] || { echo "::error::Could not extract app-build-info.json from DMG"; exit 1; }
+          [[ "$DMG_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::macOS DMG provenance mismatch (expected $GITHUB_SHA, got $DMG_COMMIT)"; exit 1; }
 
       - name: Generate release manifest + checksums
         run: |
@@ -446,6 +493,7 @@ jobs:
             --windows-zip dist/windows/Anclora-FileStudio-Windows-x64-Core.zip \
             --linux-tar dist/linux/Anclora-FileStudio-Linux-x64.tar.zst \
             --macos-zip dist/macos/Anclora-FileStudio-macOS-arm64.zip \
+            --macos-dmg dist/release/Anclora-FileStudio-macOS-arm64.dmg \
             --windows-setup dist/release/Anclora-FileStudio-Setup-Windows-x64.exe
 
       - uses: actions/upload-artifact@v4
@@ -455,6 +503,9 @@ jobs:
             dist/windows/Anclora-FileStudio-Windows-x64-Core.zip
             dist/linux/Anclora-FileStudio-Linux-x64.tar.zst
             dist/macos/Anclora-FileStudio-macOS-arm64.zip
+            dist/macos/Anclora-FileStudio-macOS-arm64.zip.sha256
+            dist/release/Anclora-FileStudio-macOS-arm64.dmg
+            dist/release/Anclora-FileStudio-macOS-arm64.dmg.sha256
             dist/release/Anclora-FileStudio-Setup-Windows-x64.exe
             dist/release/SHA256SUMS.txt
             dist/release/release-manifest.json
@@ -474,13 +525,21 @@ jobs:
           gh release create "${{ steps.meta.outputs.tag }}" \
             --title "Anclora FileStudio ${{ steps.meta.outputs.tag }}" \
             --notes "Commit: $GITHUB_SHA
-          Windows installer: unsigned (SmartScreen will warn — see docs/RELEASE_WINDOWS_INSTALLER.md)
-          macOS arm64 portable: unsigned, unnotarized (Gatekeeper will warn — see docs/portable-macos.md)
+
+          Windows: portable ZIP + Setup.exe (unsigned — SmartScreen will warn, see docs/RELEASE_WINDOWS_INSTALLER.md)
+          Linux: portable tar.zst
+          macOS Apple Silicon (arm64):
+            - Portable ZIP
+            - DMG containing Anclora FileStudio.app (drag to /Applications)
+            - unsigned, unnotarized — Gatekeeper will show a warning on first launch (see docs/portable-macos.md for the one-time authorization steps)
+
           Checksums: see SHA256SUMS.txt / release-manifest.json" \
             dist/windows/Anclora-FileStudio-Windows-x64-Core.zip \
             dist/linux/Anclora-FileStudio-Linux-x64.tar.zst \
             dist/macos/Anclora-FileStudio-macOS-arm64.zip \
             dist/macos/Anclora-FileStudio-macOS-arm64.zip.sha256 \
+            dist/release/Anclora-FileStudio-macOS-arm64.dmg \
+            dist/release/Anclora-FileStudio-macOS-arm64.dmg.sha256 \
             dist/release/Anclora-FileStudio-Setup-Windows-x64.exe \
             dist/release/SHA256SUMS.txt \
             dist/release/release-manifest.json
