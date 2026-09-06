@@ -47,16 +47,46 @@ pnpm dev
 
 The application will be available at `http://localhost:3000`.
 
-### Windows Portable
+### Windows (Installer)
 
-If you are using the Windows portable distribution:
+Download `Anclora-FileStudio-Setup-Windows-x64.exe` from the
+[latest release](https://github.com/ToniIAPro73/anclora-filestudio/releases/latest)
+and run it:
 
-1. Extract the `Anclora FileStudio-Windows-x64.zip` to a folder on your computer
-2. Double-click `INICIAR_ANCLORA_FILESTUDIO.bat`
-3. Your browser will open automatically at `http://127.0.0.1:3000`
-4. To stop the application, double-click `CERRAR_ANCLORA_FILESTUDIO.bat`
+1. Run `Anclora-FileStudio-Setup-Windows-x64.exe` — no admin rights required
+2. The installer creates a Desktop shortcut and Start Menu entry
+3. Launch "Anclora FileStudio" from either shortcut — your browser opens
+   automatically once the app is ready
+4. Use the "Cerrar aplicación" button in the app, or the Start Menu
+   uninstaller, to stop/remove it
 
-The portable distribution includes Node.js, yt-dlp, FFmpeg, and FFprobe. For additional conversion capabilities (Pandoc, LibreOffice, QPDF, Calibre, Tesseract), install them separately.
+The installer bundles Node.js, yt-dlp, FFmpeg, and FFprobe. For additional
+conversion capabilities (Pandoc, LibreOffice, QPDF, Calibre, Tesseract),
+install them separately — see [Diagnosing Tool Availability](#diagnosing-tool-availability).
+
+The installer is unsigned; Windows SmartScreen may show a warning on first
+run ("More info" → "Run anyway"). See `docs/RELEASE_WINDOWS_INSTALLER.md`.
+
+### macOS (Apple Silicon)
+
+Download `Anclora-FileStudio-macOS-arm64.dmg` from the
+[latest release](https://github.com/ToniIAPro73/anclora-filestudio/releases/latest):
+
+1. Open the DMG and drag "Anclora FileStudio" into the `Applications` shortcut
+2. Double-click "Anclora FileStudio" in `/Applications` to launch it
+3. The app is unsigned and unnotarized — Gatekeeper will warn on first launch;
+   see `docs/portable-macos.md` for the one-time authorization steps
+4. Quit the app from the "Cerrar aplicación" button in the browser tab, or
+   from the Dock
+
+### Linux (Portable)
+
+If you are using the Linux portable distribution:
+
+1. Extract `Anclora-FileStudio-Linux-x64.tar.zst` to a folder on your computer
+2. Run `./start-anclora-filestudio.sh`
+3. Your browser will open automatically once the app is ready
+4. To stop the application, run `./stop-anclora-filestudio.sh`
 
 ### Desktop PRO
 

@@ -87,6 +87,7 @@ pnpm check  # lint + typecheck + test + build
 - Guía de diagnóstico: [`docs/diagnostic-guide.md`](./docs/diagnostic-guide.md)
 - Seguridad y privacidad: [`docs/security.md`](./docs/security.md), [`docs/privacy.md`](./docs/privacy.md)
 - Gobernanza y bóveda: `contracts/` y `docs/governance/`
+- Release Desktop (Windows Setup.exe / macOS DMG / Linux portable): [`docs/release/RUNBOOK-RELEASE.md`](./docs/release/RUNBOOK-RELEASE.md), [`docs/portable-macos.md`](./docs/portable-macos.md)
 
 ---
 

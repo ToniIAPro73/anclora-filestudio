@@ -1,7 +1,28 @@
 # Runbook de Release — Anclora FileStudio
 
 > **Audiencia**: mantenedores con acceso al repositorio y al destino de publicación.
-> **Alcance**: portables `windows-x64`, `linux-x64` y `macos-arm64`. El despliegue Vercel (web) sigue su propio pipeline CI.
+> **Alcance**: distribución Desktop `windows-x64`, `linux-x64` y `macos-arm64`. El despliegue Vercel (web) sigue su propio pipeline CI.
+
+> **PUBLIC DISTRIBUTION (lo único que un usuario final descarga):**
+>
+> | Plataforma | Producto público |
+> |---|---|
+> | Windows | `Anclora-FileStudio-Setup-Windows-x64.exe` (instalador) |
+> | macOS (Apple Silicon) | `Anclora-FileStudio-macOS-arm64.dmg` |
+> | Linux | `Anclora-FileStudio-Linux-x64.tar.zst` (portable) |
+>
+> Los portables Windows (`Anclora-FileStudio-Windows-x64-Core.zip`) y macOS
+> (`Anclora-FileStudio-macOS-arm64.zip`) siguen construyéndose, pero solo como
+> `INTERNAL_BUILD_PAYLOAD` para generar el instalador/`​.app`+DMG respectivamente.
+> **No se suben como workflow artifact ni se publican en GitHub Releases.**
+>
+> El pipeline canónico y automatizado es
+> [`.github/workflows/release-filestudio.yml`](../../.github/workflows/release-filestudio.yml)
+> (`validate` → `linux-portable` / `macos-dmg` / `windows-setup` → `package`).
+> El resto de este runbook describe el flujo manual histórico de construcción
+> y verificación local — útil para depurar un fallo del workflow paso a paso,
+> pero la publicación real de un release ocurre a través del workflow, vía
+> `git push origin vX.Y.Z` o `workflow_dispatch` con `publish=true`.
 
 ---
 
@@ -68,13 +89,13 @@ bash scripts/build-portables.sh --windows
 
 Artefactos resultantes:
 
-| Plataforma | Ruta esperada |
-|---|---|
-| Linux x64 | `dist/linux/Anclora-FileStudio-Linux-x64.tar.zst` |
-| Windows x64 Core | `dist/windows/Anclora-FileStudio-Windows-x64-Core.zip` |
-| Windows x64 Setup | `dist/release/Anclora-FileStudio-Setup-Windows-x64.exe` |
-| macOS arm64 ZIP | `dist/macos/Anclora-FileStudio-macOS-arm64.zip` |
-| macOS arm64 DMG | `dist/release/Anclora-FileStudio-macOS-arm64.dmg` |
+| Plataforma | Ruta esperada | Distribución |
+|---|---|---|
+| Linux x64 | `dist/linux/Anclora-FileStudio-Linux-x64.tar.zst` | **Pública** |
+| Windows x64 Core (portable) | `dist/windows/Anclora-FileStudio-Windows-x64-Core.zip` | Interna (payload del Setup) |
+| Windows x64 Setup | `dist/release/Anclora-FileStudio-Setup-Windows-x64.exe` | **Pública** |
+| macOS arm64 ZIP (portable) | `dist/macos/Anclora-FileStudio-macOS-arm64.zip` | Interna (payload del DMG) |
+| macOS arm64 DMG | `dist/release/Anclora-FileStudio-macOS-arm64.dmg` | **Pública** |
 
 ---
 

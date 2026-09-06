@@ -7,14 +7,17 @@ build Intel (x64) — Rosetta 2 no está soportada ni probada.
 
 ## Artefactos de Release
 
-A partir de la versión 0.2.0, el pipeline de release genera dos modalidades de distribución:
+**El único producto público para usuarios macOS es el DMG.** El ZIP portable
+arm64 sigue existiendo, pero únicamente como payload de construcción interno
+(`INTERNAL_BUILD_PAYLOAD`) que el pipeline usa para generar el `.app` y el
+DMG — ya no se sube como artifact de release ni se publica en GitHub
+Releases. No lo presentes como opción de descarga a usuarios finales.
 
 | Artefacto | Descripción | Destinatario |
 |---|---|---|
-| `Anclora-FileStudio-macOS-arm64.dmg` | Imagen de disco (.dmg) con `Anclora FileStudio.app` y acceso directo a `/Applications` | Usuarios de escritorio (instalación estándar Finder) |
+| `Anclora-FileStudio-macOS-arm64.dmg` | Imagen de disco (.dmg) con `Anclora FileStudio.app` y acceso directo a `/Applications` | **Producto público** — usuarios de escritorio (instalación estándar Finder) |
 | `Anclora-FileStudio-macOS-arm64.dmg.sha256` | Checksum SHA-256 de la imagen DMG | Verificación de integridad |
-| `Anclora-FileStudio-macOS-arm64.zip` | Paquete portable autocontenido con scripts shell | Usuarios avanzados / entornos terminal |
-| `Anclora-FileStudio-macOS-arm64.zip.sha256` | Checksum SHA-256 del paquete portable ZIP | Verificación de integridad |
+| `Anclora-FileStudio-macOS-arm64.zip` | Paquete portable — payload de construcción interno del `.app`/DMG | Interno (build/CI, no distribuido a usuarios) |
 
 ---
 
@@ -50,9 +53,13 @@ La aplicación arranca silenciosamente en segundo plano (sin abrir ventana de te
 
 Si se vuelve a hacer doble clic en la aplicación mientras ya está corriendo, detecta la instancia en ejecución y reutiliza la ventana del navegador sin lanzar procesos duplicados.
 
-### 2. Paquete portable ZIP (Modo Terminal)
+### 2. Paquete portable ZIP (build interno, no distribuido)
 
-Para usuarios que prefieran ejecutarlo en una ruta local fija sin instalar en `/Applications`:
+Este paquete ya no se publica como asset de release — es el payload interno
+que el pipeline usa para construir el `.app`/DMG (`pnpm build:portable:macos`).
+Se documenta aquí solo para quien construya FileStudio localmente desde
+código fuente y prefiera ejecutarlo en una ruta local fija sin instalar en
+`/Applications`:
 
 ```bash
 # Verificar integridad
