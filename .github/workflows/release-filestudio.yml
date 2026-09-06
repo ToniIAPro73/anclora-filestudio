@@ -213,8 +213,13 @@ jobs:
           # default dist/installer-staging layout.
           export ANCLORA_INSTALLER_STAGING_BASE="$RUNNER_TEMP/fs-stage"
           bash scripts/build-windows-installer-staging.sh
+          STAGED_MANIFEST_PATH="$RUNNER_TEMP/fs-stage/Anclora-FileStudio-Windows-x64-Core/manifest.json"
           echo "INSTALLER_STAGING_DIR=$(cygpath -w "$RUNNER_TEMP/fs-stage/Anclora-FileStudio-Windows-x64-Core")" >> "$GITHUB_ENV"
-          STAGED_MANIFEST_COMMIT="$(python3 -c "import json; print(json.load(open('$RUNNER_TEMP/fs-stage/Anclora-FileStudio-Windows-x64-Core/manifest.json'))['commitFull'])")"
+          # Pass the path as argv, never interpolated into a Python string
+          # literal: $RUNNER_TEMP is a Windows-style path on this runner
+          # (e.g. D:\a\_temp) and "\a" / "\_" would otherwise be parsed as
+          # Python string escapes, corrupting the path (silent \a -> BEL).
+          STAGED_MANIFEST_COMMIT="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['commitFull'])" "$STAGED_MANIFEST_PATH")"
           echo "Staged manifest commit: $STAGED_MANIFEST_COMMIT"
           echo "Workflow commit:        $GITHUB_SHA"
           [[ "$STAGED_MANIFEST_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::Installer staging manifest commit does not match GITHUB_SHA"; exit 1; }
