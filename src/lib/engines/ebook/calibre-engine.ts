@@ -10,7 +10,7 @@ import type { UniversalFileDescriptor } from "../../domain/descriptors";
 import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { CONFIG } from "../../config";
-import { resolveMacAwareBinary } from "../../binary-resolution";
+import { isAncloraMacRuntime, resolveMacCalibreBinary } from "../../binary-resolution";
 
 const ENGINE_ID: EngineId = "calibre";
 
@@ -144,8 +144,15 @@ export function findEbookConvertBinary(): string {
   for (const p of portablePaths) {
     if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
-  // 3. Fall back to PATH (macOS: also searches Homebrew's standard dirs)
-  return resolveMacAwareBinary("ebook-convert");
+  // 3. macOS: PATH (+ Homebrew extra dirs), then the standard calibre.app
+  //    bundle locations — a Calibre installed via the official .app
+  //    installer does not place ebook-convert on PATH, and a Finder-launched
+  //    process may not inherit an interactive shell's Homebrew PATH either.
+  if (isAncloraMacRuntime()) {
+    return resolveMacCalibreBinary() ?? "ebook-convert";
+  }
+  // 4. Linux/Windows: PATH-based, ProcessRunner.probe() verifies.
+  return "ebook-convert";
 }
 
 // ── Engine implementation ────────────────────────────────────────────────────

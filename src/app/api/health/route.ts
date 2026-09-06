@@ -42,7 +42,13 @@ export async function GET() {
   ]);
   const { dependencies, probeResults } = await toolchainProbe.run();
 
-  const allOk = dependencies.every((d) => d.available);
+  // A missing OPTIONAL tool (LibreOffice, Calibre, Tesseract, Poppler) must
+  // not alarm the user with a "degraded" readiness label — it only narrows
+  // which conversions are available, not core app health. Only a missing
+  // non-optional (required/included) dependency counts against readiness.
+  const requiredOk = dependencies
+    .filter((d) => d.portableInclusion !== "optional")
+    .every((d) => d.available);
   const criticalIds = new Set(["ytdlp", "ffmpeg", "ffprobe"]);
   const criticalOk = dependencies
     .filter((d) => criticalIds.has(d.id))
@@ -61,7 +67,7 @@ export async function GET() {
     // non-fatal
   }
 
-  const healthStatus = allOk ? "ready" : criticalOk ? "degraded" : "unavailable";
+  const healthStatus = requiredOk ? "ready" : criticalOk ? "degraded" : "unavailable";
 
   return NextResponse.json({
     ok: criticalOk,

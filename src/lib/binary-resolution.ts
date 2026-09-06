@@ -141,3 +141,31 @@ export function resolveMacLibreOfficeBinary(
   }
   return null;
 }
+
+/**
+ * macOS-specific Calibre discovery: PATH (+ Homebrew extra dirs) first, then
+ * the standard calibre.app bundle install locations. Calibre installed via
+ * the official calibre-ebook.com .app installer does not place
+ * `ebook-convert` on PATH, and `brew install --cask calibre` does not
+ * symlink a CLI binary into /opt/homebrew/bin either — so a plain PATH
+ * search alone under-detects a correctly installed Calibre. Returns an
+ * absolute path, or null if Calibre cannot be found anywhere.
+ */
+export function resolveMacCalibreBinary(
+  existsSync: (p: string) => boolean = fs.existsSync,
+  homeDir: string = os.homedir(),
+  pathSearchOptions: AugmentedPathSearchOptions = {}
+): string | null {
+  const searchOptions: AugmentedPathSearchOptions = { existsSync, ...pathSearchOptions };
+  const onPath = resolveOnAugmentedPath("ebook-convert", searchOptions);
+  if (onPath) return onPath;
+
+  const appBundleCandidates = [
+    "/Applications/calibre.app/Contents/MacOS/ebook-convert",
+    path.join(homeDir, "Applications", "calibre.app", "Contents", "MacOS", "ebook-convert"),
+  ];
+  for (const candidate of appBundleCandidates) {
+    if (existsSync(candidate)) return candidate;
+  }
+  return null;
+}
