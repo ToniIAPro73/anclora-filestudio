@@ -74,13 +74,35 @@ brew install ffmpeg qpdf pandoc tesseract tesseract-lang poppler yt-dlp sevenzip
 
 | Herramienta | Capacidad que habilita |
 |---|---|
-| `ffmpeg` / `ffprobe` | audio, vídeo, miniaturas |
+| `ffmpeg` / `ffprobe` | audio, vídeo, miniaturas (requiere el códec `libvorbis` para salida OGG/Vorbis — ver nota abajo) |
 | `yt-dlp` | descarga de YouTube |
 | `qpdf` | manipulación de PDF |
 | `pandoc` | conversión de documentos |
 | `tesseract` | OCR |
 | `poppler` (`pdftoppm`) | PDF a imagen |
 | `sevenzip` (`7zz`)/`7z` | archivos comprimidos |
+
+### Nota sobre codecs de FFmpeg
+
+FileStudio no exige una distribución concreta de FFmpeg (Homebrew, MacPorts,
+build propia, etc.) — exige que el binario detectado tenga las
+**capacidades** (codecs) que cada conversión necesita. Para salida
+OGG/Vorbis en concreto, el binario debe incluir el codec `libvorbis`.
+
+Algunas variantes de `ffmpeg` empaquetadas sin ese codec (por licencia o por
+recorte de dependencias) reportan un `ffmpeg` funcional pero fallan
+específicamente al codificar a OGG/Vorbis. Esto no es un fallo de detección
+de FileStudio — el binario existe y se ejecuta — sino de capacidades del
+binario instalado. Compruébalo directamente antes de reportar un problema:
+
+```bash
+ffmpeg -encoders | grep -E 'vorbis|libvorbis'
+```
+
+Si no aparece nada, reinstala o recompila FFmpeg con soporte `libvorbis`
+(la mayoría de builds recientes de `brew install ffmpeg` ya lo incluyen).
+No se documenta aquí una fórmula específica porque el requisito real es la
+capacidad del codec, no el origen del paquete.
 
 Esta es la misma arquitectura que el portable Linux (detección de
 herramientas del sistema, sin bundling estático de binarios GPL/externos de

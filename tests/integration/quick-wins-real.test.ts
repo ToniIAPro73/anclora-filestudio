@@ -13,7 +13,7 @@ import JSZip from "jszip";
 
 import { popplerEngine } from "../../src/lib/engines/pdf/poppler-engine";
 import { ffmpegEngine } from "../../src/lib/engines/media/ffmpeg-engine";
-import { libreOfficeEngine } from "../../src/lib/engines/document/libreoffice-engine";
+import { libreOfficeEngine, findLibreofficeBinary } from "../../src/lib/engines/document/libreoffice-engine";
 import { sharpEngine } from "../../src/lib/engines/image/sharp-engine";
 import { CONFIG } from "../../src/lib/config";
 import type { ConversionPlan } from "../../src/lib/domain/engines";
@@ -425,7 +425,7 @@ describe("TS coverage — FFmpeg", () => {
 
 describe("Office quick wins — LibreOffice headless", () => {
   it("DOCXRTF-001 docx→rtf produces valid RTF with expected text", async () => {
-    requireBin("libreoffice");
+    requireBin(findLibreofficeBinary());
     const output = path.join(tmpDir, "out-docx.rtf");
     const plan = makePlan("libreoffice", "convert-office", F.docx, output, "rtf");
     const result = await libreOfficeEngine.execute(plan);
@@ -438,7 +438,7 @@ describe("Office quick wins — LibreOffice headless", () => {
   }, LO_TIMEOUT);
 
   it("ODPPDF-001 odp→pdf produces a valid PDF", async () => {
-    requireBin("libreoffice");
+    requireBin(findLibreofficeBinary());
     const output = path.join(tmpDir, "out-odp.pdf");
     const plan = makePlan("libreoffice", "convert-office", F.odp, output, "pdf");
     const result = await libreOfficeEngine.execute(plan);
@@ -449,7 +449,7 @@ describe("Office quick wins — LibreOffice headless", () => {
   }, LO_TIMEOUT);
 
   it("ODPPPTX-001 odp→pptx produces a valid PPTX package", async () => {
-    requireBin("libreoffice");
+    requireBin(findLibreofficeBinary());
     const output = path.join(tmpDir, "out-odp.pptx");
     const plan = makePlan("libreoffice", "convert-office", F.odp, output, "pptx");
     const result = await libreOfficeEngine.execute(plan);
@@ -474,7 +474,7 @@ describe("Regression — PDF raster and multistep chain", () => {
   }, STD_TIMEOUT);
 
   it("MULTISTEP-REG-001 docx→pdf→png chain keeps passing on Linux", async () => {
-    requireBin("libreoffice");
+    requireBin(findLibreofficeBinary());
     requireBin("pdftoppm");
     const stepPdf = path.join(tmpDir, "out-chain.pdf");
     const step1 = await libreOfficeEngine.execute(
