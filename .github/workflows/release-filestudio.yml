@@ -90,7 +90,68 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  # ── Gate 2b: Windows portable build ────────────────────────────────────────
+  # ── Gate 2b: macOS arm64 (Apple Silicon) portable build ──────────────────────
+  build-macos-portable:
+    needs: validate
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install optional engine binaries (Homebrew, build host only)
+        run: |
+          brew install ffmpeg poppler qpdf pandoc tesseract yt-dlp sevenzip
+      - name: Build macOS arm64 portable
+        run: pnpm build:portable:macos
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-portable
+          path: |
+            dist/macos/Anclora-FileStudio-macOS-arm64.zip
+            dist/macos/Anclora-FileStudio-macOS-arm64.zip.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  # ── Gate 2c: macOS portable structure and provenance ────────────────────────
+  verify-macos-portable:
+    needs: build-macos-portable
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-portable
+          path: dist/macos
+      - name: Verify macOS portable
+        run: bash scripts/verify-macos-portable.sh
+      - name: Verify provenance matches this commit
+        run: |
+          set -euo pipefail
+          MANIFEST_COMMIT="$(python3 -c "import zipfile,json; print(json.loads(zipfile.ZipFile('dist/macos/Anclora-FileStudio-macOS-arm64.zip').read('Anclora-FileStudio-macOS-arm64/manifest.json'))['commitFull'])")"
+          echo "Manifest commit: $MANIFEST_COMMIT"
+          echo "Workflow commit: $GITHUB_SHA"
+          [[ "$MANIFEST_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::macOS portable manifest commit does not match GITHUB_SHA"; exit 1; }
+
+  # ── Gate 2d: real macOS process startup and shutdown ────────────────────────
+  smoke-macos-portable:
+    needs: verify-macos-portable
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-portable
+          path: dist/macos
+      - name: Smoke test macOS portable
+        run: bash scripts/smoke-macos-portable.sh
+
+  # ── Gate 2e: Windows portable build ────────────────────────────────────────
   build-windows-portable:
     needs: validate
     runs-on: windows-latest
@@ -314,7 +375,7 @@ jobs:
   # ── Gate 4: assemble checksums/manifest, verify cross-artifact provenance,
   #    publish a GitHub Release only if every prior gate passed AND publish=true ──
   package:
-    needs: [validate, build-linux-portable, smoke-windows-portable, build-windows-setup]
+    needs: [validate, build-linux-portable, smoke-macos-portable, smoke-windows-portable, build-windows-setup]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -328,6 +389,10 @@ jobs:
         with:
           name: linux-portable
           path: dist/linux
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-portable
+          path: dist/macos
       - uses: actions/download-artifact@v4
         with:
           name: windows-portable
@@ -362,11 +427,14 @@ jobs:
         run: |
           set -euo pipefail
           LINUX_COMMIT="$(tar --use-compress-program=zstd -xOf dist/linux/Anclora-FileStudio-Linux-x64.tar.zst Anclora-FileStudio-Linux-x64/manifest.json | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).commitFull))")"
+          MACOS_COMMIT="$(python3 -c "import zipfile,json; print(json.loads(zipfile.ZipFile('dist/macos/Anclora-FileStudio-macOS-arm64.zip').read('Anclora-FileStudio-macOS-arm64/manifest.json'))['commitFull'])")"
           WINDOWS_COMMIT="$(python3 -c "import zipfile,json; print(json.loads(zipfile.ZipFile('dist/windows/Anclora-FileStudio-Windows-x64-Core.zip').read('Anclora-FileStudio-Windows-x64-Core/manifest.json'))['commitFull'])")"
           echo "Linux portable commit:   $LINUX_COMMIT"
+          echo "macOS portable commit:   $MACOS_COMMIT"
           echo "Windows portable commit: $WINDOWS_COMMIT"
           echo "Workflow commit:         $GITHUB_SHA"
           [[ "$LINUX_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::Linux portable provenance mismatch"; exit 1; }
+          [[ "$MACOS_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::macOS portable provenance mismatch"; exit 1; }
           [[ "$WINDOWS_COMMIT" == "$GITHUB_SHA" ]] || { echo "::error::Windows portable provenance mismatch"; exit 1; }
 
       - name: Generate release manifest + checksums
@@ -377,6 +445,7 @@ jobs:
             --commit "$GITHUB_SHA" \
             --windows-zip dist/windows/Anclora-FileStudio-Windows-x64-Core.zip \
             --linux-tar dist/linux/Anclora-FileStudio-Linux-x64.tar.zst \
+            --macos-zip dist/macos/Anclora-FileStudio-macOS-arm64.zip \
             --windows-setup dist/release/Anclora-FileStudio-Setup-Windows-x64.exe
 
       - uses: actions/upload-artifact@v4
@@ -385,6 +454,7 @@ jobs:
           path: |
             dist/windows/Anclora-FileStudio-Windows-x64-Core.zip
             dist/linux/Anclora-FileStudio-Linux-x64.tar.zst
+            dist/macos/Anclora-FileStudio-macOS-arm64.zip
             dist/release/Anclora-FileStudio-Setup-Windows-x64.exe
             dist/release/SHA256SUMS.txt
             dist/release/release-manifest.json
@@ -405,9 +475,12 @@ jobs:
             --title "Anclora FileStudio ${{ steps.meta.outputs.tag }}" \
             --notes "Commit: $GITHUB_SHA
           Windows installer: unsigned (SmartScreen will warn — see docs/RELEASE_WINDOWS_INSTALLER.md)
+          macOS arm64 portable: unsigned, unnotarized (Gatekeeper will warn — see docs/portable-macos.md)
           Checksums: see SHA256SUMS.txt / release-manifest.json" \
             dist/windows/Anclora-FileStudio-Windows-x64-Core.zip \
             dist/linux/Anclora-FileStudio-Linux-x64.tar.zst \
+            dist/macos/Anclora-FileStudio-macOS-arm64.zip \
+            dist/macos/Anclora-FileStudio-macOS-arm64.zip.sha256 \
             dist/release/Anclora-FileStudio-Setup-Windows-x64.exe \
             dist/release/SHA256SUMS.txt \
             dist/release/release-manifest.json

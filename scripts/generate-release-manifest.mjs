@@ -70,6 +70,9 @@ async function main() {
 
   const windowsPortable = await describeArtifact(args["windows-zip"]);
   const linuxPortable = await describeArtifact(args["linux-tar"]);
+  const macosPortable = args["macos-zip"] && existsSync(args["macos-zip"])
+    ? await describeArtifact(args["macos-zip"])
+    : null;
   const windowsSetup = args["windows-setup"] && existsSync(args["windows-setup"])
     ? await describeArtifact(args["windows-setup"])
     : null;
@@ -81,6 +84,7 @@ async function main() {
     buildDateUtc: new Date().toISOString(),
     windowsPortable,
     linuxPortable,
+    ...(macosPortable ? { macosPortable } : {}),
     ...(windowsSetup ? { windowsSetup } : {}),
   };
 
@@ -92,6 +96,9 @@ async function main() {
     `${windowsPortable.sha256}  ${windowsPortable.file}`,
     `${linuxPortable.sha256}  ${linuxPortable.file}`,
   ];
+  if (macosPortable) {
+    sumsLines.push(`${macosPortable.sha256}  ${macosPortable.file}`);
+  }
   if (windowsSetup) {
     sumsLines.push(`${windowsSetup.sha256}  ${windowsSetup.file}`);
   }
