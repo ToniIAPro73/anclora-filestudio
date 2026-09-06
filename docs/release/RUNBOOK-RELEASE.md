@@ -1,7 +1,7 @@
 # Runbook de Release — Anclora FileStudio
 
 > **Audiencia**: mantenedores con acceso al repositorio y al destino de publicación.
-> **Alcance**: portables `windows-x64` y `linux-x64`. El despliegue Vercel (web) sigue su propio pipeline CI.
+> **Alcance**: portables `windows-x64`, `linux-x64` y `macos-arm64`. El despliegue Vercel (web) sigue su propio pipeline CI.
 
 ---
 
@@ -72,6 +72,7 @@ Artefactos resultantes:
 |---|---|
 | Linux x64 | `dist/linux/Anclora-FileStudio-Linux-x64.tar.zst` |
 | Windows x64 | `dist/windows/Anclora-FileStudio-Windows-x64-Core.zip` |
+| macOS arm64 | `dist/macos/Anclora-FileStudio-macOS-arm64.zip` (solo se construye en un runner `macos-latest`/Apple Silicon) |
 
 ---
 
@@ -84,6 +85,9 @@ bash scripts/verify-linux-portable.sh
 # Verificar portable Windows (desde Linux con herramientas compatibles)
 bash scripts/verify-windows-portable-v2.sh
 
+# Verificar portable macOS (requiere ejecutarse en macOS Apple Silicon)
+bash scripts/verify-macos-portable.sh
+
 # Verificar bundle Vercel (no empaqueta herramientas nativas)
 node scripts/verify-vercel-bundle.mjs
 ```
@@ -93,6 +97,7 @@ Opcionalmente, ejecutar smoke tests de portables:
 ```bash
 bash scripts/smoke-linux-portable.sh
 bash scripts/smoke-windows-portable.sh
+bash scripts/smoke-macos-portable.sh
 ```
 
 ---
@@ -294,6 +299,7 @@ print('Manifest status set to rollback')
 | `scripts/build-portables.sh` | Orquestador de builds portables (Linux + Windows) |
 | `scripts/build-linux-portable.sh` | Build del portable Linux x64 tar.zst |
 | `scripts/build-windows-portable.sh` | Build del portable Windows x64 ZIP |
+| `scripts/build-macos-portable.sh` | Build del portable macOS arm64 ZIP (requiere macOS Apple Silicon) |
 | `scripts/update-release-manifest.sh` | Calcular SHA-256/bytes y actualizar release-manifest.json |
 | `scripts/validate-release-manifest.sh` | Descargar artefactos remotos y verificar SHA-256/bytes |
 | `scripts/external-e2e-smoke.sh` | Smoke E2E externo opt-in (yt-dlp + ffprobe) |
