@@ -1,28 +1,58 @@
-# Distribución portable macOS (Apple Silicon) — Anclora FileStudio
+# Distribución portable y aplicación macOS (Apple Silicon) — Anclora FileStudio
 
 ## Desktop PRO 0.2.0
 
-El portable macOS soporta exclusivamente **Apple Silicon (arm64)**. No hay
+La distribución macOS soporta exclusivamente **Apple Silicon (arm64)**. No hay
 build Intel (x64) — Rosetta 2 no está soportada ni probada.
 
-## Artefacto
+## Artefactos de Release
 
-| Artefacto | Descripción |
-|---|---|
-| `Anclora-FileStudio-macOS-arm64.zip` | Paquete portable autocontenido |
-| `Anclora-FileStudio-macOS-arm64.zip.sha256` | Checksum SHA-256 |
+A partir de la versión 0.2.0, el pipeline de release genera dos modalidades de distribución:
+
+| Artefacto | Descripción | Destinatario |
+|---|---|---|
+| `Anclora-FileStudio-macOS-arm64.dmg` | Imagen de disco (.dmg) con `Anclora FileStudio.app` y acceso directo a `/Applications` | Usuarios de escritorio (instalación estándar Finder) |
+| `Anclora-FileStudio-macOS-arm64.dmg.sha256` | Checksum SHA-256 de la imagen DMG | Verificación de integridad |
+| `Anclora-FileStudio-macOS-arm64.zip` | Paquete portable autocontenido con scripts shell | Usuarios avanzados / entornos terminal |
+| `Anclora-FileStudio-macOS-arm64.zip.sha256` | Checksum SHA-256 del paquete portable ZIP | Verificación de integridad |
+
+---
 
 ## Estado de firma y notarización
 
-**Este paquete NO está firmado ni notarizado por Apple.** Es una decisión
-explícita, no un descuido: firmar/notarizar requiere una cuenta de
-Apple Developer Program y credenciales que este pipeline no gestiona.
+**Estos paquetes NO están firmados ni notarizados por Apple.** Es una decisión
+explícita, no un descuido: firmar y notarizar requiere una cuenta de
+Apple Developer Program y certificados dedicados que este pipeline no gestiona.
 
-Consecuencia práctica: macOS Gatekeeper bloqueará la primera ejecución con
-un mensaje del tipo *"no se puede abrir porque el desarrollador no pudo
-verificarse"*. Esto es esperado — ver la sección "Gatekeeper" abajo.
+Consecuencia práctica: macOS Gatekeeper advertirá en la primera ejecución que
+el desarrollador no puede ser verificado. Esto es esperado y no indica daño
+ni manipulación del paquete. Ver la sección [Gatekeeper y autorización](#gatekeeper-y-autorización)
+para los pasos de apertura en un solo clic.
 
-## Instalación y ejecución
+---
+
+## Métodos de instalación y uso
+
+### 1. Imagen de disco DMG (Recomendado — experiencia Finder)
+
+El DMG ofrece el flujo estándar de macOS sin requerir terminal ni dependencias de Electron:
+
+1. **Verificar integridad (opcional pero recomendado):**
+   ```bash
+   shasum -a 256 -c Anclora-FileStudio-macOS-arm64.dmg.sha256
+   ```
+2. **Montar el DMG:** doble clic sobre `Anclora-FileStudio-macOS-arm64.dmg`.
+3. **Instalar:** arrastra `Anclora FileStudio.app` a la carpeta `Applications` (proporcionada en el propio DMG).
+4. **Desmontar:** expulsa la imagen de disco.
+5. **Ejecutar:** abre `Anclora FileStudio` desde la carpeta `/Applications`, Spotlight o Launchpad.
+
+La aplicación arranca silenciosamente en segundo plano (sin abrir ventana de terminal visible), comprueba la salud de la API local (`/api/health`) y abre automáticamente el navegador web predeterminado en `http://127.0.0.1:3847`.
+
+Si se vuelve a hacer doble clic en la aplicación mientras ya está corriendo, detecta la instancia en ejecución y reutiliza la ventana del navegador sin lanzar procesos duplicados.
+
+### 2. Paquete portable ZIP (Modo Terminal)
+
+Para usuarios que prefieran ejecutarlo en una ruta local fija sin instalar en `/Applications`:
 
 ```bash
 # Verificar integridad
@@ -34,146 +64,133 @@ cd Anclora-FileStudio-macOS-arm64
 
 # Iniciar
 ./start-anclora-filestudio.sh
+
+# Detener
+./stop-anclora-filestudio.sh
 ```
 
-El navegador por defecto se abre automáticamente en `http://127.0.0.1:3847`
-(o el siguiente puerto libre en el rango 3847-3857) una vez el servidor
-responde en `/api/health`.
+---
 
-## Gatekeeper
+## Gatekeeper y autorización
 
-Al ser un binario sin firma de Apple, la primera ejecución puede mostrar una
-advertencia de seguridad. Para resolverlo, dentro de la carpeta extraída:
+Al tratarse de binarios sin firma de Apple, la primera ejecución requiere una autorización puntual:
+
+### Método A: Desde la interfaz de macOS (Finder)
+1. Haz clic derecho (o Control + clic) sobre `Anclora FileStudio.app` en `/Applications`.
+2. Selecciona **Abrir** en el menú contextual.
+3. En el diálogo que indica *"macOS no puede verificar el desarrollador de Anclora FileStudio"*, haz clic en **Abrir**.
+*(Solo es necesario la primera vez; los lanzamientos posteriores arrancan directamente).*
+
+Alternativamente, si se bloqueó al hacer doble clic:
+- Ve a **Ajustes del Sistema** → **Privacidad y seguridad**.
+- Desplázate hasta la sección **Seguridad** y haz clic en **Abrir de todas formas** junto al aviso de Anclora FileStudio.
+
+### Método B: Desde Terminal
+Si prefieres eliminar el atributo de cuarentena de Gatekeeper mediante línea de comandos:
 
 ```bash
+# Para la aplicación instalada en /Applications:
+xattr -dr com.apple.quarantine "/Applications/Anclora FileStudio.app"
+
+# Para el paquete portable ZIP extraído:
 xattr -dr com.apple.quarantine .
 ```
 
-Alternativamente: Ajustes del Sistema → Privacidad y seguridad → tras el
-primer intento bloqueado, aparece un botón "Abrir de todas formas".
-
-No se simula ni se falsea ningún estado de firma/notarización en el
-`manifest.json` del paquete (`"signed": false, "notarized": false`).
+---
 
 ## Requisitos del sistema
 
-- macOS 13 (Ventura) o superior
-- Apple Silicon (arm64) — M1/M2/M3/M4 y sucesores
-- Node.js **ya incluido** (bundled) — no requiere instalación
+- **Sistema operativo:** macOS 13 (Ventura), macOS 14 (Sonoma), macOS 15 (Sequoia) o superior.
+- **Arquitectura:** Apple Silicon (arm64: chips M1, M2, M3, M4 y variantes).
+- **Node.js:** **Ya incluido (bundled)** en versión arm64 — no requiere instalar Node.js en el sistema.
+- **Sin dependencias de Electron:** El núcleo corre como servidor Next.js local optimizado e interactúa mediante el navegador del sistema.
 
-## Herramientas opcionales (Homebrew)
+---
 
-El portable arranca y funciona (procesado de imágenes vía Sharp, historial
-vía SQLite, motor de datos) sin ninguna herramienta externa. Las siguientes
-capacidades se activan automáticamente si detectan el binario correspondiente
-en el `PATH` del usuario en tiempo de ejecución:
+## Dependencias externas y detección de herramientas
+
+FileStudio funciona desde el primer momento para conversiones de imagen (mediante Sharp arm64 embebido), base de datos de historial (SQLite arm64 compilado) y transformaciones de datos.
+
+Para motores de conversión avanzados (video, audio con Vorbis, documentos ofimáticos, OCR, PDF vectorial), FileStudio detecta dinámicamente las herramientas instaladas en el equipo.
+
+### Independencia del PATH de Finder
+
+Los procesos lanzados desde Finder mediante LaunchServices no cargan el entorno de sesión de un shell interactivo (`~/.zprofile` o `~/.zshrc`). Por ello, FileStudio implementa resolución reforzada (`src/lib/binary-resolution.ts`) y el launcher de la `.app` exporta rutas estándar:
+
+- `/opt/homebrew/bin` y `/opt/homebrew/sbin` (Homebrew en Apple Silicon)
+- `/usr/local/bin` (herramientas locales / Intel)
+- `/Applications/LibreOffice.app/Contents/MacOS/soffice` (instalaciones de LibreOffice para macOS)
+
+### Instalación de herramientas recomendadas (Homebrew)
 
 ```bash
 brew install ffmpeg qpdf pandoc tesseract tesseract-lang poppler yt-dlp sevenzip
 ```
 
-| Herramienta | Capacidad que habilita |
-|---|---|
-| `ffmpeg` / `ffprobe` | audio, vídeo, miniaturas (requiere el códec `libvorbis` para salida OGG/Vorbis — ver nota abajo) |
-| `yt-dlp` | descarga de YouTube |
-| `qpdf` | manipulación de PDF |
-| `pandoc` | conversión de documentos |
-| `tesseract` | OCR |
-| `poppler` (`pdftoppm`) | PDF a imagen |
-| `sevenzip` (`7zz`)/`7z` | archivos comprimidos |
+Para soporte ofimático (Word, Excel, PowerPoint a PDF/imágenes):
+- Instalar LibreOffice descargándolo de su sitio web oficial o vía Homebrew Cask:
+  ```bash
+  brew install --cask libreoffice
+  ```
+  FileStudio detecta automáticamente `/Applications/LibreOffice.app/Contents/MacOS/soffice`.
 
-### Nota sobre codecs de FFmpeg
+### Capacidades de herramientas y Nota sobre FFmpeg / libvorbis
 
-FileStudio no exige una distribución concreta de FFmpeg (Homebrew, MacPorts,
-build propia, etc.) — exige que el binario detectado tenga las
-**capacidades** (codecs) que cada conversión necesita. Para salida
-OGG/Vorbis en concreto, el binario debe incluir el codec `libvorbis`.
+| Herramienta | Capacidad | Comentarios |
+|---|---|---|
+| `ffmpeg` / `ffprobe` | Audio, vídeo, miniaturas | Requiere que el binario disponga de los codecs necesarios para la tarea. |
+| `soffice` | Documentos ofimáticos (DOCX, XLSX, PPTX, ODT...) | Detectado tanto en `/Applications/LibreOffice.app` como en `PATH`. |
+| `yt-dlp` | Descarga de YouTube y metadatos | Utilizado para ingestión multimedia. |
+| `qpdf` | Manipulación, linearización y cifrado de PDF | Operaciones PDF nativas. |
+| `pandoc` | Conversión de Markdown / formatos de texto | Motor de documentos de texto. |
+| `tesseract` | OCR y extracción de texto en imágenes | Requiere paquetes de idiomas deseados. |
+| `poppler` (`pdftoppm`) | Conversión de páginas PDF a imágenes raster | Renderizado de documentos. |
+| `sevenzip` (`7zz` o `7z`) | Extracción y compresión de archivos | Formatos ZIP, 7z, TAR, etc. |
 
-Algunas variantes de `ffmpeg` empaquetadas sin ese codec (por licencia o por
-recorte de dependencias) reportan un `ffmpeg` funcional pero fallan
-específicamente al codificar a OGG/Vorbis. Esto no es un fallo de detección
-de FileStudio — el binario existe y se ejecuta — sino de capacidades del
-binario instalado. Compruébalo directamente antes de reportar un problema:
+#### Verificación de capability FFmpeg (libvorbis)
+
+FileStudio no exige una fórmula específica de paquete (Homebrew vanilla, ffmpeg-full, MacPorts o compilación propia). Lo relevante es que el binario reporte la **capability del codec**, en particular `libvorbis` si se realizan conversiones hacia OGG/Vorbis:
 
 ```bash
 ffmpeg -encoders | grep -E 'vorbis|libvorbis'
 ```
 
-Si no aparece nada, reinstala o recompila FFmpeg con soporte `libvorbis`
-(la mayoría de builds recientes de `brew install ffmpeg` ya lo incluyen).
-No se documenta aquí una fórmula específica porque el requisito real es la
-capacidad del codec, no el origen del paquete.
+Si el encoder está presente, la capacidad queda plenamente habilitada.
 
-Esta es la misma arquitectura que el portable Linux (detección de
-herramientas del sistema, sin bundling estático de binarios GPL/externos de
-terceros) — ver [`docs/portable-linux.md`](portable-linux.md). El runner de
-CI **sí** usa Homebrew durante la construcción para poblar `manifest.json`
-con las versiones detectadas, pero el artefacto distribuido no depende de
-que el usuario final tenga Homebrew instalado.
+---
 
-## Runtime embebido
+## Arquitectura del App Bundle y Staging
 
-| Componente | Origen | Arquitectura |
-|---|---|---|
-| Node.js v22.22.1 (ABI 127) | `nodejs.org`, SHA-256 fijado en `scripts/toolchain.lock.json` | Mach-O arm64 |
-| `better-sqlite3` | Recompilado en build-time contra el ABI del Node embebido | Mach-O arm64 |
-| `sharp` (`@img/sharp-darwin-arm64` + `@img/sharp-libvips-darwin-arm64`) | pnpm store, prebuilt oficial | Mach-O arm64 |
-
-## Scripts incluidos
-
-| Script | Función |
-|---|---|
-| `start-anclora-filestudio.sh` | Inicia la aplicación (detecta instancia existente, escribe/lee puerto, espera `/api/health`, abre navegador con `open`) |
-| `stop-anclora-filestudio.sh` | Detiene la aplicación (por PID, sin matar el grupo de procesos del terminal) |
-| `diagnose-anclora-filestudio.sh` | Diagnóstico: runtime, módulos nativos, herramientas del sistema, estado de cuarentena |
-
-## Estructura interna
+La `.app` y el DMG se construyen reutilizando **exactamente el mismo payload del portable arm64 ya verificado**:
 
 ```text
-Anclora-FileStudio-macOS-arm64/
-├── start-anclora-filestudio.sh
-├── stop-anclora-filestudio.sh
-├── diagnose-anclora-filestudio.sh
-├── LEEME.txt
-├── VERSION.txt
-├── manifest.json
-├── THIRD_PARTY_NOTICES.txt
-├── SBOM.cdx.json
-├── runtime/node       # Node.js embebido (Mach-O arm64)
-├── app/               # Aplicación Next.js standalone compilada
-├── data/              # Base de datos SQLite + fichero de puerto (no borrar al actualizar)
-├── temp/              # Ficheros temporales de conversión
-└── logs/              # Logs de ejecución (app.log)
+Anclora-FileStudio-macOS-arm64.zip (construido y verificado)
+  └── Repaquetizado como payload en:
+      Anclora FileStudio.app/
+      └── Contents/
+          ├── Info.plist               # Bundle ID: com.anclora.filestudio, APPL
+          ├── PkgInfo                  # APPL????
+          ├── MacOS/
+          │   └── Anclora FileStudio   # Launcher bash relocatable (resuelve rutas dinámicamente)
+          └── Resources/
+              ├── AppIcon.icns         # Icono nativo generado de public/brand/anclora-filestudio.png
+              ├── app-build-info.json  # Provenance (commit exacto, versión, fecha)
+              └── payload/             # Payload íntegro del portable
+                  ├── runtime/node     # Node.js arm64 oficial (ABI 127)
+                  ├── app/             # Next.js standalone compilado
+                  ├── manifest.json    # Metadatos del build
+                  └── tools/           # Herramientas auxiliares
 ```
 
-## Datos y persistencia
+Posteriormente, `hdiutil` genera `dist/release/Anclora-FileStudio-macOS-arm64.dmg` con un enlace simbólico a `/Applications` para permitir el arrastre visual directo.
 
-Los datos se guardan en `./data/` — no borrar esta carpeta al actualizar de
-versión. El fichero `./data/anclora-filestudio.port` registra el puerto de
-la instancia activa; `./anclora-filestudio.pid` registra el PID.
+### Persistencia y Datos en Modo .app
 
-## Diseño: portable shell vs `.app` nativo
+Para garantizar que la `.app` sea completamente relocatable (pudiendo ejecutarse incluso desde un DMG de solo lectura o desde cualquier directorio), los datos de usuario nunca se escriben dentro del bundle de la aplicación.
 
-Se evaluaron dos opciones (ver AGENTS.md / decisión de diseño de este
-cambio):
-
-- **A) Portable con launcher shell (elegida)**: reutiliza exactamente la
-  misma arquitectura que Linux (Next.js standalone + Node embebido + script
-  de arranque), sin introducir Electron ni otra dependencia pesada.
-- **B) Bundle `.app` nativo**: exigiría reestructurar el arranque como app
-  bundle (`Contents/MacOS/`, `Info.plist`, icono, gestión de ciclo de vida
-  vía `NSApplication` o un wrapper), lo cual no aporta valor funcional
-  inmediato y sí complejidad no trivial dado que el "runtime" real es un
-  servidor Node.js + navegador, no una app de UI nativa.
-
-**Se implementó la opción A.** La opción B queda documentada como evolución
-posterior si en el futuro se decide ofrecer doble clic desde Finder sin
-pasar por una terminal.
-
-## Limitaciones conocidas
-
-- Sin firma ni notarización Apple (ver arriba).
-- Sin build Intel x64 (solo Apple Silicon).
-- Las herramientas externas (ffmpeg, pandoc, qpdf, tesseract, poppler,
-  yt-dlp) no vienen embebidas — se detectan si están instaladas (p. ej. vía
-  Homebrew). Ver [Herramientas opcionales](#herramientas-opcionales-homebrew).
+Se almacenan en el directorio estándar de usuario de macOS:
+`$HOME/Library/Application Support/Anclora/FileStudio/`
+- `data/`: Base de datos SQLite e información de puerto (`anclora-filestudio.port`).
+- `temp/`: Ficheros temporales generados durante conversiones.
+- `logs/`: Registro de ejecución (`app.log`).
+- `anclora-filestudio.pid`: Control de instancia única en ejecución.

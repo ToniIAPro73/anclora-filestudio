@@ -71,8 +71,10 @@ Artefactos resultantes:
 | Plataforma | Ruta esperada |
 |---|---|
 | Linux x64 | `dist/linux/Anclora-FileStudio-Linux-x64.tar.zst` |
-| Windows x64 | `dist/windows/Anclora-FileStudio-Windows-x64-Core.zip` |
-| macOS arm64 | `dist/macos/Anclora-FileStudio-macOS-arm64.zip` (solo se construye en un runner `macos-latest`/Apple Silicon) |
+| Windows x64 Core | `dist/windows/Anclora-FileStudio-Windows-x64-Core.zip` |
+| Windows x64 Setup | `dist/release/Anclora-FileStudio-Setup-Windows-x64.exe` |
+| macOS arm64 ZIP | `dist/macos/Anclora-FileStudio-macOS-arm64.zip` |
+| macOS arm64 DMG | `dist/release/Anclora-FileStudio-macOS-arm64.dmg` |
 
 ---
 
@@ -88,16 +90,21 @@ bash scripts/verify-windows-portable-v2.sh
 # Verificar portable macOS (requiere ejecutarse en macOS Apple Silicon)
 bash scripts/verify-macos-portable.sh
 
+# Verificar .app bundle y DMG macOS
+bash scripts/verify-macos-app.sh
+bash scripts/verify-macos-dmg.sh
+
 # Verificar bundle Vercel (no empaqueta herramientas nativas)
 node scripts/verify-vercel-bundle.mjs
 ```
 
-Opcionalmente, ejecutar smoke tests de portables:
+Opcionalmente, ejecutar smoke tests de portables y aplicaciones:
 
 ```bash
 bash scripts/smoke-linux-portable.sh
 bash scripts/smoke-windows-portable.sh
 bash scripts/smoke-macos-portable.sh
+bash scripts/smoke-macos-app.sh
 ```
 
 ---
@@ -300,6 +307,11 @@ print('Manifest status set to rollback')
 | `scripts/build-linux-portable.sh` | Build del portable Linux x64 tar.zst |
 | `scripts/build-windows-portable.sh` | Build del portable Windows x64 ZIP |
 | `scripts/build-macos-portable.sh` | Build del portable macOS arm64 ZIP (requiere macOS Apple Silicon) |
+| `scripts/build-macos-app.sh` | Empaqueta el portable macOS en bundle Finder "Anclora FileStudio.app" |
+| `scripts/build-macos-dmg.sh` | Genera imagen distribuible DMG con enlace a /Applications |
+| `scripts/verify-macos-app.sh` | Verificación de estructura, Info.plist, icon y provenance de la .app |
+| `scripts/verify-macos-dmg.sh` | Verificación de montaje, checksum y contenido del DMG |
+| `scripts/smoke-macos-app.sh` | Smoke test real de la .app mediante launch 'open' y lifecycle |
 | `scripts/update-release-manifest.sh` | Calcular SHA-256/bytes y actualizar release-manifest.json |
 | `scripts/validate-release-manifest.sh` | Descargar artefactos remotos y verificar SHA-256/bytes |
 | `scripts/external-e2e-smoke.sh` | Smoke E2E externo opt-in (yt-dlp + ffprobe) |
