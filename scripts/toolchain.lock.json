@@ -20,6 +20,15 @@
       "sha256": "edaca9bd58ec8e92037dac4e877d52f6b8f430b81c18b57e264b4e2fb111cd56",
       "license": "MIT",
       "binaryPath": "node.exe"
+    },
+    "darwin-arm64": {
+      "engine": "node",
+      "version": "22.22.1",
+      "abi": "127",
+      "sourceUrl": "https://nodejs.org/dist/v22.22.1/node-v22.22.1-darwin-arm64.tar.gz",
+      "sha256": "679ad4966339e4ef4900f57996714864e4211b898825bb840c3086c419fbcef2",
+      "license": "MIT",
+      "binaryPath": "bin/node"
     }
   },
   "nativeModules": {
@@ -113,6 +122,11 @@
           "source": "system-apt",
           "sha256": null
         },
+        "darwin-arm64": {
+          "version": "detected-at-build",
+          "source": "system-brew",
+          "sha256": null
+        },
         "win-x64": {
           "version": "N-125875-g5d4d3bdc61",
           "provider": "https://github.com/BtbN/FFmpeg-Builds",
@@ -139,6 +153,11 @@
           "sourceUrl": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp",
           "sha256": "495be29ff4d9d4e9be7eabdfef225221e5d5282e77f2f505abc6dca80349f3fd"
         },
+        "darwin-arm64": {
+          "version": "detected-at-build",
+          "source": "system-brew",
+          "sha256": null
+        },
         "win-x64": {
           "version": "2026.07.04",
           "sourceUrl": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp.exe",
@@ -161,6 +180,11 @@
         "linux": {
           "version": "10.6.3",
           "source": "system-apt",
+          "sha256": null
+        },
+        "darwin-arm64": {
+          "version": "detected-at-build",
+          "source": "system-brew",
           "sha256": null
         },
         "win-x64": {
@@ -187,6 +211,11 @@
           "source": "system",
           "sha256": null
         },
+        "darwin-arm64": {
+          "version": "detected-at-build",
+          "source": "system-brew",
+          "sha256": null
+        },
         "win-x64": {
           "version": "26.01",
           "sourceUrl": "https://www.7-zip.org/a/7z2601-extra.7z",
@@ -207,6 +236,11 @@
       ],
       "redistribution": "optional-pack",
       "versions": {
+        "darwin-arm64": {
+          "version": "detected-at-build",
+          "source": "system-brew",
+          "sha256": null
+        },
         "win-x64": {
           "version": "3.6.4",
           "sourceUrl": "https://github.com/jgm/pandoc/releases/download/3.6.4/pandoc-3.6.4-windows-x86_64.zip",
@@ -231,6 +265,11 @@
           "version": "4.1.1",
           "source": "system-apt",
           "sha256": null
+        },
+        "darwin-arm64": {
+          "version": "detected-at-build",
+          "source": "system-brew",
+          "sha256": null
         }
       }
     },
@@ -247,6 +286,11 @@
       ],
       "redistribution": "bundled",
       "versions": {
+        "darwin-arm64": {
+          "version": "detected-at-build",
+          "source": "system-brew",
+          "sha256": null
+        },
         "win-x64": {
           "version": "26.02.0-0",
           "sourceUrl": "https://github.com/oschwartz10612/poppler-windows/releases/download/v26.02.0-0/Release-26.02.0-0.zip",
