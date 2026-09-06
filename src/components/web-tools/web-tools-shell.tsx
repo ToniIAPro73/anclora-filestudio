@@ -82,9 +82,9 @@ export function WebToolsShell({ initialTab = "home" }: { initialTab?: WebTab }) 
             Prepara imágenes y organiza PDF directamente en tu navegador. Para motores nativos y conversiones avanzadas, usa la versión Desktop.
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <ExternalActionLink url={windowsUrl} label="Windows" icon={<Download className="h-4 w-4" aria-hidden="true" />} disabledTooltip="Descarga próximamente" className="inline-flex min-h-11 items-center gap-2 rounded-md bg-stone-100 px-4 text-sm font-bold text-[#101316]" />
-            <ExternalActionLink url={linuxUrl} label="Linux" icon={<Download className="h-4 w-4" aria-hidden="true" />} disabledTooltip="Descarga próximamente" className="inline-flex min-h-11 items-center gap-2 rounded-md border border-white/14 px-4 text-sm font-bold text-stone-100" />
-            <ExternalActionLink url={macosUrl} label="macOS (Apple Silicon)" icon={<Download className="h-4 w-4" aria-hidden="true" />} disabledTooltip="Descarga próximamente" className="inline-flex min-h-11 items-center gap-2 rounded-md border border-white/14 px-4 text-sm font-bold text-stone-100" />
+            <ExternalActionLink url={windowsUrl} label="Windows" ariaLabel="Descargar instalador Windows (Setup.exe)" icon={<Download className="h-4 w-4" aria-hidden="true" />} disabledTooltip="Descarga próximamente" className="inline-flex min-h-11 items-center gap-2 rounded-md bg-stone-100 px-4 text-sm font-bold text-[#101316]" />
+            <ExternalActionLink url={linuxUrl} label="Linux" ariaLabel="Descargar versión portable Linux" icon={<Download className="h-4 w-4" aria-hidden="true" />} disabledTooltip="Descarga próximamente" className="inline-flex min-h-11 items-center gap-2 rounded-md border border-white/14 px-4 text-sm font-bold text-stone-100" />
+            <ExternalActionLink url={macosUrl} label="macOS (Apple Silicon)" ariaLabel="Descargar DMG para macOS Apple Silicon" icon={<Download className="h-4 w-4" aria-hidden="true" />} disabledTooltip="Descarga próximamente" className="inline-flex min-h-11 items-center gap-2 rounded-md border border-white/14 px-4 text-sm font-bold text-stone-100" />
             <ExternalActionLink url={supportUrl} label="Ayuda" icon={<HelpCircle className="h-4 w-4" aria-hidden="true" />} disabledTooltip="Soporte aún no configurado" className="inline-flex min-h-11 items-center gap-2 rounded-md border border-white/10 px-4 text-sm font-medium text-stone-400" />
           </div>
         </header>
