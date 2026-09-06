@@ -80,6 +80,13 @@
           "compressedSize": 201068834,
           "installedSize": 447417940,
           "executablePath": "chrome-win64/chrome.exe"
+        },
+        "darwin-arm64": {
+          "sourceUrl": "https://storage.googleapis.com/chrome-for-testing-public/151.0.7922.34/mac-arm64/chrome-mac-arm64.zip",
+          "sha256": "01a23ef9501b2745e0c2944c2e583207e6f6132d8d91c3a87ff65b5079e438ef",
+          "compressedSize": 187406357,
+          "installedSize": 372014615,
+          "executablePath": "chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
         }
       }
     }

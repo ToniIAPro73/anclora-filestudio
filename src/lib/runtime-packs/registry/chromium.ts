@@ -81,4 +81,42 @@ export const CHROMIUM_RUNTIME_PACKS: RuntimePackDefinition[] = [
       timeoutMs: 8_000,
     },
   },
+  {
+    id: "chromium-runtime",
+    name: "Chromium Renderer Runtime",
+    version: CHROMIUM_RUNTIME_VERSION,
+    revision: CHROMIUM_CFT_REVISION,
+    platform: "darwin",
+    architecture: "arm64",
+    source: {
+      type: "https",
+      url: "https://storage.googleapis.com/chrome-for-testing-public/151.0.7922.34/mac-arm64/chrome-mac-arm64.zip",
+      trustedOrigin: "https://storage.googleapis.com",
+    },
+    sha256: "01a23ef9501b2745e0c2944c2e583207e6f6132d8d91c3a87ff65b5079e438ef",
+    compressedSize: 187_406_357,
+    installedSize: 372_014_615,
+    license: {
+      name: "Chrome for Testing / Chromium third-party notices",
+      url: "https://chromium.googlesource.com/chromium/src/+/main/LICENSE",
+    },
+    notices: [
+      "Runtime pack notices are tracked separately from Core notices.",
+      "Chrome for Testing is downloaded from a fixed official Google Storage URL.",
+    ],
+    sbom: "artifacts/runtime-packs/chromium-runtime-151.0.7922.34.sbom.json",
+    capabilities: ["HTML_RENDERER", "html-to-png", "html-to-tiff"],
+    executablePaths: {
+      linux: "chrome-linux64/chrome",
+      windows: "chrome-win64/chrome.exe",
+      darwin: "chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    },
+    healthProbe: {
+      type: "chromium",
+      executableKey: "darwin",
+      args: ["--version"],
+      expectedVersion: CHROMIUM_RUNTIME_VERSION,
+      timeoutMs: 8_000,
+    },
+  },
 ];

@@ -464,8 +464,22 @@ export class RuntimePackManager {
         continue;
       }
       const unixPermissions = entry.unixPermissions;
-      if (typeof unixPermissions === "number" && (unixPermissions & 0o170000) === 0o120000) {
-        throw new RuntimePackError("RUNTIME_PACK_INSTALL_FAILED", `Unsafe archive symlink: ${entry.name}`);
+      const isSymlink = typeof unixPermissions === "number" && (unixPermissions & 0o170000) === 0o120000;
+      if (isSymlink) {
+        // macOS .app bundles legitimately contain internal symlinks (e.g. a
+        // framework's Versions/Current -> Versions/A). A relative symlink
+        // whose resolved target stays inside the extraction root is safe;
+        // only a link that escapes the root (path traversal) is rejected.
+        const linkTarget = await entry.async("string");
+        if (linkTarget.startsWith("/") || /^[A-Za-z]:[\\/]/.test(linkTarget) || linkTarget.includes("\0")) {
+          throw new RuntimePackError("RUNTIME_PACK_INSTALL_FAILED", `Unsafe archive symlink target: ${entry.name} -> ${linkTarget}`);
+        }
+        // turbopackIgnore: resolved against the dynamic extraction root (see packageRoot).
+        ensureInside(destination, path.resolve(/* turbopackIgnore: true */ path.dirname(target), linkTarget));
+        fs.mkdirSync(/* turbopackIgnore: true */ path.dirname(target), { recursive: true });
+        fs.rmSync(/* turbopackIgnore: true */ target, { force: true });
+        fs.symlinkSync(linkTarget, target);
+        continue;
       }
       fs.mkdirSync(/* turbopackIgnore: true */ path.dirname(target), { recursive: true });
       fs.writeFileSync(/* turbopackIgnore: true */ target, Buffer.from(await entry.async("uint8array")));
