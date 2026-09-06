@@ -45,7 +45,7 @@ FileStudio centralizes file format conversion workflows for the Anclora ecosyste
 - **Operaciones por lotes** — Batch convert, compress, resize, rotate, extract metadata, strip EXIF/GPS data
 - **Validación defensiva** — Schema validation, loss-profile classification, engine availability checks before operations
 - **Múltiples modos de despliegue** — Web (browser-based canvas processing), Desktop (native engines), Service (API with async queue workers)
-- **Control de calidad** — Playwright end-to-end tests, format-matrix reference, platform-specific verification (Windows/Linux portable builds)
+- **Control de calidad** — Playwright end-to-end tests, format-matrix reference, platform-specific verification (Windows/Linux/macOS portable builds)
 
 ## Stack tecnológico
 

@@ -585,7 +585,7 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
           </div>
           <p className="mx-auto mt-3 max-w-2xl text-pretty text-sm leading-6 text-stone-400">
             Todo lo de la Web, más motores nativos, lotes pesados, historial local,
-            diagnóstico y portables Windows/Linux.
+            diagnóstico y portables Windows/Linux/macOS.
           </p>
         </header>
 
