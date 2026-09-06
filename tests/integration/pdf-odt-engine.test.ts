@@ -8,6 +8,7 @@ import sharp from "sharp";
 import { CONFIG } from "../../src/lib/config";
 import { buildDescriptor } from "../../src/lib/detection/file-detector";
 import { getEngine } from "../../src/lib/engines/registry";
+import { findLibreofficeBinary } from "../../src/lib/engines/document/libreoffice-engine";
 import { getAvailableEngineIds } from "../../src/lib/conversion-routing/server";
 import {
   getAllEffectiveSources,
@@ -78,7 +79,7 @@ async function createPdfWithLibreOfficeHtml(name: string, body: string): Promise
   const htmlPath = path.join(tmpDir, name.replace(/\.pdf$/i, ".html"));
   const pdfPath = path.join(tmpDir, name);
   fs.writeFileSync(htmlPath, `<!doctype html><html><meta charset="utf-8"><body>${body}</body></html>`);
-  const result = await run("libreoffice", ["--headless", "--norestore", "--convert-to", "pdf", "--outdir", tmpDir, htmlPath]);
+  const result = await run(findLibreofficeBinary(), ["--headless", "--norestore", "--convert-to", "pdf", "--outdir", tmpDir, htmlPath]);
   expect(result.code, result.stderr || result.stdout).toBe(0);
   expect(fs.existsSync(pdfPath), result.stderr || result.stdout).toBe(true);
   return pdfPath;
@@ -305,7 +306,7 @@ describe("LibreOffice PDF → ODT E2E", () => {
     expect(out.result.success, out.result.error).toBe(true);
     const pdfOutDir = path.join(tmpDir, "roundtrip out");
     fs.mkdirSync(pdfOutDir, { recursive: true });
-    const result = await run("libreoffice", ["--headless", "--norestore", "--convert-to", "pdf", "--outdir", pdfOutDir, out.outputPath]);
+    const result = await run(findLibreofficeBinary(), ["--headless", "--norestore", "--convert-to", "pdf", "--outdir", pdfOutDir, out.outputPath]);
     expect(result.code, result.stderr).toBe(0);
     const generated = fs.readdirSync(pdfOutDir).find((name) => name.endsWith(".pdf"));
     expect(generated).toBeTruthy();

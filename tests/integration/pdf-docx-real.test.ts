@@ -11,7 +11,9 @@ import { spawn, execSync } from "child_process";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import JSZip from "jszip";
 
-import { libreOfficeEngine, SCANNED_PDF_DOCX_ERROR } from "../../src/lib/engines/document/libreoffice-engine";
+import { libreOfficeEngine, SCANNED_PDF_DOCX_ERROR, findLibreofficeBinary } from "../../src/lib/engines/document/libreoffice-engine";
+import { resolvePopplerTool } from "../../src/lib/engines/pdf/poppler-engine";
+import { findPandocBinary } from "../../src/lib/engines/document/pandoc-engine";
 import { CONFIG } from "../../src/lib/config";
 import type { ConversionPlan } from "../../src/lib/domain/engines";
 
@@ -109,8 +111,8 @@ async function makePdfViaOffice(file: string, markdown: string, tag: string): Pr
   const docx = path.join(tmpDir, `${tag}.docx`);
   const profile = path.join(tmpDir, `${tag}-lo-profile`);
   fs.writeFileSync(md, markdown);
-  expect((await run("pandoc", ["-f", "markdown", "-t", "docx", "-o", docx, md])).code).toBe(0);
-  const res = await run("libreoffice", [
+  expect((await run(findPandocBinary(), ["-f", "markdown", "-t", "docx", "-o", docx, md])).code).toBe(0);
+  const res = await run(findLibreofficeBinary(), [
     `-env:UserInstallation=file://${profile}`,
     "--headless", "--norestore", "--convert-to", "pdf", "--outdir", tmpDir, docx,
   ]);
@@ -124,9 +126,9 @@ beforeAll(async () => {
   fs.mkdirSync(CONFIG.media.tempDir, { recursive: true });
   tmpDir = fs.mkdtempSync(path.join(CONFIG.media.tempDir, "pdfdocx-"));
 
-  requireBin("libreoffice");
-  requireBin("pdftotext");
-  requireBin("pandoc");
+  requireBin(findLibreofficeBinary());
+  requireBin(resolvePopplerTool("pdftotext"));
+  requireBin(findPandocBinary());
 
   // PDFDOCX-001 simple text
   await makePdf(F.simple = path.join(tmpDir, "simple.pdf"), [["FileStudio PDFDOCX simple text fixture", "Second paragraph line"]]);
@@ -284,7 +286,7 @@ describe("PDF→DOCX — LibreOffice writer_pdf_import real execution", () => {
     const profile = path.join(tmpDir, "roundtrip-profile");
     const roundtripDir = path.join(tmpDir, "roundtrip");
     fs.mkdirSync(roundtripDir, { recursive: true });
-    const rt = await run("libreoffice", [
+    const rt = await run(findLibreofficeBinary(), [
       `-env:UserInstallation=file://${profile}`,
       "--headless", "--norestore", "--convert-to", "pdf", "--outdir", roundtripDir, out,
     ]);

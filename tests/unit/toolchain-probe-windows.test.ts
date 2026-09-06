@@ -91,7 +91,12 @@ describe("ENGINE alignment — Poppler runtime resolver", () => {
     const previousCwd = process.cwd();
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "anclora-poppler-align-"));
     try {
-      const popplerRoot = path.join(tempDir, "tools", "poppler");
+      // process.chdir() canonicalizes the working directory (e.g. macOS
+      // resolves /var/folders/... to /private/var/folders/... since /var is
+      // itself a symlink to /private/var). Build the expected path from the
+      // same realpath so this comparison isn't a textual coincidence.
+      const realTempDir = fs.realpathSync(tempDir);
+      const popplerRoot = path.join(realTempDir, "tools", "poppler");
       const bundled = path.join(popplerRoot, "Library", "bin", "pdftoppm.exe");
       fs.mkdirSync(path.dirname(bundled), { recursive: true });
       fs.writeFileSync(bundled, "");
@@ -144,7 +149,11 @@ describe("LibreOffice binary name fallback", () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "anclora-lo-"));
     const previousCwd = process.cwd();
     try {
-      const programDir = path.join(tempDir, "tools", "libreoffice", "program");
+      // See the realpath comment in "ENGINE-003" above — process.chdir()
+      // canonicalizes the cwd, so the expected path must be built from the
+      // same realpath to avoid a /var vs /private/var false mismatch on macOS.
+      const realTempDir = fs.realpathSync(tempDir);
+      const programDir = path.join(realTempDir, "tools", "libreoffice", "program");
       fs.mkdirSync(programDir, { recursive: true });
       const sofficeCom = path.join(programDir, "soffice.com");
       const sofficeExe = path.join(programDir, "soffice.exe");
