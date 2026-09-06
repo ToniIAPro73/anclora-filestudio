@@ -14,6 +14,14 @@ import {
   currentRuntimePackArchitecture,
   currentRuntimePackPlatform,
 } from "@/lib/runtime-packs";
+import { findFfmpegBinary, findFfprobeBinary } from "@/lib/engines/media/ffmpeg-engine";
+import { findQpdfBinary } from "@/lib/engines/pdf/qpdf-engine";
+import { findSevenZipBinary } from "@/lib/engines/archive/sevenzip-engine";
+import { findPandocBinary } from "@/lib/engines/document/pandoc-engine";
+import { findLibreofficeBinary } from "@/lib/engines/document/libreoffice-engine";
+import { findEbookConvertBinary } from "@/lib/engines/ebook/calibre-engine";
+import { findTesseractBinary } from "@/lib/engines/ocr/tesseract-engine";
+import { resolveMacAwareBinary } from "@/lib/binary-resolution";
 
 // Resolve the pdftoppm binary from a Poppler directory.
 // Windows Poppler distributions may place the binary in Library\bin\ or bin\.
@@ -223,7 +231,7 @@ export const toolchainProbe = {
             "Incluido en el portable — descárgalo de nuevo si falta: ffmpeg.org"
           ),
         },
-        binary: bins.ffmpeg,
+        binary: findFfmpegBinary(),
       },
       {
         def: {
@@ -236,7 +244,7 @@ export const toolchainProbe = {
             "Incluido en el portable junto con FFmpeg"
           ),
         },
-        binary: bins.ffprobe,
+        binary: findFfprobeBinary(),
       },
       {
         def: {
@@ -249,7 +257,7 @@ export const toolchainProbe = {
             "Incluido en el portable — descárgalo de nuevo si falta: qpdf.sourceforge.net"
           ),
         },
-        binary: bins.qpdf,
+        binary: findQpdfBinary(),
       },
       {
         def: {
@@ -262,7 +270,7 @@ export const toolchainProbe = {
             "Incluido en el portable — descárgalo de nuevo si falta: 7-zip.org"
           ),
         },
-        binary: bins.sevenzip,
+        binary: findSevenZipBinary(),
       },
       {
         def: {
@@ -275,7 +283,7 @@ export const toolchainProbe = {
             "Incluido en el portable — descárgalo de nuevo si falta: pandoc.org"
           ),
         },
-        binary: bins.pandoc,
+        binary: findPandocBinary(),
       },
       {
         def: {
@@ -291,7 +299,7 @@ export const toolchainProbe = {
             "Instala LibreOffice desde libreoffice.org (se detecta en C:\\Program Files\\LibreOffice)"
           ),
         },
-        binary: bins.libreoffice,
+        binary: findLibreofficeBinary(),
       },
       {
         def: {
@@ -305,7 +313,7 @@ export const toolchainProbe = {
             "Instala Calibre desde calibre-ebook.com (se detecta en C:\\Program Files\\Calibre2)"
           ),
         },
-        binary: bins.calibre,
+        binary: findEbookConvertBinary(),
       },
       {
         def: {
@@ -319,7 +327,7 @@ export const toolchainProbe = {
             "Instala Tesseract desde github.com/UB-Mannheim/tesseract (se detecta en C:\\Program Files\\Tesseract-OCR)"
           ),
         },
-        binary: bins.tesseract,
+        binary: findTesseractBinary(),
       },
       {
         def: {
@@ -333,8 +341,10 @@ export const toolchainProbe = {
             "Descarga Poppler para Windows desde github.com/oschwartz10612/poppler-windows y colócalo en tools\\poppler\\ (el portable buscará en Library\\bin\\ y bin\\). Las conversiones PDF→imagen y OCR de PDF quedarán deshabilitadas sin esta herramienta."
           ),
         },
-        // Resolve binary from directory: checks Library\bin\, bin\, and root on Windows.
-        binary: resolvePopplerBinary(bins.poppler),
+        // Resolve binary from directory: checks Library\bin\, bin\, and root on
+        // Windows. macOS: also searches Homebrew's standard dirs when no
+        // bundled Poppler directory is configured.
+        binary: resolveMacAwareBinary(resolvePopplerBinary(bins.poppler)),
       },
     ];
 

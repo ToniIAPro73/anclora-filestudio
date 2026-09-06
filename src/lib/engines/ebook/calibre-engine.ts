@@ -10,6 +10,7 @@ import type { UniversalFileDescriptor } from "../../domain/descriptors";
 import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { CONFIG } from "../../config";
+import { resolveMacAwareBinary } from "../../binary-resolution";
 
 const ENGINE_ID: EngineId = "calibre";
 
@@ -131,7 +132,7 @@ function buildCapability(
 
 // ── Binary discovery ─────────────────────────────────────────────────────────
 
-function findEbookConvertBinary(): string {
+export function findEbookConvertBinary(): string {
   // 1. Prefer ANCLORA_FILESTUDIO_CALIBRE_PATH env var (portable distribution)
   const envPath = CONFIG.media.binaries.calibre;
   if (envPath && envPath !== "ebook-convert") return envPath;
@@ -143,8 +144,8 @@ function findEbookConvertBinary(): string {
   for (const p of portablePaths) {
     if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
-  // 3. Fall back to PATH
-  return "ebook-convert";
+  // 3. Fall back to PATH (macOS: also searches Homebrew's standard dirs)
+  return resolveMacAwareBinary("ebook-convert");
 }
 
 // ── Engine implementation ────────────────────────────────────────────────────

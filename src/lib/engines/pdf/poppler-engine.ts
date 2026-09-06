@@ -16,6 +16,7 @@ import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { resolvePopplerBinary as resolveDiagnosticPopplerBinary } from "../../diagnostics/toolchain-probe";
 import { isAncloraWindowsRuntime } from "../../runtime-platform";
+import { resolveMacAwareBinary } from "../../binary-resolution";
 import { findPandocBinary } from "../document/pandoc-engine";
 
 const ENGINE_ID: EngineId = "poppler";
@@ -39,7 +40,9 @@ export function resolvePopplerRuntimeBinary(): string {
   const portableRoot = path.resolve(process.cwd(), "tools", "poppler");
   if (fs.existsSync(/* turbopackIgnore: true */ portableRoot)) return resolveDiagnosticPopplerBinary(portableRoot, isWindows);
 
-  return executable;
+  // macOS: also searches Homebrew's standard dirs — a Finder-launched
+  // process may not inherit an interactive shell's PATH.
+  return resolveMacAwareBinary(executable);
 }
 
 // Same Poppler runtime, sibling tools. pdftotext/pdftohtml ship in the same
@@ -52,7 +55,7 @@ export function resolvePopplerTool(tool: PopplerTool): string {
     const sibling = path.join(path.dirname(pdftoppm), executable);
     if (fs.existsSync(/* turbopackIgnore: true */ sibling)) return sibling;
   }
-  return executable;
+  return resolveMacAwareBinary(executable);
 }
 
 export class PopplerEngine implements ConversionEngine {

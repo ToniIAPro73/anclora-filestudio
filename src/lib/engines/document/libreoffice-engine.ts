@@ -15,10 +15,23 @@ import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { CONFIG } from "../../config";
 import { isAncloraWindowsRuntime } from "../../runtime-platform";
+import { isAncloraMacRuntime, resolveMacLibreOfficeBinary } from "../../binary-resolution";
 import { resolvePopplerTool } from "../pdf/poppler-engine";
 import JSZip from "jszip";
 
 const ENGINE_ID: EngineId = "libreoffice";
+
+// Product-level (never raw ENOENT/spawn) message, worded per-platform so the
+// instruction actually matches how the user would install it.
+export function getLibreOfficeUnavailableMessage(): string {
+  if (isAncloraMacRuntime()) {
+    return "Esta operación necesita LibreOffice. Instálalo en Aplicaciones (libreoffice.org) y vuelve a intentarlo.";
+  }
+  if (isAncloraWindowsRuntime()) {
+    return "Esta operación necesita LibreOffice. Está disponible en el ZIP portable de Windows, o instálalo desde libreoffice.org.";
+  }
+  return "Esta operación necesita LibreOffice. Instálalo con tu gestor de paquetes (p. ej. sudo apt install libreoffice) o desde libreoffice.org.";
+}
 
 export const SCANNED_PDF_DOCX_ERROR =
   "Este PDF parece estar compuesto principalmente por imágenes escaneadas. " +
@@ -42,27 +55,35 @@ export function findLibreofficeBinary(): string {
     : ["libreoffice", "soffice"];
   const genericPathFallbacks = new Set([...pathFallbacks, "libreoffice", "soffice"]);
   if (envPath && !genericPathFallbacks.has(envPath)) return envPath;
-  // 2. Portable path relative to cwd
-  const candidates = isAncloraWindowsRuntime()
-    ? [
-        path.resolve(process.cwd(), "tools", "libreoffice", "program", "soffice.com"),
-        path.resolve(process.cwd(), "tools", "LibreOffice", "program", "soffice.com"),
-        path.resolve(process.cwd(), "tools", "libreoffice", "program", "soffice.exe"),
-        path.resolve(process.cwd(), "tools", "LibreOffice", "program", "soffice.exe"),
-        ...pathFallbacks,
-      ]
-    : [
-        "libreoffice",
-        "soffice",
-      ];
-  for (const c of candidates) {
-    if (c.includes("/") || c.includes("\\")) {
-      if (fs.existsSync(/* turbopackIgnore: true */ c)) return c;
-    } else {
-      return c; // PATH-based — ProcessRunner.probe() will verify
+
+  if (isAncloraWindowsRuntime()) {
+    // 2. Portable path relative to cwd
+    const candidates = [
+      path.resolve(process.cwd(), "tools", "libreoffice", "program", "soffice.com"),
+      path.resolve(process.cwd(), "tools", "LibreOffice", "program", "soffice.com"),
+      path.resolve(process.cwd(), "tools", "libreoffice", "program", "soffice.exe"),
+      path.resolve(process.cwd(), "tools", "LibreOffice", "program", "soffice.exe"),
+      ...pathFallbacks,
+    ];
+    for (const c of candidates) {
+      if (c.includes("/") || c.includes("\\")) {
+        if (fs.existsSync(/* turbopackIgnore: true */ c)) return c;
+      } else {
+        return c; // PATH-based — ProcessRunner.probe() will verify
+      }
     }
+    return pathFallbacks[0] ?? "libreoffice";
   }
-  return pathFallbacks[0] ?? "libreoffice";
+
+  if (isAncloraMacRuntime()) {
+    // 2. PATH (+ Homebrew extra dirs), then the standard .app bundle
+    // locations — LibreOffice on macOS does not place `soffice` on PATH
+    // by default, and the user must not need to create a manual symlink.
+    return resolveMacLibreOfficeBinary() ?? "soffice";
+  }
+
+  // Linux and anything else: PATH-based, ProcessRunner.probe() verifies.
+  return "libreoffice";
 }
 
 export function getLibreOfficeUserInstallationArg(profileDir: string): string {
@@ -140,7 +161,7 @@ function buildCapability(
     description: `${inputExt.toUpperCase()} → ${outDef.label}`,
     lossProfile: isPdf ? "lossy" : "metadata-risk",
     state: isSameFormat ? "unsupported-input" : (available ? "available" : "unavailable-tool"),
-    unavailableReason: available ? undefined : "LibreOffice no está instalado. Disponible en el ZIP portable de Windows.",
+    unavailableReason: available ? undefined : getLibreOfficeUnavailableMessage(),
     recommended: isPdf,
     presets: [{ id: `lo-${inputExt}-${outDef.ext}`, label: "Estándar", quality: "0", description: "Conversión con LibreOffice headless", isRecommended: true }],
     warnings,
@@ -165,7 +186,7 @@ export class LibreOfficeEngine implements ConversionEngine {
       version: result.version,
       binaryPath: result.binaryPath,
       capabilities: result.available ? [...Object.keys(INPUT_FORMATS), "pdf-to-docx", "pdf-to-odt"] : [],
-      error: result.available ? undefined : "LibreOffice no encontrado. Instálalo desde libreoffice.org o usa el ZIP portable.",
+      error: result.available ? undefined : getLibreOfficeUnavailableMessage(),
     };
     return this._probeResult;
   }
@@ -183,7 +204,7 @@ export class LibreOfficeEngine implements ConversionEngine {
       description: "PDF → DOCX editable vía importador Writer de LibreOffice",
       lossProfile: "structure-risk",
       state: available ? "available" : "unavailable-tool",
-      unavailableReason: available ? undefined : "LibreOffice no está instalado. Disponible en el ZIP portable de Windows.",
+      unavailableReason: available ? undefined : getLibreOfficeUnavailableMessage(),
       recommended: true,
       presets: [{ id: "lo-pdf-docx", label: "Estándar", quality: "0", description: "Importador PDF de LibreOffice Writer", isRecommended: true }],
       warnings: [
@@ -209,7 +230,7 @@ export class LibreOfficeEngine implements ConversionEngine {
       description: "PDF → ODT editable vía importador Writer de LibreOffice",
       lossProfile: "structure-risk",
       state: available ? "available" : "unavailable-tool",
-      unavailableReason: available ? undefined : "LibreOffice no está instalado. Disponible en el ZIP portable de Windows.",
+      unavailableReason: available ? undefined : getLibreOfficeUnavailableMessage(),
       recommended: true,
       presets: [{ id: "lo-pdf-odt", label: "Estándar", quality: "0", description: "Importador PDF de LibreOffice Writer", isRecommended: true }],
       warnings: [

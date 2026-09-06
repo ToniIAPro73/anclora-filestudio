@@ -18,6 +18,14 @@ import type { UniversalFileDescriptor } from "../../domain/descriptors";
 import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { CONFIG } from "../../config";
+import { resolveMacAwareBinary, isAncloraMacRuntime } from "../../binary-resolution";
+import { isAncloraWindowsRuntime } from "../../runtime-platform";
+
+function getPandocUnavailableMessage(): string {
+  if (isAncloraMacRuntime()) return "Pandoc no está instalado. Instálalo con Homebrew: brew install pandoc.";
+  if (isAncloraWindowsRuntime()) return "Pandoc no está instalado. Disponible en el ZIP portable de Windows, o desde pandoc.org.";
+  return "Pandoc no está instalado. Instálalo con tu gestor de paquetes o desde pandoc.org.";
+}
 
 const ENGINE_ID: EngineId = "pandoc";
 
@@ -33,8 +41,8 @@ export function findPandocBinary(): string {
   for (const p of portablePaths) {
     if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
-  // 3. Fall back to PATH
-  return "pandoc";
+  // 3. Fall back to PATH (macOS: also searches Homebrew's standard dirs)
+  return resolveMacAwareBinary("pandoc");
 }
 
 /**
@@ -232,9 +240,7 @@ function buildCapability(
     description: `${fromDef.label} → ${toDef.label}`,
     lossProfile: loss,
     state: available ? "available" : "unavailable-tool",
-    unavailableReason: available
-      ? undefined
-      : "Pandoc no está instalado. Disponible en el ZIP portable de Windows.",
+    unavailableReason: available ? undefined : getPandocUnavailableMessage(),
     recommended:
       toFmt === "html" ||
       (fromDef.pandocName === "docx" && toFmt === "markdown"),
@@ -278,7 +284,7 @@ export class PandocEngine implements ConversionEngine {
       capabilities: result.available ? Object.keys(FORMAT_MAP) : [],
       error: result.available
         ? undefined
-        : "Pandoc no encontrado. Instálalo desde pandoc.org o usa el ZIP portable.",
+        : getPandocUnavailableMessage(),
     };
     return this._probeResult;
   }

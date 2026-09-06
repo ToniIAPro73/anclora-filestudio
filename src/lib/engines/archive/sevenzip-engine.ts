@@ -11,6 +11,7 @@ import type { UniversalFileDescriptor, ArchiveAttributes } from "../../domain/de
 import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { CONFIG } from "../../config";
+import { resolveMacAwareBinary, resolveOnAugmentedPath, isAncloraMacRuntime } from "../../binary-resolution";
 
 const ENGINE_ID: EngineId = "sevenzip";
 
@@ -19,7 +20,7 @@ const MAX_ENTRIES = 10_000;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MAX_UNCOMPRESSED_BYTES = 2 * 1024 * 1024 * 1024; // 2 GB
 
-function findSevenZipBinary(): string {
+export function findSevenZipBinary(): string {
   // 1. Prefer ANCLORA_FILESTUDIO_7ZIP_PATH env var (portable distribution)
   const envPath = CONFIG.media.binaries.sevenzip;
   if (envPath && envPath !== "7z") return envPath;
@@ -34,8 +35,16 @@ function findSevenZipBinary(): string {
   for (const p of portablePaths) {
     if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
-  // 3. Fall back to PATH
-  return "7z";
+  // 3. Fall back to PATH. macOS package managers commonly install the
+  // p7zip fork as `7z`, `7za`, or `7zr` (not always all three) — search
+  // Homebrew's standard dirs for each name in that preference order.
+  if (isAncloraMacRuntime()) {
+    for (const name of ["7z", "7za", "7zr"]) {
+      const resolved = resolveOnAugmentedPath(name);
+      if (resolved) return resolved;
+    }
+  }
+  return resolveMacAwareBinary("7z");
 }
 
 type ArchiveOutputFormat = "zip" | "7z" | "tar";

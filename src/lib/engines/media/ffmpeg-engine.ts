@@ -13,6 +13,7 @@ import type { UniversalFileDescriptor, MediaAttributes, LossProfile } from "../.
 import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { CONFIG } from "../../config";
+import { resolveMacAwareBinary } from "../../binary-resolution";
 
 const ENGINE_ID: EngineId = "ffmpeg-media";
 
@@ -560,7 +561,7 @@ function mapMp3Quality(quality: string): string {
 
 // ── Binary discovery ─────────────────────────────────────────────────────────
 
-function findFfmpegBinary(): string {
+export function findFfmpegBinary(): string {
   // 1. Prefer ANCLORA_FILESTUDIO_FFMPEG_PATH env var (portable distribution)
   const envPath = CONFIG.media.binaries.ffmpeg;
   if (envPath && envPath !== "ffmpeg") return envPath;
@@ -573,11 +574,12 @@ function findFfmpegBinary(): string {
   for (const p of portablePaths) {
     if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
-  // 3. Fall back to PATH
-  return "ffmpeg";
+  // 3. Fall back to PATH (macOS: also searches Homebrew's standard dirs —
+  // a Finder-launched process may not inherit an interactive shell's PATH)
+  return resolveMacAwareBinary("ffmpeg");
 }
 
-function findFfprobeBinary(): string {
+export function findFfprobeBinary(): string {
   // 1. Prefer ANCLORA_FILESTUDIO_FFPROBE_PATH env var (portable distribution)
   const envPath = CONFIG.media.binaries.ffprobe;
   if (envPath && envPath !== "ffprobe") return envPath;
@@ -590,8 +592,8 @@ function findFfprobeBinary(): string {
   for (const p of portablePaths) {
     if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
-  // 3. Fall back to PATH
-  return "ffprobe";
+  // 3. Fall back to PATH (macOS: also searches Homebrew's standard dirs)
+  return resolveMacAwareBinary("ffprobe");
 }
 
 // ── Engine implementation ────────────────────────────────────────────────────

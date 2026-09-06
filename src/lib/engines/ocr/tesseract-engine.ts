@@ -12,6 +12,7 @@ import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { CONFIG } from "../../config";
 import { isAncloraWindowsRuntime } from "../../runtime-platform";
+import { resolveMacAwareBinary } from "../../binary-resolution";
 
 const ENGINE_ID: EngineId = "tesseract";
 
@@ -82,7 +83,7 @@ const OCR_CAPABILITIES: OcrCapabilityDef[] = [
 
 // ── Binary discovery ─────────────────────────────────────────────────────────
 
-function findTesseractBinary(): string {
+export function findTesseractBinary(): string {
   // 1. Prefer ANCLORA_FILESTUDIO_TESSERACT_PATH env var (portable distribution)
   const envPath = CONFIG.media.binaries.tesseract;
   if (envPath && envPath !== "tesseract") return envPath;
@@ -94,11 +95,11 @@ function findTesseractBinary(): string {
   for (const p of portablePaths) {
     if (fs.existsSync(/* turbopackIgnore: true */ p)) return p;
   }
-  // 3. Fall back to PATH
-  return "tesseract";
+  // 3. Fall back to PATH (macOS: also searches Homebrew's standard dirs)
+  return resolveMacAwareBinary("tesseract");
 }
 
-function findPdftoppmBinary(): string {
+export function findPdftoppmBinary(): string {
   const isWindows = isAncloraWindowsRuntime();
 
   // Build candidate list from a Poppler directory, checking common Windows distro subdirs.
@@ -127,8 +128,8 @@ function findPdftoppmBinary(): string {
     if (fs.existsSync(/* turbopackIgnore: true */ c)) return c;
   }
 
-  // 3. Fall back to PATH
-  return isWindows ? "pdftoppm.exe" : "pdftoppm";
+  // 3. Fall back to PATH (macOS: also searches Homebrew's standard dirs)
+  return isWindows ? "pdftoppm.exe" : resolveMacAwareBinary("pdftoppm");
 }
 
 // ── Language detection ────────────────────────────────────────────────────────

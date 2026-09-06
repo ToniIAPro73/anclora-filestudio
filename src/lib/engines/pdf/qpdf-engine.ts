@@ -21,11 +21,12 @@ import type {
 import { ProcessRunner } from "../../infrastructure/processes/process-runner";
 import { ensurePathSafety } from "../../security/path-safety";
 import { CONFIG } from "../../config";
+import { resolveMacAwareBinary } from "../../binary-resolution";
 
 const ENGINE_ID: EngineId = "qpdf";
 
 // Look for qpdf: prefer ANCLORA_FILESTUDIO_QPDF_PATH env var, then portable path, then PATH
-function findQpdfBinary(): string {
+export function findQpdfBinary(): string {
   const envPath = CONFIG.media.binaries.qpdf;
   if (envPath && envPath !== "qpdf") return envPath;
   const portablePaths = [
@@ -35,7 +36,7 @@ function findQpdfBinary(): string {
   for (const portablePath of portablePaths) {
     if (fs.existsSync(/* turbopackIgnore: true */ portablePath)) return portablePath;
   }
-  return "qpdf";
+  return resolveMacAwareBinary("qpdf");
 }
 
 interface QpdfOptions {
