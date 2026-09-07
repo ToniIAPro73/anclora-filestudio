@@ -18,6 +18,16 @@ export function clearAbortController(jobId: string): void {
   activeAbortControllers.delete(jobId);
 }
 
+/**
+ * Looks up the AbortSignal for a job without holding a reference to the
+ * controller itself — used by call sites that only receive a jobId (e.g.
+ * media/processor.ts's runProcess, which is invoked from deep inside a
+ * long call chain that doesn't otherwise thread a signal parameter).
+ */
+export function getAbortSignal(jobId: string): AbortSignal | undefined {
+  return activeAbortControllers.get(jobId)?.signal;
+}
+
 /** Aborts the running process for a job, if any. Returns whether one was found. */
 export function cancelJobProcess(jobId: string): boolean {
   const controller = activeAbortControllers.get(jobId);

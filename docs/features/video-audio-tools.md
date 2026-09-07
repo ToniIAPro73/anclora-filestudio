@@ -149,8 +149,11 @@ finalizar, sin procesos `yt-dlp`/`ffmpeg`/`whisper-cli` huérfanos. Ver
   **DEFERRED_BY_PRODUCT_DECISION**. El usuario coloca manualmente el
   archivo `ggml-*.bin`. La detección ya funciona; falta sólo la UI de
   descarga, explícitamente pospuesta.
-- Cancelación de procesos: el registro compartido
-  (`job-cancellation.ts`) cubre Whisper, FFmpeg y yt-dlp para los jobs de
-  archivo local y de URL. El pipeline legacy de conversión YouTube→MP3/MP4
-  (`media/processor.ts`) no se retrofit-eó en esta iteración (fuera de
-  alcance de "Vídeo y Audio").
+- Cancelación de procesos: el registro compartido (`job-cancellation.ts`)
+  cubre Whisper, FFmpeg y yt-dlp para los tres processors sobre la tabla
+  `jobs` — archivo local (`universal-job-processor.ts`), URL
+  (`url-transcript-processor.ts`) y el pipeline legacy de conversión
+  YouTube→MP3/MP4 (`media/processor.ts`, incluidos los pasos de remux
+  FFmpeg). Un único `DELETE /api/jobs/:id` cancela cualquiera de los tres.
+  Verificado real: MP3 normal, MP4 normal y cancelación real durante una
+  descarga en curso (`scripts/legacy-youtube-real-smoke.real-smoke.test.ts`).

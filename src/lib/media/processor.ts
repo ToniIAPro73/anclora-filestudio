@@ -20,6 +20,7 @@ import { createAppError, ERROR_MESSAGES, type AppError, type ErrorCode } from ".
 import { checkDiskSpace } from "../jobs/disk-space-check";
 import { classifyYtdlpFailure, sanitizeStderr, appendYtdlpErrorLog } from "./ytdlp-stderr-classifier";
 import { withCookiesFallback, cookiesFileHasDomainFor } from "./ytdlp-cookies-retry";
+import { registerAbortController, clearAbortController, getAbortSignal } from "../jobs/job-cancellation";
 import crypto from "crypto";
 
 const AUDIO_FORMATS: AudioOutputFormat[] = ["mp3", "m4a", "wav", "flac", "ogg"];
@@ -66,6 +67,9 @@ function getMimeType(format: string): string {
 export async function processJob(jobId: string) {
   const job = jobManager.getJob(jobId);
   if (!job) return;
+
+  const abortController = new AbortController();
+  registerAbortController(jobId, abortController);
 
   const outputFormat = job.output_format;
   const isAudio = AUDIO_FORMATS.includes(outputFormat as AudioOutputFormat);
@@ -206,6 +210,19 @@ export async function processJob(jobId: string) {
       completed_at: new Date().toISOString(),
     });
   } catch (error: unknown) {
+    if (abortController.signal.aborted) {
+      // job-route.ts's DELETE handler already flips DB status to
+      // "cancelled" before aborting the controller — avoid overwriting it
+      // with "failed" when the killed child process's rejection surfaces
+      // here as a race (same pattern as universal-job-processor.ts and
+      // url-transcript-processor.ts). No partial output is ever left
+      // behind as a "completed" result — only "cancelled" is possible past
+      // this point, and the job dir (any partial download/output) is
+      // removed since a cancelled job has no artifact to serve.
+      fs.rmSync(jobDir, { recursive: true, force: true });
+      jobManager.updateJob(jobId, { status: "cancelled", stage: "Cancelado", cancelled_at: new Date().toISOString() });
+      return;
+    }
     const appError = error as AppError;
     const isClassifiedAppError = error instanceof Error && error.name === "AppError";
     const code: ErrorCode = appError?.code ?? "ENGINE_EXECUTE_FAILED";
@@ -229,6 +246,8 @@ export async function processJob(jobId: string) {
       error_message: message,
       stage: "Error",
     });
+  } finally {
+    clearAbortController(jobId);
   }
 }
 
@@ -400,7 +419,7 @@ async function convertAudioSourceToOutput(
     (sourceCodec === "aac" || sourceCodec === "mp4a" || sourceCodec === "alac");
 
   if (canRemuxM4a) {
-    await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg);
+    await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg, jobId);
     return;
   }
 
@@ -470,7 +489,7 @@ async function finalizeVideoSource(
   switch (format) {
     case "mp4": {
       if (isH264Compatible(vcodec) && isAacCompatible(acodec)) {
-        await remuxToPathFaststart(sourcePath, outputPath);
+        await remuxToPathFaststart(sourcePath, outputPath, jobId);
       } else {
         await runProcess(
           CONFIG.media.binaries.ffmpeg,
@@ -482,7 +501,7 @@ async function finalizeVideoSource(
     }
     case "webm": {
       if (isWebmVideoCodec(vcodec) && isWebmAudioCodec(acodec)) {
-        await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg);
+        await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg, jobId);
       } else {
         await runProcess(
           CONFIG.media.binaries.ffmpeg,
@@ -493,10 +512,10 @@ async function finalizeVideoSource(
       break;
     }
     case "mkv":
-      await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg);
+      await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg, jobId);
       break;
     default:
-      await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg);
+      await remuxToPath(sourcePath, outputPath, CONFIG.media.binaries.ffmpeg, jobId);
   }
 }
 
@@ -546,7 +565,7 @@ async function downloadRemoteVideo(opts: {
           }),
           opts.jobId
         );
-        await ensureOutputAtPath(opts.outputPath, CONFIG.media.binaries.ffmpeg);
+        await ensureOutputAtPath(opts.outputPath, CONFIG.media.binaries.ffmpeg, opts.jobId);
       } else {
         await downloadSourceForCandidate(opts, candidate);
         const sourcePath = findSourceFile(opts.jobDir);
@@ -660,7 +679,7 @@ async function processRemoteUrl(
             }),
             jobId
           );
-          await ensureOutputAtPath(outputPath, CONFIG.media.binaries.ffmpeg);
+          await ensureOutputAtPath(outputPath, CONFIG.media.binaries.ffmpeg, jobId);
         }
       },
       cookiesConfigured
@@ -825,6 +844,7 @@ function runProcess(
 ): Promise<void> {
   const isYtdlp = binary === CONFIG.media.binaries.ytdlp;
   const isFfmpeg = binary === CONFIG.media.binaries.ffmpeg;
+  const signal = getAbortSignal(jobId);
 
   return new Promise((resolve, reject) => {
     const proc = spawn(binary, args, {
@@ -832,6 +852,18 @@ function runProcess(
       windowsHide: true,
       timeout: CONFIG.media.limits.conversionTimeoutSeconds * 1000,
     });
+
+    let settled = false;
+    const onAbort = () => {
+      if (settled) return;
+      settled = true;
+      proc.kill("SIGKILL");
+      reject(new Error("Process cancelled"));
+    };
+    if (signal) {
+      if (signal.aborted) onAbort();
+      else signal.addEventListener("abort", onAbort);
+    }
 
     let stderrBuffer = "";
 
@@ -856,6 +888,10 @@ function runProcess(
     });
 
     proc.on("close", (code: number | null) => {
+      if (settled) return; // already rejected via cancellation
+      settled = true;
+      if (signal) signal.removeEventListener("abort", onAbort);
+
       if (code !== 0) {
         const sanitized = sanitizeStderr(stderrBuffer);
         console.error(
@@ -901,6 +937,10 @@ function runProcess(
     });
 
     proc.on("error", (err: NodeJS.ErrnoException) => {
+      if (settled) return;
+      settled = true;
+      if (signal) signal.removeEventListener("abort", onAbort);
+
       if (err.code === "ENOENT") {
         reject(createAppError("TOOL_NOT_AVAILABLE", "Dependencia no encontrada. Comprueba que yt-dlp y ffmpeg están disponibles.", {
           stage: "execution",
@@ -924,7 +964,7 @@ function runProcess(
  * ENOENT with a full local path. Detect that case and remux (stream copy,
  * no re-encode) into the exact path the rest of the pipeline expects.
  */
-async function ensureOutputAtPath(outputPath: string, ffmpegBinary: string): Promise<void> {
+async function ensureOutputAtPath(outputPath: string, ffmpegBinary: string, jobId: string): Promise<void> {
   if (fs.existsSync(outputPath)) return;
 
   const jobDir = path.dirname(outputPath);
@@ -945,17 +985,34 @@ async function ensureOutputAtPath(outputPath: string, ffmpegBinary: string): Pro
     );
   }
 
-  await remuxToPath(path.join(jobDir, siblings[0]), outputPath, ffmpegBinary);
+  await remuxToPath(path.join(jobDir, siblings[0]), outputPath, ffmpegBinary, jobId);
 }
 
-function remuxToPath(fromPath: string, toPath: string, ffmpegBinary: string): Promise<void> {
+function remuxToPath(fromPath: string, toPath: string, ffmpegBinary: string, jobId: string): Promise<void> {
+  const signal = getAbortSignal(jobId);
   return new Promise((resolve, reject) => {
     const proc = spawn(ffmpegBinary, ["-y", "-i", fromPath, "-c", "copy", toPath], {
       shell: false,
       windowsHide: true,
     });
 
+    let settled = false;
+    const onAbort = () => {
+      if (settled) return;
+      settled = true;
+      proc.kill("SIGKILL");
+      fs.rmSync(fromPath, { force: true });
+      reject(new Error("Process cancelled"));
+    };
+    if (signal) {
+      if (signal.aborted) onAbort();
+      else signal.addEventListener("abort", onAbort);
+    }
+
     proc.on("close", (code: number | null) => {
+      if (settled) return;
+      settled = true;
+      if (signal) signal.removeEventListener("abort", onAbort);
       fs.rmSync(fromPath, { force: true });
       if (code !== 0 || !fs.existsSync(toPath)) {
         reject(
@@ -971,13 +1028,17 @@ function remuxToPath(fromPath: string, toPath: string, ffmpegBinary: string): Pr
     });
 
     proc.on("error", () => {
+      if (settled) return;
+      settled = true;
+      if (signal) signal.removeEventListener("abort", onAbort);
       reject(createAppError("TOOL_NOT_AVAILABLE", "No se pudo ejecutar ffmpeg para finalizar la conversión.", { stage: "remux" }));
     });
   });
 }
 
 /** MP4-compatible remux: stream-copy + faststart (moov atom moved to the front). */
-function remuxToPathFaststart(fromPath: string, toPath: string): Promise<void> {
+function remuxToPathFaststart(fromPath: string, toPath: string, jobId: string): Promise<void> {
+  const signal = getAbortSignal(jobId);
   return new Promise((resolve, reject) => {
     const ffmpegBinary = CONFIG.media.binaries.ffmpeg;
     const proc = spawn(
@@ -986,7 +1047,23 @@ function remuxToPathFaststart(fromPath: string, toPath: string): Promise<void> {
       { shell: false, windowsHide: true }
     );
 
+    let settled = false;
+    const onAbort = () => {
+      if (settled) return;
+      settled = true;
+      proc.kill("SIGKILL");
+      fs.rmSync(fromPath, { force: true });
+      reject(new Error("Process cancelled"));
+    };
+    if (signal) {
+      if (signal.aborted) onAbort();
+      else signal.addEventListener("abort", onAbort);
+    }
+
     proc.on("close", (code: number | null) => {
+      if (settled) return;
+      settled = true;
+      if (signal) signal.removeEventListener("abort", onAbort);
       fs.rmSync(fromPath, { force: true });
       if (code !== 0 || !fs.existsSync(toPath)) {
         reject(
@@ -1002,6 +1079,9 @@ function remuxToPathFaststart(fromPath: string, toPath: string): Promise<void> {
     });
 
     proc.on("error", () => {
+      if (settled) return;
+      settled = true;
+      if (signal) signal.removeEventListener("abort", onAbort);
       reject(createAppError("TOOL_NOT_AVAILABLE", "No se pudo ejecutar ffmpeg para finalizar la conversión.", { stage: "remux" }));
     });
   });
