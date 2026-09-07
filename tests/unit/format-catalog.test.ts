@@ -241,7 +241,7 @@ describe("Format Catalog — canonical normalization", () => {
       tiff: "tiff",
       ico: null,
       svg: null,
-      srt: null,
+      srt: "srt",
       unknown: null,
     };
 

@@ -45,6 +45,7 @@ FileStudio centralizes file format conversion workflows for the Anclora ecosyste
 - **Operaciones por lotes** — Batch convert, compress, resize, rotate, extract metadata, strip EXIF/GPS data
 - **Validación defensiva** — Schema validation, loss-profile classification, engine availability checks before operations
 - **Múltiples modos de despliegue** — Web (browser-based canvas processing), Desktop (native engines), Service (API with async queue workers)
+- **Vídeo y Audio (Desktop only)** — local speech-to-text transcription via whisper.cpp (no cloud, no generative AI), embedded/YouTube subtitle extraction, audio/frame/thumbnail extraction, trim, metadata. See [docs/features/video-audio-tools.md](docs/features/video-audio-tools.md)
 - **Control de calidad** — Playwright end-to-end tests, format-matrix reference, platform-specific verification (Windows/Linux/macOS portable builds)
 
 ## Stack tecnológico

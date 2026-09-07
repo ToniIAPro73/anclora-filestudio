@@ -32,6 +32,7 @@ import { BatchActionToolbar } from "@/components/converter/batch-action-toolbar"
 import { ImageTool } from "@/components/web-tools/images/image-tool";
 import { PdfTool } from "@/components/web-tools/pdf/pdf-tool";
 import { StructuredDataTool } from "@/components/web-tools/structured/structured-data-tool";
+import { VideoAudioWorkspace } from "@/components/desktop-pro/video-audio-workspace";
 import { ConversionHub } from "@/components/ux-v3/conversion-hub";
 import { FileStudioHome } from "@/components/ux-v3/file-studio-home";
 import { ToolHub } from "@/components/ux-v3/tool-hub";
@@ -45,7 +46,7 @@ import { buildConversionUxModel, type UxConversionCategoryId, type UxConversionM
 import { t } from "@/i18n";
 
 export type DesktopTab = "home" | "convert" | "tools" | "history" | "diagnostics";
-type ToolWorkspaceId = "pdf" | "images" | "structured" | "ocr" | null;
+type ToolWorkspaceId = "pdf" | "images" | "structured" | "ocr" | "video-audio" | null;
 type FlowStep = "source" | "analysis" | "format" | "progress" | "result";
 
 const UX_CATEGORY_TO_LEGACY_GROUP: Partial<Record<UxConversionCategoryId, DesktopProGroupId>> = {
@@ -68,6 +69,7 @@ const LOCAL_DESKTOP_ENGINE_IDS = new Set([
   "ffmpeg-media",
   "ffmpeg",
   "ffprobe",
+  "whisper-cli",
   "qpdf",
   "poppler",
   "tesseract",
@@ -88,7 +90,7 @@ function normalizeConversionCategory(value: string | null): UxConversionCategory
 }
 
 function toolWorkspaceFromCategory(value: string | null): ToolWorkspaceId {
-  if (value === "pdf" || value === "images" || value === "ocr") return value;
+  if (value === "pdf" || value === "images" || value === "ocr" || value === "video-audio") return value;
   if (value === "metadata" || value === "compression" || value === "utilities" || value === "structured") return "structured";
   return null;
 }
@@ -458,7 +460,11 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
     const href = `/tools?category=${encodeURIComponent(toolId)}`;
     if (pathname !== "/tools" || searchParams.get("category") !== toolId) router.push(href);
     setActiveTab("tools");
-    setActiveTool(toolId === "pdf" || toolId === "images" || toolId === "ocr" ? toolId : "structured");
+    setActiveTool(
+      toolId === "pdf" || toolId === "images" || toolId === "ocr" || toolId === "video-audio"
+        ? toolId
+        : "structured"
+    );
     resetFlow();
   }, [pathname, resetFlow, router, searchParams]);
 
@@ -670,6 +676,7 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
         {activeTab === "tools" && effectiveActiveTool === "images" && <Panel><ImageTool /></Panel>}
         {activeTab === "tools" && effectiveActiveTool === "pdf" && <Panel><PdfTool /></Panel>}
         {activeTab === "tools" && effectiveActiveTool === "structured" && <Panel><StructuredDataTool /></Panel>}
+        {activeTab === "tools" && effectiveActiveTool === "video-audio" && <Panel><VideoAudioWorkspace /></Panel>}
         {activeTab === "tools" && effectiveActiveTool === "ocr" && (
           <Panel>
             <div className="space-y-3">

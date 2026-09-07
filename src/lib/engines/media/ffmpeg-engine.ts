@@ -366,24 +366,29 @@ function buildTrimCapability(
   };
 }
 
+const SUBTITLE_EXPORT_FORMATS: Record<"srt" | "vtt", { label: string; mime: string }> = {
+  srt: { label: "SRT", mime: "application/x-subrip" },
+  vtt: { label: "VTT", mime: "text/vtt" },
+};
+
 function buildExtractSubtitlesCapability(
   descriptor: UniversalFileDescriptor,
+  outputFmt: "srt" | "vtt",
   available: boolean,
 ): ConversionCapability {
+  const def = SUBTITLE_EXPORT_FORMATS[outputFmt];
   return {
-    id: `ffmpeg-subtitles-${descriptor.id}`,
+    id: `ffmpeg-subtitles-${descriptor.id}-${outputFmt}`,
     operation: "extract-subtitles",
-    outputFormat: "srt",
-    outputMime: "text/srt",
-    label: "Extraer subtítulos",
+    outputFormat: outputFmt,
+    outputMime: def.mime,
+    label: `Extraer subtítulos (${def.label})`,
     description: "Extrae los subtítulos internos del archivo",
     lossProfile: "lossless",
     state: available ? "available" : "unavailable-tool",
     unavailableReason: available ? undefined : "FFmpeg no está instalado.",
-    recommended: false,
-    presets: [
-      { id: "sub-srt", label: "SRT", quality: "srt", description: "Formato de subtítulos más compatible", isRecommended: true },
-    ],
+    recommended: outputFmt === "srt",
+    presets: [],
     warnings: [],
     engineId: ENGINE_ID,
     mobilePortability: "desktop-only",
@@ -534,9 +539,10 @@ function buildThumbnailArgs(inputPath: string, outputPath: string, options: Reco
   return args;
 }
 
-function buildExtractSubtitlesArgs(inputPath: string, outputPath: string, options: Record<string, unknown>): string[] {
+function buildExtractSubtitlesArgs(inputPath: string, outputPath: string, outputFmt: "srt" | "vtt", options: Record<string, unknown>): string[] {
   const streamIndex = options.subtitleStreamIndex ?? 0;
-  const args = ["-y", "-i", inputPath, "-map", `0:s:${streamIndex}`, "-f", "srt", outputPath];
+  const container = outputFmt === "vtt" ? "webvtt" : "srt";
+  const args = ["-y", "-i", inputPath, "-map", `0:s:${streamIndex}`, "-f", container, outputPath];
   return args;
 }
 
@@ -720,7 +726,8 @@ export class FFmpegEngine implements ConversionEngine {
 
       // Subtitles extraction
       if (attrs.hasSubtitles) {
-        caps.push(buildExtractSubtitlesCapability(descriptor, available));
+        caps.push(buildExtractSubtitlesCapability(descriptor, "srt", available));
+        caps.push(buildExtractSubtitlesCapability(descriptor, "vtt", available));
       }
     }
 
@@ -794,7 +801,8 @@ export class FFmpegEngine implements ConversionEngine {
         break;
       }
       case "extract-subtitles": {
-        args = buildExtractSubtitlesArgs(plan.inputPath, plan.outputPath, opts);
+        const outputFmt = (plan.outputFormat === "vtt" ? "vtt" : "srt") as "srt" | "vtt";
+        args = buildExtractSubtitlesArgs(plan.inputPath, plan.outputPath, outputFmt, opts);
         break;
       }
       case "trim": {

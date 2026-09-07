@@ -11,7 +11,8 @@ export type ConversionOperation =
   | "create-gif"
   | "extract-thumbnail"
   | "extract-frames"
-  | "extract-subtitles";
+  | "extract-subtitles"
+  | "transcribe";
 
 export type AudioOutputFormat = "mp3" | "m4a" | "wav" | "flac" | "ogg";
 export type VideoOutputFormat = "mp4" | "webm" | "mkv";

@@ -16,7 +16,8 @@ export type EngineId =
   | "tesseract"
   | "browser"
   | "html-renderer"
-  | "background-removal";
+  | "background-removal"
+  | "whisper-cli";
 
 export type CapabilityState =
   | "available"
@@ -94,6 +95,13 @@ export interface ConversionPlan {
   env: Record<string, string>;
   timeoutMs: number;
   estimatedSizeBytes: number | null;
+  /**
+   * Optional cancellation signal, wired in-memory by the job processor (never
+   * persisted). Engines that spawn long-running processes (e.g. whisper-cli)
+   * should forward it to ProcessRunner.run({ signal }); engines that don't
+   * support cancellation may ignore it safely.
+   */
+  abortSignal?: AbortSignal;
 }
 
 export interface ExecutionResult {

@@ -17,6 +17,7 @@ import { calibreEngine } from "./ebook/calibre-engine";
 import { tesseractEngine } from "./ocr/tesseract-engine";
 import { backgroundRemovalEngine } from "./background/background-removal-engine";
 import { htmlRendererEngine } from "./html/html-renderer-engine";
+import { whisperEngine } from "./media/whisper-engine";
 
 // ── Registration ─────────────────────────────────────────────────────────────
 
@@ -91,6 +92,12 @@ const REGISTERED_ENGINES: EngineRegistration[] = [
     engine: htmlRendererEngine,
     categories: ["plain-text", "document"],
     requiredTools: ["chromium"],
+    enabled: true,
+  },
+  {
+    engine: whisperEngine,
+    categories: ["audio", "video"],
+    requiredTools: ["whisper"],
     enabled: true,
   },
 ];

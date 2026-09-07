@@ -60,6 +60,8 @@ export const CONFIG = {
       tesseract: resolveToolPath(env.ANCLORA_FILESTUDIO_TESSERACT_PATH, "tesseract"),
       tessdataPrefix: env.ANCLORA_FILESTUDIO_TESSDATA_PREFIX || "",
       poppler: env.ANCLORA_FILESTUDIO_POPPLER_PATH || "",
+      whisper: resolveToolPath(env.ANCLORA_FILESTUDIO_WHISPER_PATH, "whisper-cli"),
+      whisperModelsDir: env.ANCLORA_FILESTUDIO_WHISPER_MODELS_DIR || "",
       ytdlpCookiesPath: resolveYtdlpCookiesPath(),
     },
     limits: {

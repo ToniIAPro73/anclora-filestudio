@@ -12,6 +12,7 @@ describe("Desktop PRO runtime capabilities", () => {
       "ocr",
       "archives",
       "ebooks",
+      "video-audio-tools",
       "structured",
     ]);
   });

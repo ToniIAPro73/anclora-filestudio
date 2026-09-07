@@ -3,6 +3,7 @@ import { jobManager } from "@/lib/jobs/job-manager";
 import { ERROR_CODES, ERROR_MESSAGES } from "@/lib/errors";
 import { updateJob } from "@/lib/infrastructure/db/job-repository";
 import { publicExecutionSummary } from "@/lib/jobs/execution-summary";
+import { cancelUniversalJob } from "@/lib/jobs/universal-job-processor";
 
 export async function GET(
   _req: NextRequest,
@@ -79,6 +80,9 @@ export async function DELETE(
         cancelled_at: new Date().toISOString(),
         stage: "Cancelado",
       });
+      // Best-effort: abort the underlying child process (e.g. whisper-cli) if
+      // this job is running on the universal-job path. No-op otherwise.
+      cancelUniversalJob(jobId);
     }
 
     return NextResponse.json({ ok: true });

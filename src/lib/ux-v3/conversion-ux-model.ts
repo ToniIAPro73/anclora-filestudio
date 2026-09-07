@@ -52,7 +52,7 @@ export interface UxToolOperation {
 }
 
 export interface UxToolCategory {
-  id: "pdf" | "images" | "ocr" | "metadata" | "compression" | "utilities";
+  id: "pdf" | "images" | "ocr" | "metadata" | "compression" | "utilities" | "video-audio";
   label: string;
   description: string;
   operations: UxToolOperation[];
@@ -325,6 +325,27 @@ export function buildToolCategories(
       label: "Utilidades",
       description: "Validación y transformaciones auxiliares que no son navegación principal.",
       operations: [{ id: "data:inspect", label: "Inspeccionar datos" }],
+    });
+  }
+
+  // Desktop-only — never shown on Web even if a caller's engine set were
+  // ever to (incorrectly) include ffmpeg-media/whisper-cli: unlike every
+  // other tool category above, this one explicitly excludes "web".
+  if (environment !== "web" && (availableEngineIds.has("ffmpeg-media") || availableEngineIds.has("whisper-cli"))) {
+    tools.push({
+      id: "video-audio",
+      label: "Vídeo y audio",
+      description: "Extrae audio, fotogramas y subtítulos, transcribe contenido localmente y realiza operaciones básicas sobre vídeo y audio.",
+      operations: [
+        { id: "video-audio:transcribe-file", label: "Transcribir desde archivo" },
+        { id: "video-audio:transcribe-url", label: "Transcribir desde URL" },
+        { id: "video-audio:extract-audio", label: "Extraer audio" },
+        { id: "video-audio:extract-frames", label: "Extraer frames" },
+        { id: "video-audio:extract-subtitles", label: "Extraer subtítulos" },
+        { id: "video-audio:thumbnail", label: "Generar miniatura" },
+        { id: "video-audio:trim", label: "Recortar" },
+        { id: "video-audio:metadata", label: "Metadatos" },
+      ],
     });
   }
 

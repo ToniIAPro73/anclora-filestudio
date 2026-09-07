@@ -44,7 +44,17 @@ export type ErrorCode =
   | "YOUTUBE_GENERIC_ACCESS_DENIED"
   | "PROVIDER_ACCESS_DENIED"
   | "CONVERSION_TIMEOUT"
-  | "INTERNAL_ERROR";
+  | "INTERNAL_ERROR"
+  // ── Video/Audio tools (whisper.cpp transcription, subtitles, URL audio) ────
+  | "WHISPER_MISSING"
+  | "WHISPER_MODEL_MISSING"
+  | "TRANSCRIPTION_FAILED"
+  | "NO_AUDIO_STREAM"
+  | "UNSUPPORTED_URL"
+  | "NO_SUBTITLES"
+  | "YTDLP_MISSING"
+  | "AUDIO_EXTRACTION_FAILED"
+  | "INVALID_TIME_RANGE";
 
 export interface AppError extends Error {
   code: ErrorCode;
@@ -156,4 +166,13 @@ export const ERROR_MESSAGES: Readonly<Record<ErrorCode, string>> = {
     "El proveedor ha denegado el acceso (HTTP 403). Puede ser temporal o requerir configuración adicional.",
   CONVERSION_TIMEOUT: "La conversión ha tardado demasiado tiempo.",
   INTERNAL_ERROR: "Ocurrió un error interno en el servidor.",
+  WHISPER_MISSING: "Whisper no está instalado. Instala whisper.cpp para transcribir localmente.",
+  WHISPER_MODEL_MISSING: "No hay ningún modelo Whisper disponible. Coloca un modelo ggml-*.bin en el directorio de modelos.",
+  TRANSCRIPTION_FAILED: "No se pudo completar la transcripción.",
+  NO_AUDIO_STREAM: "El archivo no contiene ninguna pista de audio.",
+  UNSUPPORTED_URL: "Este enlace no es compatible con la extracción de subtítulos o audio.",
+  NO_SUBTITLES: "Este vídeo no tiene subtítulos disponibles.",
+  YTDLP_MISSING: "yt-dlp no está instalado. Instálalo para trabajar con URLs.",
+  AUDIO_EXTRACTION_FAILED: "No se pudo extraer el audio del archivo.",
+  INVALID_TIME_RANGE: "El rango de tiempo indicado no es válido.",
 };

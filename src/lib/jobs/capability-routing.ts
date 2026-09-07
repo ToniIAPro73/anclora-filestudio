@@ -31,6 +31,8 @@ export function extractEngineIdFromCapabilityId(capabilityId: string): string {
     ["calibre", "calibre"],
     ["tesseract", "tesseract"],
     ["html-renderer", "html-renderer"],
+    ["whisper-transcribe", "whisper-cli"],
+    ["whisper-cli", "whisper-cli"],
   ];
 
   for (const [prefix, engineId] of PREFIX_TO_ENGINE) {

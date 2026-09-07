@@ -26,6 +26,11 @@ const envSchema = z.object({
   ANCLORA_FILESTUDIO_TESSERACT_PATH: z.string().default(""),
   ANCLORA_FILESTUDIO_TESSDATA_PREFIX: z.string().default(""),
   ANCLORA_FILESTUDIO_POPPLER_PATH: z.string().default(""),
+  // whisper.cpp (whisper-cli) — optional local speech-to-text dependency.
+  ANCLORA_FILESTUDIO_WHISPER_PATH: z.string().default(""),
+  // Directory holding downloaded ggml-*.bin models. Defaults to a per-OS
+  // user data directory (same convention as ANCLORA_FILESTUDIO_RUNTIME_PACKS_DIR).
+  ANCLORA_FILESTUDIO_WHISPER_MODELS_DIR: z.string().default(""),
   ANCLORA_FILESTUDIO_DATA_DIR: z.string().default(""),
   ANCLORA_FILESTUDIO_TEMP_DIR: z.string().default(""),
   ANCLORA_FILESTUDIO_LOGS_DIR: z.string().default(""),

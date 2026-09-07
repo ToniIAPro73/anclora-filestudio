@@ -50,6 +50,7 @@ src/
 - Vercel Web must remain free of native binaries, local filesystem assumptions, SQLite runtime dependencies and long-running workers.
 - Service API/Worker QA depends on service infrastructure that is outside this repository's local Wave 1 scope.
 - Local Agent QA depends on local package/runtime preparation and explicit user consent flows.
+- The "Vídeo y Audio" family (local Whisper transcription, subtitle/audio/frame extraction, trim, metadata) is Desktop-only and must never appear or execute on Vercel Web. See [docs/features/video-audio-tools.md](docs/features/video-audio-tools.md).
 
 ## AOS Bootstrap
 

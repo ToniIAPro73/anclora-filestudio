@@ -83,6 +83,26 @@ Code:    https://gitlab.freedesktop.org/poppler/poppler
 License: https://gitlab.freedesktop.org/poppler/poppler/-/blob/master/COPYING
 
 ────────────────────────────────────────────────────────────────────────────────
+whisper.cpp (Vídeo y Audio Pack — Desktop only, optional)
+────────────────────────────────────────────────────────────────────────────────
+License: MIT
+Source:  https://github.com/ggml-org/whisper.cpp
+License: https://github.com/ggml-org/whisper.cpp/blob/master/LICENSE
+
+Not bundled with FileStudio (no redistribution obligation applies); detected
+at runtime as an optional local dependency the user installs separately
+(e.g. via Homebrew). All speech-to-text runs fully offline.
+
+Whisper GGML models (ggml-tiny/base/small.bin, converted from OpenAI's
+Whisper checkpoints):
+License: MIT
+Source:  https://github.com/openai/whisper (original weights)
+         https://huggingface.co/ggerganov/whisper.cpp (GGML conversions)
+
+Models are never bundled with the installer; the user downloads/places them
+manually in the local models directory (see docs/features/video-audio-tools.md).
+
+────────────────────────────────────────────────────────────────────────────────
 Sharp (libvips)
 ────────────────────────────────────────────────────────────────────────────────
 License: Apache License 2.0

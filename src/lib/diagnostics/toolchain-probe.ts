@@ -22,6 +22,7 @@ import { findLibreofficeBinary } from "@/lib/engines/document/libreoffice-engine
 import { findEbookConvertBinary } from "@/lib/engines/ebook/calibre-engine";
 import { findTesseractBinary } from "@/lib/engines/ocr/tesseract-engine";
 import { resolveMacAwareBinary } from "@/lib/binary-resolution";
+import { findWhisperBinary, defaultWhisperModelsRoot, listWhisperModels, getActiveWhisperModel } from "@/lib/engines/media/whisper-engine";
 
 // Resolve the pdftoppm binary from a Poppler directory.
 // Windows Poppler distributions may place the binary in Library\bin\ or bin\.
@@ -84,6 +85,8 @@ export interface ToolProbeResult {
   portableInclusion: "required" | "included" | "optional" | "unexpected-missing";
   /** Human-readable explanation shown only when portableInclusion === 'optional' and the tool is absent. */
   optionalDescription?: string;
+  /** Local model info (whisper.cpp today) — same detection the runtime engine uses. */
+  modelInfo?: { activeModel: string | null; modelsDir: string; detectedModels: string[] };
 }
 
 // ── Binary probe helpers ──────────────────────────────────────────────────────
@@ -346,6 +349,20 @@ export const toolchainProbe = {
         // bundled Poppler directory is configured.
         binary: resolveMacAwareBinary(resolvePopplerBinary(bins.poppler)),
       },
+      {
+        def: {
+          id: "whisper", displayName: "Whisper (whisper.cpp)",
+          args: ["--version"], versionPattern: "version:\\s*(\\d+\\.\\d+\\.\\d+)",
+          group: "media", requiredFor: ["transcribe-audio", "transcribe-video"],
+          portableInclusion: "optional",
+          optionalDescription: "Transcripción local de audio y vídeo. Instala whisper.cpp y coloca un modelo GGML para habilitar esta función.",
+          recommendedAction: getRecommendedAction(
+            "Instala whisper.cpp (p.ej. tu gestor de paquetes) y coloca un modelo ggml-*.bin en el directorio de modelos",
+            "Instala whisper.cpp y coloca un modelo ggml-*.bin en el directorio de modelos"
+          ),
+        },
+        binary: findWhisperBinary(),
+      },
     ];
 
     const results = await Promise.all(
@@ -364,6 +381,19 @@ export const toolchainProbe = {
           recommendedAction: probe.available ? null : def.recommendedAction,
           portableInclusion: def.portableInclusion,
           ...(def.optionalDescription !== undefined ? { optionalDescription: def.optionalDescription } : {}),
+          ...(def.id === "whisper"
+            ? {
+                modelInfo: (() => {
+                  const modelsDir = defaultWhisperModelsRoot();
+                  const models = listWhisperModels(modelsDir);
+                  return {
+                    activeModel: getActiveWhisperModel(models)?.id ?? null,
+                    modelsDir,
+                    detectedModels: models.map((m) => m.id),
+                  };
+                })(),
+              }
+            : {}),
         };
       })
     );

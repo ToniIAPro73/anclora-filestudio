@@ -8,7 +8,8 @@ export type DesktopProGroupId =
   | "ocr"
   | "archives"
   | "ebooks"
-  | "structured";
+  | "structured"
+  | "video-audio-tools";
 
 export const DESKTOP_PRO_GROUPS: Array<CapabilityGroup & { id: DesktopProGroupId }> = [
   {
@@ -73,6 +74,15 @@ export const DESKTOP_PRO_GROUPS: Array<CapabilityGroup & { id: DesktopProGroupId
     operations: ["epub", "mobi", "azw3", "pdf", "html-to-epub", "docx-to-epub"],
     quickMode: "Carga un ebook y revisa salidas disponibles.",
     proMode: "Calibre habilita EPUB, MOBI, AZW3 y conversiones derivadas.",
+  },
+  {
+    id: "video-audio-tools",
+    label: "Vídeo y audio",
+    description: "Extrae audio, fotogramas y subtítulos, transcribe contenido localmente y realiza operaciones básicas sobre vídeo y audio.",
+    requiredTools: ["FFmpeg", "FFprobe", "Whisper", "yt-dlp"],
+    operations: ["transcribe", "extract-audio", "extract-frames", "extract-subtitles", "extract-thumbnail", "trim"],
+    quickMode: "Transcripción local, extracción de audio/frames/subtítulos, miniaturas y recorte.",
+    proMode: "FFmpeg y Whisper (whisper.cpp) ejecutan todo localmente; yt-dlp obtiene subtítulos o audio de URLs sin descargar vídeo completo.",
   },
   {
     id: "structured",
