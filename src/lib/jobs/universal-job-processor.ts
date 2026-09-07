@@ -22,6 +22,7 @@ import {
 import { extractEngineIdFromCapabilityId } from "./capability-routing";
 import { checkDiskSpace } from "./disk-space-check";
 import { coordinatedCleanup } from "./coordinated-cleanup";
+import { registerAbortController, clearAbortController } from "./job-cancellation";
 
 // ── Magic bytes table for output validation ──────────────────────────────────
 
@@ -166,25 +167,10 @@ function redact(message: string): string {
 
 // ── Main processor ────────────────────────────────────────────────────────────
 
-// In-memory cancellation wiring. Never persisted — DB only tracks the
-// "cancelled" status flip. Keyed by job id so job-route.ts's DELETE handler
-// can abort the underlying child process (e.g. whisper-cli) in addition to
-// flipping the status. Engines that don't read ConversionPlan.abortSignal
-// simply keep running to completion (no regression for existing engines).
-const activeAbortControllers = new Map<string, AbortController>();
-
-/** Aborts the running process for a job, if any. Returns whether one was found. */
-export function cancelUniversalJob(jobId: string): boolean {
-  const controller = activeAbortControllers.get(jobId);
-  if (!controller) return false;
-  controller.abort();
-  return true;
-}
-
 export async function processUniversalJob(jobId: string): Promise<void> {
   const log: string[] = [];
   const abortController = new AbortController();
-  activeAbortControllers.set(jobId, abortController);
+  registerAbortController(jobId, abortController);
 
   try {
     // 1. Recover job from DB
@@ -551,7 +537,7 @@ export async function processUniversalJob(jobId: string): Promise<void> {
       console.error(redact(msg));
     }
   } finally {
-    activeAbortControllers.delete(jobId);
+    clearAbortController(jobId);
   }
 }
 

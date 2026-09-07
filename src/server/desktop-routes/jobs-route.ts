@@ -4,6 +4,7 @@ import { VideoQualitySelectionSchema } from "@/lib/quality/quality-contract";
 import { jobManager } from "@/lib/jobs/job-manager";
 import { processJob } from "@/lib/media/processor";
 import { processUniversalJob } from "@/lib/jobs/universal-job-processor";
+import { createUrlTranscriptJob, processUrlTranscriptJob, type UrlTranscriptOptions } from "@/lib/jobs/url-transcript-processor";
 import { getEngine } from "@/lib/engines/registry";
 import { CONFIG } from "@/lib/config";
 import { ERROR_CODES, ERROR_MESSAGES } from "@/lib/errors";
@@ -115,6 +116,11 @@ export async function POST(req: NextRequest) {
 
     const data = validated.data;
 
+    // ── URL transcript job path (Vídeo y Audio — Desde URL) ─────────────────
+    if (data.operation === "url-transcribe" && data.url) {
+      return handleUrlTranscriptJob(data, clientIp);
+    }
+
     // ── Universal job path ─────────────────────────────────────────────────
     if (data.capabilityId && data.inputId) {
       return await handleUniversalJob(data, clientIp);
@@ -132,6 +138,46 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+// ── URL transcript job handler (Vídeo y Audio — Desde URL) ─────────────────────
+
+const UrlTranscriptOptionsSchema = z.object({
+  mode: z.enum(["subtitle", "auto"]),
+  source: z.enum(["manual", "automatic"]).optional(),
+  lang: z.string().optional(),
+  language: z.string().optional(),
+  outputFormat: z.enum(["txt", "md", "srt", "vtt"]),
+  timestamps: z.boolean().optional(),
+});
+
+function handleUrlTranscriptJob(
+  data: z.infer<typeof JobRequestSchema>,
+  clientIp: string,
+): NextResponse {
+  const parsedOptions = UrlTranscriptOptionsSchema.safeParse(data.options ?? {});
+  if (!parsedOptions.success) {
+    return NextResponse.json(
+      { error: "Opciones de transcripción por URL no válidas.", code: "VALIDATION_ERROR" },
+      { status: 400 },
+    );
+  }
+  if (parsedOptions.data.mode === "subtitle" && (!parsedOptions.data.source || !parsedOptions.data.lang)) {
+    return NextResponse.json(
+      { error: "Falta 'source'/'lang' para el modo 'subtitle'.", code: "VALIDATION_ERROR" },
+      { status: 400 },
+    );
+  }
+
+  const job = createUrlTranscriptJob({
+    url: data.url!,
+    options: parsedOptions.data as UrlTranscriptOptions,
+    clientIp,
+  });
+
+  processUrlTranscriptJob(job.id).catch(console.error);
+
+  return NextResponse.json({ jobId: job.id, status: job.status });
 }
 
 // ── Universal job handler ─────────────────────────────────────────────────────

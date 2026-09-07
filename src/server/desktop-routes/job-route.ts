@@ -3,7 +3,7 @@ import { jobManager } from "@/lib/jobs/job-manager";
 import { ERROR_CODES, ERROR_MESSAGES } from "@/lib/errors";
 import { updateJob } from "@/lib/infrastructure/db/job-repository";
 import { publicExecutionSummary } from "@/lib/jobs/execution-summary";
-import { cancelUniversalJob } from "@/lib/jobs/universal-job-processor";
+import { cancelJobProcess } from "@/lib/jobs/job-cancellation";
 
 export async function GET(
   _req: NextRequest,
@@ -21,9 +21,12 @@ export async function GET(
     }
 
     const isAudio = ["mp3", "m4a", "wav", "flac", "ogg"].includes(job.output_format);
-    const qualityLabel = isAudio
-      ? `${job.quality} kbps`
-      : `${job.quality}p`;
+    const isTextArtifact = ["txt", "md", "srt", "vtt"].includes(job.output_format);
+    const qualityLabel = isTextArtifact
+      ? job.quality
+      : isAudio
+        ? `${job.quality} kbps`
+        : `${job.quality}p`;
 
     const publicJob = {
       jobId: job.id,
@@ -82,7 +85,7 @@ export async function DELETE(
       });
       // Best-effort: abort the underlying child process (e.g. whisper-cli) if
       // this job is running on the universal-job path. No-op otherwise.
-      cancelUniversalJob(jobId);
+      cancelJobProcess(jobId);
     }
 
     return NextResponse.json({ ok: true });

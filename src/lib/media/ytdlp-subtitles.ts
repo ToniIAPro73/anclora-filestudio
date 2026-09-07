@@ -50,10 +50,10 @@ function toTrackList(dict: Record<string, YtdlpJsonSubtitleEntry[]> | undefined)
 }
 
 /** Lists manual/automatic caption availability without downloading anything. */
-export async function probeUrlCaptions(url: string, timeoutMs = 30_000): Promise<UrlCaptionInfo> {
+export async function probeUrlCaptions(url: string, timeoutMs = 30_000, signal?: AbortSignal): Promise<UrlCaptionInfo> {
   const runner = new ProcessRunner(findYtdlpBinary(), timeoutMs);
   const args = [...getYtdlpCommonArgs(false), "--skip-download", "-J", url];
-  const result = await runner.run({ args, timeoutMs });
+  const result = await runner.run({ args, timeoutMs, signal });
 
   if (result.exitCode !== 0) {
     throw new Error(result.stderr.slice(0, 500) || `yt-dlp exit ${result.exitCode}`);
@@ -90,7 +90,8 @@ export async function downloadUrlSubtitle(
   lang: string,
   kind: "manual" | "automatic",
   outDir: string,
-  timeoutMs = 60_000
+  timeoutMs = 60_000,
+  signal?: AbortSignal
 ): Promise<DownloadedSubtitle> {
   fs.mkdirSync(outDir, { recursive: true });
   const outTemplate = path.join(outDir, "subtitle.%(ext)s");
@@ -104,7 +105,7 @@ export async function downloadUrlSubtitle(
     "-o", outTemplate,
     url,
   ];
-  const result = await runner.run({ args, timeoutMs });
+  const result = await runner.run({ args, timeoutMs, signal });
   const srtPath = path.join(outDir, `subtitle.${lang}.srt`);
   if (result.exitCode !== 0 || !fs.existsSync(srtPath)) {
     throw new Error(result.stderr.slice(0, 500) || "yt-dlp no generó el archivo de subtítulos.");
@@ -112,30 +113,57 @@ export async function downloadUrlSubtitle(
   return { srtPath, lang, kind };
 }
 
+// Semantic yt-dlp format selectors — never a rigid provider-specific format
+// id (those change over time and vary per-video, see download-strategy.ts's
+// own reasoning for the main YouTube pipeline). Two attempts: a plain
+// "best audio available" selector, then an alternate-codec/container
+// selector as a fallback if the first representation is unavailable or
+// rejected (e.g. a per-format 403) — same spirit as the recoverable-403
+// candidate fallback already used elsewhere in this app, simplified since
+// the only requirement here is "decodable audio for Whisper", not a
+// specific output container.
+const AUDIO_ONLY_CANDIDATES = [
+  "bestaudio/best",
+  "bestaudio[ext=webm]/bestaudio[acodec=opus]/best",
+] as const;
+
+export interface AudioDownloadResult {
+  candidateIndex: number;
+  formatSelector: string;
+}
+
 /**
- * Downloads audio only (bestaudio, no video track) to a WAV file — the
- * fallback path when a URL has no subtitles and the user wants a local
- * Whisper transcription instead. Deliberately simpler than the main
- * YouTube→MP3 pipeline's multi-candidate 403 fallback chain (out of scope
- * here): a single bestaudio attempt, transcoded straight to WAV.
+ * Downloads audio only (no video track) to a WAV file — the fallback path
+ * when a URL has no subtitles and the user wants a local Whisper
+ * transcription instead. Tries each candidate selector in order; only
+ * throws once all candidates have failed.
  */
 export async function downloadUrlAudioOnly(
   url: string,
   outputWavPath: string,
-  timeoutMs = 300_000
-): Promise<void> {
+  timeoutMs = 300_000,
+  signal?: AbortSignal
+): Promise<AudioDownloadResult> {
   fs.mkdirSync(path.dirname(outputWavPath), { recursive: true });
   const runner = new ProcessRunner(findYtdlpBinary(), timeoutMs);
-  const args = [
-    ...getYtdlpCommonArgs(false),
-    "-f", "bestaudio/best",
-    "--extract-audio",
-    "--audio-format", "wav",
-    "-o", outputWavPath,
-    url,
-  ];
-  const result = await runner.run({ args, timeoutMs });
-  if (result.exitCode !== 0 || !fs.existsSync(outputWavPath)) {
-    throw new Error(result.stderr.slice(0, 500) || "No se pudo descargar el audio de la URL.");
+
+  let lastError = "No se pudo descargar el audio de la URL.";
+  for (let i = 0; i < AUDIO_ONLY_CANDIDATES.length; i++) {
+    if (signal?.aborted) throw new Error("Process cancelled");
+    const formatSelector = AUDIO_ONLY_CANDIDATES[i];
+    const args = [
+      ...getYtdlpCommonArgs(false),
+      "-f", formatSelector,
+      "--extract-audio",
+      "--audio-format", "wav",
+      "-o", outputWavPath,
+      url,
+    ];
+    const result = await runner.run({ args, timeoutMs, signal });
+    if (result.exitCode === 0 && fs.existsSync(outputWavPath)) {
+      return { candidateIndex: i, formatSelector };
+    }
+    lastError = result.stderr.slice(0, 500) || lastError;
   }
+  throw new Error(lastError);
 }

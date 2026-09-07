@@ -15,7 +15,7 @@ const desktopRouteImporters = isVercelBuild
       "inputs-analyze-route": () => import("@/server/desktop-routes/inputs-analyze-route"),
       "settings-cookies-route": () => import("@/server/desktop-routes/settings-cookies-route"),
       "system-shutdown-route": () => import("@/server/desktop-routes/system-shutdown-route"),
-      "url-transcript-route": () => import("@/server/desktop-routes/url-transcript-route"),
+      "url-captions-route": () => import("@/server/desktop-routes/url-captions-route"),
     };
 
 const desktopModuleImporters = isVercelBuild

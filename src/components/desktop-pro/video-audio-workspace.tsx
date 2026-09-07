@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, Download, FileAudio, FileVideo, Scissors, Image as ImageIcon, Captions, Info } from "lucide-react";
 import { SourceSelector, type UniversalAnalysisResult } from "@/components/converter/source-selector";
-import { downloadBlob } from "@/lib/browser-tools/common/download";
 import type { CapabilityInfo } from "@/lib/domain/unified-analysis";
 
 type OutputFormat = "txt" | "md" | "srt" | "vtt";
@@ -65,8 +64,19 @@ export function VideoAudioWorkspace() {
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const isMounted = useRef(true);
   useEffect(() => () => { isMounted.current = false; }, []);
+
+  const cancelCurrentJob = useCallback(async () => {
+    if (!currentJobId) return;
+    try {
+      await fetch(`/api/jobs/${currentJobId}`, { method: "DELETE" });
+      if (isMounted.current) setStatus("Cancelando…");
+    } catch {
+      // best-effort — the poll loop will still surface the final job status
+    }
+  }, [currentJobId]);
 
   useEffect(() => {
     if (!analysis) return;
@@ -116,6 +126,7 @@ export function VideoAudioWorkspace() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "No se pudo iniciar el trabajo.");
       const jobId = data.jobId as string;
+      if (isMounted.current) setCurrentJobId(jobId);
       const result = await pollJob(jobId, (stage, progress) => {
         if (isMounted.current) setStatus(`${stage || "Procesando"} (${progress}%)`);
       });
@@ -125,9 +136,45 @@ export function VideoAudioWorkspace() {
     } catch (err) {
       if (isMounted.current) setErrorMsg(err instanceof Error ? err.message : "Error inesperado.");
     } finally {
-      if (isMounted.current) setBusy(false);
+      if (isMounted.current) { setBusy(false); setCurrentJobId(null); }
     }
   }, [analysis]);
+
+  const runUrlJob = useCallback(async (
+    url: string,
+    options: Record<string, unknown>,
+    outputFileName: string
+  ) => {
+    setBusy(true);
+    setErrorMsg(null);
+    setStatus("Enviando trabajo...");
+    try {
+      const res = await fetch("/api/jobs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url,
+          operation: "url-transcribe",
+          options,
+          rightsConfirmed: true,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "No se pudo iniciar el trabajo.");
+      const jobId = data.jobId as string;
+      if (isMounted.current) setCurrentJobId(jobId);
+      const result = await pollJob(jobId, (stage, progress) => {
+        if (isMounted.current) setStatus(`${stage || "Procesando"} (${progress}%)`);
+      });
+      if (!result.ok) throw new Error(result.error);
+      await downloadJobResult(jobId, outputFileName);
+      if (isMounted.current) setStatus("Completado.");
+    } catch (err) {
+      if (isMounted.current) setErrorMsg(err instanceof Error ? err.message : "Error inesperado.");
+    } finally {
+      if (isMounted.current) { setBusy(false); setCurrentJobId(null); }
+    }
+  }, []);
 
   const transcribeCaps = capabilitiesByPrefix(capabilities, "whisper-transcribe-");
   const extractAudioCaps = capabilitiesByPrefix(capabilities, "ffmpeg-extract-audio-");
@@ -284,10 +331,19 @@ export function VideoAudioWorkspace() {
         </div>
       )}
 
-      {tab === "url" && <UrlTranscriptionPanel />}
+      {tab === "url" && <UrlTranscriptionPanel busy={busy} onRunJob={runUrlJob} />}
 
-      {status && !errorMsg && <p className="text-sm text-teal-300">{status}</p>}
-      {errorMsg && <p className="text-sm text-red-400">{errorMsg}</p>}
+      {(status || errorMsg) && (
+        <div className="flex items-center gap-3">
+          {status && !errorMsg && <p className="text-sm text-teal-300">{status}</p>}
+          {errorMsg && <p className="text-sm text-red-400">{errorMsg}</p>}
+          {busy && currentJobId && (
+            <button type="button" onClick={cancelCurrentJob} className="text-xs font-bold text-stone-400 hover:text-red-300 hover:underline">
+              Cancelar
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -331,15 +387,23 @@ function TrimSection({
   );
 }
 
-// ── URL tab (Fase 6/7) — synchronous by design, see url-transcript-route.ts ──
+// ── URL tab — caption probe is a quick read-only call (not a job); the
+// actual download/transcription runs as a real job (progress + cancel),
+// see src/lib/jobs/url-transcript-processor.ts and onRunJob (passed down
+// from VideoAudioWorkspace, shared with the file-tab job runner).
 
 interface CaptionTrack { lang: string; formats: string[]; }
 interface CaptionInfo { title: string; durationSeconds: number | null; manual: CaptionTrack[]; automatic: CaptionTrack[]; }
 
-function UrlTranscriptionPanel() {
+function UrlTranscriptionPanel({
+  busy, onRunJob,
+}: {
+  busy: boolean;
+  onRunJob: (url: string, options: Record<string, unknown>, outputFileName: string) => Promise<void>;
+}) {
   const [url, setUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [probing, setProbing] = useState(false);
+  const [probeError, setProbeError] = useState<string | null>(null);
   const [info, setInfo] = useState<CaptionInfo | null>(null);
   const [language, setLanguage] = useState("auto");
   const [outputFormat, setOutputFormat] = useState<OutputFormat>("txt");
@@ -347,41 +411,22 @@ function UrlTranscriptionPanel() {
 
   const probe = async () => {
     if (!url.trim()) return;
-    setLoading(true);
-    setError(null);
+    setProbing(true);
+    setProbeError(null);
     setInfo(null);
     try {
-      const res = await fetch("/api/media/url-transcript", {
+      const res = await fetch("/api/media/url-captions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "probe", url: url.trim() }),
+        body: JSON.stringify({ url: url.trim() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "No se pudo analizar la URL.");
       setInfo(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error inesperado.");
+      setProbeError(err instanceof Error ? err.message : "Error inesperado.");
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchAndDownload = async (body: Record<string, unknown>, fileNameBase: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/media/url-transcript", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "No se pudo generar el archivo.");
-      downloadBlob(new Blob([data.content], { type: data.mimeType }), `${fileNameBase}.${data.outputFormat}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error inesperado.");
-    } finally {
-      setLoading(false);
+      setProbing(false);
     }
   };
 
@@ -396,11 +441,11 @@ function UrlTranscriptionPanel() {
           placeholder="https://…"
           className="flex-1 rounded-md border border-white/15 bg-black/30 px-3 py-2 text-sm text-stone-100"
         />
-        <ActionButton label="Buscar subtítulos" disabled={loading || !url.trim()} onClick={probe} />
+        <ActionButton label="Buscar subtítulos" disabled={probing || busy || !url.trim()} onClick={probe} />
       </div>
 
-      {loading && <p className="flex items-center gap-2 text-sm text-stone-400"><Loader2 className="h-4 w-4 animate-spin" /> Procesando…</p>}
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {probing && <p className="flex items-center gap-2 text-sm text-stone-400"><Loader2 className="h-4 w-4 animate-spin" /> Comprobando subtítulos…</p>}
+      {probeError && <p className="text-sm text-red-400">{probeError}</p>}
 
       {info && (
         <div className="space-y-3 rounded-lg border border-white/10 bg-white/3 p-4">
@@ -421,12 +466,30 @@ function UrlTranscriptionPanel() {
 
           {hasCaptions ? (
             <div className="space-y-2">
-              {info.manual.length > 0 && <CaptionTrackList label="Subtítulos manuales" tracks={info.manual} kind="manual" outputFormat={outputFormat} includeTimestamps={includeTimestamps} onDownload={fetchAndDownload} title={info.title} url={url.trim()} />}
-              {info.automatic.length > 0 && <CaptionTrackList label="Subtítulos automáticos" tracks={info.automatic} kind="automatic" outputFormat={outputFormat} includeTimestamps={includeTimestamps} onDownload={fetchAndDownload} title={info.title} url={url.trim()} />}
+              {info.manual.length > 0 && (
+                <CaptionTrackList
+                  label="Subtítulos manuales" tracks={info.manual} kind="manual" busy={busy}
+                  onSelect={(lang) => onRunJob(
+                    url.trim(),
+                    { mode: "subtitle", source: "manual", lang, outputFormat, timestamps: includeTimestamps },
+                    `${info.title}-${lang}.${outputFormat}`,
+                  )}
+                />
+              )}
+              {info.automatic.length > 0 && (
+                <CaptionTrackList
+                  label="Subtítulos automáticos" tracks={info.automatic} kind="automatic" busy={busy}
+                  onSelect={(lang) => onRunJob(
+                    url.trim(),
+                    { mode: "subtitle", source: "automatic", lang, outputFormat, timestamps: includeTimestamps },
+                    `${info.title}-${lang}.${outputFormat}`,
+                  )}
+                />
+              )}
             </div>
           ) : (
             <div className="space-y-2">
-              <p className="text-sm text-stone-400">Este vídeo no tiene subtítulos disponibles. Puedes transcribirlo localmente con Whisper (solo se descarga el audio).</p>
+              <p className="text-sm text-stone-400">Este vídeo no tiene subtítulos disponibles. Puedes transcribirlo localmente con Whisper (solo se descarga el audio, nunca el vídeo completo).</p>
               <label className="flex items-center gap-2 text-sm text-stone-300">
                 Idioma
                 <select value={language} onChange={(e) => setLanguage(e.target.value)} className="rounded bg-black/30 px-2 py-1 text-stone-100">
@@ -438,8 +501,12 @@ function UrlTranscriptionPanel() {
               <ActionButton
                 icon={<FileAudio className="h-3.5 w-3.5" />}
                 label="Transcribir con Whisper"
-                disabled={loading}
-                onClick={() => fetchAndDownload({ action: "transcribe", url: url.trim(), language, outputFormat, timestamps: includeTimestamps }, info.title)}
+                disabled={busy}
+                onClick={() => onRunJob(
+                  url.trim(),
+                  { mode: "auto", language, outputFormat, timestamps: includeTimestamps },
+                  `${info.title}.${outputFormat}`,
+                )}
               />
             </div>
           )}
@@ -450,28 +517,20 @@ function UrlTranscriptionPanel() {
 }
 
 function CaptionTrackList({
-  label, tracks, kind, outputFormat, includeTimestamps, onDownload, title, url,
+  label, tracks, kind, busy, onSelect,
 }: {
   label: string;
   tracks: CaptionTrack[];
   kind: "manual" | "automatic";
-  outputFormat: OutputFormat;
-  includeTimestamps: boolean;
-  title: string;
-  url: string;
-  onDownload: (body: Record<string, unknown>, fileNameBase: string) => void;
+  busy: boolean;
+  onSelect: (lang: string) => void;
 }) {
   return (
     <div>
       <p className="mb-1 text-xs font-bold uppercase tracking-wide text-stone-500">{label}</p>
       <div className="flex flex-wrap gap-2">
         {tracks.map((t) => (
-          <ActionButton
-            key={t.lang}
-            label={t.lang}
-            disabled={false}
-            onClick={() => onDownload({ action: "subtitle", url, source: kind, lang: t.lang, outputFormat, timestamps: includeTimestamps }, `${title}-${t.lang}`)}
-          />
+          <ActionButton key={`${kind}-${t.lang}`} label={t.lang} disabled={busy} onClick={() => onSelect(t.lang)} />
         ))}
       </div>
     </div>

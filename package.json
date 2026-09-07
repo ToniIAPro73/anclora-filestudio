@@ -23,6 +23,7 @@
     "test:watch": "vitest",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:engines": "vitest run --config vitest.engines.config.ts",
+    "test:url-transcript-real-smoke": "vitest run --config vitest.manual-real.config.ts",
     "test:security": "vitest run --config vitest.security.config.ts",
     "test:operations": "vitest run --config vitest.operations.config.ts",
     "test:automation": "vitest run --config vitest.automation.config.ts",

@@ -86,11 +86,27 @@ Orden de preferencia: subtítulos manuales → subtítulos automáticos →
 transcripción local con Whisper. Nunca se descarga el vídeo completo si
 sólo se necesita audio o subtítulos (`src/lib/media/ytdlp-subtitles.ts`).
 
-El endpoint `/api/media/url-transcript` es **síncrono** (no pasa por el
-sistema de jobs/cola): la respuesta HTTP devuelve el contenido final
-directamente. Esto es una simplificación deliberada frente al flujo de
-archivo local (que sí usa el pipeline de jobs completo, con progreso y
-cancelación) — ver GAPS.
+El flujo URL usa el **mismo sistema de jobs** que el flujo de archivo local
+(`src/lib/jobs/url-transcript-processor.ts`, tercer processor sobre la
+misma tabla `jobs` — ver `job-manager.ts`/`universal-job-processor.ts` como
+los otros dos precedentes). Fases reales (`stage`, nunca un porcentaje
+interpolado falso): Analizando URL → Comprobando subtítulos → Descargando
+subtítulos | Descargando audio → Preparando audio → Transcribiendo →
+Generando archivo → Completado/Error/Cancelado. El botón "Buscar
+subtítulos" de la UI sigue siendo una llamada rápida de sólo lectura
+(`/api/media/url-captions`, no un job) para listar pistas disponibles.
+
+La cancelación usa un registro compartido
+(`src/lib/jobs/job-cancellation.ts`) — el mismo mecanismo para archivo local
+y URL — que mata de verdad el proceso hijo activo (yt-dlp, FFmpeg o
+whisper-cli) mediante `AbortController`/`SIGKILL`, limpia el directorio de
+trabajo temporal y marca el job `cancelled` (nunca deja un resultado
+parcial como si estuviera completado).
+
+El fallback de audio-only usa selectores semánticos de yt-dlp con dos
+candidatos (`bestaudio/best`, luego un candidato de codec/contenedor
+alternativo) — nunca un ID de formato rígido — para tolerar 403 o formatos
+no disponibles.
 
 ## Privacidad
 
@@ -108,18 +124,33 @@ subtítulos o audio — eso no es una API de transcripción cloud.
 
 Ver `THIRD_PARTY_NOTICES.txt`.
 
+## Prueba real de red (fallback sin subtítulos)
+
+Verificado contra un vídeo público real, estable y conocido (Big Buck
+Bunny, Blender Foundation) confirmado sin subtítulos manuales ni
+automáticos mediante `yt-dlp --skip-download -J`:
+
+```
+manual: []
+auto: []
+```
+
+Ejecución real (sin mocks) de `probeUrlCaptions` → `downloadUrlAudioOnly`
+→ `runWhisperTranscription` — mismas funciones que usa el job processor —
+candidato de audio `bestaudio/best` (primer intento), transcripción real
+generada (SRT 2370 bytes, TXT 453 bytes), directorio temporal eliminado al
+finalizar, sin procesos `yt-dlp`/`ffmpeg`/`whisper-cli` huérfanos. Ver
+`scripts/url-transcript-real-smoke.real-smoke.test.ts` (excluido de
+`pnpm test`; ejecutar con `pnpm test:url-transcript-real-smoke`).
+
 ## GAPS conocidos de esta iteración
 
 - No hay descarga de modelos in-app con progreso/cancelación (Fase 13):
-  el usuario coloca manualmente el archivo `ggml-*.bin`. La detección ya
-  funciona; falta sólo la UI de descarga.
-- El flujo de transcripción desde URL es síncrono (una sola petición HTTP),
-  sin barra de progreso ni botón de cancelar — a diferencia del flujo de
-  archivo local, que sí usa el pipeline de jobs con progreso/cancelación
-  reales.
-- La descarga de audio-only para URLs sin subtítulos usa un único intento
-  `bestaudio` (sin la cadena de fallback multi-candidato ante 403 que sí
-  tiene el pipeline YouTube→MP3 existente).
-- Cancelación de procesos: se añadió wiring real (AbortController) sólo
-  para el motor Whisper; FFmpeg/yt-dlp no se retrofit-earon en esta
-  iteración (no tenían wiring de cancelación previamente tampoco).
+  **DEFERRED_BY_PRODUCT_DECISION**. El usuario coloca manualmente el
+  archivo `ggml-*.bin`. La detección ya funciona; falta sólo la UI de
+  descarga, explícitamente pospuesta.
+- Cancelación de procesos: el registro compartido
+  (`job-cancellation.ts`) cubre Whisper, FFmpeg y yt-dlp para los jobs de
+  archivo local y de URL. El pipeline legacy de conversión YouTube→MP3/MP4
+  (`media/processor.ts`) no se retrofit-eó en esta iteración (fuera de
+  alcance de "Vídeo y Audio").
