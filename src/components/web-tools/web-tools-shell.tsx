@@ -22,7 +22,7 @@ const macosUrl = process.env.NEXT_PUBLIC_MACOS_DOWNLOAD_URL || "";
 const supportUrl = process.env.NEXT_PUBLIC_SUPPORT_URL || "";
 
 export type WebTab = "home" | "convert" | "tools" | "history" | "diagnostics";
-type ToolTab = "images" | "pdf" | "structured" | null;
+type ToolTab = "images" | "pdf" | "structured" | "metadata" | "compression" | null;
 const WEB_UX_MODEL = buildConversionUxModel("web", new Set(["browser", "data-ts"]));
 const TAB_ROUTES: Record<WebTab, string> = {
   home: "/",
@@ -112,12 +112,18 @@ export function WebToolsShell({ initialTab = "home" }: { initialTab?: WebTab }) 
           {tab === "tools" && !toolTab && (
             <ToolHub
               model={WEB_UX_MODEL}
-              onOpenTool={(toolId) => setToolTab(toolId === "pdf" || toolId === "images" ? toolId : "structured")}
+              onOpenTool={(toolId) => setToolTab(
+                toolId === "pdf" || toolId === "images" || toolId === "metadata" || toolId === "compression"
+                  ? toolId
+                  : "structured"
+              )}
             />
           )}
           {tab === "tools" && toolTab && (
             <section className="rounded-lg border border-white/10 bg-[#13161b]/80 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-md sm:p-5">
               {toolTab === "images" && <ImageTool />}
+              {toolTab === "metadata" && <ImageTool mode="metadata" />}
+              {toolTab === "compression" && <ImageTool mode="compression" />}
               {toolTab === "pdf" && <PdfTool />}
               {toolTab === "structured" && <StructuredDataTool />}
             </section>

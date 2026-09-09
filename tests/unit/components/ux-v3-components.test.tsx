@@ -8,6 +8,7 @@ import { SourceSelector } from "../../../src/components/converter/source-selecto
 import { FileStudioHome, getVisibleTargetRoutes, getVisibleSourceRoutes } from "../../../src/components/ux-v3/file-studio-home";
 import { groupAllowedFormats } from "../../../src/components/ux-v3/premium-format-picker";
 import { ToolHub } from "../../../src/components/ux-v3/tool-hub";
+import { ImageTool } from "../../../src/components/web-tools/images/image-tool";
 import { buildConversionUxModel } from "../../../src/lib/ux-v3/conversion-ux-model";
 import { FORMAT_CATALOG, normalizeFormatId } from "../../../src/lib/domain/format-catalog";
 
@@ -245,6 +246,33 @@ describe("UX V3 components", () => {
     expect(screen.getByRole("button", { name: /^PDF/i })).toBeTruthy();
     expect(screen.getByRole("button", { name: /^Imágenes/i })).toBeTruthy();
     expect(screen.getByRole("button", { name: /^Conversión con OCR/i })).toBeTruthy();
+  });
+
+  it("TOOLS-006 opens metadata and compression in distinct image workspaces", () => {
+    render(<ImageTool mode="metadata" />);
+    expect(screen.getByRole("heading", { name: "Metadatos de imágenes" })).toBeTruthy();
+    cleanup();
+
+    render(<ImageTool mode="compression" />);
+    expect(screen.getByRole("heading", { name: "Comprimir imágenes" })).toBeTruthy();
+    expect(screen.queryByText("Inspecciona y elimina metadatos privados de imágenes JPEG, PNG y WebP.")).toBeNull();
+  });
+
+  it("SOURCE-CONTRACT-002 restricts video/audio file inputs to media formats", () => {
+    render(
+      <SourceSelector
+        onUrlAnalyzed={() => {}}
+        onFileAnalyzed={() => {}}
+        isLoading={false}
+        setLoading={() => {}}
+        requiredSourceLabel="vídeo o audio"
+        acceptedFileExtensions={["mp3", "mp4"]}
+        acceptedFileMimeTypes={["audio/mpeg", "video/mp4"]}
+      />
+    );
+
+    expect(screen.getByLabelText("Seleccionar archivo local").getAttribute("accept"))
+      .toBe("audio/mpeg,video/mp4,.mp3,.mp4");
   });
 
   it("SOURCE-CONTRACT-001 restricts the picker when a source format is fixed", () => {

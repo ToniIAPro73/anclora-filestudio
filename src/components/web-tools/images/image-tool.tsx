@@ -11,7 +11,9 @@ import type { ImageOutputFormat, ImageProcessResult, ImageToolOptions } from "@/
 
 const ACCEPT = "image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp";
 
-export function ImageTool() {
+export type ImageToolMode = "all" | "metadata" | "compression";
+
+export function ImageTool({ mode = "all" }: { mode?: ImageToolMode }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [results, setResults] = useState<ImageProcessResult[]>([]);
@@ -19,7 +21,7 @@ export function ImageTool() {
   const [busy, setBusy] = useState(false);
   const [metadataSummary, setMetadataSummary] = useState<string | null>(null);
   const [options, setOptions] = useState<ImageToolOptions>({
-    action: "convert",
+    action: mode === "compression" ? "compress" : "convert",
     outputFormat: "webp",
     quality: 82,
     stripMetadata: true,
@@ -112,9 +114,15 @@ export function ImageTool() {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-black text-stone-100">Preparar imágenes</h2>
+        <h2 className="text-xl font-black text-stone-100">
+          {mode === "metadata" ? "Metadatos de imágenes" : mode === "compression" ? "Comprimir imágenes" : "Preparar imágenes"}
+        </h2>
         <p className="mt-1 text-sm leading-6 text-stone-400">
-          Convierte, comprime, cambia el tamaño y elimina metadatos privados en JPEG, PNG y WebP.
+          {mode === "metadata"
+            ? "Inspecciona y elimina metadatos privados de imágenes JPEG, PNG y WebP."
+            : mode === "compression"
+              ? "Reduce el peso de imágenes JPEG, PNG y WebP ajustando calidad y tamaño."
+              : "Convierte, comprime, cambia el tamaño y elimina metadatos privados en JPEG, PNG y WebP."}
         </p>
       </div>
 
@@ -146,14 +154,16 @@ export function ImageTool() {
       )}
 
       <div className="grid gap-4 md:grid-cols-2">
-        <label className="space-y-1 text-sm font-semibold text-stone-300">
-          Acción
-          <select value={options.action} onChange={(event) => setOptions({ ...options, action: event.target.value as ImageToolOptions["action"] })} className="min-h-11 w-full rounded-md border border-white/14 bg-[#0d1015] px-3 text-stone-100">
-            <option value="convert">Convertir</option>
-            <option value="compress">Comprimir</option>
-            <option value="resize">Redimensionar</option>
-          </select>
-        </label>
+        {mode === "all" && (
+          <label className="space-y-1 text-sm font-semibold text-stone-300">
+            Acción
+            <select value={options.action} onChange={(event) => setOptions({ ...options, action: event.target.value as ImageToolOptions["action"] })} className="min-h-11 w-full rounded-md border border-white/14 bg-[#0d1015] px-3 text-stone-100">
+              <option value="convert">Convertir</option>
+              <option value="compress">Comprimir</option>
+              <option value="resize">Redimensionar</option>
+            </select>
+          </label>
+        )}
         <label className="space-y-1 text-sm font-semibold text-stone-300">
           Formato de salida
           <select value={options.outputFormat} onChange={(event) => setOptions({ ...options, outputFormat: event.target.value as ImageOutputFormat })} className="min-h-11 w-full rounded-md border border-white/14 bg-[#0d1015] px-3 text-stone-100">
@@ -166,35 +176,39 @@ export function ImageTool() {
           Calidad {options.quality}
           <input type="range" min="1" max="100" value={options.quality} onChange={(event) => setOptions({ ...options, quality: Number(event.target.value) })} className="w-full accent-teal-300" />
         </label>
-        <label className="space-y-1 text-sm font-semibold text-stone-300">
-          Redimensionado
-          <select value={options.resizeMode} onChange={(event) => setOptions({ ...options, resizeMode: event.target.value as ImageToolOptions["resizeMode"] })} className="min-h-11 w-full rounded-md border border-white/14 bg-[#0d1015] px-3 text-stone-100">
-            <option value="none">Sin redimensionar</option>
-            <option value="width">Solo ancho</option>
-            <option value="height">Solo alto</option>
-            <option value="max-side">Lado máximo</option>
-            <option value="percent">Porcentaje</option>
-          </select>
-        </label>
-        {options.resizeMode !== "none" && (
-          <label className="space-y-1 text-sm font-semibold text-stone-300">
-            Valor
-            <input type="number" min="1" value={options.resizeMode === "width" ? options.width : options.resizeMode === "height" ? options.height : options.resizeMode === "percent" ? options.percent : options.maxSide} onChange={(event) => {
-              const value = Number(event.target.value);
-              setOptions({
-                ...options,
-                width: options.resizeMode === "width" ? value : options.width,
-                height: options.resizeMode === "height" ? value : options.height,
-                percent: options.resizeMode === "percent" ? value : options.percent,
-                maxSide: options.resizeMode === "max-side" ? value : options.maxSide,
-              });
-            }} className="min-h-11 w-full rounded-md border border-white/14 bg-[#0d1015] px-3 text-stone-100" />
-          </label>
+        {mode !== "metadata" && (
+          <>
+            <label className="space-y-1 text-sm font-semibold text-stone-300">
+              Redimensionado
+              <select value={options.resizeMode} onChange={(event) => setOptions({ ...options, resizeMode: event.target.value as ImageToolOptions["resizeMode"] })} className="min-h-11 w-full rounded-md border border-white/14 bg-[#0d1015] px-3 text-stone-100">
+                <option value="none">Sin redimensionar</option>
+                <option value="width">Solo ancho</option>
+                <option value="height">Solo alto</option>
+                <option value="max-side">Lado máximo</option>
+                <option value="percent">Porcentaje</option>
+              </select>
+            </label>
+            {options.resizeMode !== "none" && (
+              <label className="space-y-1 text-sm font-semibold text-stone-300">
+                Valor
+                <input type="number" min="1" value={options.resizeMode === "width" ? options.width : options.resizeMode === "height" ? options.height : options.resizeMode === "percent" ? options.percent : options.maxSide} onChange={(event) => {
+                  const value = Number(event.target.value);
+                  setOptions({
+                    ...options,
+                    width: options.resizeMode === "width" ? value : options.width,
+                    height: options.resizeMode === "height" ? value : options.height,
+                    percent: options.resizeMode === "percent" ? value : options.percent,
+                    maxSide: options.resizeMode === "max-side" ? value : options.maxSide,
+                  });
+                }} className="min-h-11 w-full rounded-md border border-white/14 bg-[#0d1015] px-3 text-stone-100" />
+              </label>
+            )}
+            <label className="space-y-1 text-sm font-semibold text-stone-300">
+              Fondo JPEG
+              <input type="color" value={options.jpegBackground} onChange={(event) => setOptions({ ...options, jpegBackground: event.target.value })} className="h-11 w-full rounded-md border border-white/14 bg-[#0d1015] p-1" />
+            </label>
+          </>
         )}
-        <label className="space-y-1 text-sm font-semibold text-stone-300">
-          Fondo JPEG
-          <input type="color" value={options.jpegBackground} onChange={(event) => setOptions({ ...options, jpegBackground: event.target.value })} className="h-11 w-full rounded-md border border-white/14 bg-[#0d1015] p-1" />
-        </label>
       </div>
 
       <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-stone-300">

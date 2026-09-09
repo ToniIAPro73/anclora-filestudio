@@ -823,6 +823,20 @@ export const INPUT_ACCEPT_ATTR: string = FORMAT_CATALOG.flatMap((f) =>
   f.inputExtensions.map((ext) => `.${ext}`)
 ).join(",");
 
+/** Media inputs accepted by the local video/audio workspace. */
+export const MEDIA_INPUT_EXTENSIONS: readonly string[] = Array.from(new Set(
+  FORMAT_CATALOG
+    .filter((format) => format.category === "audio" || format.category === "video")
+    .flatMap((format) => format.inputExtensions)
+));
+
+/** MIME types accepted by the local video/audio workspace. */
+export const MEDIA_INPUT_MIME_TYPES: readonly string[] = Array.from(new Set(
+  FORMAT_CATALOG
+    .filter((format) => format.category === "audio" || format.category === "video")
+    .flatMap((format) => format.mimeTypes)
+));
+
 /** Map of category → format definitions */
 export const FORMATS_BY_CATEGORY: ReadonlyMap<FileCategory, FormatDefinition[]> = (() => {
   const map = new Map<FileCategory, FormatDefinition[]>();

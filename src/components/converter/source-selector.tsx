@@ -13,6 +13,8 @@ interface SourceSelectorProps {
   acquisitionModes?: AcquisitionMode[];
   requiredSourceFormat?: string | null;
   requiredSourceLabel?: string | null;
+  acceptedFileExtensions?: readonly string[];
+  acceptedFileMimeTypes?: readonly string[];
 }
 
 export type AcquisitionMode = "local-file" | "direct-url" | "web-url" | "video-url" | "google-drive" | "onedrive";
@@ -97,6 +99,8 @@ export function SourceSelector({
   acquisitionModes = ["local-file"],
   requiredSourceFormat,
   requiredSourceLabel,
+  acceptedFileExtensions = [],
+  acceptedFileMimeTypes = [],
 }: SourceSelectorProps) {
   const canUseUrl = acquisitionModes.includes("video-url") || acquisitionModes.includes("direct-url") || acquisitionModes.includes("web-url");
   const canUseFile = acquisitionModes.includes("local-file");
@@ -106,9 +110,16 @@ export function SourceSelector({
   const [dragState, setDragState] = useState<DragState>("idle");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const requiredFormat = requiredSourceFormat ? getFormatByCanonicalId(requiredSourceFormat) : null;
-  const acceptedExtensions = useMemo(() => requiredFormat?.inputExtensions ?? [], [requiredFormat]);
-  const acceptAttr = acceptedExtensions.length > 0
-    ? acceptedExtensions.map((ext) => `.${ext}`).join(",")
+  const acceptedExtensions = useMemo(
+    () => requiredFormat?.inputExtensions ?? acceptedFileExtensions,
+    [acceptedFileExtensions, requiredFormat]
+  );
+  const acceptedMimeTypes = useMemo(
+    () => requiredFormat ? [] : acceptedFileMimeTypes,
+    [acceptedFileMimeTypes, requiredFormat]
+  );
+  const acceptAttr = acceptedExtensions.length > 0 || acceptedMimeTypes.length > 0
+    ? [...acceptedMimeTypes, ...acceptedExtensions.map((ext) => `.${ext}`)].join(",")
     : INPUT_ACCEPT_ATTR;
   const acceptedLabel = requiredSourceLabel
     ?? (requiredFormat ? requiredFormat.outputExtension.toUpperCase() : "audio, vídeo, imágenes, documentos, datos y más");
@@ -143,7 +154,20 @@ export function SourceSelector({
     }
   };
 
-  const handleFile = async (file: File) => {
+  const isFileValid = useCallback((file: File): boolean => {
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+    if (acceptedExtensions.length > 0 || acceptedMimeTypes.length > 0) {
+      return acceptedExtensions.includes(ext) || acceptedMimeTypes.includes(file.type);
+    }
+    const acceptExts = INPUT_ACCEPT_ATTR.split(",").map((s) => s.trim().replace(/^\./, ""));
+    return acceptExts.includes(ext) || file.type.startsWith("audio/") || file.type.startsWith("video/") || file.type.startsWith("image/");
+  }, [acceptedExtensions, acceptedMimeTypes]);
+
+  const handleFile = useCallback(async (file: File) => {
+    if (!isFileValid(file)) {
+      setError("Formato de archivo no soportado.");
+      return;
+    }
     setError(null);
     setLoading(true);
     const formData = new FormData();
@@ -189,15 +213,7 @@ export function SourceSelector({
     } finally {
       setLoading(false);
     }
-  };
-
-  const isFileValid = useCallback((file: File): boolean => {
-    const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
-    if (acceptedExtensions.length > 0) return acceptedExtensions.includes(ext);
-    // Check against the accept attribute extensions
-    const acceptExts = INPUT_ACCEPT_ATTR.split(",").map((s) => s.trim().replace(/^\./, ""));
-    return acceptExts.includes(ext) || file.type.startsWith("audio/") || file.type.startsWith("video/") || file.type.startsWith("image/");
-  }, [acceptedExtensions]);
+  }, [isFileValid, onFileAnalyzed, setLoading]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -229,8 +245,7 @@ export function SourceSelector({
         setTimeout(() => setDragState("idle"), 2000);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFileValid]);
+  }, [handleFile, isFileValid]);
 
   const dragBorderClass =
     dragState === "drag-valid"
@@ -359,7 +374,7 @@ export function SourceSelector({
               type="file"
               className="sr-only"
               accept={acceptAttr}
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); e.target.value = ""; }}
               aria-label="Seleccionar archivo local"
             />
           </div>

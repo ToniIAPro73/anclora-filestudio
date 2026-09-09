@@ -46,7 +46,7 @@ import { buildConversionUxModel, type UxConversionCategoryId, type UxConversionM
 import { t } from "@/i18n";
 
 export type DesktopTab = "home" | "convert" | "tools" | "history" | "diagnostics";
-type ToolWorkspaceId = "pdf" | "images" | "structured" | "ocr" | "video-audio" | null;
+type ToolWorkspaceId = "pdf" | "images" | "structured" | "ocr" | "metadata" | "compression" | "video-audio" | null;
 type FlowStep = "source" | "analysis" | "format" | "progress" | "result";
 
 const UX_CATEGORY_TO_LEGACY_GROUP: Partial<Record<UxConversionCategoryId, DesktopProGroupId>> = {
@@ -90,8 +90,8 @@ function normalizeConversionCategory(value: string | null): UxConversionCategory
 }
 
 function toolWorkspaceFromCategory(value: string | null): ToolWorkspaceId {
-  if (value === "pdf" || value === "images" || value === "ocr" || value === "video-audio") return value;
-  if (value === "metadata" || value === "compression" || value === "utilities" || value === "structured") return "structured";
+  if (value === "pdf" || value === "images" || value === "ocr" || value === "metadata" || value === "compression" || value === "video-audio") return value;
+  if (value === "utilities" || value === "structured") return "structured";
   return null;
 }
 
@@ -461,7 +461,7 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
     if (pathname !== "/tools" || searchParams.get("category") !== toolId) router.push(href);
     setActiveTab("tools");
     setActiveTool(
-      toolId === "pdf" || toolId === "images" || toolId === "ocr" || toolId === "video-audio"
+      toolId === "pdf" || toolId === "images" || toolId === "ocr" || toolId === "metadata" || toolId === "compression" || toolId === "video-audio"
         ? toolId
         : "structured"
     );
@@ -674,6 +674,8 @@ export function DesktopProShell({ initialTab = "home" }: { initialTab?: DesktopT
         )}
         {activeTab === "tools" && uxModel && !effectiveActiveTool && <ToolHub model={uxModel} onOpenTool={handleOpenTool} />}
         {activeTab === "tools" && effectiveActiveTool === "images" && <Panel><ImageTool /></Panel>}
+        {activeTab === "tools" && effectiveActiveTool === "metadata" && <Panel><ImageTool mode="metadata" /></Panel>}
+        {activeTab === "tools" && effectiveActiveTool === "compression" && <Panel><ImageTool mode="compression" /></Panel>}
         {activeTab === "tools" && effectiveActiveTool === "pdf" && <Panel><PdfTool /></Panel>}
         {activeTab === "tools" && effectiveActiveTool === "structured" && <Panel><StructuredDataTool /></Panel>}
         {activeTab === "tools" && effectiveActiveTool === "video-audio" && <Panel><VideoAudioWorkspace /></Panel>}

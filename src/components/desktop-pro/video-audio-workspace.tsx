@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, Download, FileAudio, FileVideo, Scissors, Image as ImageIcon, Captions, Info } from "lucide-react";
 import { SourceSelector, type UniversalAnalysisResult } from "@/components/converter/source-selector";
 import type { CapabilityInfo } from "@/lib/domain/unified-analysis";
+import { MEDIA_INPUT_EXTENSIONS, MEDIA_INPUT_MIME_TYPES } from "@/lib/domain/format-catalog";
 
 type OutputFormat = "txt" | "md" | "srt" | "vtt";
 const OUTPUT_FORMATS: OutputFormat[] = ["txt", "md", "srt", "vtt"];
@@ -225,6 +226,8 @@ export function VideoAudioWorkspace() {
                 if (result.kind === "universal-file") setAnalysis(result);
               }}
               requiredSourceLabel="vídeo o audio"
+              acceptedFileExtensions={MEDIA_INPUT_EXTENSIONS}
+              acceptedFileMimeTypes={MEDIA_INPUT_MIME_TYPES}
             />
           )}
 
