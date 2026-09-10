@@ -2,10 +2,11 @@ import type { NextConfig } from "next";
 
 const isVercelWebBuild =
   process.env.ANCLORA_FILESTUDIO_DEPLOYMENT_TARGET === "vercel" ||
-  process.env.NEXT_PUBLIC_ANCLORA_FILESTUDIO_MODE === "vercel-web";
+  process.env.NEXT_PUBLIC_ANCLORA_FILESTUDIO_MODE === "vercel-web" ||
+  process.env.VERCEL === "1";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  output: isVercelWebBuild ? undefined : "standalone",
   allowedDevOrigins: process.env.NODE_ENV === "development"
     ? ["127.0.0.1", "filestudio.dev.anclora.com"]
     : undefined,
