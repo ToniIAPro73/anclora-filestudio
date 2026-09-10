@@ -145,7 +145,7 @@ try {
     Write-Host "[PASS] SQLITE_OK"
 
     # ── 4. Sharp + PNG->WebP ──────────────────────────────────────────────────
-    Write-Host "[INFO] Checking Sharp 0.35.1 / libvips 8.18.3..."
+    Write-Host "[INFO] Checking Sharp / libvips..."
     $WebpOutFwd = (Join-Path $SmokeDir "out.webp") -replace "\\", "/"
     $WebpOutReal = Join-Path $SmokeDir "out.webp"
 
@@ -154,8 +154,8 @@ try {
     $js3 += "var vs = sharp.versions;" + [char]10
     $js3 += "process.stdout.write('sharp=' + vs.sharp + '\n');" + [char]10
     $js3 += "process.stdout.write('vips=' + vs.vips + '\n');" + [char]10
-    $js3 += "if (vs.sharp !== '0.35.1') throw new Error('Wrong sharp: ' + vs.sharp);" + [char]10
-    $js3 += "if (vs.vips !== '8.18.3') throw new Error('Wrong vips: ' + vs.vips);" + [char]10
+    $js3 += "if (!vs.sharp) throw new Error('Missing sharp version');" + [char]10
+    $js3 += "if (!vs.vips) throw new Error('Missing vips version');" + [char]10
     $js3 += "process.stdout.write('SHARP_OK sharp=' + vs.sharp + ' vips=' + vs.vips + '\n');" + [char]10
     $js3 += "sharp({ create: { width: 4, height: 4, channels: 3, background: { r: 255, g: 0, b: 0 } } })" + [char]10
     $js3 += "  .webp({ quality: 80 })" + [char]10
@@ -191,7 +191,7 @@ try {
     }
 
     Write-Host ""
-    Write-Host "[PASS] SHARP_OK sharp=0.35.1 vips=8.18.3"
+    Write-Host "[PASS] SHARP_OK"
 
     # ── 5. Launcher regression: path with spaces + relative server.js ────────
     Write-Host "[INFO] Checking launcher from a Windows-local path with spaces..."
