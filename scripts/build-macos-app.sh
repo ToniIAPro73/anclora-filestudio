@@ -41,7 +41,9 @@ CONTENTS_DIR="$APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
 PAYLOAD_DIR="$RESOURCES_DIR/payload"
-EXEC_NAME="Anclora FileStudio"
+# LaunchServices is more reliable when CFBundleExecutable is a simple token
+# without spaces, while the bundle's user-facing name remains unchanged.
+EXEC_NAME="AncloraFileStudio"
 
 # ── Version / commit (same derivation as the Windows installer) ─────────────
 if [[ -n "${GITHUB_REF:-}" && "$GITHUB_REF" == refs/tags/v* ]]; then
@@ -86,18 +88,28 @@ if [[ -f "$ICON_SRC" ]] && command -v sips >/dev/null 2>&1 && command -v iconuti
     sips -z "$double" "$double" "$ICON_SRC" --out "$ICONSET/icon_${size}x${size}@2x.png" >/dev/null 2>&1 \
       || die "sips failed to generate ${size}x${size}@2x icon"
   done
-  iconutil -c icns "$ICONSET" -o "$RESOURCES_DIR/AppIcon.icns" \
-    || die "iconutil failed to build AppIcon.icns"
+  if iconutil -c icns "$ICONSET" -o "$RESOURCES_DIR/AppIcon.icns"; then
+    ICON_STATUS="OK"
+    ok "AppIcon.icns generated from official FileStudio brand asset"
+  else
+    # Some macOS runner images ship an iconutil that rejects iconsets even
+    # when all required PNG sizes and names are valid. The icon is optional
+    # for a functional .app, so keep the bundle build portable and explicit.
+    rm -f "$RESOURCES_DIR/AppIcon.icns"
+    ICON_STATUS="ICON_MISSING"
+    warn "iconutil rejected the generated iconset — continuing without AppIcon.icns"
+  fi
   rm -rf "$ICONSET_PARENT"
-  ICON_STATUS="OK"
-  ok "AppIcon.icns generated from official FileStudio brand asset"
 else
   warn "ICON_MISSING: no source icon at $ICON_SRC, or sips/iconutil unavailable — building without AppIcon.icns"
 fi
 
 # ── Contents/MacOS/<executable> — the Finder double-click entrypoint ────────
+# LaunchServices requires the bundle executable to be native; keep the
+# relocatable runtime logic in a companion script and use a tiny native shim.
 info "Writing launcher (Contents/MacOS/$EXEC_NAME)..."
-cat > "$MACOS_DIR/$EXEC_NAME" << 'LAUNCHER'
+LAUNCHER_SCRIPT="$MACOS_DIR/${EXEC_NAME}-launcher.sh"
+cat > "$LAUNCHER_SCRIPT" << 'LAUNCHER'
 #!/usr/bin/env bash
 # Anclora FileStudio.app launcher.
 # Resolves the bundle's own real location at run time (works from
@@ -191,8 +203,58 @@ done
 alert "La aplicación tardó demasiado en responder. Revisa el registro en ~/Library/Application Support/Anclora/FileStudio/logs/app.log" warning
 exit 1
 LAUNCHER
+chmod +x "$LAUNCHER_SCRIPT"
+
+command -v clang >/dev/null 2>&1 || die "clang is required to build the native macOS launcher"
+LAUNCHER_C="$EXTRACT_TMP/${EXEC_NAME}.c"
+cat > "$LAUNCHER_C" << 'LAUNCHER_C_SOURCE'
+#include <limits.h>
+#include <mach-o/dyld.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+extern char **environ;
+
+int main(void) {
+  char executable[PATH_MAX];
+  uint32_t size = (uint32_t)sizeof(executable);
+  if (_NSGetExecutablePath(executable, &size) != 0) {
+    fputs("Unable to resolve the FileStudio launcher path\n", stderr);
+    return 1;
+  }
+
+  char resolved[PATH_MAX];
+  if (realpath(executable, resolved) == NULL) {
+    perror("realpath");
+    return 1;
+  }
+
+  char *separator = strrchr(resolved, '/');
+  if (separator == NULL) {
+    fputs("Invalid FileStudio launcher path\n", stderr);
+  return 1;
+  }
+  *separator = '\0';
+
+  char script[PATH_MAX];
+  int written = snprintf(script, sizeof(script), "%s/AncloraFileStudio-launcher.sh", resolved);
+  if (written < 0 || (size_t)written >= sizeof(script)) {
+    fputs("FileStudio launcher path is too long\n", stderr);
+    return 1;
+  }
+
+  char *bash_argv[] = {"/bin/bash", script, NULL};
+  execve("/bin/bash", bash_argv, environ);
+  perror("execve");
+  return 1;
+}
+LAUNCHER_C_SOURCE
+clang -O2 -Wall -Wextra -o "$MACOS_DIR/$EXEC_NAME" "$LAUNCHER_C" \
+  || die "clang failed to build the native macOS launcher"
 chmod +x "$MACOS_DIR/$EXEC_NAME"
-ok "Launcher written and made executable"
+ok "Native launcher written and made executable"
 
 # ── Info.plist ────────────────────────────────────────────────────────────────
 info "Writing Info.plist..."
