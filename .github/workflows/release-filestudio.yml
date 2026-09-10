@@ -142,6 +142,18 @@ jobs:
         run: bash scripts/build-macos-app.sh
       - name: Verify .app bundle
         run: bash scripts/verify-macos-app.sh
+      - name: Fail-closed codesign verification on .app bundle
+        run: |
+          set -euo pipefail
+          APP="dist/macos/app-staging/Anclora FileStudio.app"
+          echo "Verifying code signature of $APP..."
+          codesign --verify --deep --strict --verbose=4 "$APP"
+          [[ -f "$APP/Contents/_CodeSignature/CodeResources" ]] || { echo "::error::CodeResources missing"; exit 1; }
+          CS_DETAILS="$(codesign -dv --verbose=4 "$APP" 2>&1)"
+          echo "$CS_DETAILS"
+          echo "$CS_DETAILS" | grep -q "Identifier=com.anclora.filestudio" || { echo "::error::Identifier mismatch"; exit 1; }
+          if echo "$CS_DETAILS" | grep -q "Info.plist=not bound"; then echo "::error::Info.plist not bound"; exit 1; fi
+          if echo "$CS_DETAILS" | grep -q "Sealed Resources=none"; then echo "::error::Sealed Resources none"; exit 1; fi
       - name: Verify .app provenance matches this commit
         run: |
           set -euo pipefail
@@ -155,6 +167,34 @@ jobs:
         run: bash scripts/build-macos-dmg.sh
       - name: Verify DMG (mount + inspect)
         run: bash scripts/verify-macos-dmg.sh
+      - name: Verify codesign on .app extracted from DMG
+        run: |
+          set -euo pipefail
+          DMG="dist/release/Anclora-FileStudio-macOS-arm64.dmg"
+          MOUNT_PLIST="$(mktemp)"
+          hdiutil attach "$DMG" -nobrowse -readonly -plist > "$MOUNT_PLIST"
+          MOUNT_POINT="$(python3 -c "import plistlib, sys; d=plistlib.load(open(sys.argv[1],'rb')); print(next(e['mount-point'] for e in d.get('system-entities',[]) if 'mount-point' in e))" "$MOUNT_PLIST")"
+          rm -f "$MOUNT_PLIST"
+
+          EXTRACT_DIR="$(mktemp -d)"
+          cleanup() {
+            hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
+            rm -rf "$EXTRACT_DIR"
+          }
+          trap cleanup EXIT
+
+          echo "Mounted DMG at: $MOUNT_POINT"
+          cp -a "$MOUNT_POINT/Anclora FileStudio.app" "$EXTRACT_DIR/"
+          EXTRACTED_APP="$EXTRACT_DIR/Anclora FileStudio.app"
+
+          echo "Verifying code signature of extracted .app..."
+          codesign --verify --deep --strict --verbose=4 "$EXTRACTED_APP"
+          [[ -f "$EXTRACTED_APP/Contents/_CodeSignature/CodeResources" ]] || { echo "::error::CodeResources missing in extracted .app"; exit 1; }
+          CS_EXT="$(codesign -dv --verbose=4 "$EXTRACTED_APP" 2>&1)"
+          echo "$CS_EXT"
+          echo "$CS_EXT" | grep -q "Identifier=com.anclora.filestudio" || { echo "::error::Extracted Identifier mismatch"; exit 1; }
+          if echo "$CS_EXT" | grep -q "Info.plist=not bound"; then echo "::error::Extracted Info.plist not bound"; exit 1; fi
+          if echo "$CS_EXT" | grep -q "Sealed Resources=none"; then echo "::error::Extracted Sealed Resources none"; exit 1; fi
       - name: Smoke test .app (real 'open' launch, health, single-instance, relaunch, shutdown, no orphans)
         run: bash scripts/smoke-macos-app.sh
 

@@ -80,6 +80,59 @@ if [[ -n "$MOUNT_POINT" ]]; then
   else
     pass "No developer/runner workspace paths inside mounted DMG"
   fi
+
+  echo ""
+  echo "--- DMG App Code Signature & Integrity ---"
+  if codesign --verify --deep --strict --verbose=4 "$APP_IN_DMG" >/dev/null 2>&1; then
+    pass "Mounted app bundle signature valid (codesign --verify --deep --strict)"
+  else
+    fail "Mounted app bundle signature verification failed"
+  fi
+
+  [[ -f "$APP_IN_DMG/Contents/_CodeSignature/CodeResources" ]] \
+    && pass "Mounted app Contents/_CodeSignature/CodeResources exists" \
+    || fail "Mounted app Contents/_CodeSignature/CodeResources missing"
+
+  DMG_EXTRACT_DIR="$(mktemp -d)"
+  cp -a "$APP_IN_DMG" "$DMG_EXTRACT_DIR/"
+  EXTRACTED_APP="$DMG_EXTRACT_DIR/Anclora FileStudio.app"
+
+  echo ""
+  echo "--- Extracted App Code Signature (Packaging Integrity) ---"
+  if codesign --verify --deep --strict --verbose=4 "$EXTRACTED_APP" >/dev/null 2>&1; then
+    pass "Extracted app bundle signature valid (packaging preserves signature)"
+  else
+    fail "Extracted app bundle signature verification failed"
+  fi
+
+  [[ -f "$EXTRACTED_APP/Contents/_CodeSignature/CodeResources" ]] \
+    && pass "Extracted app Contents/_CodeSignature/CodeResources exists" \
+    || fail "Extracted app Contents/_CodeSignature/CodeResources missing"
+
+  EXTRACTED_CS="$(codesign -dv --verbose=4 "$EXTRACTED_APP" 2>&1 || true)"
+  if echo "$EXTRACTED_CS" | grep -q "Identifier=com.anclora.filestudio"; then
+    pass "Extracted app Identifier = com.anclora.filestudio"
+  else
+    fail "Extracted app Identifier mismatch"
+  fi
+
+  if echo "$EXTRACTED_CS" | grep -q "Info.plist=not bound"; then
+    fail "Extracted app Info.plist is not bound"
+  elif echo "$EXTRACTED_CS" | grep -qE "Info\.plist entries=[1-9]"; then
+    pass "Extracted app Info.plist is bound"
+  else
+    fail "Extracted app Info.plist entries missing"
+  fi
+
+  if echo "$EXTRACTED_CS" | grep -q "Sealed Resources=none"; then
+    fail "Extracted app Sealed Resources is none"
+  elif echo "$EXTRACTED_CS" | grep -qE "Sealed Resources version="; then
+    pass "Extracted app Sealed Resources present"
+  else
+    fail "Extracted app Sealed Resources missing"
+  fi
+
+  rm -rf "$DMG_EXTRACT_DIR"
 fi
 
 echo ""

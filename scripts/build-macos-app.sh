@@ -325,7 +325,56 @@ if [[ -n "$DEV_PATH_FOUND" ]]; then
 fi
 ok "No developer/runner workspace paths found in .app bundle"
 
+# ── Sign the entire .app bundle (Steps 9-12) ─────────────────────────────────
+# Finalize all bundle contents above before signing; do NOT modify bundle after this.
+SIGNING_IDENTITY="${MACOS_SIGNING_IDENTITY:-${APPLE_SIGNING_IDENTITY:--}}"
+info "Signing entire .app bundle with identity: '$SIGNING_IDENTITY'..."
+
+SIGN_ARGS=("--force" "--deep" "--sign" "$SIGNING_IDENTITY")
+if [[ "$SIGNING_IDENTITY" != "-" ]]; then
+  SIGN_ARGS+=("--options" "runtime" "--timestamp")
+fi
+
+# Step 9: codesign --force --deep --sign - "$APP"
+codesign "${SIGN_ARGS[@]}" "$APP_DIR" || die "codesign failed for $APP_DIR"
+ok "codesign completed successfully"
+
+# Step 10: codesign --verify --deep --strict --verbose=4 "$APP"
+info "Validating code signature (deep, strict)..."
+codesign --verify --deep --strict --verbose=4 "$APP_DIR" \
+  || die "codesign --verify failed for $APP_DIR"
+ok "Signature valid on disk and satisfies designated requirement"
+
+# Step 11: verify $APP/Contents/_CodeSignature/CodeResources exists
+CODE_RESOURCES="$CONTENTS_DIR/_CodeSignature/CodeResources"
+[[ -f "$CODE_RESOURCES" ]] || die "Missing code signature resource: $CODE_RESOURCES"
+ok "Contents/_CodeSignature/CodeResources exists ($(stat -f%z "$CODE_RESOURCES" 2>/dev/null || stat -c%s "$CODE_RESOURCES") bytes)"
+
+# Step 12: codesign -dv --verbose=4 "$APP" and enforce bundle properties
+CODESIGN_DETAILS="$(codesign -dv --verbose=4 "$APP_DIR" 2>&1)"
+echo "$CODESIGN_DETAILS"
+
+echo "$CODESIGN_DETAILS" | grep -q "Identifier=com.anclora.filestudio" \
+  || die "codesign check failed: Identifier is not 'com.anclora.filestudio'"
+ok "codesign Identifier = com.anclora.filestudio"
+
+if echo "$CODESIGN_DETAILS" | grep -q "Info.plist=not bound"; then
+  die "codesign check failed: Info.plist is not bound"
+fi
+echo "$CODESIGN_DETAILS" | grep -qE "Info\.plist entries=[1-9]" \
+  || die "codesign check failed: Info.plist entries not bound"
+ok "codesign Info.plist is bound"
+
+if echo "$CODESIGN_DETAILS" | grep -q "Sealed Resources=none"; then
+  die "codesign check failed: Sealed Resources is none"
+fi
+echo "$CODESIGN_DETAILS" | grep -qE "Sealed Resources version=" \
+  || die "codesign check failed: Sealed Resources missing"
+ok "codesign Sealed Resources present"
+
 echo ""
 ok "=== App bundle build complete ==="
 ok "Bundle : $APP_DIR"
 ok "Icon   : $ICON_STATUS"
+ok "Signature: VALID (com.anclora.filestudio)"
+

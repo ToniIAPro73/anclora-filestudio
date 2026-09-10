@@ -35,6 +35,15 @@ fi
 rm -f "$PID_FILE" "$PORT_FILE"
 
 echo ""
+echo "--- Preflight Code Signature Check ---"
+if ! codesign --verify --deep --strict "$APP_DIR" 2>/dev/null; then
+  echo "[FAIL] App bundle code signature is invalid before launch: $APP_DIR"
+  codesign --verify --deep --strict --verbose=4 "$APP_DIR" || true
+  exit 1
+fi
+echo "[PASS] App bundle code signature is valid before launch"
+
+echo ""
 echo "--- Launch (open, as Finder would) ---"
 open "$APP_DIR"
 

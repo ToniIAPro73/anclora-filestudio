@@ -23,14 +23,15 @@ Releases. No lo presentes como opción de descarga a usuarios finales.
 
 ## Estado de firma y notarización
 
-**Estos paquetes NO están firmados ni notarizados por Apple.** Es una decisión
-explícita, no un descuido: firmar y notarizar requiere una cuenta de
-Apple Developer Program y certificados dedicados que este pipeline no gestiona.
+**El bundle `Anclora FileStudio.app` se firma íntegramente (ad-hoc con sellado de recursos y `Info.plist` enlazado)** en el pipeline de empaquetado:
 
-Consecuencia práctica: macOS Gatekeeper advertirá en la primera ejecución que
-el desarrollador no puede ser verificado. Esto es esperado y no indica daño
-ni manipulación del paquete. Ver la sección [Gatekeeper y autorización](#gatekeeper-y-autorización)
-para los pasos de apertura en un solo clic.
+```bash
+codesign --force --deep --sign - "Anclora FileStudio.app"
+```
+
+Esto garantiza que el bundle es estructuralmente válido, contiene `Contents/_CodeSignature/CodeResources`, vincula su `Info.plist` y satisface su requisito de integridad en disco (`valid on disk`, `satisfies its Designated Requirement`). El pipeline está además preparado para admitir firmas oficiales con `Developer ID Application` configurando `MACOS_SIGNING_IDENTITY`.
+
+Al no disponer aún de certificado `Developer ID Application` ni notarización automática por parte de Apple en las builds internas, macOS Gatekeeper advertirá en la primera ejecución que el desarrollador no puede ser verificado. Esto es esperado y no indica daño ni manipulación del paquete. Ver la sección [Gatekeeper y autorización](#gatekeeper-y-autorización) para los pasos de apertura en un solo clic.
 
 ---
 

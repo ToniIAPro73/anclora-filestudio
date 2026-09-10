@@ -168,6 +168,48 @@ else
 fi
 
 echo ""
+echo "--- 7. Bundle Code Signature ---"
+if command -v codesign >/dev/null 2>&1; then
+  if codesign --verify --deep --strict --verbose=4 "$APP_DIR" >/dev/null 2>&1; then
+    pass "codesign --verify --deep --strict passed"
+  else
+    fail "codesign --verify --deep --strict failed"
+  fi
+
+  CODE_RESOURCES="$CONTENTS_DIR/_CodeSignature/CodeResources"
+  if [[ -f "$CODE_RESOURCES" ]]; then
+    pass "Contents/_CodeSignature/CodeResources exists"
+  else
+    fail "Contents/_CodeSignature/CodeResources missing"
+  fi
+
+  CODESIGN_DV="$(codesign -dv --verbose=4 "$APP_DIR" 2>&1 || true)"
+  if echo "$CODESIGN_DV" | grep -q "Identifier=com.anclora.filestudio"; then
+    pass "codesign Identifier = com.anclora.filestudio"
+  else
+    fail "codesign Identifier unexpected or missing com.anclora.filestudio"
+  fi
+
+  if echo "$CODESIGN_DV" | grep -q "Info.plist=not bound"; then
+    fail "codesign Info.plist is not bound"
+  elif echo "$CODESIGN_DV" | grep -qE "Info\.plist entries=[1-9]"; then
+    pass "codesign Info.plist is bound"
+  else
+    fail "codesign Info.plist entries missing"
+  fi
+
+  if echo "$CODESIGN_DV" | grep -q "Sealed Resources=none"; then
+    fail "codesign Sealed Resources is none"
+  elif echo "$CODESIGN_DV" | grep -qE "Sealed Resources version="; then
+    pass "codesign Sealed Resources present"
+  else
+    fail "codesign Sealed Resources missing"
+  fi
+else
+  fail "codesign tool not available on this host"
+fi
+
+echo ""
 echo "=============================="
 echo " Verification Summary"
 echo "=============================="
