@@ -376,7 +376,7 @@ for field in ("version", "config", "files"):
     if field not in data:
         raise SystemExit(f"missing field: {field}")
 
-for value in (data.get("appDir"), data.get("config", {}).get("outputFileTracingRoot"), data.get("config", {}).get("turbopack", {}).get("root")):
+for value in (data.get("appDir"), data.get("config", {}).get("outputFileTracingRoot"), data.get("config", {}).get("repoRoot"), data.get("config", {}).get("turbopack", {}).get("root")):
     if isinstance(value, str) and value.startswith("/"):
         raise SystemExit(f"absolute workspace-style metadata field: {value}")
 

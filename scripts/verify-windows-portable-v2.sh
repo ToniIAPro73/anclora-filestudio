@@ -333,8 +333,8 @@ if not isinstance(data["files"], list) or not all(isinstance(value, str) for val
 if not isinstance(data["ignore"], list) or not all(isinstance(value, str) for value in data["ignore"]):
     raise SystemExit("ignore must be a list of paths")
 
-for value in (data.get("appDir"), data.get("config", {}).get("outputFileTracingRoot"), data.get("config", {}).get("turbopack", {}).get("root")):
-    if isinstance(value, str) and value.startswith("/"):
+for value in (data.get("appDir"), data.get("config", {}).get("outputFileTracingRoot"), data.get("config", {}).get("repoRoot"), data.get("config", {}).get("turbopack", {}).get("root")):
+    if isinstance(value, str) and (value.startswith("/") or (len(value) >= 2 and value[1] == ":")):
         raise SystemExit(f"absolute workspace-style metadata field: {value}")
 
 def normalize_relative_path(value):

@@ -244,47 +244,11 @@ ok "Build-only path metadata removed"
 
 REQUIRED_SERVER_FILES="$APP_DIR/.next/required-server-files.json"
 [[ -f "$REQUIRED_SERVER_FILES" ]] || die "Next.js runtime metadata missing: app/.next/required-server-files.json"
-python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF'
-import json
-import pathlib
-import sys
-
-metadata_path = pathlib.Path(sys.argv[1])
-repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
-
-with metadata_path.open("r", encoding="utf-8") as fh:
-    data = json.load(fh)
-
-config = data.get("config")
-if isinstance(config, dict):
-    if config.get("outputFileTracingRoot") == repo_root:
-        config["outputFileTracingRoot"] = "."
-    turbopack = config.get("turbopack")
-    if isinstance(turbopack, dict) and turbopack.get("root") == repo_root:
-        turbopack["root"] = "."
-
-if data.get("appDir") == repo_root:
-    data["appDir"] = "."
-
-encoded = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
-if repo_root in encoded:
-    raise SystemExit("required-server-files.json still contains the build workspace path")
-
-metadata_path.write_text(encoded, encoding="utf-8")
-PYEOF
+python3 "$SCRIPT_DIR/lib/sanitize-required-server-files.py" "$REQUIRED_SERVER_FILES" "$REPO_ROOT"
 ok "Next.js runtime metadata preserved and sanitized"
 
 if [[ -f "$APP_DIR/server.js" ]]; then
-  python3 - "$APP_DIR/server.js" "$REPO_ROOT" << 'PYEOF'
-import pathlib
-import sys
-
-server_js = pathlib.Path(sys.argv[1])
-repo_root = sys.argv[2]
-source = server_js.read_text(encoding="utf-8")
-source = source.replace(repo_root, ".")
-server_js.write_text(source, encoding="utf-8")
-PYEOF
+  python3 "$SCRIPT_DIR/lib/sanitize-required-server-files.py" --server-js "$APP_DIR/server.js" "$REPO_ROOT"
 fi
 ok "Standalone server metadata sanitized"
 
@@ -1030,9 +994,12 @@ import pathlib
 import sys
 
 metadata_path = pathlib.Path(sys.argv[1])
-repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
+repo_root = sys.argv[2]
+repo_root_posix = pathlib.Path(repo_root).resolve().as_posix().lower()
+repo_root_win = repo_root_posix.replace("/", "\\")
 data = json.loads(metadata_path.read_text(encoding="utf-8"))
-if repo_root in json.dumps(data, ensure_ascii=False):
+dump = json.dumps(data, ensure_ascii=False).lower()
+if repo_root_posix in dump or repo_root_win in dump:
     raise SystemExit("required-server-files.json contains the build workspace path")
 for field in ("version", "config", "files"):
     if field not in data:

@@ -3,8 +3,8 @@
 # Fails with exit 1 on ANY issue. Does NOT skip on missing artifact.
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+REPO_ROOT="$(node -e 'const fs = require("fs"); const path = require("path"); console.log((fs.realpathSync.native || fs.realpathSync)(path.resolve(process.argv[1])))' "$SCRIPT_DIR/.." 2>/dev/null || (cd "$SCRIPT_DIR/.." && pwd -P))"
 ZIP="$REPO_ROOT/dist/macos/Anclora-FileStudio-macOS-arm64.zip"
 SHA_FILE="$ZIP.sha256"
 
@@ -361,7 +361,7 @@ for field in ("version", "config", "files"):
     if field not in data:
         raise SystemExit(f"missing field: {field}")
 
-for value in (data.get("appDir"), data.get("config", {}).get("outputFileTracingRoot"), data.get("config", {}).get("turbopack", {}).get("root")):
+for value in (data.get("appDir"), data.get("config", {}).get("outputFileTracingRoot"), data.get("config", {}).get("repoRoot"), data.get("config", {}).get("turbopack", {}).get("root")):
     if isinstance(value, str) and value.startswith("/"):
         raise SystemExit(f"absolute workspace-style metadata field: {value}")
 

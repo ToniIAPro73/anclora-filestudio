@@ -13,8 +13,8 @@
 set -euo pipefail
 
 # ── Root detection (no hardcoded paths) ───────────────────────────────────────
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+REPO_ROOT="$(node -e 'const fs = require("fs"); const path = require("path"); console.log((fs.realpathSync.native || fs.realpathSync)(path.resolve(process.argv[1])))' "$SCRIPT_DIR/.." 2>/dev/null || (cd "$SCRIPT_DIR/.." && pwd -P))"
 
 # ── Outputs ───────────────────────────────────────────────────────────────────
 DIST_DIR="$REPO_ROOT/dist/macos"
@@ -248,46 +248,10 @@ done
 
 REQUIRED_SERVER_FILES="$PACKAGE_DIR/app/.next/required-server-files.json"
 [[ -f "$REQUIRED_SERVER_FILES" ]] || die "Next.js runtime metadata missing: app/.next/required-server-files.json"
-python3 - "$REQUIRED_SERVER_FILES" "$REPO_ROOT" << 'PYEOF'
-import json
-import pathlib
-import sys
-
-metadata_path = pathlib.Path(sys.argv[1])
-repo_root = pathlib.Path(sys.argv[2]).resolve().as_posix()
-
-with metadata_path.open("r", encoding="utf-8") as fh:
-    data = json.load(fh)
-
-config = data.get("config")
-if isinstance(config, dict):
-    if config.get("outputFileTracingRoot") == repo_root:
-        config["outputFileTracingRoot"] = "."
-    turbopack = config.get("turbopack")
-    if isinstance(turbopack, dict) and turbopack.get("root") == repo_root:
-        turbopack["root"] = "."
-
-if data.get("appDir") == repo_root:
-    data["appDir"] = "."
-
-encoded = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
-if repo_root in encoded:
-    raise SystemExit("required-server-files.json still contains the build workspace path")
-
-metadata_path.write_text(encoded, encoding="utf-8")
-PYEOF
+python3 "$SCRIPT_DIR/lib/sanitize-required-server-files.py" "$REQUIRED_SERVER_FILES" "$REPO_ROOT"
 ok "Next.js runtime metadata preserved and sanitized"
 
-python3 - "$PACKAGE_DIR/app/server.js" "$REPO_ROOT" << 'PYEOF'
-import pathlib
-import sys
-
-server_js = pathlib.Path(sys.argv[1])
-repo_root = sys.argv[2]
-source = server_js.read_text(encoding="utf-8")
-source = source.replace(repo_root, ".")
-server_js.write_text(source, encoding="utf-8")
-PYEOF
+python3 "$SCRIPT_DIR/lib/sanitize-required-server-files.py" --server-js "$PACKAGE_DIR/app/server.js" "$REPO_ROOT"
 ok "Standalone server metadata sanitized"
 
 node -e "
@@ -389,13 +353,14 @@ done
 # ── Sharp + libvips: mandatory packaging from pnpm store ─────────────────────
 info "Packaging Sharp native runtime from pnpm store (mandatory)..."
 
-PNPM_STORE="$REPO_ROOT/node_modules/.pnpm"
+PNPM_STORE="$(node -e 'const fs = require("fs"); console.log((fs.realpathSync.native || fs.realpathSync)(process.argv[1]))' "$REPO_ROOT/node_modules/.pnpm" 2>/dev/null || echo "$REPO_ROOT/node_modules/.pnpm")"
 
 resolve_sharp_path() {
   local key="$1"
   node - "$key" <<'NODE'
 const fs = require("fs");
 const path = require("path");
+const realpath = fs.realpathSync.native || fs.realpathSync;
 
 const key = process.argv[2];
 
@@ -409,11 +374,11 @@ function findPackageDir(start) {
   throw new Error("Could not locate sharp package.json from " + start);
 }
 
-const sharpPackageDir = findPackageDir(require.resolve("sharp"));
+const sharpPackageDir = realpath(findPackageDir(require.resolve("sharp")));
 const sharpPackageJson = JSON.parse(fs.readFileSync(path.join(sharpPackageDir, "package.json"), "utf8"));
 const imgDir = path.resolve(sharpPackageDir, "..", "@img");
-const sharpNativeDir = fs.realpathSync(path.join(imgDir, "sharp-darwin-arm64"));
-const libvipsDir = fs.realpathSync(path.join(imgDir, "sharp-libvips-darwin-arm64"));
+const sharpNativeDir = realpath(path.join(imgDir, "sharp-darwin-arm64"));
+const libvipsDir = realpath(path.join(imgDir, "sharp-libvips-darwin-arm64"));
 
 const values = {
   sharpPackageDir,
