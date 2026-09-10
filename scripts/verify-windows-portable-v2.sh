@@ -177,11 +177,25 @@ done
 # ── 6. Native modules ────────────────────────────────────────────────────────
 info "Verificando módulos nativos Windows..."
 
+SHARP_JS_PKG="$EXTRACTED/app/node_modules/sharp/package.json"
+SHARP_WIN_PKG="$EXTRACTED/app/node_modules/@img/sharp-win32-x64/package.json"
+TOOLCHAIN_LOCK="$REPO_ROOT/scripts/toolchain.lock.json"
+
+SHARP_JS_VER="$(python3 -c "import json; print(json.load(open('$SHARP_JS_PKG')).get('version', ''))" 2>/dev/null || true)"
+SHARP_LOCK_VER="$(python3 -c "import json; print(json.load(open('$TOOLCHAIN_LOCK')).get('nativeModules', {}).get('sharp-win32-x64', {}).get('version', ''))" 2>/dev/null || true)"
+SHARP_NATIVE_VER="$(python3 -c "import json; print(json.load(open('$SHARP_WIN_PKG')).get('version', ''))" 2>/dev/null || true)"
+
+if [[ -n "$SHARP_JS_VER" && "$SHARP_JS_VER" == "$SHARP_LOCK_VER" && "$SHARP_JS_VER" == "$SHARP_NATIVE_VER" ]]; then
+  ok "  Versión de Sharp alineada (JS=$SHARP_JS_VER, lock=$SHARP_LOCK_VER, native=$SHARP_NATIVE_VER)"
+  PASS=$((PASS+1))
+else
+  fail "  Desalineación de versiones Sharp: JS='$SHARP_JS_VER' lock='$SHARP_LOCK_VER' native='$SHARP_NATIVE_VER'"
+fi
+
 NATIVE_FILES=(
   "app/node_modules/better-sqlite3/build/Release/better_sqlite3.node"
-  "app/node_modules/@img/sharp-win32-x64/lib/sharp-win32-x64-0.35.1.node"
+  "app/node_modules/@img/sharp-win32-x64/lib/sharp-win32-x64-${SHARP_LOCK_VER}.node"
   "app/node_modules/@img/sharp-win32-x64/lib/libvips-42.dll"
-  "app/node_modules/@img/sharp-win32-x64/lib/libvips-cpp-8.18.3.dll"
 )
 
 for f in "${NATIVE_FILES[@]}"; do
@@ -193,6 +207,15 @@ for f in "${NATIVE_FILES[@]}"; do
     fail "  Falta módulo nativo: $f"
   fi
 done
+
+VIPS_DLL="$(find "$EXTRACTED/app/node_modules/@img/sharp-win32-x64/lib" -maxdepth 1 -name "libvips-cpp-*.dll" -type f 2>/dev/null | head -1 || true)"
+if [[ -n "$VIPS_DLL" && -f "$VIPS_DLL" ]]; then
+  SIZE="$(du -sh "$VIPS_DLL" | awk '{print $1}')"
+  ok "  Existe ($SIZE): $(basename "$VIPS_DLL")"
+  PASS=$((PASS+1))
+else
+  fail "  Falta módulo nativo: libvips-cpp-*.dll en @img/sharp-win32-x64/lib"
+fi
 
 # ── 6b. Next.js runtime externals referenced by server chunks ────────────────
 # Regression guard for the Windows native QA P0: Turbopack chunks load Next.js

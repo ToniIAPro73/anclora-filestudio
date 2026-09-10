@@ -143,8 +143,8 @@ describe("SharpEngine capability ID format matches routing", () => {
 
   const probe: EngineProbeResult = {
     available: true,
-    version: "0.35.1",
-    binaryPath: "sharp@0.35.1 (libvips 8.18.3)",
+    version: "0.35.4",
+    binaryPath: "sharp@0.35.4 (libvips 8.18.6)",
     capabilities: ["jpeg", "png", "webp", "avif", "tiff", "gif"],
   };
 

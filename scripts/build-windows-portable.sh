@@ -483,7 +483,7 @@ ok "Next.js runtime externals complete"
 
 # ── Fix truncated JS dependency stubs ────────────────────────────────────────
 # Next.js standalone can leave semver as a stub in the pnpm flat namespace —
-# only package.json, no index.js. Sharp@0.35.1 requires semver@^7.8.4 as a full
+# only package.json, no index.js. Sharp requires semver@^7.8.4 as a full
 # package. Resolve the full package from the lockfile-installed repo deps before
 # removing .pnpm.
 info "Fixing truncated semver stub..."

@@ -149,24 +149,43 @@ try {
     $WebpOutFwd = (Join-Path $SmokeDir "out.webp") -replace "\\", "/"
     $WebpOutReal = Join-Path $SmokeDir "out.webp"
 
-    $js3 = "var path = require('path');" + [char]10
-    $js3 += "var sharp = require(path.join('" + $AppDirFwd + "', 'node_modules', 'sharp'));" + [char]10
-    $js3 += "var vs = sharp.versions;" + [char]10
-    $js3 += "process.stdout.write('sharp=' + vs.sharp + '\n');" + [char]10
-    $js3 += "process.stdout.write('vips=' + vs.vips + '\n');" + [char]10
-    $js3 += "if (!vs.sharp) throw new Error('Missing sharp version');" + [char]10
-    $js3 += "if (!vs.vips) throw new Error('Missing vips version');" + [char]10
-    $js3 += "process.stdout.write('SHARP_OK sharp=' + vs.sharp + ' vips=' + vs.vips + '\n');" + [char]10
-    $js3 += "sharp({ create: { width: 4, height: 4, channels: 3, background: { r: 255, g: 0, b: 0 } } })" + [char]10
-    $js3 += "  .webp({ quality: 80 })" + [char]10
-    $js3 += "  .toFile('" + $WebpOutFwd + "')" + [char]10
-    $js3 += "  .then(function(i) {" + [char]10
-    $js3 += "    if (i.format !== 'webp') throw new Error('format: ' + i.format);" + [char]10
-    $js3 += "    if (i.size === 0) throw new Error('empty output');" + [char]10
-    $js3 += "    process.stdout.write('WEBP_OK size=' + i.size + '\n');" + [char]10
-    $js3 += "    process.stdout.write('NATIVE_ACCEPTANCE_WINDOWS_PASS\n');" + [char]10
-    $js3 += "  })" + [char]10
-    $js3 += "  .catch(function(e) { process.stderr.write(e.message + '\n'); process.exit(1); });"
+    $js3 = "try {" + [char]10
+    $js3 += "  var path = require('path');" + [char]10
+    $js3 += "  var sharp = require(path.join('" + $AppDirFwd + "', 'node_modules', 'sharp'));" + [char]10
+    $js3 += "  var vs = sharp.versions || {};" + [char]10
+    $js3 += "  process.stdout.write('SHARP_JS_VERSION=' + (vs.sharp || 'UNKNOWN') + '\n');" + [char]10
+    $js3 += "  process.stdout.write('LIBVIPS_VERSION=' + (vs.vips || 'UNKNOWN') + '\n');" + [char]10
+    $js3 += "  if (!vs.sharp) throw new Error('Missing sharp version');" + [char]10
+    $js3 += "  if (!vs.vips) throw new Error('Missing vips version');" + [char]10
+    $js3 += "  process.stdout.write('SHARP_OK sharp=' + vs.sharp + ' vips=' + vs.vips + '\n');" + [char]10
+    $js3 += "  sharp({ create: { width: 4, height: 4, channels: 3, background: { r: 255, g: 0, b: 0 } } })" + [char]10
+    $js3 += "    .webp({ quality: 80 })" + [char]10
+    $js3 += "    .toFile('" + $WebpOutFwd + "')" + [char]10
+    $js3 += "    .then(function(i) {" + [char]10
+    $js3 += "      if (i.format !== 'webp') throw new Error('format: ' + i.format);" + [char]10
+    $js3 += "      if (i.size === 0) throw new Error('empty output');" + [char]10
+    $js3 += "      process.stdout.write('WEBP_OK size=' + i.size + '\n');" + [char]10
+    $js3 += "      process.stdout.write('NATIVE_ACCEPTANCE_WINDOWS_PASS\n');" + [char]10
+    $js3 += "    })" + [char]10
+    $js3 += "    .catch(function(e) {" + [char]10
+    $js3 += "      process.stderr.write('ERROR_MESSAGE: ' + (e.message || e) + '\n');" + [char]10
+    $js3 += "      process.stderr.write('ERROR_STACK: ' + (e.stack || '') + '\n');" + [char]10
+    $js3 += "      process.exit(1);" + [char]10
+    $js3 += "    });" + [char]10
+    $js3 += "} catch (err) {" + [char]10
+    $js3 += "  var path = require('path');" + [char]10
+    $js3 += "  var fs = require('fs');" + [char]10
+    $js3 += "  var jsVer = 'UNKNOWN', natVer = 'UNKNOWN';" + [char]10
+    $js3 += "  try { jsVer = JSON.parse(fs.readFileSync(path.join('" + $AppDirFwd + "', 'node_modules', 'sharp', 'package.json'), 'utf8')).version; } catch (_) {}" + [char]10
+    $js3 += "  try { natVer = JSON.parse(fs.readFileSync(path.join('" + $AppDirFwd + "', 'node_modules', '@img', 'sharp-win32-x64', 'package.json'), 'utf8')).version; } catch (_) {}" + [char]10
+    $js3 += "  process.stderr.write('=== SHARP DIAGNOSTIC FAILURE ===\n');" + [char]10
+    $js3 += "  process.stderr.write('SHARP_JS_VERSION: ' + jsVer + '\n');" + [char]10
+    $js3 += "  process.stderr.write('SHARP_NATIVE_PACKAGE: ' + natVer + '\n');" + [char]10
+    $js3 += "  process.stderr.write('LIBVIPS_VERSION: ' + ((typeof vs !== 'undefined' && vs && vs.vips) ? vs.vips : 'UNKNOWN') + '\n');" + [char]10
+    $js3 += "  process.stderr.write('ERROR_MESSAGE: ' + (err.message || err) + '\n');" + [char]10
+    $js3 += "  process.stderr.write('ERROR_STACK: ' + (err.stack || '') + '\n');" + [char]10
+    $js3 += "  process.exit(1);" + [char]10
+    $js3 += "}"
 
     $out3 = Run-NodeScript -JsCode $js3 -Label "Sharp PNG->WebP"
     $out3 | ForEach-Object { Write-Host ("  " + $_) }

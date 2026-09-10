@@ -44,13 +44,12 @@
     },
     "sharp-win32-x64": {
       "package": "@img/sharp-win32-x64",
-      "version": "0.35.1",
+      "version": "0.35.4",
       "platform": "win32",
       "arch": "x64",
-      "sourceUrl": "https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.35.1.tgz",
-      "sha256": "0f2db56bdc93ea0bf23afb7ef322806cc9456324d34db1f9d5643d2c64986f36",
-      "license": "Apache-2.0",
-      "note": "sha256 will be computed on first download"
+      "sourceUrl": "https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.35.4.tgz",
+      "sha256": "5bae8109aa0c7d115788abc3dd9b241caa8d316c838f163a9dadc310dff4008b",
+      "license": "Apache-2.0"
     }
   },
   "runtimePacks": {
