@@ -55,6 +55,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Security audit gate (blocks packaging on critical/high)
+        run: pnpm audit --prod
       - run: pnpm lint
       - run: pnpm typecheck
       - name: Install Linux integration test toolchain
