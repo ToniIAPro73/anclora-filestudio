@@ -205,6 +205,15 @@ if command -v codesign >/dev/null 2>&1; then
   else
     fail "codesign Sealed Resources missing"
   fi
+
+  NODE_BIN="$PAYLOAD_DIR/runtime/node"
+  if [[ -f "$NODE_BIN" ]]; then
+    if codesign -v "$NODE_BIN" >/dev/null 2>&1; then
+      pass "payload/runtime/node has valid code signature"
+    else
+      fail "payload/runtime/node code signature is invalid"
+    fi
+  fi
 else
   fail "codesign tool not available on this host"
 fi

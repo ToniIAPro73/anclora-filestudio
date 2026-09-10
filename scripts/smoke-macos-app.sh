@@ -125,6 +125,16 @@ else
   echo "[PASS] Server stopped cleanly"
 fi
 
+sleep 1
+LAUNCHER_PIDS="$(pgrep -f "Contents/MacOS/AncloraFileStudio" 2>/dev/null || true)"
+if [[ -z "$LAUNCHER_PIDS" ]]; then
+  echo "[PASS] No launcher processes remain (clean lifecycle)"
+else
+  echo "[FAIL] Launcher process(es) still running after server stop: $LAUNCHER_PIDS"
+  kill -9 $LAUNCHER_PIDS 2>/dev/null || true
+  (( FAIL++ )) || true
+fi
+
 ORPHAN_LISTENERS="$(lsof -nP -iTCP:"$SMOKE_PORT" -sTCP:LISTEN -t 2>/dev/null | wc -l | tr -d ' ' || true)"
 if [[ "$ORPHAN_LISTENERS" -eq 0 ]]; then
   echo "[PASS] No orphaned processes remain (port free)"

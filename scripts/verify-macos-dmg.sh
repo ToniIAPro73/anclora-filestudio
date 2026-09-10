@@ -132,6 +132,15 @@ if [[ -n "$MOUNT_POINT" ]]; then
     fail "Extracted app Sealed Resources missing"
   fi
 
+  EXTRACTED_NODE="$EXTRACTED_APP/Contents/Resources/payload/runtime/node"
+  if [[ -f "$EXTRACTED_NODE" ]]; then
+    if codesign -v "$EXTRACTED_NODE" >/dev/null 2>&1; then
+      pass "Extracted app payload/runtime/node has valid code signature"
+    else
+      fail "Extracted app payload/runtime/node code signature is invalid"
+    fi
+  fi
+
   rm -rf "$DMG_EXTRACT_DIR"
 fi
 

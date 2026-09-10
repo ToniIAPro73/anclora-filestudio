@@ -123,7 +123,7 @@ PAYLOAD_DIR="$RESOURCES_DIR/payload"
 NODE="$PAYLOAD_DIR/runtime/node"
 
 alert() {
-  osascript -e "display alert \"Anclora FileStudio\" message \"$1\" as ${2:-critical}" >/dev/null 2>&1 || true
+  osascript -e "display alert \"Anclora FileStudio\" message \"$1\" as ${2:-critical} giving up after 15" >/dev/null 2>&1 || true
 }
 
 if [[ ! -x "$NODE" ]]; then
@@ -139,6 +139,12 @@ DATA_DIR="$APP_SUPPORT/data"
 TEMP_DIR="$APP_SUPPORT/temp"
 LOG_DIR="$APP_SUPPORT/logs"
 mkdir -p "$DATA_DIR" "$TEMP_DIR" "$LOG_DIR"
+
+LAUNCHER_LOG="$LOG_DIR/launcher.log"
+echo "=== Anclora FileStudio Launcher $(date -u +%Y-%m-%dT%H:%M:%SZ) ===" >> "$LAUNCHER_LOG"
+echo "Launcher PID: $$ | PPID: $PPID" >> "$LAUNCHER_LOG"
+echo "Bundle Contents: $CONTENTS_DIR" >> "$LAUNCHER_LOG"
+echo "Node Binary: $NODE" >> "$LAUNCHER_LOG"
 
 export ANCLORA_FILESTUDIO_DATA_DIR="$DATA_DIR"
 export ANCLORA_FILESTUDIO_TEMP_DIR="$TEMP_DIR"
@@ -161,14 +167,19 @@ PORT_FILE="$DATA_DIR/anclora-filestudio.port"
 
 # Reuse an already-running instance instead of starting a second one.
 if [[ -f "$PID_FILE" ]]; then
-  OLD_PID="$(cat "$PID_FILE")"
-  if kill -0 "$OLD_PID" 2>/dev/null; then
-    if [[ -f "$PORT_FILE" ]]; then
-      open "http://127.0.0.1:$(cat "$PORT_FILE")" 2>/dev/null || true
+  OLD_PID="$(cat "$PID_FILE" 2>/dev/null || true)"
+  OLD_PORT="$(cat "$PORT_FILE" 2>/dev/null || true)"
+  if [[ -n "$OLD_PID" ]] && kill -0 "$OLD_PID" 2>/dev/null; then
+    if [[ -n "$OLD_PORT" ]] && curl -sf --connect-timeout 1 --max-time 2 "http://127.0.0.1:$OLD_PORT/api/health" >/dev/null 2>&1; then
+      echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Existing healthy instance detected (PID $OLD_PID, port $OLD_PORT). Relaunching browser." >> "$LAUNCHER_LOG"
+      if [[ "${ANCLORA_FILESTUDIO_SKIP_BROWSER:-}" != "1" ]]; then
+        open "http://127.0.0.1:$OLD_PORT" 2>/dev/null || true
+      fi
+      exit 0
     fi
-    exit 0
   fi
-  rm -f "$PID_FILE"
+  echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Cleaning up stale PID/port file (PID: ${OLD_PID:-<none>}, port: ${OLD_PORT:-<none>})" >> "$LAUNCHER_LOG"
+  rm -f "$PID_FILE" "$PORT_FILE"
 fi
 
 if [[ -z "${ANCLORA_FILESTUDIO_PORT:-}" ]]; then
@@ -188,20 +199,63 @@ cd "$PAYLOAD_DIR/app"
 APP_PID="$!"
 echo "$APP_PID" > "$PID_FILE"
 echo "$PORT" > "$PORT_FILE"
+echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Spawned Node.js server (PID: $APP_PID) on port $PORT" >> "$LAUNCHER_LOG"
 
-for _ in $(seq 1 30); do
-  if curl -sf "http://127.0.0.1:$PORT/api/health" >/dev/null 2>&1; then
-    if [[ "${ANCLORA_FILESTUDIO_SKIP_BROWSER:-}" != "1" ]]; then
-      open "http://127.0.0.1:$PORT" 2>/dev/null || true
+# Clean lifecycle management: terminate child process on exit or signal
+cleanup() {
+  trap - SIGTERM SIGINT SIGHUP EXIT
+  echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Cleanup triggered for launcher PID $$ (child PID: ${APP_PID:-none})" >> "$LAUNCHER_LOG"
+  if [[ -n "${APP_PID:-}" ]] && kill -0 "$APP_PID" 2>/dev/null; then
+    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Sending SIGTERM to Node server (PID $APP_PID)..." >> "$LAUNCHER_LOG"
+    kill -TERM "$APP_PID" 2>/dev/null || true
+    for _ in $(seq 1 15); do
+      kill -0 "$APP_PID" 2>/dev/null || break
+      sleep 0.2
+    done
+    if kill -0 "$APP_PID" 2>/dev/null; then
+      echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Sending SIGKILL to stubborn Node server (PID $APP_PID)..." >> "$LAUNCHER_LOG"
+      kill -9 "$APP_PID" 2>/dev/null || true
     fi
-    exit 0
   fi
-  kill -0 "$APP_PID" 2>/dev/null || break
+  rm -f "$PID_FILE" "$PORT_FILE"
+  echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Cleanup finished." >> "$LAUNCHER_LOG"
+}
+trap cleanup SIGTERM SIGINT SIGHUP EXIT
+
+# Poll health endpoint with early crash detection
+READY=0
+for attempt in $(seq 1 45); do
+  if ! kill -0 "$APP_PID" 2>/dev/null; then
+    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Node server process $APP_PID exited unexpectedly during startup" >> "$LAUNCHER_LOG"
+    break
+  fi
+  if curl -sf --connect-timeout 1 --max-time 2 "http://127.0.0.1:$PORT/api/health" >/dev/null 2>&1; then
+    READY=1
+    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Healthcheck passed on attempt $attempt (port $PORT)" >> "$LAUNCHER_LOG"
+    break
+  fi
   sleep 1
 done
 
-alert "La aplicación tardó demasiado en responder. Revisa el registro en ~/Library/Application Support/Anclora/FileStudio/logs/app.log" warning
-exit 1
+if [[ "$READY" -ne 1 ]]; then
+  echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] ERROR: Application failed to respond within timeout on port $PORT" >> "$LAUNCHER_LOG"
+  if [[ -f "$LOG_DIR/app.log" ]]; then
+    echo "--- Last 20 lines of app.log ---" >> "$LAUNCHER_LOG"
+    tail -n 20 "$LOG_DIR/app.log" >> "$LAUNCHER_LOG" 2>&1 || true
+  fi
+  alert "La aplicación tardó demasiado en responder. Revisa el registro en ~/Library/Application Support/Anclora/FileStudio/logs/app.log" warning
+  exit 1
+fi
+
+if [[ "${ANCLORA_FILESTUDIO_SKIP_BROWSER:-}" != "1" ]]; then
+  open "http://127.0.0.1:$PORT" 2>/dev/null || true
+fi
+
+# Hold launcher process alive to maintain Dock presence and lifecycle control
+echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Master launcher active. Waiting on Node server (PID $APP_PID)..." >> "$LAUNCHER_LOG"
+wait "$APP_PID" || true
+echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Node server has terminated. Exiting launcher." >> "$LAUNCHER_LOG"
+exit 0
 LAUNCHER
 chmod +x "$LAUNCHER_SCRIPT"
 
@@ -335,7 +389,17 @@ if [[ "$SIGNING_IDENTITY" != "-" ]]; then
   SIGN_ARGS+=("--options" "runtime" "--timestamp")
 fi
 
-# Step 9: codesign --force --deep --sign - "$APP"
+# Step 9a: Sign all nested Mach-O binaries inside-out
+info "Signing nested Mach-O libraries and executables inside-out..."
+while IFS= read -r bin; do
+  if file "$bin" | grep -q "Mach-O"; then
+    codesign "${SIGN_ARGS[@]}" "$bin" || die "Failed to sign nested Mach-O binary: $bin"
+  fi
+done < <(find "$APP_DIR" -type f \( -name "*.dylib" -o -name "*.node" -o -path "*/runtime/node" -o -path "*/MacOS/*" \))
+ok "Nested Mach-O binaries signed"
+
+# Step 9b: codesign --force --deep --sign - "$APP"
+info "Signing top-level .app bundle..."
 codesign "${SIGN_ARGS[@]}" "$APP_DIR" || die "codesign failed for $APP_DIR"
 ok "codesign completed successfully"
 
@@ -344,6 +408,13 @@ info "Validating code signature (deep, strict)..."
 codesign --verify --deep --strict --verbose=4 "$APP_DIR" \
   || die "codesign --verify failed for $APP_DIR"
 ok "Signature valid on disk and satisfies designated requirement"
+
+# Verify runtime/node is explicitly signed
+NODE_CS="$(codesign -dv "$PAYLOAD_DIR/runtime/node" 2>&1)"
+if [[ "$SIGNING_IDENTITY" == "-" ]]; then
+  echo "$NODE_CS" | grep -q "Signature=adhoc" || die "runtime/node signature is not adhoc"
+fi
+ok "runtime/node signature verified"
 
 # Step 11: verify $APP/Contents/_CodeSignature/CodeResources exists
 CODE_RESOURCES="$CONTENTS_DIR/_CodeSignature/CodeResources"
