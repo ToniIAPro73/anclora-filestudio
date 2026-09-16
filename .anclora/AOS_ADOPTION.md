@@ -32,9 +32,9 @@ Enlaza las fuentes oficiales AOS que gobiernan este repositorio:
 
 Autoridad delegada relevante:
 
-- Repository registry y censo canonico de repos: [`../../boveda-anclora/docs/governance/ecosystem-repos.json`](../../boveda-anclora/docs/governance/ecosystem-repos.json)
-- Mecanismo CHG para decisiones operacionales OD: [`../../boveda-anclora/docs/cambios/`](../../boveda-anclora/docs/cambios/)
-- Contratos de ecosistema aplicables a marca, UX, localizacion y compliance: [`../../boveda-anclora/contracts/`](../../boveda-anclora/contracts/)
+- Repository registry y censo canonico de repos: [`../../anclora-vault/00-governance/registry/ecosystem-repos.json`](../../anclora-vault/00-governance/registry/ecosystem-repos.json)
+- Mecanismo CHG para decisiones operacionales OD: [`../../anclora-vault/00-governance/decisions/`](../../anclora-vault/00-governance/decisions/)
+- Contratos de ecosistema aplicables a marca, UX, localizacion y compliance: [`../../anclora-vault/00-governance/contracts/`](../../anclora-vault/00-governance/contracts/)
 
 ## Fuentes oficiales locales
 

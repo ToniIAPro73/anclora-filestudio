@@ -1,3 +1,13 @@
+# AGENTS.md — Anclora Filestudio
+
+## Bootstrap de agentes
+
+Antes de realizar tareas sustanciales en este repositorio, el agente debe leer:
+1. [`.anclora/AGENT_PROJECT_CONTEXT.md`](.anclora/AGENT_PROJECT_CONTEXT.md) (v1.0) y seguir su enrutamiento canónico hacia:
+   - [`.anclora/PRODUCTION_RUNTIME.md`](.anclora/PRODUCTION_RUNTIME.md) para ejecución, infraestructura, base de datos, QA y Git.
+   - [`.anclora/AOS_ADOPTION.md`](.anclora/AOS_ADOPTION.md) para gobernanza, estándares y autoridad AOS.
+
+
 # AI Agent Documentation - Anclora FileStudio
 
 This document is the root agent entrypoint for `anclora-filestudio`.
