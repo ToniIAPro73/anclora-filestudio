@@ -3,6 +3,17 @@
 import { useEffect, useState } from "react";
 import { Power, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface AdminStatus {
   requiresToken: boolean;
@@ -37,12 +48,7 @@ export function CloseAppButton() {
       .catch(() => {});
   }, []);
 
-  function handleClick() {
-    if (!confirming) {
-      setConfirming(true);
-      setError(null);
-      return;
-    }
+  function handleConfirm() {
     setClosing(true);
     setError(null);
     fetch("/api/shutdown", {
@@ -78,33 +84,43 @@ export function CloseAppButton() {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-40 flex flex-col items-end gap-2">
-      {confirming && status?.requiresToken && (
-        <input
-          type="password"
-          placeholder="Token de administrador"
-          value={token}
-          onChange={(e) => setToken(e.target.value)}
-          className="w-48 rounded-md border border-white/10 bg-[#13161b]/95 px-2.5 py-1.5 text-xs text-stone-100 shadow-[0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur placeholder:text-stone-500"
-        />
-      )}
-      <button
-        type="button"
-        onClick={handleClick}
-        onBlur={(e) => {
-          if (!e.currentTarget.parentElement?.contains(e.relatedTarget)) setConfirming(false);
-        }}
-        title={confirming ? "Confirmar cierre de la aplicación" : "Cerrar Anclora FileStudio"}
-        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold shadow-[0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur transition-all duration-200 ${
-          confirming
-            ? "border-red-400/40 bg-red-500/15 text-red-200 hover:bg-red-500/25"
-            : "border-white/10 bg-[#13161b]/90 text-stone-400 hover:border-red-400/30 hover:text-red-300"
-        }`}
-      >
-        <Power className="h-3.5 w-3.5" aria-hidden="true" />
-        {confirming ? "¿Seguro? Pulsa de nuevo" : "Cerrar aplicación"}
-      </button>
-      {error && <p className="max-w-48 text-right text-[11px] text-red-300">{error}</p>}
-    </div>
+    <AlertDialog open={confirming} onOpenChange={(open) => { if (!closing) { setConfirming(open); if (!open) setError(null); } }}>
+      <div className="fixed top-4 right-4 z-40 flex flex-col items-end gap-2">
+        <AlertDialogTrigger
+          className="ac-button ac-button--destructive ac-button--compact shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+          onClick={() => { setError(null); setConfirming(true); }}
+          aria-label="Cerrar Anclora FileStudio"
+        >
+          <Power className="h-3.5 w-3.5" aria-hidden="true" />
+          Cerrar aplicación
+        </AlertDialogTrigger>
+      </div>
+      <AlertDialogContent className="ac-modal ac-pattern-destructive-confirmation max-w-lg">
+        <AlertDialogHeader className="ac-pattern-destructive-confirmation__header">
+          <AlertDialogTitle>Cerrar Anclora FileStudio</AlertDialogTitle>
+          <AlertDialogDescription className="ac-pattern-destructive-confirmation__consequence">
+            Se detendrá la aplicación local y sus operaciones activas. Esta acción no elimina archivos ni cambia datos de producción.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        {status?.requiresToken && (
+          <div className="ac-form-field">
+            <label className="ac-form-field__label" htmlFor="close-app-admin-token">Token de administrador</label>
+            <input
+              id="close-app-admin-token"
+              type="password"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              className="field-input w-full"
+              autoComplete="off"
+            />
+          </div>
+        )}
+        {error && <div className="ac-alert" data-tone="danger" role="alert"><div className="ac-alert__content"><p className="ac-alert__summary">{error}</p></div></div>}
+        <AlertDialogFooter className="ac-pattern-destructive-confirmation__actions">
+          <AlertDialogCancel className="ac-button ac-button--ghost" onClick={() => setError(null)}>Cancelar</AlertDialogCancel>
+          <AlertDialogAction className="ac-button ac-button--destructive" onClick={handleConfirm} disabled={closing}>Cerrar aplicación</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

@@ -18,6 +18,7 @@ apps/*/node_modules
 /artifacts/playwright/
 /artifacts/acceptance/**/downloads/
 /artifacts/acceptance/**/*.bin
+/artifacts/qa/
 /tests/acceptance/fixtures/generated/
 
 # next.js

@@ -69,14 +69,14 @@ export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloa
   };
 
   return (
-    <div className="rounded-2xl border border-emerald-500/30 bg-[#1a1e25] p-5 space-y-4 animate-in fade-in slide-in-from-bottom-3 duration-400 motion-reduce:animate-none">
-      <h2 className="text-xl font-black text-stone-100">Conversión completada</h2>
-      <div className="flex items-start gap-3">
+    <div className="ac-pattern-processing-result rounded-2xl border border-emerald-500/30 bg-[#1a1e25] p-5 space-y-4 animate-in fade-in slide-in-from-bottom-3 duration-400 motion-reduce:animate-none">
+      <div className="ac-pattern-processing-result__header"><h2 className="text-xl font-black text-stone-100">Conversión completada</h2><p className="text-sm text-stone-400">El archivo está listo para la siguiente acción.</p></div>
+      <div className="ac-pattern-processing-result__file flex items-start gap-3">
         <div className="h-10 w-10 rounded-xl bg-emerald-500/15 flex items-center justify-center shrink-0">
           <Download className="h-5 w-5 text-emerald-400" aria-hidden="true" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-white truncate">{fileName}</p>
+          <p className="ac-pattern-processing-result__file-name text-sm font-semibold text-white">{fileName}</p>
           <p className="text-xs text-white/40 mt-0.5">
             {format.toUpperCase()} · {formatSize(sizeBytes)}
           </p>
@@ -87,13 +87,13 @@ export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloa
         <p role="alert" className="text-sm text-red-400">{error}</p>
       )}
 
-      <div className="space-y-2">
+      <div className="ac-pattern-processing-result__body space-y-2">
         {downloadTokenHash ? (
           <button
             type="button"
             onClick={() => void handleDownload()}
             disabled={fetching}
-            className="flex items-center justify-center gap-2 w-full h-12 min-h-[44px] rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition-colors disabled:opacity-60 motion-reduce:transition-none"
+            className="ac-button ac-button--primary w-full"
           >
             {fetching ? (
               <>
@@ -111,12 +111,12 @@ export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloa
           <p className="text-sm text-white/40 text-center">Archivo no disponible.</p>
         )}
 
-        <div className="flex gap-2">
+        <div className="ac-pattern-processing-result__actions flex gap-2">
           {downloadTokenHash && downloadUrl && (
             <button
               type="button"
               onClick={() => void handleOpenInspector()}
-              className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl border border-teal-500/30 text-teal-300 hover:bg-teal-500/10 text-sm font-medium transition-colors"
+              className="ac-button ac-button--secondary ac-button--compact flex-1"
             >
               <Eye className="h-3.5 w-3.5" />
               Inspeccionar
@@ -125,7 +125,7 @@ export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloa
           <button
             type="button"
             onClick={onReset}
-            className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl border border-white/10 text-white/50 hover:text-white/80 hover:border-white/25 text-sm transition-colors motion-reduce:transition-none"
+            className="ac-button ac-button--ghost ac-button--compact flex-1"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             {t("result.processAnother")}
@@ -134,7 +134,7 @@ export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloa
             <button
               type="button"
               onClick={onConvertAnother}
-              className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl border border-teal-500/30 text-teal-300 hover:bg-teal-500/10 text-sm font-medium transition-colors"
+              className="ac-button ac-button--secondary ac-button--compact flex-1"
             >
               <ArrowLeftRight className="h-3.5 w-3.5" />
               {t("result.convertAnother")}
@@ -143,7 +143,7 @@ export function ArtifactResultCard({ jobId, fileName, format, sizeBytes, downloa
           <button
             type="button"
             onClick={onViewHistory}
-            className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl border border-white/10 text-white/50 hover:text-white/80 hover:border-white/25 text-sm transition-colors motion-reduce:transition-none"
+            className="ac-button ac-button--ghost ac-button--compact flex-1"
           >
             <History className="h-3.5 w-3.5" />
             Historial

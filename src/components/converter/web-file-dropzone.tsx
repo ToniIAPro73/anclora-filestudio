@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, type DragEvent, type KeyboardEvent } from "react";
+import { useCallback, useRef, useState, type DragEvent } from "react";
 import { Upload, X, FileText, AlertCircle } from "lucide-react";
 import { normalizeFormat, BROWSER_CONVERSION_MAX_BYTES } from "@/lib/browser-conversion/validators";
 import { getExtension } from "@/lib/browser-conversion/validators";
@@ -44,7 +44,7 @@ export function WebFileDropzone({
   const [dropState, setDropState] = useState<DropzoneState>("idle");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleDragEnter = useCallback((e: DragEvent<HTMLDivElement>) => {
+  const handleDragEnter = useCallback((e: DragEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (disabled) return;
@@ -63,12 +63,12 @@ export function WebFileDropzone({
     void types;
   }, [disabled]);
 
-  const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
+  const handleDragOver = useCallback((e: DragEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
   }, []);
 
-  const handleDragLeave = useCallback((e: DragEvent<HTMLDivElement>) => {
+  const handleDragLeave = useCallback((e: DragEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
     // Only reset if leaving the zone entirely (not a child element)
@@ -90,7 +90,7 @@ export function WebFileDropzone({
     onFileSelected(file);
   }, [onFileSelected]);
 
-  const handleDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
+  const handleDrop = useCallback((e: DragEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (disabled) return;
@@ -107,13 +107,6 @@ export function WebFileDropzone({
     // Reset input so the same file can be re-selected
     e.target.value = "";
   }, [processFile]);
-
-  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      inputRef.current?.click();
-    }
-  }, []);
 
   const handleClear = useCallback(() => {
     setDropState("idle");
@@ -132,7 +125,7 @@ export function WebFileDropzone({
   const isDragActive = dropState === "drag-active";
 
   return (
-    <div className="w-full">
+    <div className="ac-pattern-file-upload w-full">
       <input
         ref={inputRef}
         type="file"
@@ -148,7 +141,7 @@ export function WebFileDropzone({
       {isSelected && selectedFile ? (
         /* File selected state */
         <div
-          className="flex items-start gap-3 rounded-xl border border-teal-300/25 bg-teal-400/6 p-4"
+          className="ac-pattern-file-upload__file flex items-start gap-3 rounded-xl border border-teal-300/25 bg-teal-400/6 p-4"
           role="status"
           aria-label={`Archivo seleccionado: ${selectedFile.name}`}
         >
@@ -180,19 +173,14 @@ export function WebFileDropzone({
         </div>
       ) : (
         /* Drop zone idle / drag / error states */
-        <div
-          role="button"
-          tabIndex={disabled ? -1 : 0}
-          aria-label="Arrastra un archivo aquí o pulsa Enter para abrir el selector de archivos"
-          aria-disabled={disabled}
-          onClick={openPicker}
-          onKeyDown={handleKeyDown}
+        <label
+          htmlFor="web-file-dropzone-input"
           onDragEnter={handleDragEnter}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={[
-            "flex min-h-[140px] w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-6 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/70 motion-reduce:transition-none",
+            "ac-pattern-file-upload__dropzone flex min-h-[140px] w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-6 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/70 motion-reduce:transition-none",
             isDragActive
               ? "border-teal-300/60 bg-teal-400/8"
               : isInvalid || isTooLarge
@@ -257,7 +245,7 @@ export function WebFileDropzone({
               </div>
             </>
           )}
-        </div>
+        </label>
       )}
     </div>
   );

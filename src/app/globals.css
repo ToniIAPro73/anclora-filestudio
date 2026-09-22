@@ -1,3 +1,20 @@
+/* Next/Turbopack inlines a package stylesheet before resolving its nested
+   relative imports. Import the immutable installed Wave 8 files directly so
+   each canonical source keeps the correct package-relative base. */
+@import "../../node_modules/@anclora/design-system/src/tokens/core.css";
+@import "../../node_modules/@anclora/design-system/src/tokens/semantic.css";
+@import "../../node_modules/@anclora/design-system/src/themes/product.css";
+@import "../../node_modules/@anclora/design-system/src/foundations/typography.css";
+@import "../../node_modules/@anclora/design-system/src/foundations/primitives.css";
+@import "../../node_modules/@anclora/design-system/src/components/button.css";
+@import "../../node_modules/@anclora/design-system/src/components/form-field.css";
+@import "../../node_modules/@anclora/design-system/src/components/alert.css";
+@import "../../node_modules/@anclora/design-system/src/components/status-badge.css";
+@import "../../node_modules/@anclora/design-system/src/components/loading.css";
+@import "../../node_modules/@anclora/design-system/src/components/progress.css";
+@import "../../node_modules/@anclora/design-system/src/components/processing.css";
+@import "../../node_modules/@anclora/design-system/src/components/modal.css";
+@import "../../node_modules/@anclora/design-system/src/patterns/shared-product-patterns.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";

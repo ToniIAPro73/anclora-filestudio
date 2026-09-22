@@ -26,17 +26,18 @@ export function JobProgressCard({ status, stage, progress, error, onCancel }: Jo
   const isActive = ["queued", "downloading", "processing", "verifying"].includes(status);
   const isCompleted = status === "completed";
   const isFailed = status === "failed";
+  const hasMeasuredProgress = isActive && Number.isFinite(progress) && progress > 0;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#1a1e25] p-5 space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="ac-processing-state rounded-2xl border border-white/10 bg-[#1a1e25] p-5 space-y-4" role="status" aria-live="polite">
+      <div className="ac-processing-state__header flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           {isActive && <Loader2 className="h-4 w-4 text-cyan-400 animate-spin motion-reduce:animate-none" aria-hidden="true" />}
           {isCompleted && <CheckCircle2 className="h-4 w-4 text-emerald-400" aria-hidden="true" />}
           {isFailed && <AlertTriangle className="h-4 w-4 text-red-400" aria-hidden="true" />}
           <div>
-            <p className="text-sm font-semibold text-white">{STATUS_LABELS[status] ?? status}</p>
-            <p className="text-xs text-white/40">{stage}</p>
+            <p className="ac-processing-state__title text-sm font-semibold text-white">{STATUS_LABELS[status] ?? status}</p>
+            <p className="ac-processing-state__summary text-xs text-white/40">{stage}</p>
           </div>
         </div>
         {isActive && onCancel && (
@@ -54,16 +55,13 @@ export function JobProgressCard({ status, stage, progress, error, onCancel }: Jo
 
       {/* Progress bar */}
       {isActive && (
-        <div role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label={`Progreso: ${progress}%`}>
-          <div className="flex justify-between text-[11px] text-white/30 mb-1.5">
+        <div className="ac-progress" data-indeterminate={!hasMeasuredProgress} role="progressbar" {...(hasMeasuredProgress ? { "aria-valuenow": Math.round(progress) } : {})} aria-valuemin={0} aria-valuemax={100} aria-label={hasMeasuredProgress ? `Progreso: ${Math.round(progress)}%` : "Procesando"}>
+          <div className="ac-progress__label flex justify-between text-[11px] text-white/30 mb-1.5">
             <span>Progreso</span>
-            <span>{progress > 0 ? `${Math.round(progress)}%` : "..."}</span>
+            <span>{hasMeasuredProgress ? `${Math.round(progress)}%` : "En curso"}</span>
           </div>
-          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-500 motion-reduce:transition-none"
-              style={{ width: `${Math.max(progress, 3)}%` }}
-            />
+          <div className="ac-progress__track h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div className="ac-progress__bar h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-500 motion-reduce:transition-none" style={hasMeasuredProgress ? { width: `${Math.min(100, Math.max(0, progress))}%` } : undefined} />
           </div>
         </div>
       )}
@@ -73,9 +71,10 @@ export function JobProgressCard({ status, stage, progress, error, onCancel }: Jo
         <div
           role="alert"
           aria-live="assertive"
-          className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400"
+          className="ac-alert"
+          data-tone="danger"
         >
-          {error}
+          <div className="ac-alert__content"><p className="ac-alert__summary">{error}</p></div>
         </div>
       )}
     </div>

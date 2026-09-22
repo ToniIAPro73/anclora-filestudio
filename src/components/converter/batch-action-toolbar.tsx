@@ -88,18 +88,18 @@ export function BatchActionToolbar({ jobs, onClearCompleted, onApplyPrefixSuffix
   const previewResult = `${prefix}${previewOriginal.replace(/\.[^/.]+$/, "")}${suffix}${previewOriginal.match(/\.[^/.]+$/)?.[0] ?? ""}`;
 
   return (
-    <details className="rounded-xl border border-white/10 bg-[#12161f] p-4 shadow-lg">
+    <details className="ac-pattern-bulk-action-bar rounded-xl border border-white/10 bg-[#12161f] p-4 shadow-lg">
       <summary className="cursor-pointer list-none text-sm font-bold text-stone-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300/60 [&::-webkit-details-marker]:hidden">
         Opciones de lote
       </summary>
-      <div className="mt-3 space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="ac-pattern-bulk-action-bar__body mt-3 space-y-3">
+      <div className="ac-pattern-bulk-action-bar__header flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
             <Archive className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-white">{jobs.length} archivos preparados</h4>
+            <h4 className="text-xs font-bold text-white" aria-live="polite">{jobs.length} archivos preparados</h4>
             <p className="text-[11px] text-stone-400">
               {completedJobs.length} de {jobs.length} conversiones completadas
             </p>
@@ -111,7 +111,7 @@ export function BatchActionToolbar({ jobs, onClearCompleted, onApplyPrefixSuffix
             size="sm"
             onClick={handleDownloadAllZip}
             disabled={isZipping || completedJobs.length === 0}
-            className="h-8 text-xs bg-teal-600 hover:bg-teal-500 text-stone-950 font-bold gap-1.5 shadow-md"
+            className="ac-button ac-button--primary ac-button--compact h-8 text-xs bg-teal-600 hover:bg-teal-500 text-stone-950 font-bold gap-1.5 shadow-md"
           >
             <Download className="h-3.5 w-3.5" />
             {isZipping ? "Generando ZIP..." : "Descargar todo (.zip)"}
@@ -121,7 +121,7 @@ export function BatchActionToolbar({ jobs, onClearCompleted, onApplyPrefixSuffix
             size="sm"
             variant="outline"
             onClick={() => setShowNamingOptions(!showNamingOptions)}
-            className="h-8 text-xs border-stone-700 text-stone-300 hover:bg-white/5 gap-1.5"
+            className="ac-button ac-button--secondary ac-button--compact h-8 text-xs border-stone-700 text-stone-300 hover:bg-white/5 gap-1.5"
           >
             <Edit3 className="h-3.5 w-3.5 text-teal-400" />
             Cambiar nombres
@@ -132,7 +132,7 @@ export function BatchActionToolbar({ jobs, onClearCompleted, onApplyPrefixSuffix
               size="sm"
               variant="ghost"
               onClick={onClearCompleted}
-              className="h-8 text-xs text-stone-400 hover:text-red-400 hover:bg-red-500/10 gap-1"
+              className="ac-button ac-button--destructive ac-button--compact h-8 text-xs text-stone-400 hover:text-red-400 hover:bg-red-500/10 gap-1"
             >
               <Trash2 className="h-3.5 w-3.5" />
               Limpiar

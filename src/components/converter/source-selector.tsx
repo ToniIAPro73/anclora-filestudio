@@ -262,8 +262,11 @@ export function SourceSelector({
         : "";
 
   return (
-    <div className="space-y-3 rounded-[22px] border border-white/10 bg-[#1a1e25] p-3 shadow-[0_24px_90px_rgba(0,0,0,0.34)] backdrop-blur">
-      <h3 className="text-sm font-black text-stone-100">Añade el archivo</h3>
+    <div className="ac-pattern-file-upload space-y-3 rounded-[22px] border border-white/10 bg-[#1a1e25] p-3 shadow-[0_24px_90px_rgba(0,0,0,0.34)] backdrop-blur">
+      <div className="ac-pattern-file-upload__header">
+        <h3 className="text-sm font-black text-stone-100">Añade el archivo</h3>
+        <p className="text-xs text-stone-400">Selecciona un archivo para analizarlo antes de procesarlo.</p>
+      </div>
       {canUseFile && canUseUrl && (
         <div className="grid grid-cols-2 gap-2 rounded-[14px] border border-white/10 bg-black/20 p-1.5">
           <button
@@ -333,16 +336,21 @@ export function SourceSelector({
       {/* File drop zone */}
       {canUseFile && tab === "file" && (
         <div>
-          <div
+          <input
+            ref={fileInputRef}
+            id="source-selector-file-input"
+            type="file"
+            className="sr-only"
+            accept={acceptAttr}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); e.target.value = ""; }}
+            aria-label="Seleccionar archivo local"
+          />
+          <label
+            htmlFor="source-selector-file-input"
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            role="button"
-            aria-label={`Arrastra un archivo o haz clic para seleccionar ${acceptedLabel}`}
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click(); }}
-            className={`relative cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-all focus:outline-none focus:ring-2 focus:ring-teal-300/50 motion-reduce:transition-none ${dragBorderClass} ${
+            className={`ac-pattern-file-upload__dropzone relative cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-all focus:outline-none focus:ring-2 focus:ring-teal-300/50 motion-reduce:transition-none ${dragBorderClass} ${
               isLoading ? "pointer-events-none opacity-50" : ""
             }`}
           >
@@ -369,15 +377,7 @@ export function SourceSelector({
                 </div>
               </div>
             )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              className="sr-only"
-              accept={acceptAttr}
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); e.target.value = ""; }}
-              aria-label="Seleccionar archivo local"
-            />
-          </div>
+          </label>
         </div>
       )}
 
@@ -386,10 +386,11 @@ export function SourceSelector({
         <div
           role="alert"
           aria-live="assertive"
-          className="flex items-start gap-2.5 rounded-xl bg-red-500/10 border border-red-500/20 p-3.5 text-red-400 text-sm"
+          className="ac-alert"
+          data-tone="danger"
         >
-          <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
-          <span>{error}</span>
+          <AlertTriangle className="ac-alert__icon mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          <div className="ac-alert__content"><p className="ac-alert__summary">{error}</p></div>
         </div>
       )}
     </div>

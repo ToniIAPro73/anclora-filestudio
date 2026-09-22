@@ -94,6 +94,7 @@
     "cleanup": "node scripts/cleanup-temp.mjs"
   },
   "dependencies": {
+    "@anclora/design-system": "github:ToniIAPro73/anclora-design-system#4be18bd1cc632ceefae258b0462500b65f6ab32b",
     "@base-ui/react": "^1.5.0",
     "better-sqlite3": "^12.10.1",
     "class-variance-authority": "^0.7.1",

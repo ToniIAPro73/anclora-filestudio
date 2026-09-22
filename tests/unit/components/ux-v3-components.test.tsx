@@ -287,7 +287,7 @@ describe("UX V3 components", () => {
       />
     );
 
-    expect(screen.getByRole("button", { name: /seleccionar DOCX/i })).toBeTruthy();
+    expect(screen.getByText("Elegir archivo DOCX").closest("label")).toBeTruthy();
     expect(screen.getByLabelText("Seleccionar archivo local").getAttribute("accept")).toBe(".docx");
   });
 });
