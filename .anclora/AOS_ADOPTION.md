@@ -77,6 +77,14 @@ Una decision local debe elevarse cuando:
 
 La decision pendiente [`../docs/governance/decision-expose-filestudio-as-product-infra.md`](../docs/governance/decision-expose-filestudio-as-product-infra.md) permanece pendiente. Esta Wave no la aprueba, rechaza ni modifica.
 
+## Adopción de Gobernanza QA Proporcional
+
+- PROPORTIONAL_QA_CONTRACT_ADOPTED=true
+- BATCHED_VALIDATION_CONTRACT_ADOPTED=true
+- QA_MODE_DEFAULT=AUTO
+- QA_OVERRIDE_MODEL_ADOPTED=true
+- WORKSPACE_QA_POLICY_AUTHORITY=ANCLORA_WORKSPACE_AGENT_POLICY.md
+
 ## Excepciones y desviaciones
 
 No existen excepciones AOS conocidas al momento de esta declaracion.
@@ -106,6 +114,13 @@ El upgrade debe:
 | Fecha | AOS Version | Cambio | Owner |
 | --- | --- | --- | --- |
 | 2026-08-09 | v0.2.0 | Declaracion inicial de adopcion AOS para FileStudio; AGENTS actualizado para arquitectura real e incompleta. | AOS Chief Architect |
+
+## Historial de adopción
+
+| Fecha | Versión | Cambio | Owner |
+| --- | --- | --- | --- |
+| 2026-09-16 | v0.2.0 | Declaración inicial de adopción AOS. | ToniIAPro73 |
+| 2026-09-25 | v2.0 | Adopción de política canónica de QA proporcional, cadencia de puertas por lotes (BATCHED) y modelo de overrides explícitos. | ToniIAPro73 |
 
 ## Documentos relacionados
 
