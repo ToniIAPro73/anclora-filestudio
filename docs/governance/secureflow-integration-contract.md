@@ -82,6 +82,21 @@ make this a live, importable contract (e.g. a shared `@anclora/secureflow-catalo
 consumed by both repos) is a new cross-repo architecture decision, not something this repository
 can introduce unilaterally.
 
+## Visual identity (CHG-0018, 2026-09-26)
+
+FileStudio's commercial classification changed to MicroSaaS/SecureFlow, but its logo/favicon
+assets initially stayed on the old `Internal` tier mark. Fixed in CHG-0018: FileStudio now uses
+the canonical **SaaS tier** logo master (`anclora-design-system/assets/logos/tiers/anclora-saas-tier.png`),
+the same lockup already used by PurgeDoc, TableExtract, and CleanSheet (same geometry, tier-level
+color treatment only). Regenerated in this repo: `public/brand/anclora-filestudio.{png,webp}`,
+`public/favicon.ico`, `public/favicon-32.png`, `public/favicon-512.png`, `public/icon.png`,
+`public/apple-touch-icon.png`, `src/app/icon.png`, `src/app/apple-icon.png`. Filenames are
+unchanged (per the tier-logo system's naming rule); `src/lib/branding/icon-metadata.ts` hashes
+file content for cache-busting, so no code change was needed. Previous (Internal-tier) assets are
+kept, not deleted, under `public/brand/legacy/*-internal-tier-2026-09-26.*`. FileStudio's own UI
+accent color (`#14b8a6`, `src/lib/filestudio-brand.ts`) is unchanged — the tier logo palette and
+each app's own UI accent are independent per `anclora-design-system/assets/logos/tiers/README.md`.
+
 ## Pending items / follow-ups for `anclora-secureflow`
 
 1. Extend `Product` in `src/data/products.ts` with `tier`, `capability`, `secureFlow`,
