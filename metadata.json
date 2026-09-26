@@ -1,6 +1,6 @@
 {
   "name": "Anclora FileStudio",
-  "description": "Universal multimedia file converter and processing workspace",
+  "description": "Universal multimedia file converter and processing workspace — the Prepare step of the Anclora SecureFlow product family",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

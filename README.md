@@ -15,7 +15,7 @@ FileStudio is a comprehensive file format conversion engine supporting images, P
 <br />
 
 ![Anclora](https://img.shields.io/badge/Anclora-ecosystem-111827)
-![Categoría](https://img.shields.io/badge/categoría-Interna-4FB3BF)
+![Categoría](https://img.shields.io/badge/categoría-MicroSaaS%20%C2%B7%20SecureFlow%20Prepare-4FB3BF)
 ![Idiomas](https://img.shields.io/badge/idiomas-ES%20%7C%20EN-047857)
 
 </div>
@@ -34,10 +34,30 @@ FileStudio centralizes file format conversion workflows for the Anclora ecosyste
 
 | Campo | Valor |
 |---|---|
-| Categoría | Interna |
-| Acento de marca | `#4FB3BF` |
+| Categoría | MicroSaaS (familia comercial Anclora SecureFlow) |
+| Acento de marca | `#14b8a6` (teal, `src/lib/filestudio-brand.ts`) |
 | Tipografía | Inter |
 | Repositorio canónico | `anclora-filestudio` |
+
+## Anclora SecureFlow
+
+FileStudio es el primer producto — capability **Prepare** — del tier SaaS comercial
+**Anclora SecureFlow**, junto a Anclora PurgeDoc (Protect), Anclora TableExtract (Extract) y
+Anclora CleanSheet (Automate):
+
+> FileStudio prepara, convierte y organiza tus archivos para que el resto del flujo SecureFlow
+> pueda trabajar con ellos.
+
+- Se vende de forma independiente o incluido en packs de 2, 3 o 4 aplicaciones.
+- El catálogo comercial y la whitelist de acceso viven en el repositorio `anclora-secureflow`
+  (`src/data/products.ts`, `src/data/plans.ts`, `src/services/accessRequestService.ts`), no en
+  este repositorio.
+- El contrato de integración local (identificador, tier, capability, flags) se documenta en
+  [docs/governance/secureflow-integration-contract.md](docs/governance/secureflow-integration-contract.md)
+  y en `src/lib/filestudio-brand.ts` (campo `secureFlow`).
+- Gobernanza del ecosistema: `anclora-vault/00-governance/registry/ecosystem-repos.json` y
+  `anclora-group/contracts/core/ANCLORA_ECOSYSTEM_CONTRACT_GROUPS.md` clasifican FileStudio como
+  `MicroSaaS` (antes `Interna`), igual que el resto de la familia SecureFlow.
 
 ## Funcionalidades principales
 

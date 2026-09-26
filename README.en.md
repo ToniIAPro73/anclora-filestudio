@@ -15,7 +15,7 @@ FileStudio is a comprehensive file format conversion engine supporting images, P
 <br />
 
 ![Anclora](https://img.shields.io/badge/Anclora-ecosystem-111827)
-![Category](https://img.shields.io/badge/category-Internal-4FB3BF)
+![Category](https://img.shields.io/badge/category-MicroSaaS%20%C2%B7%20SecureFlow%20Prepare-4FB3BF)
 ![Languages](https://img.shields.io/badge/languages-ES%20%7C%20EN-047857)
 
 </div>
@@ -33,10 +33,27 @@ FileStudio centralizes file format conversion workflows for the Anclora ecosyste
 
 | Field | Value |
 |---|---|
-| Category | Internal |
-| Brand accent | `#4FB3BF` |
+| Category | MicroSaaS (Anclora SecureFlow commercial family) |
+| Brand accent | `#14b8a6` (teal, `src/lib/filestudio-brand.ts`) |
 | Typography | Inter |
 | Canonical repository | `anclora-filestudio` |
+
+## Anclora SecureFlow
+
+FileStudio is the first product — **Prepare** capability — of the commercial SaaS tier
+**Anclora SecureFlow**, alongside Anclora PurgeDoc (Protect), Anclora TableExtract (Extract) and
+Anclora CleanSheet (Automate):
+
+> FileStudio prepares, converts, and organizes your files so the rest of the SecureFlow workflow
+> can work with them.
+
+- Sold standalone or bundled in packs of 2, 3, or 4 applications.
+- The commercial catalog and access whitelist live in the `anclora-secureflow` repository
+  (`src/data/products.ts`, `src/data/plans.ts`, `src/services/accessRequestService.ts`), not in
+  this repository.
+- The local integration contract (id, tier, capability, flags) is documented in
+  [docs/governance/secureflow-integration-contract.md](docs/governance/secureflow-integration-contract.md)
+  and in `src/lib/filestudio-brand.ts` (`secureFlow` field).
 
 ## Key features
 

@@ -85,6 +85,11 @@ Use the AOS model:
 
 The pending decision [docs/governance/decision-expose-filestudio-as-product-infra.md](docs/governance/decision-expose-filestudio-as-product-infra.md) is not resolved by this document.
 
+FileStudio's commercial classification (MicroSaaS tier, Anclora SecureFlow family, capability
+Prepare) is documented in
+[docs/governance/secureflow-integration-contract.md](docs/governance/secureflow-integration-contract.md).
+This is a separate, narrower decision from the pending product-infra exposure decision above.
+
 ## QA Readiness
 
 Wave 1 prepares QA infrastructure; it does not certify the full functional matrix as passing.

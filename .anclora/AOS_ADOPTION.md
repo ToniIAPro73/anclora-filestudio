@@ -131,6 +131,7 @@ El upgrade debe:
 | 2026-09-16 | v0.2.0 | Declaración inicial de adopción AOS. | ToniIAPro73 |
 | 2026-09-25 | v2.0 | Adopción de política canónica de QA proporcional, cadencia de puertas por lotes (BATCHED) y modelo de overrides explícitos. | ToniIAPro73 |
 | 2026-09-25 | v2.1 | Adopción de economía adaptativa (CAVEMAN_MODE=AUTO) y endurecimiento FAST QA (sin suites completas por defecto, mínimo suficiente, detención ante evidencia suficiente). | ToniIAPro73 |
+| 2026-09-26 | v2.1 | Reclasificación comercial PD: FileStudio pasa de tier `Interna` a `MicroSaaS`, como primer producto (capability Prepare) de la familia comercial Anclora SecureFlow. Decisión de Toni, documentada en `docs/governance/secureflow-integration-contract.md`; no resuelve la decisión pendiente de exposición como product-infra. | ToniIAPro73 |
 
 ## Documentos relacionados
 
