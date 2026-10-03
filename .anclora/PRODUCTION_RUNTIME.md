@@ -119,4 +119,4 @@ For machine services: Authenticate via service tokens or worker keys declared in
 ## 11. Git Branch & Operational Policy
 
 DEFAULT_BRANCH=development
-PROMOTION_POLICY=All work commits to development branch. Never push directly to main or production.
+PROMOTION_POLICY=Default development-only operation; no automatic promotion. Explicit current-task user authorization permits only the repository-supported governed promotion path, subject to all gates.
