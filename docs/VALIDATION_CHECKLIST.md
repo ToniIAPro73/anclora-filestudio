@@ -1,22 +1,18 @@
-# Checklist de validación — fix de ci-security (pnpm audit --prod)
+# Checklist de validación — invariantes de promoción global
 
-**Alcance:** el job `ci-security` fallaba con 10 vulnerabilidades en dependencias de producción. Se actualizan `next` 16.3.4 → 16.3.8, `sharp` 0.35.4 → 0.35.5 (raíz, `apps/worker`, `apps/local-agent` y override), `smol-toml` → ^1.9.0 (lock 1.9.1) y se añade el override `source-map-js` ^1.2.2.
+**Alcance:** propagar con `anclora-mods/scripts/adopt-repo.mjs` las invariantes nuevas de la política global de promoción a `.anclora/PRODUCTION_RUNTIME.md`: espera solo a que termine el workflow de cada salto, verificación de cada rama a cargo de Toni, alcance multi-repo y resumen único al final. Solo se añaden 6 líneas de contrato; no cambia código ni comportamiento de la aplicación.
 
 ## Comprobaciones ejecutadas
 
-| Comprobación | Comando | Resultado |
-| --- | --- | --- |
-| Auditoría de producción | `pnpm audit --prod` | PASS — sin vulnerabilidades conocidas |
-| Licencias | `pnpm run audit:licenses` | PASS — 0 errores, 3 avisos |
-| Typecheck | `npx tsc --noEmit` | PASS |
-
-## Verificación de GitHub
-
-Se comprobará el resultado de CI tras el push a `development`.
+| Comprobación | Resultado |
+| --- | --- |
+| `node scripts/adopt-repo.mjs apply --repo <repo>` | APPLIED |
+| Diff limitado a `.anclora/PRODUCTION_RUNTIME.md` | 6 inserciones, sin borrados |
+| Tests del adopter (`adopt-repo.test.mjs`) | PASS — 38 tests |
 
 ## Verificación visual
 
-No aplica: solo actualización de dependencias sin cambios de interfaz.
+No aplica: solo contrato de documentación.
 
 ## Promoción
 
