@@ -283,9 +283,11 @@ jobs:
           else
             VERSION="$(node -p "require('./package.json').version")"
           fi
-          echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
-          echo "BUILD_COMMIT=$GITHUB_SHA" >> "$GITHUB_ENV"
-          echo "BUILD_COMMIT_SHORT=${GITHUB_SHA:0:7}" >> "$GITHUB_ENV"
+          {
+            echo "APP_VERSION=$VERSION"
+            echo "BUILD_COMMIT=$GITHUB_SHA"
+            echo "BUILD_COMMIT_SHORT=${GITHUB_SHA:0:7}"
+          } >> "$GITHUB_ENV"
 
       - name: Compile installer (Inno Setup)
         shell: pwsh
@@ -485,9 +487,11 @@ jobs:
           PUBLISH="${{ github.event.inputs.publish }}"
           if [[ "$IS_TAG" == "true" ]]; then PUBLISH=true; fi
           if [[ -z "$PUBLISH" ]]; then PUBLISH=false; fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "publish=$PUBLISH" >> "$GITHUB_OUTPUT"
+          {
+            echo "version=$VERSION"
+            echo "tag=$TAG"
+            echo "publish=$PUBLISH"
+          } >> "$GITHUB_OUTPUT"
           echo "Version: $VERSION | Tag: ${TAG:-<none>} | Publish: $PUBLISH"
 
       - name: Verify cross-artifact provenance (by content, not file existence)

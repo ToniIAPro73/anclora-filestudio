@@ -70,7 +70,7 @@ jobs:
 
       - name: Verify source SHA passed its upstream gate
         run: |
-          STATUS=$(gh api repos/${{ github.repository }}/commits/$source/status --jq .state)
+          STATUS=$(gh api "repos/${{ github.repository }}/commits/${source}/status" --jq .state)
           echo "Combined status for $source: $STATUS"
           if [ "$STATUS" = "failure" ] || [ "$STATUS" = "error" ]; then
             echo "::error::Source SHA has failing checks. Refusing to promote red code."
