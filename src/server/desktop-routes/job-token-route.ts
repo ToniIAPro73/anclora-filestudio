@@ -3,6 +3,7 @@ import { getJob } from "@/lib/infrastructure/db/job-repository";
 import { getDb } from "@/lib/infrastructure/db/database";
 import { ERROR_CODES, ERROR_MESSAGES } from "@/lib/errors";
 import crypto from "crypto";
+import { createRemoteDownloadToken, remoteYoutubeJob } from "@/lib/media/remote-youtube-client";
 
 /**
  * GET /api/jobs/:jobId/token
@@ -16,6 +17,15 @@ export async function GET(
 ) {
   try {
     const { jobId } = await params;
+    if (jobId.startsWith("yt_")) {
+      const response = await remoteYoutubeJob(jobId);
+      const remoteJob = await response.json().catch(() => null);
+      if (!response.ok || remoteJob?.status !== "completed") {
+        return NextResponse.json({ error: "El archivo no está disponible.", code: "JOB_NOT_COMPLETED" }, { status: response.status === 404 ? 404 : 409 });
+      }
+      const token = createRemoteDownloadToken(jobId);
+      return NextResponse.json({ downloadUrl: `/api/download/${jobId}?token=${encodeURIComponent(token)}`, expiresInSeconds: 900 });
+    }
     const job = getJob(jobId);
 
     if (!job || job.status !== "completed") {

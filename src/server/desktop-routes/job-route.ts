@@ -4,6 +4,7 @@ import { ERROR_CODES, ERROR_MESSAGES } from "@/lib/errors";
 import { updateJob } from "@/lib/infrastructure/db/job-repository";
 import { publicExecutionSummary } from "@/lib/jobs/execution-summary";
 import { cancelJobProcess } from "@/lib/jobs/job-cancellation";
+import { remoteYoutubeJob } from "@/lib/media/remote-youtube-client";
 
 export async function GET(
   _req: NextRequest,
@@ -11,6 +12,10 @@ export async function GET(
 ) {
   try {
     const { jobId } = await params;
+    if (jobId.startsWith("yt_")) {
+      const response = await remoteYoutubeJob(jobId);
+      return new NextResponse(response.body, { status: response.status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
+    }
     const job = jobManager.getJob(jobId);
 
     if (!job) {
@@ -67,6 +72,10 @@ export async function DELETE(
 ) {
   try {
     const { jobId } = await params;
+    if (jobId.startsWith("yt_")) {
+      const response = await remoteYoutubeJob(jobId, "DELETE");
+      return new NextResponse(response.body, { status: response.status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
+    }
     const job = jobManager.getJob(jobId);
 
     if (!job) {

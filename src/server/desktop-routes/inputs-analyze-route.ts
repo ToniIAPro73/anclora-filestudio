@@ -16,6 +16,7 @@ import type { FileCategory } from "@/lib/domain/descriptors";
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
+import { remoteYoutubeApi, remoteYoutubeEnabled } from "@/lib/media/remote-youtube-client";
 
 const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024 * 1024; // 2 GB
 
@@ -68,7 +69,19 @@ export async function POST(req: NextRequest) {
     // Try YouTube first
     const normalizedYtUrl = normalizeYoutubeUrl(trimmedUrl);
     if (normalizedYtUrl) {
-      const meta = await getVideoMetadata(normalizedYtUrl);
+      let meta: Awaited<ReturnType<typeof getVideoMetadata>>;
+      if (remoteYoutubeEnabled()) {
+        const remote = await remoteYoutubeApi("v1/youtube/metadata", {
+          method: "POST", body: JSON.stringify({ url: normalizedYtUrl }),
+        });
+        const remoteData = await remote.json().catch(() => null);
+        if (!remote.ok || !remoteData) {
+          return NextResponse.json({ error: remoteData?.error ?? "No se pudo analizar el vídeo desde el servicio remoto.", code: "YOUTUBE_REMOTE_UNAVAILABLE" }, { status: remote.status || 502 });
+        }
+        meta = remoteData as typeof meta;
+      } else {
+        meta = await getVideoMetadata(normalizedYtUrl);
+      }
 
       const descriptor: MediaDescriptor = {
         container: null,

@@ -38,6 +38,7 @@ import type { JobRow } from "@/lib/infrastructure/db/job-repository";
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
+import { remoteYoutubeApi, remoteYoutubeEnabled } from "@/lib/media/remote-youtube-client";
 
 // ── Media formats (legacy) ────────────────────────────────────────────────────
 
@@ -508,10 +509,10 @@ function routeToMultistepSpec(route: ReturnType<typeof rankRoutes>[number]): Mul
 
 // ── Legacy media job handler ──────────────────────────────────────────────────
 
-function handleLegacyMediaJob(
+async function handleLegacyMediaJob(
   data: z.infer<typeof JobRequestSchema>,
   clientIp: string,
-): NextResponse {
+): Promise<NextResponse> {
   const format = data.format;
   if (!format) {
     return NextResponse.json(
@@ -567,6 +568,20 @@ function handleLegacyMediaJob(
       );
     }
     inputReference = remoteUrl;
+
+    if (normalizedUrl && remoteYoutubeEnabled() && MEDIA_FORMATS.includes(format as (typeof MEDIA_FORMATS)[number]) && ["mp3", "mp4"].includes(format)) {
+      const requestedQuality = data.qualitySelection?.resolutionLimit;
+      const quality = requestedQuality && requestedQuality !== "max" ? `${requestedQuality}p` : "best";
+      const response = await remoteYoutubeApi("v1/youtube/jobs", {
+        method: "POST",
+        body: JSON.stringify({ url: normalizedUrl, format, quality, rightsConfirmed: data.rightsConfirmed }),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result) {
+        return NextResponse.json({ error: result?.error ?? "El servicio remoto no pudo iniciar el trabajo.", code: result?.code ?? "YOUTUBE_REMOTE_UNAVAILABLE" }, { status: response.status || 502 });
+      }
+      return NextResponse.json(result, { status: response.status });
+    }
 
     // Fetch title asynchronously (non-blocking for job creation)
     getVideoMetadata(remoteUrl)

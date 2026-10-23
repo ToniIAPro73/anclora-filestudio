@@ -7,6 +7,7 @@ import { getDb } from "@/lib/infrastructure/db/database";
 import crypto from "crypto";
 import path from "path";
 import fs from "fs";
+import { remoteYoutubeFile, verifyRemoteDownloadToken } from "@/lib/media/remote-youtube-client";
 
 export async function GET(
   req: NextRequest,
@@ -17,6 +18,18 @@ export async function GET(
     const { searchParams } = new URL(req.url);
     const token = searchParams.get("token");
     const singleUse = searchParams.get("singleUse") === "true";
+
+    if (jobId.startsWith("yt_")) {
+      if (!verifyRemoteDownloadToken(jobId, token)) return NextResponse.json({ error: ERROR_MESSAGES.DOWNLOAD_TOKEN_INVALID, code: ERROR_CODES.DOWNLOAD_TOKEN_INVALID }, { status: 403 });
+      const remote = await remoteYoutubeFile(jobId);
+      if (!remote.ok || !remote.body) return NextResponse.json({ error: "El archivo remoto no está disponible.", code: "ARTIFACT_EXPIRED" }, { status: remote.status || 502 });
+      const headers = new Headers({ "cache-control": "no-store", "x-content-type-options": "nosniff" });
+      for (const name of ["content-type", "content-length", "content-disposition"]) {
+        const value = remote.headers.get(name);
+        if (value) headers.set(name, value);
+      }
+      return new NextResponse(remote.body, { status: 200, headers });
+    }
 
     const job = jobManager.getJob(jobId);
 

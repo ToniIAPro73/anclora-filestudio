@@ -66,11 +66,17 @@ services:
     restart: unless-stopped
     environment:
       ANCLORA_WORKER_REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      ANCLORA_WORKER_DATABASE_URL: postgresql://filestudio:${POSTGRES_PASSWORD}@postgres:5432/filestudio
+      ANCLORA_WORKER_API_TOKEN: ${YOUTUBE_WORKER_TOKEN:?YOUTUBE_WORKER_TOKEN is required}
+      ANCLORA_WORKER_API_PORT: 8081
+      ANCLORA_WORKER_ARTIFACT_ROOT: /data/artifacts/youtube
       ANCLORA_WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-4}
       ANCLORA_WORKER_HEARTBEAT_INTERVAL_MS: 30000
     volumes:
       - filestudio_data:/data
     depends_on:
+      postgres:
+        condition: service_healthy
       redis:
         condition: service_healthy
     networks:
@@ -82,7 +88,7 @@ services:
     tmpfs:
       - /tmp:size=512m
     healthcheck:
-      test: ["CMD", "node", "-e", "process.exit(0)"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8081/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
       timeout: 5s
       retries: 3

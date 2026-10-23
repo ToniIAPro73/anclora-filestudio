@@ -43,6 +43,21 @@
 
 Puertos externos: solo 80 y 443 vía Caddy.
 
+For the authorized Desktop YouTube flow, the worker also listens on internal port `8081`.
+Caddy exposes only `/worker/*` over HTTPS and strips that prefix before forwarding. Every
+control request except `/health` requires the `YOUTUBE_WORKER_TOKEN` bearer secret. Do not
+publish port 8081 directly or reuse the token used by Desktop to call the Vercel API.
+PostgreSQL stores this feature's job state; Redis carries BullMQ jobs. Temporary MP3/MP4
+artifacts are removed 24 hours after a terminal job state.
+
+The Desktop local environment points `ANCLORA_FILESTUDIO_REMOTE_API_URL` to the deployed
+Vercel route ending in `/api/youtube-service` and keeps its matching
+`ANCLORA_FILESTUDIO_REMOTE_API_TOKEN` server-side. For direct artifact streaming, it also
+needs `ANCLORA_FILESTUDIO_YOUTUBE_WORKER_URL` ending in `/worker` and the worker token.
+Vercel uses separate `YOUTUBE_REMOTE_API_TOKEN`, `YOUTUBE_WORKER_URL`, and
+`YOUTUBE_WORKER_TOKEN` values. Generate distinct random values; never commit them or
+prefix them with `NEXT_PUBLIC_`.
+
 ### Opcionales (activar con profile)
 
 | Servicio | Profile | Propósito |
@@ -88,6 +103,12 @@ ANCLORA_FILESTUDIO_UPLOAD_MAX_BYTES=524288000
 ANCLORA_FILESTUDIO_JOB_TTL_MINUTES=60
 ANCLORA_FILESTUDIO_ARTIFACT_TTL_MINUTES=60
 ANCLORA_FILESTUDIO_MAX_CONCURRENT_JOBS=10
+
+# Remote YouTube worker control surface
+ANCLORA_WORKER_DATABASE_URL=postgresql://filestudio:...@postgres:5432/filestudio
+ANCLORA_WORKER_API_TOKEN=<separate-random-token-at-least-32-characters>
+ANCLORA_WORKER_API_PORT=8081
+ANCLORA_WORKER_ARTIFACT_ROOT=/data/artifacts/youtube
 
 # Logging
 ANCLORA_FILESTUDIO_LOG_LEVEL=info

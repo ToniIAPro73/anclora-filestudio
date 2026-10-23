@@ -30,8 +30,11 @@ RUN pnpm --filter @anclora/filestudio-worker build
 # Stage 3: runtime
 FROM node:22.13.1-alpine3.21 AS runtime
 
-# Install ffmpeg and ffprobe for media conversion jobs
-RUN apk add --no-cache ffmpeg
+# Install media tooling used by remote YouTube jobs (without browser cookies).
+ARG YTDLP_VERSION=2026.7.4
+RUN apk add --no-cache ffmpeg python3 py3-pip \
+    && pip3 install --no-cache-dir --break-system-packages "yt-dlp==${YTDLP_VERSION}" \
+    && yt-dlp --version
 
 WORKDIR /app
 

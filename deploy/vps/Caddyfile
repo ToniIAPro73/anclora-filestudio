@@ -8,8 +8,9 @@
     # TLS via Let's Encrypt (automatic)
     tls {$CADDY_ACME_EMAIL}
 
-    # Only allow known paths — block everything else
+    # Only allow the service API and authenticated worker control routes.
     @api path /api/v1/*
+    @worker path /worker/*
     @health path /api/v1/health /api/v1/ready
 
     # Rate limiting at edge (Caddy layer)
@@ -20,6 +21,17 @@
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
             # No redirects — preserve for SSRF protection
+            transport http {
+                dial_timeout 10s
+                response_header_timeout 60s
+            }
+        }
+    }
+
+    handle_path @worker {
+        reverse_proxy worker:8081 {
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
             transport http {
                 dial_timeout 10s
                 response_header_timeout 60s
