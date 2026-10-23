@@ -1,29 +1,30 @@
-# Checklist de validación — arquitectura YouTube remota
+# Checklist de validación — cambios de FileStudio
 
-**Repositorio:** anclora-filestudio
-**Cambio incluido:** actualización de `.anclora/PRODUCTION_RUNTIME.md` para registrar la arquitectura autorizada de conversión remota de YouTube desde Desktop/local.
-**Rama:** `development`
-**Autorización de Toni:** autorizó expresamente esta actualización y el commit/push.
+**Repositorio:** anclora-filestudio  
+**Rama:** `development`  
+**Commits incluidos:** `3abe91f` (worker remoto YouTube), `c5a5537` (optimización CI)  
+**Autorización de Toni:** solicitó expresamente el push a `development`.
 
 ## Alcance
 
-- Se documentan el flujo Desktop → API privada de Vercel → worker HTTPS en VPS, procesamiento con yt-dlp/FFmpeg y cola BullMQ/Redis.
-- Se documentan el almacenamiento dedicado de estado en PostgreSQL, artefactos temporales en volumen privado y streaming directo VPS → Desktop.
-- Se registran límites, variables de entorno necesarias y controles de cookies y secretos.
-- El contrato indica que el código está en preparación local y que infraestructura, secretos y despliegue aún no están configurados.
-- Este commit contiene solo el contrato y este checklist; no incluye los demás cambios locales del árbol de trabajo.
+- Conversión YouTube Desktop/local a través de la API privada de Vercel y el worker HTTPS protegido del VPS.
+- Procesamiento con yt-dlp/FFmpeg, BullMQ/Redis, estado en PostgreSQL y artefactos temporales en el volumen privado.
+- Streaming de los artefactos directamente desde el VPS al servidor local de Desktop.
+- No se pasan cookies del navegador a yt-dlp ni se incluyen credenciales reales en el repositorio.
+- CI clasifica cambios documentales para omitir trabajos de código; divide validaciones core e integración y cachea el toolchain de integración.
+- No se modificaron recursos VPS, variables protegidas, DNS, bases de datos ni datos de producción.
 
 ## Comprobaciones
 
 | Comprobación | Resultado |
 | --- | --- |
-| Revisión del contrato existente y de los límites de arquitectura indicados por Toni | PASS |
 | `git diff --check` | PASS |
-| Tests, lint y build | NOT_RUN — cambio documental; no solicitados |
-| Cambios en Vercel, VPS, base de datos, DNS o datos de producción | Ninguno |
+| Estado de `development` frente a `origin/development` antes del push | 2 commits ahead, 0 behind; árbol limpio |
+| Tests, lint y build en esta sesión | NOT_RUN |
+| Revisión de patrones de secretos en los nuevos archivos de servicio | PASS; no se encontraron valores con formato de credencial |
 
 ## Seguimiento
 
-- [x] Autorizado por Toni para commit y push a `development`.
-- [ ] Revisar el contrato publicado en `development`.
-- [ ] La configuración y el rollout de infraestructura requieren su etapa y validación separadas.
+- [x] Toni autorizó el push a `origin/development`.
+- [ ] Revisar el Preview resultante.
+- [ ] La configuración de secretos y el rollout de infraestructura quedan para su etapa autorizada separada.
