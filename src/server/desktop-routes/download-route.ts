@@ -21,8 +21,11 @@ export async function GET(
 
     if (jobId.startsWith("yt_")) {
       if (!verifyRemoteDownloadToken(jobId, token)) return NextResponse.json({ error: ERROR_MESSAGES.DOWNLOAD_TOKEN_INVALID, code: ERROR_CODES.DOWNLOAD_TOKEN_INVALID }, { status: 403 });
-      const remote = await remoteYoutubeFile(jobId);
-      if (!remote.ok || !remote.body) return NextResponse.json({ error: "El archivo remoto no está disponible.", code: "ARTIFACT_EXPIRED" }, { status: remote.status || 502 });
+      const remote = await remoteYoutubeFile(jobId, req.signal);
+      if (!remote.ok || !remote.body) {
+        const detail = await remote.json().catch(() => null) as { error?: string; code?: string } | null;
+        return NextResponse.json({ error: detail?.error ?? "El archivo remoto no está disponible.", code: detail?.code ?? "ARTIFACT_EXPIRED" }, { status: remote.status || 502 });
+      }
       const headers = new Headers({ "cache-control": "no-store", "x-content-type-options": "nosniff" });
       for (const name of ["content-type", "content-length", "content-disposition"]) {
         const value = remote.headers.get(name);

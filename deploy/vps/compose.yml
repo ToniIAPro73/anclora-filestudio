@@ -45,8 +45,11 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    # `public` gives yt-dlp outbound access to YouTube; no ports are published for the worker.
+    # Postgres/Redis stay reachable only through `internal`.
     networks:
       - internal
+      - public
     security_opt:
       - no-new-privileges:true
     user: "1001:1001"
@@ -79,8 +82,11 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    # `public` gives yt-dlp outbound access to YouTube; no ports are published for the worker.
+    # Postgres/Redis stay reachable only through `internal`.
     networks:
       - internal
+      - public
     security_opt:
       - no-new-privileges:true
     user: "1001:1001"

@@ -58,6 +58,46 @@ Vercel uses separate `YOUTUBE_REMOTE_API_TOKEN`, `YOUTUBE_WORKER_URL`, and
 `YOUTUBE_WORKER_TOKEN` values. Generate distinct random values; never commit them or
 prefix them with `NEXT_PUBLIC_`.
 
+### Activación del flujo YouTube remoto (pendiente, no desplegado)
+
+Estado: el código está listo; la infraestructura **no** está configurada. Pasos, en orden:
+
+1. En el VPS, generar tres secretos distintos (≥32 caracteres, p. ej. `openssl rand -hex 32`):
+   `YOUTUBE_WORKER_TOKEN` (VPS y Vercel), `YOUTUBE_REMOTE_API_TOKEN` (Vercel y Desktop),
+   y las contraseñas `POSTGRES_PASSWORD` / `REDIS_PASSWORD`. Guardarlos en el `.env` del VPS
+   (modo `0600`) y en las variables protegidas de Vercel; nunca en el repositorio.
+2. `docker compose build worker && docker compose up -d postgres redis worker reverse-proxy`.
+   El worker crea la tabla `youtube_jobs` de forma idempotente al arrancar.
+3. Comprobar `curl https://<dominio-vps>/worker/health` → `{"ok":true}`; cualquier otra ruta
+   sin `Authorization: Bearer` debe devolver 401.
+4. En Vercel (variables solo de servidor): `YOUTUBE_REMOTE_API_TOKEN`, `YOUTUBE_WORKER_URL`
+   (`https://<dominio-vps>/worker`), `YOUTUBE_WORKER_TOKEN`. Redesplegar el proyecto.
+5. En el entorno del servidor local de Desktop: `ANCLORA_FILESTUDIO_REMOTE_API_URL`
+   (`https://<dominio-vercel>/api/youtube-service`), `ANCLORA_FILESTUDIO_REMOTE_API_TOKEN`,
+   `ANCLORA_FILESTUDIO_YOUTUBE_WORKER_URL` (`https://<dominio-vps>/worker`),
+   `ANCLORA_FILESTUDIO_YOUTUBE_WORKER_TOKEN`. Sin las dos primeras, Desktop usa el camino
+   local anterior (con su límite de 2 h).
+6. QA end-to-end con un recurso de prueba autorizado (nunca con la cuenta personal de Toni).
+
+Límites efectivos: la ruta de Vercel solo transporta JSON pequeño (el límite de cuerpo de
+Vercel Functions es 4,5 MB; `maxDuration` de la ruta = 120 s, el proxy aborta a 110 s) y
+Caddy espera hasta 100 s por respuesta; los metadatos de yt-dlp se limitan a 75 s. Los
+MP3/MP4 nunca pasan por Vercel: Desktop los descarga del VPS. Por trabajo: máximo 12 h,
+archivo ≤ 4 GiB (`--max-filesize`), 20 trabajos activos como máximo en el servicio y
+artefactos eliminados 24 h después del estado terminal.
+
+El worker usa un `HOME` de solo lectura (`read_only: true`), por eso yt-dlp se ejecuta con
+`--no-cache-dir`. El token del worker también está en Desktop (descarga directa), así que este
+esquema de token compartido solo vale para instalaciones controladas.
+
+#### Actualizar yt-dlp
+
+La versión está fijada en `deploy/vps/Dockerfile.worker` (`ARG YTDLP_VERSION`) y debe
+coincidir con `scripts/toolchain.lock.json` (hoy 2026.07.04). Para actualizar: cambiar ambos
+valores en el mismo cambio, `docker compose build --no-cache worker`, `docker compose up -d
+worker` y repetir la QA con un recurso autorizado. Las actualizaciones de yt-dlp son la vía
+habitual cuando YouTube cambia su extracción, pero no garantizan acceso anónimo.
+
 ### Opcionales (activar con profile)
 
 | Servicio | Profile | Propósito |
@@ -193,8 +233,9 @@ networks:
     internal: true
 ```
 
-Workers sin acceso a red pública — solo interna.
-PostgreSQL y Redis no accesibles desde outside.
+PostgreSQL y Redis solo son accesibles desde `internal` (sin salida a Internet).
+Excepción del flujo YouTube: el `worker` también se une a `public` para que yt-dlp tenga
+salida a YouTube. No publica puertos; el 8081 solo es alcanzable por Caddy en `internal`.
 
 ## Systemd (opcional para autostart)
 

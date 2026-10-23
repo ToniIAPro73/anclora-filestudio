@@ -167,7 +167,7 @@ PROMOTION_POLICY=Default development-only operation; no automatic promotion. Exp
 
 YOUTUBE_REMOTE_CONVERSION_STATUS=AUTHORIZED_ARCHITECTURE_NOT_DEPLOYED
 YOUTUBE_REMOTE_CONVERSION_SCOPE=DESKTOP_LOCAL_ONLY
-YOUTUBE_REMOTE_CONVERSION_IMPLEMENTATION_STATUS=IN_PROGRESS_LOCAL
+YOUTUBE_REMOTE_CONVERSION_IMPLEMENTATION_STATUS=IMPLEMENTED_LOCAL_PENDING_VALIDATION
 YOUTUBE_REMOTE_CONVERSION_INFRASTRUCTURE_STATUS=NOT_CONFIGURED
 YOUTUBE_REMOTE_CONVERSION_OUTPUTS=MP3,MP4
 YOUTUBE_REMOTE_CONVERSION_MAX_JOB_DURATION_HOURS=12
@@ -177,6 +177,11 @@ YOUTUBE_REMOTE_COOKIE_POLICY=ANONYMOUS_NO_USER_COOKIES
 YOUTUBE_REMOTE_DATABASE_PROVIDER=PostgreSQL
 YOUTUBE_REMOTE_DATABASE_SCOPE=DEDICATED_REMOTE_SERVICE
 YOUTUBE_REMOTE_QUEUE=BullMQ/Redis
+
+Currently deployed runtime: the Vercel Web deployment described in sections 2-9 (no database,
+no worker, no YouTube conversion). Everything below is the authorized target architecture,
+which is not deployed or configured. Until the environment variables below exist, Desktop
+keeps using its local YouTube path.
 
 This approved architecture applies only to YouTube URL metadata and conversion requests
 originating in FileStudio Desktop/local. It does not enable or expose YouTube conversion
@@ -189,6 +194,9 @@ worker runs `yt-dlp` and FFmpeg, queues jobs through BullMQ/Redis, stores job st
 dedicated PostgreSQL database, and writes temporary artifacts to its private volume.
 PostgreSQL and Redis are dedicated to this remote service; they do not replace or migrate
 the local SQLite database.
+
+Vercel's route carries only JSON metadata/state (4.5 MB body limit, 120 s route duration).
+Per job the worker enforces 12 h runtime, a 4 GiB file cap and a 20-active-job service cap.
 
 The Desktop local server streams completed artifacts directly from the VPS. Vercel must
 not proxy, buffer, or store media bytes. The worker accepts only validated HTTPS YouTube
@@ -220,6 +228,10 @@ Secrets must never be committed, bundled into a distributable Desktop installer,
 exposed to browser code. This shared machine-token model is limited to a controlled
 installation. A distributable Desktop product requires per-user credentials or an
 enrollment flow and must not ship a shared long-lived bearer token.
+
+No guarantee of anonymous extraction is made: YouTube can block data-center IPs or require
+challenges, and the worker adds no bypass mechanism. Failures are reported with explicit
+codes (anonymous access blocked, unavailable, timeout, too large) and never as cookie errors.
 
 Implementation and infrastructure rollout are separate stages. This contract records
 the authorized target architecture; it does not declare the service deployed or

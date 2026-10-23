@@ -13,4 +13,11 @@ describe("normalizeYoutubeUrl", () => {
       "https://www.youtube.com/watch?v=88fD-UtG_yo"
     );
   });
+
+  it("accepts /live/<id> links and rejects other paths", () => {
+    expect(
+      normalizeYoutubeUrl("https://www.youtube.com/live/5HaOxAAA5qI?si=rzBuBLnotx8Yzn7q")
+    ).toBe("https://www.youtube.com/watch?v=5HaOxAAA5qI");
+    expect(normalizeYoutubeUrl("https://www.youtube.com/channel/5HaOxAAA5qI")).toBeNull();
+  });
 });

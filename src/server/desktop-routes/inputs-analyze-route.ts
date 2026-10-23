@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
         });
         const remoteData = await remote.json().catch(() => null);
         if (!remote.ok || !remoteData) {
-          return NextResponse.json({ error: remoteData?.error ?? "No se pudo analizar el vídeo desde el servicio remoto.", code: "YOUTUBE_REMOTE_UNAVAILABLE" }, { status: remote.status || 502 });
+          return NextResponse.json({ error: remoteData?.error ?? "No se pudo analizar el vídeo desde el servicio remoto.", code: remoteData?.code ?? "YOUTUBE_REMOTE_UNAVAILABLE" }, { status: remote.status || 502 });
         }
         meta = remoteData as typeof meta;
       } else {

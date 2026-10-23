@@ -1,4 +1,3 @@
-import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 const JOB_ID = /^yt_[0-9a-f-]{36}$/i;
@@ -11,15 +10,31 @@ function config() {
   return { base, token };
 }
 
+function remoteError(status: number, code: string, error: string) {
+  return Response.json({ error, code }, { status, headers: { "cache-control": "no-store" } });
+}
+
+/** Network/config failures resolve to a JSON error Response so callers surface a useful code. */
 export async function remoteYoutubeApi(path: string, init: RequestInit = {}) {
   if (!/^v1\/youtube\/(metadata|jobs|jobs\/yt_[0-9a-f-]{36})$/i.test(path)) throw new Error("REMOTE_YOUTUBE_INVALID_PATH");
-  const { base, token } = config();
-  return fetch(`${base}/${path}`, {
-    ...init,
-    headers: { ...(init.headers ?? {}), authorization: `Bearer ${token}`, ...(init.body ? { "content-type": "application/json" } : {}) },
-    cache: "no-store",
-    signal: AbortSignal.timeout(120_000),
-  });
+  let settings: ReturnType<typeof config>;
+  try { settings = config(); } catch (error) {
+    return error instanceof Error && error.message === "REMOTE_YOUTUBE_HTTPS_REQUIRED"
+      ? remoteError(503, "REMOTE_YOUTUBE_HTTPS_REQUIRED", "La URL del servicio remoto de YouTube debe ser HTTPS.")
+      : remoteError(503, "REMOTE_YOUTUBE_NOT_CONFIGURED", "El servicio remoto de YouTube no está configurado.");
+  }
+  try {
+    return await fetch(`${settings.base}/${path}`, {
+      ...init,
+      headers: { ...(init.headers ?? {}), authorization: `Bearer ${settings.token}`, ...(init.body ? { "content-type": "application/json" } : {}) },
+      cache: "no-store",
+      signal: AbortSignal.timeout(120_000),
+    });
+  } catch (error) {
+    return error instanceof Error && error.name === "TimeoutError"
+      ? remoteError(504, "REMOTE_WORKER_TIMEOUT", "El servicio remoto de YouTube no respondió a tiempo.")
+      : remoteError(502, "REMOTE_WORKER_UNAVAILABLE", "No se pudo contactar con el servicio remoto de YouTube.");
+  }
 }
 
 export async function remoteYoutubeJob(jobId: string, method: "GET" | "DELETE" = "GET") {
@@ -31,15 +46,21 @@ export function remoteYoutubeEnabled() {
   return Boolean(process.env.ANCLORA_FILESTUDIO_REMOTE_API_URL && process.env.ANCLORA_FILESTUDIO_REMOTE_API_TOKEN);
 }
 
-export async function remoteYoutubeFile(jobId: string) {
+export async function remoteYoutubeFile(jobId: string, signal?: AbortSignal) {
   if (!JOB_ID.test(jobId)) throw new Error("REMOTE_YOUTUBE_INVALID_JOB");
   const base = process.env.ANCLORA_FILESTUDIO_YOUTUBE_WORKER_URL?.replace(/\/$/, "");
   const token = process.env.ANCLORA_FILESTUDIO_YOUTUBE_WORKER_TOKEN;
-  if (!base || !token) throw new Error("REMOTE_YOUTUBE_DOWNLOAD_NOT_CONFIGURED");
-  if (new URL(base).protocol !== "https:") throw new Error("REMOTE_YOUTUBE_HTTPS_REQUIRED");
-  return fetch(`${base}/v1/youtube/jobs/${jobId}/file`, {
-    headers: { authorization: `Bearer ${token}` }, cache: "no-store",
-  });
+  if (!base || !token) return remoteError(503, "REMOTE_YOUTUBE_DOWNLOAD_NOT_CONFIGURED", "La descarga directa desde el worker remoto no está configurada.");
+  let protocol = "";
+  try { protocol = new URL(base).protocol; } catch { /* invalid URL handled below */ }
+  if (protocol !== "https:") return remoteError(503, "REMOTE_YOUTUBE_HTTPS_REQUIRED", "La URL del worker remoto debe ser HTTPS.");
+  try {
+    return await fetch(`${base}/v1/youtube/jobs/${jobId}/file`, {
+      headers: { authorization: `Bearer ${token}` }, cache: "no-store", signal,
+    });
+  } catch {
+    return remoteError(502, "REMOTE_WORKER_UNAVAILABLE", "No se pudo contactar con el worker remoto.");
+  }
 }
 
 export function createRemoteDownloadToken(jobId: string) {

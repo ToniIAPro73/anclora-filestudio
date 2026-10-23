@@ -42,7 +42,30 @@ and installed independently in the corresponding protected environment.
 VPS Compose also requires PostgreSQL/Redis credentials. The worker schema is created
 idempotently on startup. Terminal artifacts are removed after 24 hours.
 
+## Error model
+
+The worker classifies failures into stable codes returned in job status (`errorCode`) and
+metadata responses (`code`): `YOUTUBE_ANONYMOUS_ACCESS_BLOCKED`, `YOUTUBE_UNAVAILABLE`,
+`YOUTUBE_TIMEOUT`, `YOUTUBE_FILE_TOO_LARGE`, `YOUTUBE_EXTRACTION_FAILED`, plus `QUEUE_FULL`
+and `ARTIFACT_EXPIRED`. Transport failures use `REMOTE_YOUTUBE_NOT_CONFIGURED`,
+`REMOTE_YOUTUBE_HTTPS_REQUIRED`, `REMOTE_WORKER_TIMEOUT` and `REMOTE_WORKER_UNAVAILABLE`.
+Anonymous-access failures are never reported as cookie errors and the product never asks
+for cookies for this path. Raw yt-dlp stderr is not stored in job records.
+
+## Known limits
+
+- No guarantee of anonymous extraction. YouTube may block data-center IPs, require a PO
+  token or a JavaScript challenge solver, or restrict a video. The worker image does not add
+  a JS runtime or challenge-bypass mechanism; if extraction fails for that reason the job
+  fails with `YOUTUBE_ANONYMOUS_ACCESS_BLOCKED`. Adding one would be a separate decision.
+- Progress is coarse (queued → downloading → completed/failed/cancelled).
+- Cancellation stops the active yt-dlp process group on the worker that runs the job; a
+  second worker replica would require a shared cancellation signal.
+- The current shared-token model is for a controlled installation only.
+
 ## Rollout status
 
-Code is being prepared locally. No Vercel environment variables, VPS resources, database,
-DNS records, deployment, or production data have been modified by this decision.
+Implementation is complete locally and covered by automated tests; end-to-end validation
+against real infrastructure is pending. No Vercel environment variables, VPS resources,
+database, DNS records, deployment, or production data have been modified by this decision.
+Activation steps live in `docs/implementation/anclora-filestudio-service-api/deployment-vps.md`.

@@ -34,7 +34,8 @@
             header_up X-Forwarded-For {remote_host}
             transport http {
                 dial_timeout 10s
-                response_header_timeout 60s
+                # Metadata extraction can take up to ~75s; Vercel's proxy aborts at 110s.
+                response_header_timeout 100s
             }
         }
     }

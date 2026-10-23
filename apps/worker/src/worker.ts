@@ -3,7 +3,7 @@
 import { Queue, Worker, type Job as BullJob } from "bullmq";
 import { Redis } from "ioredis";
 import postgres from "postgres";
-import { execFile } from "node:child_process";
+import { execFile, spawn, type ChildProcess } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { access, mkdtemp, rm } from "node:fs/promises";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -14,7 +14,8 @@ import { z } from "zod";
 import { parse as yamlParse, stringify as yamlStringify } from "yaml";
 import type { QueueJobPayload } from "@anclora/filestudio-core";
 import { QUEUE_NAMES } from "@anclora/filestudio-core";
-import { startYoutubeService, updateYoutubeJob } from "./youtube-service.js";
+import { startYoutubeService, updateYoutubeJob, YOUTUBE_RUNTIME_MS } from "./youtube-service.js";
+import { classifyYoutubeFailure, isYoutubeErrorCode, type YoutubeErrorCode } from "./youtube-url.js";
 
 type WorkerExecutor = (input: WorkerConversionInput) => Promise<void>;
 type WorkerExecutorRegistry = Map<string, WorkerExecutor>;
@@ -31,7 +32,9 @@ const IMAGE_FORMATS = new Set(["jpeg", "jpg", "png", "webp", "avif", "tiff"]);
 const IMAGE_FITS = new Set(["cover", "contain", "fill", "inside", "outside"]);
 let executorRegistryPromise: Promise<WorkerExecutorRegistry> | null = null;
 let serviceSql: ReturnType<typeof postgres> | null = null;
-const activeYoutubeProcesses = new Map<string, ReturnType<typeof execFile>>();
+const activeYoutubeProcesses = new Map<string, ChildProcess>();
+let youtubeArtifactRoot: string | null = null;
+const YOUTUBE_MAX_FILESIZE = "4G";
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
@@ -62,7 +65,10 @@ async function processJob(job: BullJob<QueueJobPayload>): Promise<void> {
   console.log(`[worker] Processing job=${jobId} op=${operation} engine=${engineId}`);
 
   await job.updateProgress(0);
-  if (operation === "youtube:convert" && serviceSql) await updateYoutubeJob(serviceSql, jobId, "downloading");
+  if (operation === "youtube:convert" && serviceSql && !await updateYoutubeJob(serviceSql, jobId, "downloading")) {
+    console.log(`[worker] Skipping cancelled job=${jobId}`);
+    return;
+  }
   try {
     await runWithTimeout(async () => {
       await job.updateProgress(50);
@@ -71,7 +77,10 @@ async function processJob(job: BullJob<QueueJobPayload>): Promise<void> {
     }, timeoutMs);
     if (operation === "youtube:convert" && serviceSql) await updateYoutubeJob(serviceSql, jobId, "completed");
   } catch (error) {
-    if (operation === "youtube:convert" && serviceSql) await updateYoutubeJob(serviceSql, jobId, "failed", "YOUTUBE_EXTRACTION_FAILED");
+    if (operation === "youtube:convert" && serviceSql) {
+      const code: YoutubeErrorCode = error instanceof Error && isYoutubeErrorCode(error.message) ? error.message : "YOUTUBE_EXTRACTION_FAILED";
+      await updateYoutubeJob(serviceSql, jobId, "failed", code, youtubeArtifactRoot ?? undefined);
+    }
     throw error;
   }
 
@@ -115,26 +124,42 @@ async function executeYoutubeConvert(input: WorkerConversionInput): Promise<void
   const quality = typeof input.options.quality === "string" ? input.options.quality : "best";
   if (quality !== "best" && !/^\d{3,4}p$/.test(quality)) throw new Error("VALIDATION_FAILED:quality");
   const maxHeight = quality === "best" ? null : quality.slice(0, -1);
-  const args = ["--ignore-config", "--no-playlist", "--no-warnings", "--newline", "--no-progress", "--restrict-filenames", "--output", input.outputPath];
+  const args = ["--ignore-config", "--no-cache-dir", "--no-playlist", "--no-warnings", "--newline", "--no-progress", "--restrict-filenames", "--output", input.outputPath];
   if (format === "mp3") args.push("--extract-audio", "--audio-format", "mp3", "--audio-quality", "0");
   else {
     args.push("--merge-output-format", "mp4", "--remux-video", "mp4", "--format", maxHeight
       ? `bestvideo[height<=${maxHeight}][ext=mp4]+bestaudio[ext=m4a]/best[height<=${maxHeight}][ext=mp4]/best[height<=${maxHeight}]`
       : "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best");
   }
-  args.push(input.inputPath);
+  args.push("--max-filesize", YOUTUBE_MAX_FILESIZE, input.inputPath);
   await new Promise<void>((resolve, reject) => {
-    const child = execFile("yt-dlp", args, { timeout: Math.min(readTimeout(input.options.timeoutMs), 12 * 60 * 60 * 1000), maxBuffer: 8 * 1024 * 1024 }, (error, _stdout, stderr) => {
+    // Own process group so cancellation/timeouts also stop yt-dlp's ffmpeg children.
+    const child = spawn("yt-dlp", args, { shell: false, detached: true, stdio: ["ignore", "ignore", "pipe"] });
+    let stderr = "";
+    let timedOut = false;
+    child.stderr.on("data", (chunk: Buffer) => { stderr = (stderr + chunk.toString("utf8")).slice(-64 * 1024); });
+    const timer = setTimeout(() => { timedOut = true; killYoutubeProcessGroup(child); }, Math.min(readTimeout(input.options.timeoutMs), YOUTUBE_RUNTIME_MS));
+    const finish = (error: Error | null, code: number | null) => {
+      clearTimeout(timer);
       if (input.jobId) activeYoutubeProcesses.delete(input.jobId);
-      if (error) reject(new Error(`YOUTUBE_EXTRACTION_FAILED: ${stderr || error.message}`));
-      else resolve();
-    });
+      // Only the classified code is propagated; raw stderr stays out of job records and logs.
+      if (!error && code === 0) resolve();
+      else reject(new Error(classifyYoutubeFailure(stderr, timedOut)));
+    };
+    child.once("error", (error) => finish(error, null));
+    child.once("close", (code) => finish(null, code));
     if (input.jobId) activeYoutubeProcesses.set(input.jobId, child);
   });
 }
 
-function cancelYoutubeProcess(jobId: string) {
-  activeYoutubeProcesses.get(jobId)?.kill("SIGTERM");
+function killYoutubeProcessGroup(child: ChildProcess) {
+  if (!child.pid) return;
+  try { process.kill(-child.pid, "SIGTERM"); } catch { child.kill("SIGTERM"); }
+}
+
+export function cancelYoutubeProcess(jobId: string) {
+  const child = activeYoutubeProcesses.get(jobId);
+  if (child) killYoutubeProcessGroup(child);
 }
 
 async function executeJsonToYaml(input: WorkerConversionInput): Promise<void> {
@@ -302,6 +327,7 @@ async function main() {
     created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now()
   )`;
   const youtubeQueue = new Queue<QueueJobPayload>(QUEUE_NAMES.MEDIA, { connection: connection as never });
+  youtubeArtifactRoot = config.ANCLORA_WORKER_ARTIFACT_ROOT;
   const apiServer = startYoutubeService({ sql, queue: youtubeQueue, token: config.ANCLORA_WORKER_API_TOKEN, port: config.ANCLORA_WORKER_API_PORT, artifactRoot: config.ANCLORA_WORKER_ARTIFACT_ROOT, cancelActive: cancelYoutubeProcess });
 
   const allQueues = Object.values(QUEUE_NAMES).filter((q) => q !== QUEUE_NAMES.MAINTENANCE);
