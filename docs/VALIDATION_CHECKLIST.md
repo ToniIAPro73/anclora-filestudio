@@ -1,41 +1,37 @@
-# Checklist de validación — política de promoción (2026-10-23)
+# Checklist de validación — corrección de auditoría CI Security (2026-10-23)
 
-> Entrega de cambios de flujo y configuración. El SHA final queda registrado en el commit que incluye este checklist.
+> Cambios locales en `development`; pendientes de validación de Toni antes del commit y push.
 
 **Repositorio:** anclora-filestudio
-**Rama:** development
-**Entorno de validación:** entorno development/Preview del repositorio, pendiente de revisión de Toni
+**Rama y commit:** development · cambios sin commit
 **Datos:** no se usaron ni modificaron datos de aplicación.
 
 ## 1. Qué cambia
-- El workflow promote.yml admite el dispatch de cadena completa con target=full y source_sha revisado en Preview.
-- El contrato runtime define validación expresa en development, Preview y promoción completa asíncrona.
+- Next.js pasa de `16.3.8` a `16.4.1` y `eslint-config-next` se alinea en `16.4.1`.
+- Hono pasa de `4.13.7` a `^4.13.11` en API y Nexus; el lockfile resuelve `4.13.13`.
 
 ## 2. Ya comprobado por el agente
-| Comprobación | Comando o método | Resultado |
+| Comprobación | Comando | Resultado |
 | --- | --- | --- |
-| Sintaxis de workflows | Parser YAML sobre los 41 `promote.yml` del workspace | PASS |
+| Auditoría de dependencias de producción | `pnpm audit --prod` | PASS · No known vulnerabilities found |
+| Actualización de manifiestos y lockfile | `pnpm install --lockfile-only --ignore-scripts --prefer-offline` | PASS · 8 proyectos del workspace resueltos |
 | Integridad del diff | `git diff --check` | PASS |
 
 ## 3. Pruebas no ejecutadas (NOT_RUN)
 | Prueba | Motivo concreto |
 | --- | --- |
-| Suite de la aplicación, lint y build | Cambios de políticas y configuración de promoción; no se ejecutaron suites por no afectar código de aplicación. |
-| Revisión visual y smoke test de Preview | Pendiente de Toni en el entorno publicado tras este push. |
-| Resultado de CI/deployments | No se esperará ni consultará; Toni revisa los entornos según la política acordada. |
+| Lint, typecheck, suites y build | El cambio actualiza dependencias; quedan pendientes de la validación solicitada en desarrollo. |
+| Smoke test de Preview | Aún no hay commit ni push para generar una Preview nueva. |
 
 ## 4. Checklist para Toni
 | # | Dónde | Pasos | Resultado esperado | Bloqueante |
 | --- | --- | --- | --- | --- |
-| 1 | development | Revisar el contrato y `promote.yml` de este repositorio | Cambios acordes con el flujo aprobado | Sí |
-| 2 | Preview | Confirmar la Preview correspondiente al SHA de este push | La revisión corresponde al SHA publicado | Sí, antes de promoción |
+| 1 | development | Revisar las versiones de Next.js, `eslint-config-next`, Hono y el lockfile | Versiones parcheadas y lockfile coherente | Sí |
+| 2 | CI Security | Tras autorizar el commit/push, revisar el nuevo resultado de `pnpm audit --prod` | Sin las cuatro vulnerabilidades reportadas | Sí |
 
 ## 5. Riesgos y limitaciones
-- La promoción requiere el SHA exacto revisado en Preview. Si `development` avanza, el workflow completo se detendrá y requerirá revisión nueva.
-- Los resultados de staging, production y main quedan bajo revisión de Toni.
+- La auditoría local de producción no reporta vulnerabilidades conocidas; no se ejecutaron lint, typecheck, tests ni build.
 
 ## 6. Decisión de Toni
-- [ ] Validado en development
-- [ ] Validado en Preview
-- [ ] PROMOTE=FULL
-- [ ] No se promociona. Motivo: ______________________
+- [ ] Validado en desarrollo
+- [ ] Autorizar commit y push a `development`
