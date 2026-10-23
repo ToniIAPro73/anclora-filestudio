@@ -177,6 +177,15 @@ jobs:
     needs: changes
     if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-24.04
+    # Dummy, CI-only values so Compose can interpolate deploy/vps/compose.yml.
+    # They are not credentials and never reach any real environment.
+    env:
+      DATABASE_URL: postgresql://ci:ci-placeholder@postgres:5432/ci
+      POSTGRES_PASSWORD: ci-placeholder-postgres
+      REDIS_PASSWORD: ci-placeholder-redis
+      PUBLIC_BASE_URL: https://filestudio.ci.invalid
+      JWT_ISSUER: https://filestudio.ci.invalid
+      YOUTUBE_WORKER_TOKEN: ci-placeholder-worker-token-0000000000
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -188,7 +197,7 @@ jobs:
           cache: pnpm
       - run: pnpm --version
       - run: pnpm install --frozen-lockfile
-      - run: docker compose -f deploy/vps/compose.yml config
+      - run: docker compose -f deploy/vps/compose.yml config -q
       - run: docker compose -f deploy/vps/compose.yml build --no-cache
 
   ci-release:
