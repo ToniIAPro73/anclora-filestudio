@@ -1,8 +1,11 @@
 # Checklist de validación — cambios de FileStudio
 
-**Repositorio:** anclora-filestudio  
-**Rama:** `development`  
-**Commits incluidos:** `3abe91f` (worker remoto YouTube), `c5a5537` (optimización CI)  
+**Repositorio:** anclora-filestudio
+
+**Rama:** `development`
+
+**Commits incluidos:** `3abe91f` (worker remoto YouTube), `c5a5537` (optimización CI)
+
 **Autorización de Toni:** solicitó expresamente el push a `development`.
 
 ## Alcance
