@@ -1,37 +1,29 @@
-# Checklist de validación — corrección de auditoría CI Security (2026-10-23)
-
-> Cambios locales en `development`; pendientes de validación de Toni antes del commit y push.
+# Checklist de validación — arquitectura YouTube remota
 
 **Repositorio:** anclora-filestudio
-**Rama y commit:** development · cambios sin commit
-**Datos:** no se usaron ni modificaron datos de aplicación.
+**Cambio incluido:** actualización de `.anclora/PRODUCTION_RUNTIME.md` para registrar la arquitectura autorizada de conversión remota de YouTube desde Desktop/local.
+**Rama:** `development`
+**Autorización de Toni:** autorizó expresamente esta actualización y el commit/push.
 
-## 1. Qué cambia
-- Next.js pasa de `16.3.8` a `16.4.1` y `eslint-config-next` se alinea en `16.4.1`.
-- Hono pasa de `4.13.7` a `^4.13.11` en API y Nexus; el lockfile resuelve `4.13.13`.
+## Alcance
 
-## 2. Ya comprobado por el agente
-| Comprobación | Comando | Resultado |
-| --- | --- | --- |
-| Auditoría de dependencias de producción | `pnpm audit --prod` | PASS · No known vulnerabilities found |
-| Actualización de manifiestos y lockfile | `pnpm install --lockfile-only --ignore-scripts --prefer-offline` | PASS · 8 proyectos del workspace resueltos |
-| Integridad del diff | `git diff --check` | PASS |
+- Se documentan el flujo Desktop → API privada de Vercel → worker HTTPS en VPS, procesamiento con yt-dlp/FFmpeg y cola BullMQ/Redis.
+- Se documentan el almacenamiento dedicado de estado en PostgreSQL, artefactos temporales en volumen privado y streaming directo VPS → Desktop.
+- Se registran límites, variables de entorno necesarias y controles de cookies y secretos.
+- El contrato indica que el código está en preparación local y que infraestructura, secretos y despliegue aún no están configurados.
+- Este commit contiene solo el contrato y este checklist; no incluye los demás cambios locales del árbol de trabajo.
 
-## 3. Pruebas no ejecutadas (NOT_RUN)
-| Prueba | Motivo concreto |
+## Comprobaciones
+
+| Comprobación | Resultado |
 | --- | --- |
-| Lint, typecheck, suites y build | El cambio actualiza dependencias; quedan pendientes de la validación solicitada en desarrollo. |
-| Smoke test de Preview | Aún no hay commit ni push para generar una Preview nueva. |
+| Revisión del contrato existente y de los límites de arquitectura indicados por Toni | PASS |
+| `git diff --check` | PASS |
+| Tests, lint y build | NOT_RUN — cambio documental; no solicitados |
+| Cambios en Vercel, VPS, base de datos, DNS o datos de producción | Ninguno |
 
-## 4. Checklist para Toni
-| # | Dónde | Pasos | Resultado esperado | Bloqueante |
-| --- | --- | --- | --- | --- |
-| 1 | development | Revisar las versiones de Next.js, `eslint-config-next`, Hono y el lockfile | Versiones parcheadas y lockfile coherente | Sí |
-| 2 | CI Security | Tras autorizar el commit/push, revisar el nuevo resultado de `pnpm audit --prod` | Sin las cuatro vulnerabilidades reportadas | Sí |
+## Seguimiento
 
-## 5. Riesgos y limitaciones
-- La auditoría local de producción no reporta vulnerabilidades conocidas; no se ejecutaron lint, typecheck, tests ni build.
-
-## 6. Decisión de Toni
-- [ ] Validado en desarrollo
-- [ ] Autorizar commit y push a `development`
+- [x] Autorizado por Toni para commit y push a `development`.
+- [ ] Revisar el contrato publicado en `development`.
+- [ ] La configuración y el rollout de infraestructura requieren su etapa y validación separadas.

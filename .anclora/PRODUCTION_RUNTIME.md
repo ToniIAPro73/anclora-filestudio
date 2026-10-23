@@ -22,7 +22,7 @@ Toni validates every change in the development environment before the agent comm
 
 # Anclora Filestudio — Production Runtime Manifest
 
-PRODUCTION_RUNTIME_MANIFEST_VERSION=2.0
+PRODUCTION_RUNTIME_MANIFEST_VERSION=2.1
 PROMOTION_REPORT=SINGLE_SUMMARY_AT_END
 PROMOTION_PARALLEL_ACROSS_REPOS=true
 PROMOTION_MULTI_REPO_SCOPE_ALLOWED=true
@@ -162,6 +162,69 @@ For machine services: Authenticate via service tokens or worker keys declared in
 ## 11. Git Branch & Operational Policy
 
 PROMOTION_POLICY=Default development-only operation; no automatic promotion. Explicit current-task user authorization permits only the repository-supported governed promotion path, subject to all gates.
+
+## 12. Approved YouTube Remote Conversion Architecture
+
+YOUTUBE_REMOTE_CONVERSION_STATUS=AUTHORIZED_ARCHITECTURE_NOT_DEPLOYED
+YOUTUBE_REMOTE_CONVERSION_SCOPE=DESKTOP_LOCAL_ONLY
+YOUTUBE_REMOTE_CONVERSION_IMPLEMENTATION_STATUS=IN_PROGRESS_LOCAL
+YOUTUBE_REMOTE_CONVERSION_INFRASTRUCTURE_STATUS=NOT_CONFIGURED
+YOUTUBE_REMOTE_CONVERSION_OUTPUTS=MP3,MP4
+YOUTUBE_REMOTE_CONVERSION_MAX_JOB_DURATION_HOURS=12
+YOUTUBE_REMOTE_ARTIFACT_RETENTION_HOURS=24
+YOUTUBE_REMOTE_MEDIA_PROXY=VPS_TO_DESKTOP_DIRECT
+YOUTUBE_REMOTE_COOKIE_POLICY=ANONYMOUS_NO_USER_COOKIES
+YOUTUBE_REMOTE_DATABASE_PROVIDER=PostgreSQL
+YOUTUBE_REMOTE_DATABASE_SCOPE=DEDICATED_REMOTE_SERVICE
+YOUTUBE_REMOTE_QUEUE=BullMQ/Redis
+
+This approved architecture applies only to YouTube URL metadata and conversion requests
+originating in FileStudio Desktop/local. It does not enable or expose YouTube conversion
+in Vercel Web. The existing local Desktop SQLite database remains unchanged.
+
+Desktop's local server sends metadata and conversion requests through a private Vercel API
+route. That route authenticates the Desktop server with a server-side bearer token and
+forwards requests to the token-protected HTTPS control API on the VPS worker. The VPS
+worker runs `yt-dlp` and FFmpeg, queues jobs through BullMQ/Redis, stores job state in its
+dedicated PostgreSQL database, and writes temporary artifacts to its private volume.
+PostgreSQL and Redis are dedicated to this remote service; they do not replace or migrate
+the local SQLite database.
+
+The Desktop local server streams completed artifacts directly from the VPS. Vercel must
+not proxy, buffer, or store media bytes. The worker accepts only validated HTTPS YouTube
+URLs and MP3/MP4 output. Every yt-dlp invocation uses `--ignore-config` and anonymous
+requests; user YouTube cookies are neither sent to nor stored by the service. Anonymous
+extraction may still fail when YouTube blocks access, requires a PO token, or restricts a
+video. The remote path permits jobs up to 12 hours; the prior local metadata duration cap
+does not apply when this remote path is configured. Terminal artifacts are removed after
+24 hours, and worker schema initialization is idempotent.
+
+### YouTube Remote Service Environment
+
+Vercel server-only configuration:
+
+- `YOUTUBE_REMOTE_API_TOKEN`
+- `YOUTUBE_WORKER_URL` (VPS HTTPS URL ending in `/worker`)
+- `YOUTUBE_WORKER_TOKEN`
+
+Desktop local-server configuration:
+
+- `ANCLORA_FILESTUDIO_REMOTE_API_URL`
+- `ANCLORA_FILESTUDIO_REMOTE_API_TOKEN`
+- `ANCLORA_FILESTUDIO_YOUTUBE_WORKER_URL`
+- `ANCLORA_FILESTUDIO_YOUTUBE_WORKER_TOKEN`
+
+Each token must be generated independently and installed only in its corresponding
+protected server environment. VPS PostgreSQL and Redis credentials are also required.
+Secrets must never be committed, bundled into a distributable Desktop installer, or
+exposed to browser code. This shared machine-token model is limited to a controlled
+installation. A distributable Desktop product requires per-user credentials or an
+enrollment flow and must not ship a shared long-lived bearer token.
+
+Implementation and infrastructure rollout are separate stages. This contract records
+the authorized target architecture; it does not declare the service deployed or
+configured. No Vercel environment variables, VPS resources, database, DNS records,
+deployment, or production data are changed by this contract update.
 
 <!-- ANCLORA-MODS:START -->
 ANCLORA_MODS_COMMON_CONTRACT_VERSION=1.0.0
