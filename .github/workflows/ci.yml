@@ -10,7 +10,53 @@ env:
   NODE_VERSION: "22.13.1"
 
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      code: ${{ steps.classify.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: classify
+        name: Detect code changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.event.after }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            base="$PR_BASE"
+            head="$PR_HEAD"
+          else
+            base="$PUSH_BEFORE"
+            head="$PUSH_AFTER"
+          fi
+
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          code=false
+          while IFS= read -r -d '' path; do
+            case "$path" in
+              docs/**|*.md|.anclora/**)
+                ;;
+              *)
+                code=true
+                break
+                ;;
+            esac
+          done < <(git diff --name-only -z "$base" "$head")
+
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
   ci-core:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -25,11 +71,36 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
+      - run: pnpm test:core
+
+  ci-integration:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm --version
+      - run: pnpm install --frozen-lockfile
+      - name: Restore Linux integration toolchain cache
+        id: apt-cache
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives/*.deb
+          key: ${{ runner.os }}-${{ runner.arch }}-linux-toolchain-${{ hashFiles('scripts/ci/setup-linux-test-toolchain.sh', 'scripts/toolchain.lock.json') }}
       - name: Install Linux integration test toolchain
         run: bash scripts/ci/setup-linux-test-toolchain.sh
       - run: pnpm test
 
   ci-service:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -47,6 +118,8 @@ jobs:
       - run: pnpm build:service
 
   ci-local-agent:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -63,6 +136,8 @@ jobs:
       - run: pnpm build:local-agent
 
   ci-contracts:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -79,6 +154,8 @@ jobs:
       - run: pnpm test:nexus-contract
 
   ci-security:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -97,6 +174,8 @@ jobs:
       - run: pnpm generate:sbom
 
   ci-docker:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -114,7 +193,8 @@ jobs:
 
   ci-release:
     runs-on: ubuntu-24.04
-    needs: [ci-core, ci-service, ci-local-agent, ci-contracts, ci-security]
+    needs: [changes, ci-core, ci-integration, ci-service, ci-local-agent, ci-contracts, ci-security]
+    if: needs.changes.outputs.code == 'true'
     steps:
       - uses: actions/checkout@v4
       - run: echo "Release packaging is manual; this job validates metadata only."
