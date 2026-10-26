@@ -2,6 +2,27 @@
 
 This document defines the local QA readiness baseline for FileStudio. It does not certify the complete functional matrix as passing.
 
+## Selecting checks for a change
+
+Choose checks using both the changed paths and the runtime surface they affect. A documentation-only diff (Markdown, `docs/`, or `.anclora/` contracts) runs no application lint, typecheck, test suite, build, or visual QA. Report those checks as `NOT_RUN — documentation-only diff` where a delivery report is required.
+
+For source changes, run the smallest relevant checks once at the end of the change batch. Do not run the complete `pnpm test` suite or build every runtime surface by default. Escalate for auth/authorization, persistence, security, migrations, shared architecture, or release changes.
+
+| Changed area | Focused local checks | Broader CI jobs |
+| --- | --- | --- |
+| Vercel Web (`src/app`, browser UI, Vercel deployment guards) | `pnpm lint`, `pnpm typecheck`, affected Vitest tests; `pnpm test:vercel` and `pnpm build:vercel` when Web behavior/build is affected | `ci-core`; full integration only for engine/API/test paths |
+| Desktop/local UI and engines | `pnpm lint`, `pnpm typecheck`, affected Vitest tests; `pnpm build:desktop` only when bundling is affected | `ci-core`; full integration for engine/test paths |
+| Service API, Worker, SDK/core | Package-specific tests/typecheck/build for the touched service boundary | `ci-service`, integration, and Docker only for matching service/worker paths |
+| Local Agent | `pnpm test:local-agent`; its build when packaging/runtime code changes | `ci-local-agent` only for `apps/local-agent/**` |
+| Nexus integration contracts | `pnpm test:routing` and `pnpm test:nexus-contract` | `ci-contracts` only for the integration package |
+| Portable/release packaging | Platform build, verify, and smoke gates for the affected artifact | `portable-acceptance` for its declared paths; `release-filestudio` remains tag/manual |
+
+The pull request/push workflow applies path scopes for its heavier jobs. Workflow-file changes
+run the workflow linter. Package/dependency manifest changes deliberately fan out to affected
+jobs. A skipped job is not a failed gate; the change detector and job conditions must stay
+present so the workflow reports an explicit successful skip rather than suppressing the whole
+workflow.
+
 ## A. Vercel Web QA
 
 Vercel Web validates the public browser surface, health metadata, privacy constraints and browser-only conversions. It must not require native binaries, SQLite, server-side uploads, workers or local filesystem access.

@@ -15,6 +15,12 @@ jobs:
     outputs:
       code: ${{ steps.classify.outputs.code }}
       workflow: ${{ steps.classify.outputs.workflow }}
+      integration: ${{ steps.classify.outputs.integration }}
+      service: ${{ steps.classify.outputs.service }}
+      local_agent: ${{ steps.classify.outputs.local_agent }}
+      contracts: ${{ steps.classify.outputs.contracts }}
+      security: ${{ steps.classify.outputs.security }}
+      docker: ${{ steps.classify.outputs.docker }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,17 +45,58 @@ jobs:
           if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
             echo "code=true" >> "$GITHUB_OUTPUT"
             echo "workflow=true" >> "$GITHUB_OUTPUT"
+            echo "integration=true" >> "$GITHUB_OUTPUT"
+            echo "service=true" >> "$GITHUB_OUTPUT"
+            echo "local_agent=true" >> "$GITHUB_OUTPUT"
+            echo "contracts=true" >> "$GITHUB_OUTPUT"
+            echo "security=true" >> "$GITHUB_OUTPUT"
+            echo "docker=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           code=false
           workflow=false
+          integration=false
+          service=false
+          local_agent=false
+          contracts=false
+          security=false
+          docker=false
           while IFS= read -r -d '' path; do
             case "$path" in
               docs/**|*.md|.anclora/**)
                 ;;
               .github/workflows/**)
                 workflow=true
+                if [[ "$path" == ".github/workflows/ci.yml" ]]; then
+                  code=true; integration=true; service=true; local_agent=true; contracts=true; security=true; docker=true
+                fi
+                ;;
+              package.json|pnpm-lock.yaml|pnpm-workspace.yaml|tsconfig*.json|eslint.config.*)
+                code=true; integration=true; service=true; local_agent=true; contracts=true; security=true; docker=true
+                ;;
+              tests/**|vitest*.config.ts|vitest*.config.mts|scripts/toolchain.lock.json)
+                code=true; integration=true
+                if [[ "$path" == tests/security/** ]]; then security=true; fi
+                ;;
+              src/lib/security/**|apps/api/src/auth/**)
+                code=true; security=true
+                if [[ "$path" == apps/api/* ]]; then service=true; fi
+                ;;
+              src/lib/engines/**|src/app/api/**|apps/worker/**)
+                code=true; integration=true; docker=true
+                ;;
+              apps/api/**|packages/core/**|packages/sdk/**)
+                code=true; service=true; integration=true; docker=true
+                ;;
+              apps/local-agent/**)
+                code=true; local_agent=true
+                ;;
+              packages/integrations/anclora-nexus/**)
+                code=true; contracts=true
+                ;;
+              deploy/vps/**|Dockerfile*|docker-compose*.yml)
+                code=true; docker=true
                 ;;
               *)
                 code=true
@@ -59,6 +106,12 @@ jobs:
 
           echo "code=$code" >> "$GITHUB_OUTPUT"
           echo "workflow=$workflow" >> "$GITHUB_OUTPUT"
+          echo "integration=$integration" >> "$GITHUB_OUTPUT"
+          echo "service=$service" >> "$GITHUB_OUTPUT"
+          echo "local_agent=$local_agent" >> "$GITHUB_OUTPUT"
+          echo "contracts=$contracts" >> "$GITHUB_OUTPUT"
+          echo "security=$security" >> "$GITHUB_OUTPUT"
+          echo "docker=$docker" >> "$GITHUB_OUTPUT"
 
   ci-config:
     needs: changes
@@ -92,7 +145,7 @@ jobs:
 
   ci-integration:
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.integration == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -123,7 +176,7 @@ jobs:
 
   ci-service:
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.service == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -142,7 +195,7 @@ jobs:
 
   ci-local-agent:
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.local_agent == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -160,7 +213,7 @@ jobs:
 
   ci-contracts:
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.contracts == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -178,7 +231,7 @@ jobs:
 
   ci-security:
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.security == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -198,7 +251,7 @@ jobs:
 
   ci-docker:
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.docker == 'true'
     runs-on: ubuntu-24.04
     # Dummy, CI-only values so Compose can interpolate deploy/vps/compose.yml.
     # They are not credentials and never reach any real environment.
@@ -225,7 +278,7 @@ jobs:
 
   ci-release:
     runs-on: ubuntu-24.04
-    needs: [changes, ci-core, ci-integration, ci-service, ci-local-agent, ci-contracts, ci-security]
+    needs: [changes, ci-core]
     if: needs.changes.outputs.code == 'true'
     steps:
       - uses: actions/checkout@v4

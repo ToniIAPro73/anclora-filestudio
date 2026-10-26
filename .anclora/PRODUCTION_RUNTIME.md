@@ -62,11 +62,17 @@ manifest override generic agent defaults or home-directory agent policies.
 
 APPLICATION_NAME=Anclora Filestudio
 REPOSITORY=anclora-filestudio
-APPLICATION_TYPE=fullstack_or_application
+APPLICATION_TYPE=fullstack
 FRAMEWORK=Next.js
+HOSTING_PROVIDER=vercel
+PRODUCTION_DEPLOY_BRANCH=main
 
 ## 2. Runtime Topology
 
+WEB_HOSTING_PROVIDER=vercel
+WEB_PRODUCTION_DEPLOY_BRANCH=main
+DESKTOP_DISTRIBUTION_MODEL=downloadable_local_application
+DESKTOP_HOSTING_PROVIDER=NONE
 FRONTEND_PROVIDER=Vercel
 BACKEND_PROVIDER=Vercel Serverless Functions
 PRODUCTION_DOMAIN=anclora-filestudio-3fyoq34kw-pmi140979-6354s-projects.vercel.app
