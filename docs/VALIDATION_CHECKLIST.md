@@ -1,27 +1,25 @@
-# Checklist de validación — lint de workflows (2026-10-23)
+# Checklist de validación — adopción AOS canónica (2026-10-30)
+
+> Se sobrescribe en cada entrega; el historial queda en Git.
 
 **Repositorio:** anclora-filestudio
 **Rama:** development
-**Commit base:** `b982622`
-**Estado:** cambios locales sin commit; pendientes de revisión expresa de Toni.
+**Datos:** no se usaron ni modificaron datos de aplicación.
 
-## Cambios
+## 1. Qué cambia
+- Bootstrap mínimo (`AGENTS.md`, adaptadores de proveedor) y contratos `.anclora/` alineados con el modelo AOS ratificado (D-2026-0042): autoridad en Governance, router mínimo, claves Preview heredadas retiradas, semántica de runtime derivada de hechos ya declarados.
+- Copias de contratos sincronizadas desde Vault (11 ficheros).
+- Sin cambios de código de producto, dependencias ni despliegue.
 
-- `.github/workflows/promote.yml`: se entrecomilla la ruta enviada a `gh api` para evitar expansión y división de palabras en ShellCheck (SC2086).
-- `.github/workflows/release-filestudio.yml`: se agrupan las escrituras consecutivas a `GITHUB_ENV` y `GITHUB_OUTPUT` (SC2129).
-- Se conservan los avisos y la comprobación global de actionlint; no se omiten reglas ni se limita el lint a un solo workflow.
-
-## Evidencia
-
+## 2. Ya comprobado por el agente
 | Comprobación | Resultado |
 | --- | --- |
-| Run `40026522230`, job `ci-config` | Falló en 14 s por 1 aviso SC2086 en `promote.yml` y 2 avisos SC2129 en `release-filestudio.yml`; los demás jobs se omitieron como se esperaba para este cambio |
-| Revisión de los bloques señalados | Cambios aplicados en los tres bloques indicados por actionlint/ShellCheck |
-| `git diff --check` | PASS |
-| Actionlint local | No ejecutado: Docker está instalado, pero su daemon no está disponible (`docker.sock` ausente) |
-| Tests | No ejecutados; el cambio solo afecta scripts de workflows |
+| `aos-adopt` inspect/plan/apply, diff limitado a ficheros contractuales | PASS |
+| `runtime_semantics.py` sobre `.anclora/PRODUCTION_RUNTIME.md` | PASS |
+| Enlaces a Governance en los `.md` modificados, `git diff --check` | PASS |
 
-## Revisión de Toni
+## 3. NOT_RUN
+Tests, lint, typecheck, build y E2E de la aplicación: el diff es solo documentación/configuración contractual.
 
-- [ ] Revisar el diff en `development`.
-- [ ] Autorizar commit y push cuando esté validado.
+## 4. Para Toni
+Sin pasos manuales. Bloqueante: no.
